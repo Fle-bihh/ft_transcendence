@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const config = {
     type: "postgres",
-    host: "localhost",
+    host: "172.16.1.10",
     port: 5001,
     username: "postgres",
     password: "password",

@@ -8,7 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { NavLink } from 'react-router-dom';
-const url = 'http://localhost:3000/signup'
+const url = 'http://172.16.1.10:3000/signup'
 
     const Signup = () => {
         
@@ -30,7 +30,7 @@ const url = 'http://localhost:3000/signup'
             e.preventDefault();
             
 
-         fetch('http://localhost:3000/signup',
+         fetch('http://172.16.1.10:3000/signup',
            { 
             method: 'POST', 
             mode: 'cors', 

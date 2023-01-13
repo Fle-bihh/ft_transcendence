@@ -128,54 +128,69 @@ const ChannelDialog = (props: {
             value={searchInputValue}
             autoComplete={"off"}
             onChange={(event) => {
+
+              let list = document.getElementById('listChannel');
+
+              if (list != null) {
+                for (let i = 0; i < list.children.length; i++) {
+                  // console.log(list.children[i])
+                  if (!event.currentTarget.value.length || list.children[i].children[0].textContent?.toUpperCase().indexOf(event.currentTarget.value.toUpperCase())! > -1)
+                    list.children[i].classList.remove('hidden')
+                  else
+                    list.children[i].classList.add('hidden')
+                }
+              }
+
               setSearchInputValue(event.currentTarget.value);
             }}
             autoFocus
-            onKeyDown={(event) => {}}
+            onKeyDown={(event) => { }}
           />
           <div className="channelsContainer">
-            {props.allChannels.map((channel) => {
-              if (props.allConv.find((conv) => conv.receiver == channel.name))
-                return;
-              return channel.privacy === "public" ||
-                channel.name === searchInputValue ? (
-                <div className="channelDataContainer">
-                  <div className="channelDataName">{channel.name}</div>
-                  <div className="channelDataDescription">
-                    {channel.description}
+            <div id="listChannel">
+              {props.allChannels.map((channel) => {
+                if (props.allConv.find((conv) => conv.receiver == channel.name))
+                  return;
+                return channel.privacy === "public" ||
+                  channel.name === searchInputValue ? (
+                  <div className="channelDataContainer">
+                    <div className="channelDataName">{channel.name}</div>
+                    <div className="channelDataDescription">
+                      {channel.description}
+                    </div>
+                    <div className="channelDataParticipants">0/50</div>
+                    {channel.password ? (
+                      <div className="channelDataPasswordInput"></div>
+                    ) : (
+                      <div></div>
+                    )}
+                    <div
+                      className="joinChannelButton"
+                      onClick={() => {
+                        utils.socket.emit("ADD_PARTICIPANT", {
+                          login: user.user?.login,
+                          channel: channel.name,
+                          admin: false,
+                        });
+                        console.log(
+                          "send ADD_PARTICIPANT to back from ",
+                          user.user?.login
+                        );
+                        console.log("channel: ", channel.name);
+                        props.setOpenConvName(channel.name);
+                        const newParticipantMsg =
+                          user.user?.login + " joined this Channel";
+                        handleClose();
+                      }}
+                    >
+                      Join this channel
+                    </div>
                   </div>
-                  <div className="channelDataParticipants">0/50</div>
-                  {channel.password ? (
-                    <div className="channelDataPasswordInput"></div>
-                  ) : (
-                    <div></div>
-                  )}
-                  <div
-                    className="joinChannelButton"
-                    onClick={() => {
-                      utils.socket.emit("ADD_PARTICIPANT", {
-                        login: user.user?.login,
-                        channel: channel.name,
-                        admin: false,
-                      });
-                      console.log(
-                        "send ADD_PARTICIPANT to back from ",
-                        user.user?.login
-                      );
-                      console.log("channel: ", channel.name);
-                      props.setOpenConvName(channel.name);
-                      const newParticipantMsg =
-                        user.user?.login + " joined this Channel";
-                      handleClose();
-                    }}
-                  >
-                    Join this channel
-                  </div>
-                </div>
-              ) : (
-                <div></div>
-              );
-            })}
+                ) : (
+                  <div></div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
