@@ -27,6 +27,10 @@ let EventsGateway = class EventsGateway {
     connect() {
         this.logger.log('connected serverside');
     }
+    check_user_exist(client, userLogin) {
+        this.logger.log(db_users);
+        client.emit('check_user_exist', db_users.find(user => user.login == userLogin) != undefined);
+    }
     add_user(client, data) {
         console.log('ADD_USER recu EventGateway', data);
         users.push({
@@ -34,9 +38,13 @@ let EventsGateway = class EventsGateway {
             login: data.login,
             socket: client,
         });
-        users.map((user) => {
-            this.get_all_users(user.socket);
-        });
+        if (!db_users.find(user => user.login == data.login))
+            db_users.push({
+                index: users.length,
+                login: data.login,
+                password: '',
+                username: data.login
+            });
     }
     update_user_socket(client, data) {
         if (users.findIndex((user) => user.login === data.login) >= 0) {
@@ -74,6 +82,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "connect", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('CHECK_USER_EXIST'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "check_user_exist", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('ADD_USER'),
     __metadata("design:type", Function),

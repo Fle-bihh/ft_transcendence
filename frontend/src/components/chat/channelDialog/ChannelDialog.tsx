@@ -43,6 +43,13 @@ const ChannelDialog = (props: {
     owner: string;
   }>;
   setAllChannels: Function;
+  allConv: Array<{
+    receiver: string;
+    last_message_text: string;
+    last_message_time: Date;
+    new_conv: boolean;
+  }>;
+  setAllConv: Function;
 }) => {
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
@@ -53,7 +60,7 @@ const ChannelDialog = (props: {
   const [descriptionInput, setDescriptionInput] = useState("");
   const [channelNameInput, setChannelNameInput] = useState("");
   const [channelPasswordInput, setChannelPasswordInput] = useState("");
-  const [alignment, setAlignment] = useState("left");
+  const [alignment, setAlignment] = useState("public");
 
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
@@ -66,7 +73,6 @@ const ChannelDialog = (props: {
 
   const handleClickOpen = () => {
     props.setOpen(true);
-    setAlignment("left");
 
     // setPasswordSwitchOn(false);
     // setCreateSwitchOn(false);
@@ -82,12 +88,6 @@ const ChannelDialog = (props: {
     setChannelNameInput("");
     setDescriptionInput("");
   };
-
-  useEffect(() => {
-    if (!window.open) return;
-    utils.socket.emit("GET_ALL_CHANNELS", user.user?.login);
-    console.log("send GET_ALL_CHANNELS to back from", user.user?.login);
-  }, [window.open]);
 
   utils.socket.removeListener("get_all_channels");
   utils.socket.on(
@@ -135,6 +135,8 @@ const ChannelDialog = (props: {
           />
           <div className="channelsContainer">
             {props.allChannels.map((channel) => {
+              if (props.allConv.find((conv) => conv.receiver == channel.name))
+                return;
               return channel.privacy === "public" ||
                 channel.name === searchInputValue ? (
                 <div className="channelDataContainer">
@@ -164,15 +166,6 @@ const ChannelDialog = (props: {
                       props.setOpenConvName(channel.name);
                       const newParticipantMsg =
                         user.user?.login + " joined this Channel";
-                      utils.socket.emit("ADD_MESSAGE", {
-                        sender: user.user?.login,
-                        receiver: channel.name,
-                        content: newParticipantMsg,
-                      });
-                      console.log(
-                        "send ADD_MESSAGE to back from ",
-                        user.user?.login
-                      );
                       handleClose();
                     }}
                   >
@@ -211,6 +204,7 @@ const ChannelDialog = (props: {
                 aria-label="text alignment"
                 color="primary"
                 className="channelPrivacyToggleButton"
+                defaultChecked={false}
               >
                 <ToggleButton value="public" aria-label="left aligned">
                   <Tooltip title="Public">
@@ -283,13 +277,6 @@ const ChannelDialog = (props: {
                 "send CREATE_CHANNEL to back from ",
                 user.user?.login
               );
-              const newParticipantMsg =
-                user.user?.login + " created this Channel";
-              utils.socket.emit("ADD_MESSAGE", {
-                sender: user.user?.login,
-                receiver: channelNameInput,
-                content: newParticipantMsg,
-              });
               console.log("send ADD_MESSAGE to back from ", user.user?.login);
               console.log("privacy: ", alignment);
               console.log("name: ", channelNameInput);

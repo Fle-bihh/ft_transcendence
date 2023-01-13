@@ -6,6 +6,7 @@ export declare class EventsGateway {
     httpServer: import("http").Server<typeof import("http").IncomingMessage, typeof import("http").ServerResponse>;
     io: Server<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>;
     connect(): void;
+    check_user_exist(client: Socket, userLogin: string): void;
     add_user(client: Socket, data: {
         login: string;
     }): void;

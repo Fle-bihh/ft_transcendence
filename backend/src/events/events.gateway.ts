@@ -40,6 +40,12 @@ export class EventsGateway {
     this.logger.log('connected serverside');
   }
 
+  @SubscribeMessage('CHECK_USER_EXIST')
+  check_user_exist(client: Socket, userLogin: string) {
+    this.logger.log(db_users)
+    client.emit('check_user_exist', db_users.find(user => user.login == userLogin) != undefined)
+  }
+
   @SubscribeMessage('ADD_USER')
   add_user(
     client: Socket,
@@ -54,9 +60,16 @@ export class EventsGateway {
       socket: client,
     });
     // PUSH USER DATA INTO DB
-    users.map((user) => {
-      this.get_all_users(user.socket);
-    });
+    if (!db_users.find(user => user.login == data.login))
+      db_users.push({
+        index: users.length,
+        login: data.login,
+        password: '',
+        username: data.login
+      });
+    // users.map((user) => {
+    //   this.get_all_users(user.socket);
+    // });
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
