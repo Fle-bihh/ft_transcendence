@@ -1,0 +1,83 @@
+.fond {
+    color:black;
+    background-color:black;
+//     background-image:url(asset/ananas.png);
+//     background-attachment:fixed;
+//     background-repeat: no-repeat;
+//     // display: flex;
+}
+.ananas{
+
+    height: 750%;
+    display: flex;
+    // position: absolute;
+
+    // width: 10%;
+}
+
+
+.title
+{
+    position: absolute;
+    left: 500px;
+    top: 130px;
+    display: flex;
+
+}
+.text
+{
+    position: absolute;
+    top: 220px;
+    left: 500px;
+    right: 110px;
+    display: flex;
+}
+
+.pong
+{
+    position: relative;
+    // top: 420px;
+    // left: 500px;
+    border:  1px solid white;
+    // width: 400px;
+
+    // display: flex;
+
+    margin-top: 75%;
+    margin-left: 90%;
+    margin-right: 70%;
+    z-index:2;
+
+    width: 60%;
+    height: 30%;
+    display: flex;
+
+
+}
+// @media (max-width: 480px) {
+//     .pong {
+//         width: 100%;
+//     }
+// }
+
+.clavier
+{
+     position: relative;
+    // margin-bottom: 100%;
+    margin-top:-45%;
+    margin-left: 190%;
+    margin-right: 70%;
+
+    z-index:1;
+    width: 60%;
+    height: 30%;
+    display: flex;
+    // float: none;
+    //  box-sizing: inherit;
+    //  flex:1;
+}
+// @media (max-width: 40%) {
+//     .clavier {
+//         width: 100%;
+//     }
+// }
