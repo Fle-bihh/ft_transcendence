@@ -10,6 +10,7 @@ import Signup from "./pages/signup/Signup";
 import {Routes, Route} from "react-router-dom"
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from './state/store'
+import Friends from "./pages/friends/Friends";
 
 function App() {
 
@@ -22,6 +23,7 @@ return (
           <Route path="/" element={<Home />} />
           <Route path="/versions" element={<Versions />} />
           <Route path="/pong" element={<Pong />} />
+          <Route path="/friends" element={<Friends />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/chat" element={<Chat />} />
 
