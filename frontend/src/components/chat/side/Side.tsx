@@ -118,7 +118,15 @@ const Side = (props: {
           <AddIcon className="newConvButton" />
         </div>
       </div>
-      <ChannelDialog open={open} setOpen={setOpen} setOpenConvName={props.setOpenConvName} allChannels={props.allChannels} setAllChannels={props.setAllChannels} />
+      <ChannelDialog
+        open={open}
+        setOpen={setOpen}
+        setOpenConvName={props.setOpenConvName}
+        allChannels={props.allChannels}
+        setAllChannels={props.setAllChannels}
+        allConv={props.allConv}
+        setAllConv={props.setAllConv}
+      />
       <input
         className="searchBar"
         type="text"
@@ -134,37 +142,39 @@ const Side = (props: {
       />
 
       <div className="startedConv">
-        {props.allConv.map((convInfo, index) => {
-          return (
-            <div
-              className={
-                props.openConvName == convInfo.receiver
-                  ? "activeStartedConvItem"
-                  : "startedConvItem"
-              }
-              key={index.toString()}
-              onClick={() => {
-                if (props.newConvMessageBool) {
-                  let tmpArray = [...props.allConv];
-                  tmpArray.shift();
-                  props.setAllConv(tmpArray);
-                  props.setNewConvMessageBool(false);
+        <li>
+          {props.allConv.map((convInfo, index) => {
+            return (
+              <div
+                className={
+                  props.openConvName == convInfo.receiver
+                    ? "activeStartedConvItem"
+                    : "startedConvItem"
                 }
-                props.setOpenConvName(convInfo.receiver);
-              }}
-            >
-              <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                {convInfo.receiver[0]}
-              </Avatar>
-              <div className="startedConvText">
-                <div className="startedConvName">{convInfo.receiver}</div>
-                <div className="startedConvMessage">
-                  {convInfo.last_message_text}
+                key={index.toString()}
+                onClick={() => {
+                  if (props.newConvMessageBool) {
+                    let tmpArray = [...props.allConv];
+                    tmpArray.shift();
+                    props.setAllConv(tmpArray);
+                    props.setNewConvMessageBool(false);
+                  }
+                  props.setOpenConvName(convInfo.receiver);
+                }}
+              >
+                <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
+                  {convInfo.receiver[0]}
+                </Avatar>
+                <div className="startedConvText">
+                  <div className="startedConvName">{convInfo.receiver}</div>
+                  <div className="startedConvMessage">
+                    {convInfo.last_message_text}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </li>
       </div>
     </div>
   );

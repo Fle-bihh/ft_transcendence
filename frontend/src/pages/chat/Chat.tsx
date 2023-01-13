@@ -35,9 +35,6 @@ const Chat = () => {
   const [openConvName, setOpenConvName] = useState("");
   const [launchChatBool, setLaunchChatBool] = useState(true);
   const [newConvMessageBool, setNewConvMessageBool] = useState(false);
-  const [allUsers, setAllUsers] = useState(
-    Array<{ id: number; login: string }>()
-  );
 
   useEffect(() => {
     if (!allConv.length && launchChatBool) {
@@ -62,7 +59,13 @@ const Chat = () => {
         new_conv: boolean;
       }>
     ) => {
-      setAllConv(data);
+      let tmp = [...data];
+
+      setAllConv(
+        tmp.sort((a, b) => {
+          return new Date(b.last_message_time).getTime() - new Date(a.last_message_time).getTime();
+        })
+      );
       console.log("get_all_conv_info recu front with", data);
     }
   );
@@ -73,20 +76,6 @@ const Chat = () => {
     utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.login });
     console.log("send GET_ALL_CONV_INFO to back");
   });
-
-  utils.socket.removeListener("get_all_users");
-  utils.socket.on(
-    "get_all_users",
-    (
-      all_users: Array<{
-        id: number;
-        login: string;
-      }>
-    ) => {
-      setAllUsers([...all_users]);
-      console.log("get_all_users recu front", allUsers);
-    }
-  );
 
   return (
     <div className="chat">
@@ -110,8 +99,6 @@ const Chat = () => {
             setOpenConvName={setOpenConvName}
             allConv={allConv}
             setAllConv={setAllConv}
-            allUsers={allUsers}
-            setAllUsers={setAllUsers}
             newConvMessageBool={newConvMessageBool}
             setNewConvMessageBool={setNewConvMessageBool}
             allChannels={allChannels}

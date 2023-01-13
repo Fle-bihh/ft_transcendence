@@ -32,8 +32,6 @@ const Main = (props: {
     new_conv: boolean;
   }>;
   setAllConv: Function;
-  allUsers: Array<{ id: number; login: string }>;
-  setAllUsers: Function;
   newConvMessageBool: boolean;
   setNewConvMessageBool: Function;
   allChannels: Array<{
@@ -111,6 +109,28 @@ const Main = (props: {
     }
   );
 
+  utils.socket.removeListener("check_user_exist");
+  utils.socket.on("check_user_exist", (exist: boolean) => {
+    console.log('test')
+    if (exist) {
+      const tmpArray = [...props.allConv];
+      tmpArray.shift();
+      tmpArray.unshift({
+        receiver: topInputValue,
+        last_message_text: "",
+        last_message_time: new Date(),
+        new_conv: false,
+      });
+      props.setAllConv(tmpArray);
+      props.setOpenConvName(topInputValue);
+      props.setNewConvMessageBool(false);
+      setTopInputValue("");
+    } else {
+      setTopInputValue("");
+      alert("User not found...");
+    }
+  });
+
   return (
     <div className="main">
       {props.newConvMessageBool ? (
@@ -129,25 +149,7 @@ const Main = (props: {
             autoFocus
             onKeyDown={(event) => {
               if (event.key == "Enter") {
-                if (
-                  props.allUsers.find((user) => user.login === topInputValue)
-                ) {
-                  const tmpArray = [...props.allConv];
-                  tmpArray.shift();
-                  tmpArray.unshift({
-                    receiver: topInputValue,
-                    last_message_text: "",
-                    last_message_time: new Date(),
-                    new_conv: false,
-                  });
-                  props.setAllConv(tmpArray);
-                  props.setOpenConvName(topInputValue);
-                  props.setNewConvMessageBool(false);
-                  setTopInputValue("");
-                } else {
-                  setTopInputValue("");
-                  alert("User not found...");
-                }
+                utils.socket.emit("CHECK_USER_EXIST", topInputValue);
               }
             }}
           ></input>
@@ -173,12 +175,13 @@ const Main = (props: {
               style={{ color: "white", marginRight: "2%" }}
               aria-label="upload picture"
               component="label"
-              onClick={() => {utils.socket.emit('BLOCK_USER', {
-                login: user.user?.login,
-                target: props.openConvName
-              })
-              console.log('send BLOCK_USER to back from', user.user?.login)
-            }}
+              onClick={() => {
+                utils.socket.emit("BLOCK_USER", {
+                  login: user.user?.login,
+                  target: props.openConvName,
+                });
+                console.log("send BLOCK_USER to back from", user.user?.login);
+              }}
             >
               {/* <input hidden accept="image/*" type="file" /> */}
               <BlockIcon />
@@ -193,6 +196,14 @@ const Main = (props: {
               return (
                 <div key={index.toString()} className="rightMessages">
                   {message.content}
+                </div>
+              );
+            else if (message.sender == "___server___")
+              return (
+                <div key={index.toString()} className="serverMessagesContainer">
+                  <div className="diviser"/>
+                  {message.content}
+                  <div className="diviser"/>
                 </div>
               );
             else
@@ -226,11 +237,10 @@ const Main = (props: {
                     content: inputValue,
                   });
                   console.log("send ADD_MESSAGE to back");
-                  utils.socket.emit("GET_CONV", {
-                    sender: user.user?.login,
-                    receiver: props.openConvName,
-                  });
-                  console.log("send GET_CONV to back");
+                  // utils.socket.emit("GET_CONV", {
+                  //   sender: user.user?.login,
+                  //   receiver: props.openConvName,
+                  // });
                   setInputValue("");
                 }
               }}
