@@ -1,0 +1,59 @@
+.friendsPageContainer {
+  display: flex;
+
+  .friendsPageSide {
+    .friendsSearchBar {
+    }
+
+    .friendsListContainer {
+      .friendsListItem {
+        .friendsListAvatar {
+        }
+        .friendsListName {
+        }
+        .friendsListStatus {
+        }
+      }
+    }
+  }
+
+  .friendPageMain {
+    .usersSearchBar {
+    }
+    .usersListContainer {
+      .usersListItem {
+        .usersListAvatar {
+        }
+        .usersListName {
+        }
+      }
+    }
+  }
+
+  .userInfoDialog {
+    .userInfoNavbar {
+      .exitUserInfoDialogButton {
+      }
+      .userInfoName {
+      }
+      .userHandleFriendshipContainer {
+      }
+      .userInviteGameButton {
+      }
+      .userLaunchChatButton {
+      }
+    }
+    .userInfoMainContainer {
+      .userInfoStatsContainer {
+      }
+      .userMatchHistoryContainer {
+        .matchHistoryItem {
+        }
+      }
+      .mutualMatchHistoryContainer {
+        .mutualMatchHistoryItem {
+        }
+      }
+    }
+  }
+}

@@ -17,7 +17,7 @@ const Navbar = (props: any) => {
         display: "flex",
         gap: 15,
     })
-    const ItemsInNav = [{Name: <PersonAdd/>, Link:'/'},
+    const ItemsInNav = [{Name: <PersonAdd/>, Link:'/Friends'},
     {Name: <Notifications/>, Link:'#'},
     {Name: <Message/>, Link:'/Chat'},
     {Name: <AccountCircle/>, Link:'/Profile'},
