@@ -29,6 +29,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import RemoveModeratorIcon from '@mui/icons-material/RemoveModerator';
+import ShieldIcon from '@mui/icons-material/Shield';
 
 const ChannelDialog = (props: {
   open: boolean;
@@ -133,38 +135,54 @@ const ChannelDialog = (props: {
 
               if (list != null) {
                 for (let i = 0; i < list.children.length; i++) {
-                  // console.log(list.children[i])
-                  if (!event.currentTarget.value.length || list.children[i].children[0].textContent?.toUpperCase().indexOf(event.currentTarget.value.toUpperCase())! > -1)
-                    list.children[i].classList.remove('hidden')
-                  else
+              console.log(list.children[i].children[0].children[0].textContent)
+              if (!event.currentTarget.value.length || list.children[i].children[0].children[0].textContent?.toUpperCase().indexOf(event.currentTarget.value.toUpperCase())! > -1) {
+
+                list.children[i].classList.remove('hidden')
+                list.children[i].classList.add('flex')
+              }
+                  else {
+                    list.children[i].classList.remove('flex')
+
                     list.children[i].classList.add('hidden')
+                  }
                 }
               }
 
               setSearchInputValue(event.currentTarget.value);
             }}
             autoFocus
-            onKeyDown={(event) => { }}
           />
-          <div className="channelsContainer">
-            <div id="listChannel">
-              {props.allChannels.map((channel) => {
-                if (props.allConv.find((conv) => conv.receiver == channel.name))
-                  return;
-                return channel.privacy === "public" ||
-                  channel.name === searchInputValue ? (
-                  <div className="channelDataContainer">
+          <div className="channelsContainer" id="listChannel">
+            {props.allChannels.map((channel) => {
+              if (props.allConv.find((conv) => conv.receiver == channel.name))
+                return;
+              return channel.privacy === "public" ||
+                channel.name === searchInputValue ? (
+                <div className="channelDataContainer flex">
+                  <div className="channelTextDiv">
                     <div className="channelDataName">{channel.name}</div>
                     <div className="channelDataDescription">
                       {channel.description}
                     </div>
+                  </div>
+                  <div className="channelOtherDiv">
+                    <div className="channelIcons">
+                      { channel.privacy === "private" ? <VisibilityOffOutlinedIcon className="icon" /> : <></>}
+                      {
+                        channel.password.length ?
+                          <ShieldIcon className="icon" /> :
+                          <RemoveModeratorIcon className="icon" />
+                      }
+                    </div>
                     <div className="channelDataParticipants">0/50</div>
-                    {channel.password ? (
+                  </div>
+                  {/* {channel.password ? (
                       <div className="channelDataPasswordInput"></div>
                     ) : (
                       <div></div>
-                    )}
-                    <div
+                    )} */}
+                  {/* <div
                       className="joinChannelButton"
                       onClick={() => {
                         utils.socket.emit("ADD_PARTICIPANT", {
@@ -184,13 +202,12 @@ const ChannelDialog = (props: {
                       }}
                     >
                       Join this channel
-                    </div>
-                  </div>
-                ) : (
-                  <div></div>
-                );
-              })}
-            </div>
+                    </div> */}
+                </div>
+              ) : (
+                <></>
+              );
+            })}
           </div>
         </div>
 

@@ -67,7 +67,7 @@ let ChatGateway = class ChatGateway {
         this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
         db_channels.push({
             index: db_channels.length,
-            privacy: 'public',
+            privacy: data.privacy,
             name: data.name,
             password: data.password,
             description: data.description,
