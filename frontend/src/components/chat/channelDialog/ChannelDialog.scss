@@ -42,7 +42,7 @@
 
       // display: flex;
       // flex-direction: column;
-      
+
       .hidden {
         display: none;
       }
@@ -50,17 +50,24 @@
       .flex {
         display: flex;
       }
+
+      .active {
+        background-color: rgb(0, 135, 255);
+      }
+
+      .inactive {
+        background-color: rgb(0, 0, 0, 0.2);
+      }
+
       .channelDataContainer {
         margin-inline: auto;
+        border-radius: 15px;
         margin-top: 2%;
         width: 60%;
         height: 30%;
-        background-color: rgb(0, 135, 255);
-        border-radius: 15px;
         flex-direction: row;
 
         .channelTextDiv {
-
           height: 100%;
           width: 60%;
 
@@ -97,17 +104,28 @@
             flex-direction: row;
             justify-content: right;
 
-
-
             .icon {
-
               width: 30%;
               height: auto;
-
             }
+          }
+
+          .channelDataParticipants {
+            margin-top: auto;
+            margin-left: auto;
+            margin-bottom: 5%;
+            margin-right: 5%;
           }
         }
       }
+    }
+
+    .joinChannelButton {
+      margin-inline: 30%;
+      margin-top: 5%;
+
+      width: 40%;
+      height: 10%;
     }
   }
 
@@ -168,6 +186,53 @@
         // margin: 0;
         margin-right: 5%;
       }
+    }
+  }
+}
+
+.joinChannelPasswordDialog {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(0, 0, 0, 0.5);
+
+  input {
+    margin: auto;
+    width: 40%;
+    height: 10%;
+
+    border: 0;
+    padding: 0;
+    padding-inline: 2%;
+    background-color: rgb(53, 49, 59);
+    color: whitesmoke;
+
+    outline: none;
+    border: 0;
+    border-radius: 25px;
+
+    font-weight: bold;
+    font-size: large;
+
+    &.error {
+      animation: shake 0.2s ease-in-out 0s 2;
+      border: 3px solid red;
+      // box-shadow: 0 0 0.5em red;
+    }
+  }
+
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(3px);
+    }
+    75% {
+      transform: translateX(-3px);
+    }
+    100% {
+      transform: translateX(0);
     }
   }
 }

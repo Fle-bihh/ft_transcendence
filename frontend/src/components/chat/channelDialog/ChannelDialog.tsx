@@ -29,8 +29,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import RemoveModeratorIcon from '@mui/icons-material/RemoveModerator';
-import ShieldIcon from '@mui/icons-material/Shield';
+import RemoveModeratorIcon from "@mui/icons-material/RemoveModerator";
+import ShieldIcon from "@mui/icons-material/Shield";
 
 const ChannelDialog = (props: {
   open: boolean;
@@ -61,8 +61,20 @@ const ChannelDialog = (props: {
   const [passwordSwitchOn, setPasswordSwitchOn] = useState(false);
   const [descriptionInput, setDescriptionInput] = useState("");
   const [channelNameInput, setChannelNameInput] = useState("");
+  const [showJoinChannelPasswordModal, setShowJoinChannelPasswordModal] =
+    useState(false);
+  const [joinChannelSelect, setJoinChannelSelect] = useState("");
+  const [joinChannelPasswordInput, setJoinChannelPasswordInput] = useState("");
   const [channelPasswordInput, setChannelPasswordInput] = useState("");
   const [alignment, setAlignment] = useState("public");
+
+  const handleKeyDown = (event: any) => {
+    if (event.key == "Escape") {
+      setJoinChannelPasswordInput("");
+      setShowJoinChannelPasswordModal(false);
+      window.removeEventListener("keydown", handleKeyDown);
+    }
+  };
 
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
@@ -84,11 +96,14 @@ const ChannelDialog = (props: {
   };
 
   const handleClose = () => {
+    setShowJoinChannelPasswordModal(false);
     props.setOpen(false);
     setPasswordSwitchOn(false);
     setChannelPasswordInput("");
     setChannelNameInput("");
     setDescriptionInput("");
+    setSearchInputValue("");
+    setJoinChannelSelect("");
   };
 
   utils.socket.removeListener("get_all_channels");
@@ -109,8 +124,27 @@ const ChannelDialog = (props: {
     }
   );
 
+  utils.socket.removeListener("channel_joined");
+  utils.socket.on(
+    "channel_joined",
+    (
+      data: {
+        channelName: string
+      }
+    ) => {
+      setShowJoinChannelPasswordModal(false);
+      props.setOpenConvName(data.channelName);
+      handleClose();
+    }
+  );
+
   return (
-    <Dialog fullScreen open={props.open} onClose={handleClose}>
+    <Dialog
+      fullScreen
+      open={props.open}
+      onClose={handleClose}
+      disableEscapeKeyDown={showJoinChannelPasswordModal}
+    >
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>
           <IconButton edge="start" aria-label="close" onClick={handleClose}>
@@ -130,21 +164,25 @@ const ChannelDialog = (props: {
             value={searchInputValue}
             autoComplete={"off"}
             onChange={(event) => {
-
-              let list = document.getElementById('listChannel');
+              let list = document.getElementById("listChannel");
 
               if (list != null) {
                 for (let i = 0; i < list.children.length; i++) {
-              console.log(list.children[i].children[0].children[0].textContent)
-              if (!event.currentTarget.value.length || list.children[i].children[0].children[0].textContent?.toUpperCase().indexOf(event.currentTarget.value.toUpperCase())! > -1) {
+                  console.log(
+                    list.children[i].children[0].children[0].textContent
+                  );
+                  if (
+                    !event.currentTarget.value.length ||
+                    list.children[i].children[0].children[0].textContent
+                      ?.toUpperCase()
+                      .indexOf(event.currentTarget.value.toUpperCase())! > -1
+                  ) {
+                    list.children[i].classList.remove("hidden");
+                    list.children[i].classList.add("flex");
+                  } else {
+                    list.children[i].classList.remove("flex");
 
-                list.children[i].classList.remove('hidden')
-                list.children[i].classList.add('flex')
-              }
-                  else {
-                    list.children[i].classList.remove('flex')
-
-                    list.children[i].classList.add('hidden')
+                    list.children[i].classList.add("hidden");
                   }
                 }
               }
@@ -159,7 +197,23 @@ const ChannelDialog = (props: {
                 return;
               return channel.privacy === "public" ||
                 channel.name === searchInputValue ? (
-                <div className="channelDataContainer flex">
+                <div
+                  className={
+                    (joinChannelSelect == channel.name
+                      ? "channelDataContainer active "
+                      : "channelDataContainer inactive ") +
+                    (channel.name
+                      .toUpperCase()
+                      .indexOf(searchInputValue.toUpperCase())! > -1
+                      ? "flex"
+                      : "hidden")
+                  }
+                  onClick={() => {
+                    if (joinChannelSelect != channel.name)
+                      setJoinChannelSelect(channel.name);
+                    else setJoinChannelSelect("");
+                  }}
+                >
                   <div className="channelTextDiv">
                     <div className="channelDataName">{channel.name}</div>
                     <div className="channelDataDescription">
@@ -168,12 +222,16 @@ const ChannelDialog = (props: {
                   </div>
                   <div className="channelOtherDiv">
                     <div className="channelIcons">
-                      { channel.privacy === "private" ? <VisibilityOffOutlinedIcon className="icon" /> : <></>}
-                      {
-                        channel.password.length ?
-                          <ShieldIcon className="icon" /> :
-                          <RemoveModeratorIcon className="icon" />
-                      }
+                      {channel.privacy === "private" ? (
+                        <VisibilityOffOutlinedIcon className="icon" />
+                      ) : (
+                        <></>
+                      )}
+                      {channel.password.length ? (
+                        <ShieldIcon className="icon" />
+                      ) : (
+                        <RemoveModeratorIcon className="icon" />
+                      )}
                     </div>
                     <div className="channelDataParticipants">0/50</div>
                   </div>
@@ -182,33 +240,51 @@ const ChannelDialog = (props: {
                     ) : (
                       <div></div>
                     )} */}
-                  {/* <div
-                      className="joinChannelButton"
-                      onClick={() => {
-                        utils.socket.emit("ADD_PARTICIPANT", {
-                          login: user.user?.login,
-                          channel: channel.name,
-                          admin: false,
-                        });
-                        console.log(
-                          "send ADD_PARTICIPANT to back from ",
-                          user.user?.login
-                        );
-                        console.log("channel: ", channel.name);
-                        props.setOpenConvName(channel.name);
-                        const newParticipantMsg =
-                          user.user?.login + " joined this Channel";
-                        handleClose();
-                      }}
-                    >
-                      Join this channel
-                    </div> */}
                 </div>
               ) : (
                 <></>
               );
             })}
           </div>
+          <button
+            className="joinChannelButton"
+            disabled={
+              props.allChannels.find(
+                (channel) => channel.name === joinChannelSelect
+              ) == undefined
+            }
+            onClick={() => {
+              if (
+                props.allChannels.find(
+                  (channel) => channel.name === joinChannelSelect
+                )!.password.length
+              ) {
+                setShowJoinChannelPasswordModal(true);
+                window.addEventListener("keydown", handleKeyDown);
+              }
+              utils.socket.emit('JOIN_CHANNEL', {
+                login: user.user?.login,
+                channelName: joinChannelSelect,
+                channelPassword: joinChannelPasswordInput,
+              })
+              //   utils.socket.emit("ADD_PARTICIPANT", {
+              //     login: user.user?.login,
+              //     channel: channel.name,
+              //     admin: false,
+              //   });
+              //   console.log(
+              //     "send ADD_PARTICIPANT to back from ",
+              //     user.user?.login
+              //   );
+              //   console.log("channel: ", channel.name);
+              //   props.setOpenConvName(channel.name);
+              //   const newParticipantMsg =
+              //     user.user?.login + " joined this Channel";
+              //   handleClose();
+            }}
+          >
+            Join this channel
+          </button>
         </div>
 
         <div className="createChannelContainer">
@@ -225,7 +301,6 @@ const ChannelDialog = (props: {
               onChange={(event) => {
                 setChannelNameInput(event.currentTarget.value);
               }}
-              autoFocus
             />
             <div className="channelPrivacy">
               {/* <div className="channelPrivacyTitle">Visibility :</div> */}
@@ -269,7 +344,6 @@ const ChannelDialog = (props: {
                 onChange={(event) => {
                   setChannelPasswordInput(event.currentTarget.value);
                 }}
-                autoFocus
                 disabled={!passwordSwitchOn}
               ></input>
             </Tooltip>
@@ -293,7 +367,6 @@ const ChannelDialog = (props: {
             onChange={(event) => {
               setDescriptionInput(event.currentTarget.value);
             }}
-            autoFocus
           ></input>
           <div
             className="createChannelButton"
@@ -320,6 +393,47 @@ const ChannelDialog = (props: {
             Create
           </div>
         </div>
+      </div>
+      <div
+        className="joinChannelPasswordDialog"
+        style={{ display: showJoinChannelPasswordModal ? "flex" : "none" }}
+      >
+        <input
+          type="text"
+          id="joinChannelInput"
+          placeholder="Enter channel password"
+          autoFocus
+          onChange={(value) =>
+            setJoinChannelPasswordInput(value.currentTarget.value)
+          }
+          value={joinChannelPasswordInput}
+          onKeyDown={(event) => {
+            if (event.key == "Enter") {
+              if (
+                props.allChannels.find(
+                  (channel) => channel.name === joinChannelSelect
+                )!.password != joinChannelPasswordInput
+              ) {
+                document
+                  .getElementById("joinChannelInput")!
+                  .classList.add("error");
+               const timeOut = setTimeout(() => {
+                  document
+                    .getElementById("joinChannelInput")!
+                    .classList.remove("error");
+                  clearTimeout(timeOut)
+                }, 200);
+              } else {
+                // setShowJoinChannelPasswordModal(false);
+                utils.socket.emit('JOIN_CHANNEL', {
+                  login: user.user?.login,
+                  channelName: joinChannelSelect,
+                  channelPassword: joinChannelPasswordInput,
+                })
+              }
+            }
+          }}
+        />
       </div>
     </Dialog>
   );
