@@ -106,6 +106,35 @@ let ChatGateway = class ChatGateway {
         client.emit('get_all_channels', sendArray);
         this.logger.log('send get_all_channels to ', login, 'with', sendArray);
     }
+    join_channel(client, data) {
+        if (db_channels.find((item) => item.name == data.channelName) != undefined) {
+            if (db_participants.filter((item) => item.channel == data.channelName)
+                .length < 50) {
+                if (db_participants.find((item) => item.login == data.login && item.channel == data.channelName) == undefined) {
+                    if (db_channels.find((item) => item.name == data.channelName)
+                        .password == data.channelPassword) {
+                        db_participants.push({
+                            index: db_participants.length,
+                            login: data.login,
+                            channel: data.channelName,
+                            admin: false,
+                        });
+                        db_messages.push({
+                            index: db_messages.length,
+                            sender: '___server___',
+                            receiver: data.channelName,
+                            content: `${data.login} join \'${data.channelName}\'`,
+                            time: new Date(),
+                        });
+                        client.emit('channel_joined', {
+                            channelName: data.channelName
+                        });
+                        this.get_all_conv_info(client, { sender: data.login });
+                    }
+                }
+            }
+        }
+    }
     add_participant(client, data) {
         console.log('ADD_PARTICIPANT recu ChatGateway', data);
         db_participants.push({
@@ -292,6 +321,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, String]),
     __metadata("design:returntype", void 0)
 ], ChatGateway.prototype, "get_all_channels", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('JOIN_CHANNEL'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatGateway.prototype, "join_channel", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('ADD_PARTICIPANT'),
     __metadata("design:type", Function),

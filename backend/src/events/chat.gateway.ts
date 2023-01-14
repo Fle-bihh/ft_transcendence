@@ -212,6 +212,57 @@ export class ChatGateway {
     this.logger.log('send get_all_channels to ', login, 'with', sendArray);
   }
 
+  @SubscribeMessage('JOIN_CHANNEL')
+  join_channel(
+    client: Socket,
+    data: {
+      login: string;
+      channelName: string;
+      channelPassword: string;
+    },
+  ) {
+    if (
+      db_channels.find((item) => item.name == data.channelName) != undefined
+    ) {
+      if (
+        db_participants.filter((item) => item.channel == data.channelName)
+          .length < 50
+      ) {
+        if (
+          db_participants.find(
+            (item) =>
+              item.login == data.login && item.channel == data.channelName,
+          ) == undefined
+        ) {
+          if (
+            db_channels.find((item) => item.name == data.channelName)
+              .password == data.channelPassword
+          ) {
+            db_participants.push({
+              index: db_participants.length,
+              login: data.login,
+              channel: data.channelName,
+              admin: false,
+            });
+            db_messages.push({
+              index: db_messages.length,
+              sender: '___server___',
+              receiver: data.channelName,
+              content: `${data.login} join \'${data.channelName}\'`,
+              time: new Date(),
+            });
+
+            client.emit('channel_joined', {
+              channelName: data.channelName
+            });
+
+            this.get_all_conv_info(client, {sender: data.login});
+          }
+        }
+      }
+    }
+  }
+
   @SubscribeMessage('ADD_PARTICIPANT')
   add_participant(
     client: Socket,
