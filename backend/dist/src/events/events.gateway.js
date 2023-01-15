@@ -29,7 +29,7 @@ let EventsGateway = class EventsGateway {
     }
     check_user_exist(client, userLogin) {
         this.logger.log(db_users);
-        client.emit('check_user_exist', db_users.find(user => user.login == userLogin) != undefined);
+        client.emit('check_user_exist', db_users.find((user) => user.login == userLogin) != undefined);
     }
     add_user(client, data) {
         console.log('ADD_USER recu EventGateway', data);
@@ -38,12 +38,12 @@ let EventsGateway = class EventsGateway {
             login: data.login,
             socket: client,
         });
-        if (!db_users.find(user => user.login == data.login))
+        if (!db_users.find((user) => user.login == data.login))
             db_users.push({
                 index: users.length,
                 login: data.login,
                 password: '',
-                username: data.login
+                username: data.login,
             });
     }
     update_user_socket(client, data) {
@@ -64,6 +64,31 @@ let EventsGateway = class EventsGateway {
         });
         client.emit('get_all_users', retArray);
         this.logger.log('send get_all_users to front', retArray);
+    }
+    add_friendship(client, data) {
+        this.logger.log('ADD_FRIENDSHIP received in backend');
+        let tmpDate = new Date();
+        db_friendList.push({
+            index: db_friendList.length,
+            login: data.login,
+            login2: data.login2,
+            friendshipDate: tmpDate,
+        });
+    }
+    get_user_friends(client, login) {
+        this.logger.log('GET_USER_FRIENDS received in backend from', login);
+        let tmpArray = Array();
+        db_friendList.map((friend) => {
+            if (friend.login === login || friend.login2 === login) {
+                tmpArray.push({
+                    login: friend.login,
+                    login2: friend.login2,
+                    friendshipDate: friend.friendshipDate,
+                });
+            }
+        });
+        client.emit('get_user_friends', tmpArray);
+        this.logger.log('send get_user_friends to ', login, 'with', tmpArray);
     }
     handleConnection(client) {
         this.logger.log(`new client connected ${client.id}`);
@@ -106,6 +131,18 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket]),
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "get_all_users", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('ADD_FRIENDSHIP'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "add_friendship", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('GET_USER_FRIENDS'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "get_user_friends", null);
 EventsGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

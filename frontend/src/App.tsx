@@ -5,12 +5,12 @@ import Pong from "./pages/pong/Pong";
 import Home from "./pages/home/Home";
 import Signin from "./pages/signin/Signin";
 import Signup from "./pages/signup/Signup";
+import Friends from "./pages/friends/Friends";
 
 
 import {Routes, Route} from "react-router-dom"
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from './state/store'
-import Friends from "./pages/friends/Friends";
 
 function App() {
 
