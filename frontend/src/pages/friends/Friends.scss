@@ -1,9 +1,39 @@
 .friendsPageContainer {
   display: flex;
+  background-color: rgb(42, 38, 48);
+  width: 100%;
+  height: calc(100vh - 64px);
+  color: white;
 
   .friendsPageSide {
-    .friendsSearchBar {
-    }
+    width: 30%;
+    height: 95%;
+    border-radius: 15px;
+    background-color: rgb(53, 49, 59);
+    margin-left: 1.66%;
+    margin-top: 1.25%;
+    .searchBar {
+        height: 30px;
+        width: 95%;
+    
+        background-color: rgb(53, 49, 59);
+        color: whitesmoke;
+    
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    
+        outline: none;
+        border: 0;
+        border-radius: 25px;
+    
+        margin-block: 3%;
+        margin-inline: auto;
+        padding-left: 2%;
+    
+        font-weight: bold;
+        font-size: large;
+      }
 
     .friendsListContainer {
       .friendsListItem {
@@ -18,6 +48,13 @@
   }
 
   .friendPageMain {
+    width: 65%;
+    height: 95%;
+    border-radius: 15px;
+    background-color: rgb(53, 49, 59);
+    margin-left: auto;
+    margin-right: 1.66%;
+    margin-top: 1.25%;
     .usersSearchBar {
     }
     .usersListContainer {
