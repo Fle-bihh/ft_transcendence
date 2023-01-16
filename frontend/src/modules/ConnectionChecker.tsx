@@ -9,7 +9,7 @@ import { Children, useEffect, useState } from "react";
 var test = false
 
 function ConnectionChecker(props: {
-  component: any;
+  children: any
 }): JSX.Element {
 
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
@@ -38,7 +38,7 @@ function ConnectionChecker(props: {
 //       axios.get("https://localhost:5001/user/userExist/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
   if (userExist) {
     // return {props.component}
-    return props.component
+    return (<>{props.children}</>)
   }
   else {
     return <Navigate to="/Signin"/>;

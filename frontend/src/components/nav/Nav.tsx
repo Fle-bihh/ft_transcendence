@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   AppBar,
+  Badge,
   Box,
   Menu,
   MenuItem,
@@ -20,8 +21,13 @@ import {
   Message,
   Menu as MenuIcon,
 } from "@mui/icons-material/";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state";
 
 const Navbar = (props: any) => {
+  const persistantReducer = useSelector(
+    (state: RootState) => state.persistantReducer
+  );
   const StyledToolbar = styled(Toolbar)({
     display: "flex",
     justifyContent: "space-between",
@@ -32,7 +38,7 @@ const Navbar = (props: any) => {
   });
   const ItemsInNav = [
     { Name: <PersonAdd />, Link: "/Friends" },
-    { Name: <Notifications />, Link: "#" },
+    { Name: <Notifications />, Link: "/Notif" },
     { Name: <Message />, Link: "/Chat" },
     { Name: <AccountCircle />, Link: "/Profile" },
     { Name: <LogoutIcon />, Link: "/Signin" },
@@ -75,17 +81,48 @@ const Navbar = (props: any) => {
 
         {/* La barre des Items NAV  */}
         <ItemsNav sx={{ display: { xs: "none", sm: "none", md: "flex" } }}>
-          {ItemsInNav.map((item) => (
-            /* <a href={item.Link} className='link'> */
-            <NavLink to={`${item.Link}`} className="link">
-              <Typography
-                sx={{ cursor: "pointer", frontSize: "14px", color: "black" }}
-              >
-                {item.Name}
-              </Typography>
-            </NavLink>
+          {ItemsInNav.map((item) => {
+            if (item.Link == "/Notif")
+              return (
+                <NavLink to={`${item.Link}`} className="link">
+                  <Badge
+                    badgeContent={
+                      persistantReducer.notifReducer.notifArray.filter(
+                        (notif) => !notif.seen
+                      ).length
+                    }
+                    showZero={false}
+                    color={"error"}
+                  >
+                    <Typography
+                      sx={{
+                        cursor: "pointer",
+                        frontSize: "14px",
+                        color: "black",
+                      }}
+                    >
+                      {item.Name}
+                    </Typography>
+                  </Badge>
+                </NavLink>
+              );
+            else
+              return (
+                /* <a href={item.Link} className='link'> */
+                <NavLink to={`${item.Link}`} className="link">
+                  <Typography
+                    sx={{
+                      cursor: "pointer",
+                      frontSize: "14px",
+                      color: "black",
+                    }}
+                  >
+                    {item.Name}
+                  </Typography>
+                </NavLink>
+              );
             /* </a> */
-          ))}
+          })}
         </ItemsNav>
         <MenuIcon
           sx={{
