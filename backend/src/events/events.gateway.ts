@@ -90,11 +90,29 @@ export class EventsGateway {
     this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
   }
 
+  @SubscribeMessage('GET_USERNAME')
+  get_username(client: Socket, login: string) {
+    this.logger.log('GET_USERNAME received back');
+
+    client.emit(
+      'get_username',
+      db_users.find((user) => {
+        user.login === login;
+      }).username,
+    );
+    this.logger.log(
+      'send get_username to ', login , ' with',
+      db_users.find((user) => {
+        user.login === login;
+      }).username,
+    );
+  }
+
   @SubscribeMessage('GET_ALL_USERS')
   get_all_users(client: Socket) {
     this.logger.log('GET_ALL_USERS received back');
-    const retArray = Array<{ id: number; login: string }>();
-    users.map((user) => {
+    const retArray = Array<{ id: number; login: string; username: string }>();
+    db_users.map((user) => {
       retArray.push({
         id: user.index,
         login: user.login,

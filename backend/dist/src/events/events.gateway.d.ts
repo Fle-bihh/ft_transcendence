@@ -13,6 +13,7 @@ export declare class EventsGateway {
     update_user_socket(client: Socket, data: {
         login: string;
     }): void;
+    get_username(client: Socket, login: string): void;
     get_all_users(client: Socket): void;
     add_friendship(client: Socket, data: {
         login: string;
