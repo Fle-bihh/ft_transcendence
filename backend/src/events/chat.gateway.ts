@@ -95,6 +95,8 @@ export class ChatGateway {
       time: actualTime,
     });
 
+    
+
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 
     // this.get_all_conv_info(client, { sender: data.sender });
@@ -111,7 +113,7 @@ export class ChatGateway {
       let receiverUser = users.find((user) => user.login == data.receiver);
 
       if (senderUser != undefined) senderUser.socket.emit('new_message');
-      if (receiverUser != undefined) receiverUser.socket.emit('new_message');
+      if (receiverUser != undefined) {receiverUser.socket.emit('new_message'); receiverUser.socket.emit('add_notif', {type: 'FRIENDREQUEST', data: {sender: 'Leo'}})};
     }
 
     //   if (db_channels.find((channel) => channel.name === data.receiver)) {
