@@ -61,13 +61,13 @@ const ChannelSettingsDialog = (props: {
             setNameInputValue(event.currentTarget.value);
           }}
           autoFocus
-          onKeyDown={(event) => {
-            if (event.key == "Enter") {
-              utils.socket.emit('CHANGE_CHANNEL_NAME', {
-                login: user.user?.login;
-              })
-            }
-          }}
+          // onKeyDown={(event) => {
+          //   if (event.key == "Enter") {
+          //     utils.socket.emit('CHANGE_CHANNEL_NAME', {
+          //       login: user.user?.login;
+          //     })
+          //   }
+          // }}
         />
       </div>
       <div className="changeChannelPassword">Change Password</div>
