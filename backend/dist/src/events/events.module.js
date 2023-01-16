@@ -10,11 +10,12 @@ exports.EventsModule = void 0;
 const common_1 = require("@nestjs/common");
 const chat_gateway_1 = require("./chat.gateway");
 const events_gateway_1 = require("./events.gateway");
+const pong_gateaway_1 = require("./pong.gateaway");
 let EventsModule = class EventsModule {
 };
 EventsModule = __decorate([
     (0, common_1.Module)({
-        providers: [events_gateway_1.EventsGateway, chat_gateway_1.ChatGateway],
+        providers: [events_gateway_1.EventsGateway, chat_gateway_1.ChatGateway, pong_gateaway_1.PongGateway],
     })
 ], EventsModule);
 exports.EventsModule = EventsModule;
