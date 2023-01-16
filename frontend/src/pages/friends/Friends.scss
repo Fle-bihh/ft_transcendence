@@ -55,7 +55,27 @@
     margin-left: auto;
     margin-right: 1.66%;
     margin-top: 1.25%;
-    .usersSearchBar {
+    .userSearchBar {
+        height: 30px;
+        width: 95%;
+    
+        background-color: rgb(53, 49, 59);
+        color: whitesmoke;
+    
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    
+        outline: none;
+        border: 0;
+        border-radius: 25px;
+    
+        margin-block: 3%;
+        margin-inline: auto;
+        padding-left: 2%;
+    
+        font-weight: bold;
+        font-size: large;
     }
     .usersListContainer {
       .usersListItem {

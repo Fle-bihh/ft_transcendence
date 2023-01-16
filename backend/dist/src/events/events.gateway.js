@@ -53,10 +53,19 @@ let EventsGateway = class EventsGateway {
         }
         this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
     }
+    get_username(client, login) {
+        this.logger.log('GET_USERNAME received back');
+        client.emit('get_username', db_users.find((user) => {
+            user.login === login;
+        }).username);
+        this.logger.log('send get_username to ', login, ' with', db_users.find((user) => {
+            user.login === login;
+        }).username);
+    }
     get_all_users(client) {
         this.logger.log('GET_ALL_USERS received back');
         const retArray = Array();
-        users.map((user) => {
+        db_users.map((user) => {
             retArray.push({
                 id: user.index,
                 login: user.login,
@@ -125,6 +134,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "update_user_socket", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('GET_USERNAME'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "get_username", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('GET_ALL_USERS'),
     __metadata("design:type", Function),
