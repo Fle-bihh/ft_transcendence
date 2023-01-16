@@ -1,0 +1,41 @@
+.notifContainer {
+	width: 70vw;
+	height: 75vh;
+
+	margin: auto;
+	margin-top: 15vh;
+
+	// background-color: red;
+	overflow-x: scroll;
+
+
+	.notifElement {
+		margin-inline: auto;
+		margin-block: 5%;
+		width: 80%;
+		height: 50%;
+		border-radius: 15px;
+		background-color: rgb(0, 0, 0, 0.5);
+		display: flex;
+		flex-direction: column;
+		
+		.notifTitle {
+			margin-inline: auto;
+			font-size: xx-large;
+		}
+
+		.notifCross {
+			margin-left: auto;
+			transition: all 0.25s;
+			&:hover {
+				color: white;
+			}
+		}
+
+		.notifText {
+			margin-top: 2%;
+			margin-left: 5%;
+		}
+	}
+
+}

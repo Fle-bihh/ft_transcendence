@@ -116,6 +116,7 @@ export class EventsGateway {
       retArray.push({
         id: user.index,
         login: user.login,
+        username: user.login,
       });
     });
     client.emit('get_all_users', retArray);

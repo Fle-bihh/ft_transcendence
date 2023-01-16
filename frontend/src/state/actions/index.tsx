@@ -8,3 +8,25 @@ type SetUserAction = {
 }
 
 export type userAction = SetUserAction
+
+import { notifActionType } from "../action-types";
+import { NotifType } from "../type";
+
+type AddNotifAction = {
+    type: notifActionType.ADDNOTIF
+    payload: {
+        type: NotifType,
+        data: any
+    }
+}
+
+type DelNotifAction = {
+    type: notifActionType.DELNOTIF
+    payload: number
+}
+
+type SeenAllNotifAction = {
+    type: notifActionType.SEENALLNOTIF
+}
+
+export type notifAction = AddNotifAction | DelNotifAction | SeenAllNotifAction

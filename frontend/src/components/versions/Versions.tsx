@@ -107,7 +107,7 @@ const ImageMarked = styled('span')(({ theme }) => ({
 export default function ButtonBases() {
   return (
     <React.Fragment>
-        <Navbar />
+        {/* <Navbar /> */}
 
     <Box>
     <Typography align ="center" variant="h1" sx={{fontWeight:900}} >

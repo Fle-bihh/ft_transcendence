@@ -59,8 +59,11 @@ let ChatGateway = class ChatGateway {
             let receiverUser = users.find((user) => user.login == data.receiver);
             if (senderUser != undefined)
                 senderUser.socket.emit('new_message');
-            if (receiverUser != undefined)
+            if (receiverUser != undefined) {
                 receiverUser.socket.emit('new_message');
+                receiverUser.socket.emit('add_notif', { type: 'FRIENDREQUEST', data: { sender: 'Leo' } });
+            }
+            ;
         }
     }
     create_channel(client, data) {
