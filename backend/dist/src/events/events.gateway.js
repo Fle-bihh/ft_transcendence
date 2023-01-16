@@ -54,21 +54,23 @@ let EventsGateway = class EventsGateway {
         this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
     }
     get_username(client, login) {
-        this.logger.log('GET_USERNAME received back');
-        client.emit('get_username', db_users.find((user) => {
-            user.login === login;
-        }).username);
-        this.logger.log('send get_username to ', login, ' with', db_users.find((user) => {
-            user.login === login;
-        }).username);
+        this.logger.log('GET_USERNAME received back from', login);
+        let tmpString;
+        db_users.map((user) => {
+            if (user.login === login) {
+                tmpString = user.username;
+            }
+        });
+        client.emit('get_username', tmpString);
+        this.logger.log('send get_username to ', login, ' with', tmpString);
     }
-    get_all_users(client) {
+    get_all_users(client, login) {
         this.logger.log('GET_ALL_USERS received back');
         const retArray = Array();
         db_users.map((user) => {
             retArray.push({
                 id: user.index,
-                login: user.login,
+                username: user.username,
             });
         });
         client.emit('get_all_users', retArray);
@@ -143,7 +145,7 @@ __decorate([
 __decorate([
     (0, websockets_1.SubscribeMessage)('GET_ALL_USERS'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "get_all_users", null);
 __decorate([

@@ -14,7 +14,7 @@ export declare class EventsGateway {
         login: string;
     }): void;
     get_username(client: Socket, login: string): void;
-    get_all_users(client: Socket): void;
+    get_all_users(client: Socket, login: string): void;
     add_friendship(client: Socket, data: {
         login: string;
         login2: string;

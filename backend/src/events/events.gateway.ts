@@ -92,30 +92,31 @@ export class EventsGateway {
 
   @SubscribeMessage('GET_USERNAME')
   get_username(client: Socket, login: string) {
-    this.logger.log('GET_USERNAME received back');
+    this.logger.log('GET_USERNAME received back from', login);
+    let tmpString: string;
+     db_users.map((user) => {
+      if (user.login === login) {
+        tmpString = user.username;
+      }
+    })
 
-    client.emit(
-      'get_username',
-      db_users.find((user) => {
-        user.login === login;
-      }).username,
-    );
+    client.emit('get_username', tmpString);
     this.logger.log(
-      'send get_username to ', login , ' with',
-      db_users.find((user) => {
-        user.login === login;
-      }).username,
+      'send get_username to ',
+      login,
+      ' with',
+      tmpString
     );
   }
 
   @SubscribeMessage('GET_ALL_USERS')
-  get_all_users(client: Socket) {
+  get_all_users(client: Socket, login: string) {
     this.logger.log('GET_ALL_USERS received back');
-    const retArray = Array<{ id: number; login: string; username: string }>();
+    const retArray = Array<{ id: number; username: string }>();
     db_users.map((user) => {
       retArray.push({
         id: user.index,
-        login: user.login,
+        username: user.username,
       });
     });
     client.emit('get_all_users', retArray);
