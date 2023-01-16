@@ -22,21 +22,17 @@ function App() {
           <Route
             path="/signin"
             element={
-              <ConnectionChecker>
-                <NotifInterceptor>
-                  <Signin />
-                </NotifInterceptor>
-              </ConnectionChecker>
+              <NotifInterceptor>
+                <Signin />
+              </NotifInterceptor>
             }
           />
           <Route
             path="/signup"
             element={
-              <ConnectionChecker>
-                <NotifInterceptor>
-                  <Signup />
-                </NotifInterceptor>
-              </ConnectionChecker>
+              <NotifInterceptor>
+                <Signup />
+              </NotifInterceptor>
             }
           />
           <Route
