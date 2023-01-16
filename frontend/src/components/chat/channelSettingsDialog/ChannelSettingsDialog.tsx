@@ -67,7 +67,8 @@ const ChannelSettingsDialog = (props: {
           }}
           autoFocus
           onKeyDown={(event) => {
-            setSecurityDialog(true);
+            if (event.key === "Enter")
+              setSecurityDialog(true);
             
           }}
         />
@@ -80,13 +81,13 @@ const ChannelSettingsDialog = (props: {
       <div className="leaveChannel">Leave Channel</div>
       <Dialog open={securityDialog} onClose={handleCloseSecu}>
           <div className="securityText">Are you sure ?</div>
-          <div className="noButton" onClick={() => {
-              utils.socket.emit("CHANGE_CHANNEL_NAME", {
-                login: user.user?.login,
-                currentName: props.openConvName,
-                newName: nameInputValue,
-              })}}>Yes</div>
-          <div className="yesButton" onClick={handleCloseSecu}>No</div>
+          <div className="yesButton" onClick={() => {
+            utils.socket.emit("CHANGE_CHANNEL_NAME", {
+              login: user.user?.login,
+              currentName: props.openConvName,
+              newName: nameInputValue,
+            })}}>Yes</div>
+            <div className="noButton" onClick={handleCloseSecu}>No</div>
       </Dialog>
     </Dialog>
   );
