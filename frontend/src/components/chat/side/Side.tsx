@@ -9,25 +9,6 @@ import Avatar from "@mui/material/Avatar";
 import { deepPurple, grey, red } from "@mui/material/colors";
 import AddIcon from "@mui/icons-material/Add";
 import { useSelector } from "react-redux";
-import { TransitionProps } from "@mui/material/transitions";
-import {
-  AppBar,
-  Button,
-  Dialog,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Slide,
-  ToggleButton,
-  ToggleButtonGroup,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const Side = (props: {
   openConvName: string;
@@ -135,23 +116,25 @@ const Side = (props: {
         value={inputValue}
         autoComplete={"off"}
         onChange={(event) => {
-
-
-          let list = document.getElementById('listConv');
+          let list = document.getElementById("listConv");
 
           if (list != null) {
             for (let i = 0; i < list.children.length; i++) {
-              if (!event.currentTarget.value.length || list.children[i].children[1].children[0].textContent?.toUpperCase().indexOf(event.currentTarget.value.toUpperCase())! > -1)
-                list.children[i].classList.remove('hidden')
-              else
-                list.children[i].classList.add('hidden')
+              if (
+                !event.currentTarget.value.length ||
+                list.children[i].children[1].children[0].textContent
+                  ?.toUpperCase()
+                  .indexOf(event.currentTarget.value.toUpperCase())! > -1
+              )
+                list.children[i].classList.remove("hidden");
+              else list.children[i].classList.add("hidden");
             }
           }
 
           setInputValue(event.currentTarget.value);
         }}
         autoFocus
-        onKeyDown={(event) => { }}
+        onKeyDown={(event) => {}}
       />
 
       <div className="startedConv">
@@ -173,6 +156,7 @@ const Side = (props: {
                     props.setNewConvMessageBool(false);
                   }
                   props.setOpenConvName(convInfo.receiver);
+                  utils.socket.emit("GET_ALL_CHANNELS", user.user?.login);
                 }}
               >
                 <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
