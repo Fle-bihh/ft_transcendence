@@ -127,7 +127,7 @@ let ChatGateway = class ChatGateway {
                             time: new Date(),
                         });
                         client.emit('channel_joined', {
-                            channelName: data.channelName
+                            channelName: data.channelName,
                         });
                         this.get_all_conv_info(client, { sender: data.login });
                     }
@@ -158,6 +158,17 @@ let ChatGateway = class ChatGateway {
                 tmp.socket.emit('new_message');
         });
         console.log('db_participants after ADD = ', db_participants);
+    }
+    change_channel_name(client, data) {
+        this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
+        db_channels.find((channel) => {
+            channel.name === data.currentName;
+        }).name = data.newName;
+        db_messages.forEach((message) => {
+            if (message.receiver === data.currentName) {
+                message.receiver = data.newName;
+            }
+        });
     }
     get_channel(client, data) {
         this.logger.log('GET_CHANNEL recu ChatGateway', data);
@@ -333,6 +344,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", void 0)
 ], ChatGateway.prototype, "add_participant", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('CHANGE_CHANNEL_NAME'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatGateway.prototype, "change_channel_name", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('GET_CHANNEL'),
     __metadata("design:type", Function),
