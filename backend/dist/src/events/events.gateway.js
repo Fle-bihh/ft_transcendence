@@ -70,7 +70,6 @@ let EventsGateway = class EventsGateway {
         db_users.map((user) => {
             retArray.push({
                 id: user.index,
-                login: user.login,
                 username: user.login
             });
         });

@@ -28,6 +28,7 @@ const ChannelSettingsDialog = (props: {
 }) => {
   const [nameInputValue, setNameInputValue] = useState("");
   const [passwordInputValue, setPasswordInputValue] = useState("");
+  const [securityDialog, setSecurityDialog] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
@@ -47,6 +48,10 @@ const ChannelSettingsDialog = (props: {
     props.setSettingsDialogOpen(false);
   };
 
+  const handleCloseSecu = () => {
+    setSecurityDialog(false);
+  };
+
   return (
     <Dialog open={props.settingsDialogOpen} onClose={handleClose}>
       <div className="changeChannelName">
@@ -61,13 +66,11 @@ const ChannelSettingsDialog = (props: {
             setNameInputValue(event.currentTarget.value);
           }}
           autoFocus
-          // onKeyDown={(event) => {
-          //   if (event.key == "Enter") {
-          //     utils.socket.emit('CHANGE_CHANNEL_NAME', {
-          //       login: user.user?.login;
-          //     })
-          //   }
-          // }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter")
+              setSecurityDialog(true);
+            
+          }}
         />
       </div>
       <div className="changeChannelPassword">Change Password</div>
@@ -76,6 +79,16 @@ const ChannelSettingsDialog = (props: {
       <div className="banUser">Ban User</div>
       <div className="muteUser">Mute User</div>
       <div className="leaveChannel">Leave Channel</div>
+      <Dialog open={securityDialog} onClose={handleCloseSecu}>
+          <div className="securityText">Are you sure ?</div>
+          <div className="yesButton" onClick={() => {
+            utils.socket.emit("CHANGE_CHANNEL_NAME", {
+              login: user.user?.login,
+              currentName: props.openConvName,
+              newName: nameInputValue,
+            })}}>Yes</div>
+            <div className="noButton" onClick={handleCloseSecu}>No</div>
+      </Dialog>
     </Dialog>
   );
 };

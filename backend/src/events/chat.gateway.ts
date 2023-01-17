@@ -95,6 +95,8 @@ export class ChatGateway {
       time: actualTime,
     });
 
+    
+
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 
     // this.get_all_conv_info(client, { sender: data.sender });
@@ -112,6 +114,7 @@ export class ChatGateway {
 
       if (senderUser != undefined) senderUser.socket.emit('new_message');
       if (receiverUser != undefined) receiverUser.socket.emit('new_message');
+      // if (receiverUser != undefined) receiverUser.socket.emit('add_notif', {type: 'FRIENDREQUEST', data: {sender: 'Leo'}});
     }
 
     //   if (db_channels.find((channel) => channel.name === data.receiver)) {
@@ -253,10 +256,10 @@ export class ChatGateway {
             });
 
             client.emit('channel_joined', {
-              channelName: data.channelName
+              channelName: data.channelName,
             });
 
-            this.get_all_conv_info(client, {sender: data.login});
+            this.get_all_conv_info(client, { sender: data.login });
           }
         }
       }
@@ -295,6 +298,26 @@ export class ChatGateway {
       });
 
     console.log('db_participants after ADD = ', db_participants);
+  }
+
+  @SubscribeMessage('CHANGE_CHANNEL_NAME')
+  change_channel_name(
+    client: Socket,
+    data: {
+      login: string;
+      currentName: string;
+      newName: string;
+    },
+  ) {
+    this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
+    db_channels.find((channel) => {
+      channel.name === data.currentName;
+    }).name = data.newName;
+    db_messages.forEach((message) => {
+      if (message.receiver === data.currentName) {
+        message.receiver = data.newName;
+      }
+    });
   }
 
   @SubscribeMessage('GET_CHANNEL')

@@ -29,6 +29,11 @@ export declare class ChatGateway {
         channel: string;
         admin: boolean;
     }): void;
+    change_channel_name(client: Socket, data: {
+        login: string;
+        currentName: string;
+        newName: string;
+    }): void;
     get_channel(client: Socket, data: {
         sender: string;
         receiver: string;

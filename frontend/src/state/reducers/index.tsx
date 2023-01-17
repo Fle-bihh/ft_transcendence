@@ -1,25 +1,27 @@
 import { combineReducers } from "redux";
 import { userReducer } from "./userReducer";
-import storage from 'redux-persist/lib/storage'
+import storage from "redux-persist/lib/storage";
 import persistReducer from "redux-persist/es/persistReducer";
 import { utilsReducer } from "./utilsReducer";
+import { notifReducer } from "./notifReducer";
 
 const persistConfig = {
-    key: 'root',
-    storage,
-}
+  key: "root",
+  storage,
+};
 
-const tmp = combineReducers(    {
-    userReducer: userReducer,
-})
+const tmp = combineReducers({
+  userReducer: userReducer,
+  notifReducer: notifReducer,
+});
 
-const persistantReducer = persistReducer(persistConfig, tmp)
+const persistantReducer = persistReducer(persistConfig, tmp);
 
-const reducers = combineReducers(   {
-    utils: utilsReducer,
-    persistantReducer: persistantReducer
-})
+const reducers = combineReducers({
+  utils: utilsReducer,
+  persistantReducer: persistantReducer,
+});
 
 export default reducers;
 
-export type RootState = ReturnType<typeof reducers>
+export type RootState = ReturnType<typeof reducers>;
