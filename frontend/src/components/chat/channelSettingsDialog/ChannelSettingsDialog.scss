@@ -1,0 +1,41 @@
+.channelSettingsDialog {
+    // width: 80%;
+    // height: 80%;
+    // margin-top: 5%;
+    // margin-left: 10%;
+    // background-color: red;
+  .firstRaw {
+      background-color: rgb(62, 68, 68);
+      display: flex;
+      width: 90%;
+      height: 30%;
+      .changeChannelName {
+      .changeChannelNameInput {
+      }
+    }
+    .changeChannelPassword {
+      .changeChannelPasswordInput {
+      }
+    }
+  }
+  .secondRaw {
+    display: flex;
+    width: 90%;
+    height: 30%;
+    .addAdmin {
+    }
+    .removeAdmin {
+    }
+  }
+  .thirdRaw {
+    width: 90%;
+    height: 30%;
+    display: flex;
+    .blockUser {
+    }
+    .muteUser {
+    }
+  }
+  .leaveChannel {
+  }
+}
