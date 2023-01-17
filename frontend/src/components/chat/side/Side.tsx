@@ -9,25 +9,6 @@ import Avatar from "@mui/material/Avatar";
 import { deepPurple, grey, red } from "@mui/material/colors";
 import AddIcon from "@mui/icons-material/Add";
 import { useSelector } from "react-redux";
-import { TransitionProps } from "@mui/material/transitions";
-import {
-  AppBar,
-  Button,
-  Dialog,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Slide,
-  ToggleButton,
-  ToggleButtonGroup,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 const Side = (props: {
   openConvName: string;
@@ -118,7 +99,15 @@ const Side = (props: {
           <AddIcon className="newConvButton" />
         </div>
       </div>
-      <ChannelDialog open={open} setOpen={setOpen} setOpenConvName={props.setOpenConvName} allChannels={props.allChannels} setAllChannels={props.setAllChannels} />
+      <ChannelDialog
+        open={open}
+        setOpen={setOpen}
+        setOpenConvName={props.setOpenConvName}
+        allChannels={props.allChannels}
+        setAllChannels={props.setAllChannels}
+        allConv={props.allConv}
+        setAllConv={props.setAllConv}
+      />
       <input
         className="searchBar"
         type="text"
@@ -127,6 +116,21 @@ const Side = (props: {
         value={inputValue}
         autoComplete={"off"}
         onChange={(event) => {
+          let list = document.getElementById("listConv");
+
+          if (list != null) {
+            for (let i = 0; i < list.children.length; i++) {
+              if (
+                !event.currentTarget.value.length ||
+                list.children[i].children[1].children[0].textContent
+                  ?.toUpperCase()
+                  .indexOf(event.currentTarget.value.toUpperCase())! > -1
+              )
+                list.children[i].classList.remove("hidden");
+              else list.children[i].classList.add("hidden");
+            }
+          }
+
           setInputValue(event.currentTarget.value);
         }}
         autoFocus
@@ -134,37 +138,40 @@ const Side = (props: {
       />
 
       <div className="startedConv">
-        {props.allConv.map((convInfo, index) => {
-          return (
-            <div
-              className={
-                props.openConvName == convInfo.receiver
-                  ? "activeStartedConvItem"
-                  : "startedConvItem"
-              }
-              key={index.toString()}
-              onClick={() => {
-                if (props.newConvMessageBool) {
-                  let tmpArray = [...props.allConv];
-                  tmpArray.shift();
-                  props.setAllConv(tmpArray);
-                  props.setNewConvMessageBool(false);
+        <div id="listConv">
+          {props.allConv.map((convInfo, index) => {
+            return (
+              <div
+                className={
+                  props.openConvName == convInfo.receiver
+                    ? "activeStartedConvItem"
+                    : "startedConvItem"
                 }
-                props.setOpenConvName(convInfo.receiver);
-              }}
-            >
-              <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                {convInfo.receiver[0]}
-              </Avatar>
-              <div className="startedConvText">
-                <div className="startedConvName">{convInfo.receiver}</div>
-                <div className="startedConvMessage">
-                  {convInfo.last_message_text}
+                key={index.toString()}
+                onClick={() => {
+                  if (props.newConvMessageBool) {
+                    let tmpArray = [...props.allConv];
+                    tmpArray.shift();
+                    props.setAllConv(tmpArray);
+                    props.setNewConvMessageBool(false);
+                  }
+                  props.setOpenConvName(convInfo.receiver);
+                  utils.socket.emit("GET_ALL_CHANNELS", user.user?.login);
+                }}
+              >
+                <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
+                  {convInfo.receiver[0]}
+                </Avatar>
+                <div className="startedConvText">
+                  <div className="startedConvName">{convInfo.receiver}</div>
+                  <div className="startedConvMessage">
+                    {convInfo.last_message_text}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

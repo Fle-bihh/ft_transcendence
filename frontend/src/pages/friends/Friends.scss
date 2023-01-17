@@ -1,0 +1,153 @@
+.friendsPageContainer {
+  display: flex;
+  background-color: rgb(42, 38, 48);
+  width: 100%;
+  height: calc(100vh - 64px);
+  color: white;
+
+  .friendsPageSide {
+    width: 30%;
+    height: 95%;
+    border-radius: 15px;
+    background-color: rgb(53, 49, 59);
+    margin-left: 1.66%;
+    margin-top: 1.25%;
+    .searchBar {
+      height: 30px;
+      width: 95%;
+
+      background-color: rgb(53, 49, 59);
+      color: whitesmoke;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      outline: none;
+      border: 0;
+      border-radius: 25px;
+
+      margin-block: 3%;
+      margin-inline: auto;
+      padding-left: 2%;
+
+      font-weight: bold;
+      font-size: large;
+    }
+
+    .friendsListContainer {
+      .friendsListItem {
+        .friendsListAvatar {
+        }
+        .friendsListName {
+        }
+        .friendsListStatus {
+        }
+      }
+    }
+  }
+
+  .friendPageMain {
+    width: 65%;
+    height: 95%;
+    border-radius: 15px;
+    background-color: rgb(53, 49, 59);
+    margin-left: auto;
+    margin-right: 1.66%;
+    margin-top: 1.25%;
+    .userSearchBar {
+      height: 30px;
+      width: 95%;
+
+      background-color: rgb(53, 49, 59);
+      color: whitesmoke;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      outline: none;
+      border: 0;
+      border-radius: 25px;
+
+      margin-block: 3%;
+      margin-inline: auto;
+      padding-left: 2%;
+
+      font-weight: bold;
+      font-size: large;
+    }
+    .usersListContainer {
+      .usersListItem {
+        .usersListAvatar {
+        }
+        .usersListName {
+        }
+      }
+    }
+  }
+}
+.userInfoDialog {
+  height: 100vh;
+  width: 100vw;
+  .userInfoNavbar {
+    display: flex;
+    width: 100%;
+    height: 64px;
+    background-color: rgb(53, 49, 59);
+    color: white;
+    .exitUserInfoDialogButton {
+      margin-right: 15px;
+      margin-left: 5px;
+    }
+    .userInfoName {
+      margin-right: auto;
+      // margin-left: px;
+    }
+    .userHandleFriendshipContainer {
+    }
+    .userInviteGameButton {
+    }
+    .userLaunchChatButton {
+    }
+  }
+  .userInfoMainContainer {
+    display: flex;
+    background-color: rgb(42, 38, 48);
+    width: 100%;
+    height: calc(100vh - 64px);
+    color: white;
+
+    .userInfoStatsContainer {
+      width: 30%;
+      height: 95%;
+      border-radius: 15px;
+      background-color: rgb(53, 49, 59);
+      margin-left: auto;
+      margin-right: 1.66%;
+      margin-top: 1.25%;
+    }
+    .userMatchHistoryContainer {
+      width: 30%;
+      height: 95%;
+      border-radius: 15px;
+      background-color: rgb(53, 49, 59);
+      margin-left: 1.66%;
+      margin-right: 1.66%;
+      margin-top: 1.25%;
+      .matchHistoryItem {
+      }
+    }
+    .mutualMatchHistoryContainer {
+      width: 30%;
+      height: 95%;
+      border-radius: 15px;
+      background-color: rgb(53, 49, 59);
+      margin-left: 1.66%;
+      margin-right: auto;
+      margin-top: 1.25%;
+      .mutualMatchHistoryItem {
+      }
+    }
+  }
+}

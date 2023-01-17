@@ -1,7 +1,7 @@
 //
 import "./Main.scss";
-// import Switch from "../switch/Switch";
 import { RootState } from "../../../state";
+import ChannelSettingsDialog from "../channelSettingsDialog/ChannelSettingsDialog"
 
 //
 import React, { useState, useEffect } from "react";
@@ -12,15 +12,9 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import VolumeMuteIcon from "@mui/icons-material/VolumeMute";
 import BlockIcon from "@mui/icons-material/Block";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useSelector } from "react-redux";
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
-import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
-import RemoveModeratorOutlinedIcon from "@mui/icons-material/RemoveModeratorOutlined";
-import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 const Main = (props: {
   openConvName: string;
@@ -32,8 +26,6 @@ const Main = (props: {
     new_conv: boolean;
   }>;
   setAllConv: Function;
-  allUsers: Array<{ id: number; login: string }>;
-  setAllUsers: Function;
   newConvMessageBool: boolean;
   setNewConvMessageBool: Function;
   allChannels: Array<{
@@ -57,33 +49,18 @@ const Main = (props: {
   );
   const [inputValue, setInputValue] = useState("");
   const [topInputValue, setTopInputValue] = useState("");
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
 
   useEffect(() => {
-    if (
-      !props.allChannels.find((channel) => channel.name === props.openConvName)
-    ) {
-      utils.socket.emit("GET_CONV", {
-        sender: user.user?.login,
-        receiver: props.openConvName,
-      });
-      console.log("send GET_CONV to back");
-    }
-  }, [props.openConvName, props.allConv]);
-
-  useEffect(() => {
-    if (
-      props.allChannels.find((channel) => channel.name === props.openConvName)
-    ) {
-      utils.socket.emit("GET_CHANNEL", {
-        sender: user.user?.login,
-        receiver: props.openConvName,
-      });
-      console.log("send GET_CHANNEL to back from", user.user?.login);
-    }
+    utils.socket.emit("GET_CONV", {
+      sender: user.user?.login,
+      receiver: props.openConvName,
+    });
+    console.log("send GET_CONV to back");
   }, [props.openConvName, props.allConv]);
 
   useEffect(() => {
@@ -111,6 +88,46 @@ const Main = (props: {
     }
   );
 
+  utils.socket.removeListener("check_user_exist");
+  utils.socket.on("check_user_exist", (exist: boolean) => {
+    console.log("test");
+    if (exist) {
+      const tmpArray = [...props.allConv];
+      tmpArray.shift();
+      tmpArray.unshift({
+        receiver: topInputValue,
+        last_message_text: "",
+        last_message_time: new Date(),
+        new_conv: false,
+      });
+      props.setAllConv(tmpArray);
+      props.setOpenConvName(topInputValue);
+      props.setNewConvMessageBool(false);
+      setTopInputValue("");
+    } else {
+      setTopInputValue("");
+      alert("User not found...");
+    }
+  });
+
+  utils.socket.removeListener("get_all_channels");
+  utils.socket.on(
+    "get_all_channels",
+    (
+      data: Array<{
+        index: number;
+        privacy: string;
+        name: string;
+        password: string;
+        description: string;
+        owner: string;
+      }>
+    ) => {
+      console.log("get_all_channels recu", user.user?.login, "with", data);
+      props.setAllChannels([...data]);
+    }
+  );
+
   return (
     <div className="main">
       {props.newConvMessageBool ? (
@@ -129,25 +146,7 @@ const Main = (props: {
             autoFocus
             onKeyDown={(event) => {
               if (event.key == "Enter") {
-                if (
-                  props.allUsers.find((user) => user.login === topInputValue)
-                ) {
-                  const tmpArray = [...props.allConv];
-                  tmpArray.shift();
-                  tmpArray.unshift({
-                    receiver: topInputValue,
-                    last_message_text: "",
-                    last_message_time: new Date(),
-                    new_conv: false,
-                  });
-                  props.setAllConv(tmpArray);
-                  props.setOpenConvName(topInputValue);
-                  props.setNewConvMessageBool(false);
-                  setTopInputValue("");
-                } else {
-                  setTopInputValue("");
-                  alert("User not found...");
-                }
+                utils.socket.emit("CHECK_USER_EXIST", topInputValue);
               }
             }}
           ></input>
@@ -157,6 +156,23 @@ const Main = (props: {
           <div className="mainTitle">To :</div>
           <div>{props.openConvName}</div>
           <div className="buttons">
+            {props.allChannels.find(
+              (channel) => channel.name === props.openConvName
+            ) ? (
+              <IconButton
+                className="settingButton"
+                color="secondary"
+                style={{ color: "white", marginRight: "2%" }}
+                aria-label="upload picture"
+                component="label"
+                onClick={() => setSettingsDialogOpen(true)}
+              >
+                {/* <input hidden accept="image/*" type="file" /> */}
+                <SettingsIcon />
+              </IconButton>
+            ) : (
+              <div></div>
+            )}
             <IconButton
               className="startGameButton"
               color="secondary"
@@ -173,12 +189,13 @@ const Main = (props: {
               style={{ color: "white", marginRight: "2%" }}
               aria-label="upload picture"
               component="label"
-              onClick={() => {utils.socket.emit('BLOCK_USER', {
-                login: user.user?.login,
-                target: props.openConvName
-              })
-              console.log('send BLOCK_USER to back from', user.user?.login)
-            }}
+              onClick={() => {
+                utils.socket.emit("BLOCK_USER", {
+                  login: user.user?.login,
+                  target: props.openConvName,
+                });
+                console.log("send BLOCK_USER to back from", user.user?.login);
+              }}
             >
               {/* <input hidden accept="image/*" type="file" /> */}
               <BlockIcon />
@@ -195,10 +212,19 @@ const Main = (props: {
                   {message.content}
                 </div>
               );
+            else if (message.sender == "___server___")
+              return (
+                <div key={index.toString()} className="serverMessagesContainer">
+                  <div className="diviser" />
+                  {message.content}
+                  <div className="diviser" />
+                </div>
+              );
             else
               return (
                 <div key={index.toString()} className="leftMessages">
-                  {message.content}
+                  <div className="messageSender">{message.sender + " : "}</div>
+                  <div className="messageContent">{message.content}</div>
                 </div>
               );
           })}
@@ -226,11 +252,10 @@ const Main = (props: {
                     content: inputValue,
                   });
                   console.log("send ADD_MESSAGE to back");
-                  utils.socket.emit("GET_CONV", {
-                    sender: user.user?.login,
-                    receiver: props.openConvName,
-                  });
-                  console.log("send GET_CONV to back");
+                  // utils.socket.emit("GET_CONV", {
+                  //   sender: user.user?.login,
+                  //   receiver: props.openConvName,
+                  // });
                   setInputValue("");
                 }
               }}
@@ -240,6 +265,12 @@ const Main = (props: {
           <div></div>
         )}
       </div>
+      <ChannelSettingsDialog
+        setSettingsDialogOpen={setSettingsDialogOpen}
+        settingsDialogOpen={settingsDialogOpen}
+        openConvName={props.openConvName}
+        setOpenConvName={props.setOpenConvName}
+      />
     </div>
   );
 };

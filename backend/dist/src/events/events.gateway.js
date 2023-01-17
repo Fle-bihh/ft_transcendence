@@ -27,6 +27,10 @@ let EventsGateway = class EventsGateway {
     connect() {
         this.logger.log('connected serverside');
     }
+    check_user_exist(client, userLogin) {
+        this.logger.log(db_users);
+        client.emit('check_user_exist', db_users.find((user) => user.login == userLogin) != undefined);
+    }
     add_user(client, data) {
         console.log('ADD_USER recu EventGateway', data);
         users.push({
@@ -34,9 +38,13 @@ let EventsGateway = class EventsGateway {
             login: data.login,
             socket: client,
         });
-        users.map((user) => {
-            this.get_all_users(user.socket);
-        });
+        if (!db_users.find((user) => user.login == data.login))
+            db_users.push({
+                index: users.length,
+                login: data.login,
+                password: '',
+                username: data.login,
+            });
     }
     update_user_socket(client, data) {
         if (users.findIndex((user) => user.login === data.login) >= 0) {
@@ -45,17 +53,53 @@ let EventsGateway = class EventsGateway {
         }
         this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
     }
-    get_all_users(client) {
+    get_username(client, login) {
+        this.logger.log('GET_USERNAME received back from', login);
+        let tmpString;
+        db_users.map((user) => {
+            if (user.login === login) {
+                tmpString = user.username;
+            }
+        });
+        client.emit('get_username', tmpString);
+        this.logger.log('send get_username to ', login, ' with', tmpString);
+    }
+    get_all_users(client, login) {
         this.logger.log('GET_ALL_USERS received back');
         const retArray = Array();
-        users.map((user) => {
+        db_users.map((user) => {
             retArray.push({
                 id: user.index,
-                login: user.login,
+                username: user.login
             });
         });
         client.emit('get_all_users', retArray);
         this.logger.log('send get_all_users to front', retArray);
+    }
+    add_friendship(client, data) {
+        this.logger.log('ADD_FRIENDSHIP received in backend');
+        let tmpDate = new Date();
+        db_friendList.push({
+            index: db_friendList.length,
+            login: data.login,
+            login2: data.login2,
+            friendshipDate: tmpDate,
+        });
+    }
+    get_user_friends(client, login) {
+        this.logger.log('GET_USER_FRIENDS received in backend from', login);
+        let tmpArray = Array();
+        db_friendList.map((friend) => {
+            if (friend.login === login || friend.login2 === login) {
+                tmpArray.push({
+                    login: friend.login,
+                    login2: friend.login2,
+                    friendshipDate: friend.friendshipDate,
+                });
+            }
+        });
+        client.emit('get_user_friends', tmpArray);
+        this.logger.log('send get_user_friends to ', login, 'with', tmpArray);
     }
     handleConnection(client) {
         this.logger.log(`new client connected ${client.id}`);
@@ -75,6 +119,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "connect", null);
 __decorate([
+    (0, websockets_1.SubscribeMessage)('CHECK_USER_EXIST'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "check_user_exist", null);
+__decorate([
     (0, websockets_1.SubscribeMessage)('ADD_USER'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
@@ -87,11 +137,29 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "update_user_socket", null);
 __decorate([
+    (0, websockets_1.SubscribeMessage)('GET_USERNAME'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "get_username", null);
+__decorate([
     (0, websockets_1.SubscribeMessage)('GET_ALL_USERS'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
     __metadata("design:returntype", void 0)
 ], EventsGateway.prototype, "get_all_users", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('ADD_FRIENDSHIP'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "add_friendship", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('GET_USER_FRIENDS'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], EventsGateway.prototype, "get_user_friends", null);
 EventsGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

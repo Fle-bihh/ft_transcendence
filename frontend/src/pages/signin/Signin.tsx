@@ -48,9 +48,9 @@ const Signin = () => {
         </Grid>
         <form style={formStyle}>
           <TextField
-            label="Username"
+            label="Login"
             variant="standard"
-            placeholder="Enter username"
+            placeholder="Enter login"
             fullWidth
             required
             value={inputUsernameValue}
@@ -67,7 +67,8 @@ const Signin = () => {
             required
           />
 
-          <FormControlLabel control={<Checkbox />} label="Remember me" />
+          {/* <FormControlLabel control={<Checkbox />} label="Remember me" /> */}
+          <NavLink to="/">
           <Button
             type="submit"
             color="primary"
@@ -80,9 +81,10 @@ const Signin = () => {
               // <NavLink to='/'></NavLink>
             }}
           >
-            {" "}
             Sign in
+
           </Button>
+            </NavLink>
           <Typography style={askStyle}>
             <Link href="#">Forgot password ?</Link>
           </Typography>

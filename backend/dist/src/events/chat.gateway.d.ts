@@ -19,10 +19,20 @@ export declare class ChatGateway {
         owner: string;
     }): void;
     get_all_channels(client: Socket, login: string): void;
+    join_channel(client: Socket, data: {
+        login: string;
+        channelName: string;
+        channelPassword: string;
+    }): void;
     add_participant(client: Socket, data: {
         login: string;
         channel: string;
         admin: boolean;
+    }): void;
+    change_channel_name(client: Socket, data: {
+        login: string;
+        currentName: string;
+        newName: string;
     }): void;
     get_channel(client: Socket, data: {
         sender: string;

@@ -9,6 +9,7 @@ import { createServer } from 'http';
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { channel } from 'diagnostics_channel';
 
 const db_messages = Array<{
   index: number;
@@ -49,13 +50,6 @@ const db_channels = Array<{
   owner: string;
 }>();
 const users = Array<{ index: number; login: string; socket: Socket }>();
-const messages = Array<{
-  index: number;
-  sender: string;
-  receiver: string;
-  content: string;
-  time: Date;
-}>();
 
 @WebSocketGateway({
   cors: {
@@ -83,7 +77,15 @@ export class ChatGateway {
       content: string;
     },
   ) {
-    if (db_blockList.find(block => block.loginBlock === data.sender && block.loginEmitter === data.receiver)) {console.log('testest'); return;}
+    if (
+      db_blockList.find(
+        (block) =>
+          block.loginBlock === data.sender &&
+          block.loginEmitter === data.receiver,
+      )
+    ) {
+      return;
+    }
     const actualTime: Date = new Date();
     db_messages.push({
       index: db_messages.length,
@@ -92,31 +94,44 @@ export class ChatGateway {
       content: data.content,
       time: actualTime,
     });
-    messages.push({
-      index: db_messages.length,
-      sender: data.sender,
-      receiver: data.receiver,
-      content: data.content,
-      time: actualTime,
-    });
+
+    
+
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 
-    this.get_all_conv_info(client, { sender: data.sender });
-    if (db_channels.find((channel) => channel.name === data.receiver)) {
+    // this.get_all_conv_info(client, { sender: data.sender });
+
+    if (db_channels.find((channel) => channel.name == data.receiver)) {
       db_participants
-        .filter((participant) => participant.channel === data.receiver)
-        .map((target) => {
-          users
-            .find((user) => user.login === target.login)
-            .socket.emit('new_message');
-          this.logger.log('send new_message to front', data.receiver);
+        .filter((participant) => participant.channel == data.receiver)
+        .map((participant) => {
+          let tmp = users.find((user) => user.login == participant.login);
+          if (tmp != undefined) tmp.socket.emit('new_message');
         });
     } else {
-      users
-        .find((user) => user.login === data.receiver)
-        .socket.emit('new_message');
-      this.logger.log('send new_message to front', data.receiver);
+      let senderUser = users.find((user) => user.login == data.sender);
+      let receiverUser = users.find((user) => user.login == data.receiver);
+
+      if (senderUser != undefined) senderUser.socket.emit('new_message');
+      if (receiverUser != undefined) receiverUser.socket.emit('new_message');
+      // if (receiverUser != undefined) receiverUser.socket.emit('add_notif', {type: 'FRIENDREQUEST', data: {sender: 'Leo'}});
     }
+
+    //   if (db_channels.find((channel) => channel.name === data.receiver)) {
+    //     db_participants
+    //       .filter((participant) => participant.channel === data.receiver)
+    //       .map((target) => {
+    //         users
+    //           .find((user) => user.login === target.login)
+    //           .socket.emit('new_message');
+    //         this.logger.log('send new_message to front', data.receiver);
+    //       });
+    //   } else {
+    //     users
+    //       .find((user) => user.login === data.receiver)
+    //       .socket.emit('new_message');
+    //     this.logger.log('send new_message to front', data.receiver);
+    //   }
   }
 
   @SubscribeMessage('CREATE_CHANNEL')
@@ -133,19 +148,46 @@ export class ChatGateway {
     this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
     db_channels.push({
       index: db_channels.length,
-      privacy: 'public',
+      privacy: data.privacy,
       name: data.name,
       password: data.password,
       description: data.description,
       owner: data.owner,
     });
-    this.logger.log('db_channels after CREAT_CHANNEL = ', db_channels);
+    this.logger.log('db_channels after CREATE_CHANNEL = ', db_channels);
     db_participants.push({
       index: db_participants.length,
       login: data.owner,
       channel: data.name,
       admin: true,
     });
+
+    db_messages.push({
+      index: db_messages.length,
+      sender: '___server___',
+      receiver: data.name,
+      content: `${data.owner} create channel`,
+      time: new Date(),
+    });
+
+    console.log(db_messages);
+
+    this.get_all_conv_info(client, { sender: data.owner });
+    // if (db_channels.find((channel) => channel.name === data.receiver)) {
+    //   db_participants
+    //     .filter((participant) => participant.channel === data.receiver)
+    //     .map((target) => {
+    //       users
+    //         .find((user) => user.login === target.login)
+    //         .socket.emit('new_message');
+    //       this.logger.log('send new_message to front', data.receiver);
+    //     });
+    // } else {
+    //   users
+    //     .find((user) => user.login === data.receiver)
+    //     .socket.emit('new_message');
+    //   this.logger.log('send new_message to front', data.receiver);
+    // }
   }
 
   @SubscribeMessage('GET_ALL_CHANNELS')
@@ -173,6 +215,57 @@ export class ChatGateway {
     this.logger.log('send get_all_channels to ', login, 'with', sendArray);
   }
 
+  @SubscribeMessage('JOIN_CHANNEL')
+  join_channel(
+    client: Socket,
+    data: {
+      login: string;
+      channelName: string;
+      channelPassword: string;
+    },
+  ) {
+    if (
+      db_channels.find((item) => item.name == data.channelName) != undefined
+    ) {
+      if (
+        db_participants.filter((item) => item.channel == data.channelName)
+          .length < 50
+      ) {
+        if (
+          db_participants.find(
+            (item) =>
+              item.login == data.login && item.channel == data.channelName,
+          ) == undefined
+        ) {
+          if (
+            db_channels.find((item) => item.name == data.channelName)
+              .password == data.channelPassword
+          ) {
+            db_participants.push({
+              index: db_participants.length,
+              login: data.login,
+              channel: data.channelName,
+              admin: false,
+            });
+            db_messages.push({
+              index: db_messages.length,
+              sender: '___server___',
+              receiver: data.channelName,
+              content: `${data.login} join \'${data.channelName}\'`,
+              time: new Date(),
+            });
+
+            client.emit('channel_joined', {
+              channelName: data.channelName,
+            });
+
+            this.get_all_conv_info(client, { sender: data.login });
+          }
+        }
+      }
+    }
+  }
+
   @SubscribeMessage('ADD_PARTICIPANT')
   add_participant(
     client: Socket,
@@ -189,7 +282,42 @@ export class ChatGateway {
       channel: data.channel,
       admin: data.admin,
     });
+    db_messages.push({
+      index: db_messages.length,
+      sender: '___server___',
+      receiver: data.channel,
+      content: `${data.login} join \'${data.channel}\'`,
+      time: new Date(),
+    });
+
+    db_participants
+      .filter((participant) => participant.channel == data.channel)
+      .map((participant) => {
+        let tmp = users.find((user) => user.login == participant.login);
+        if (tmp != undefined) tmp.socket.emit('new_message');
+      });
+
     console.log('db_participants after ADD = ', db_participants);
+  }
+
+  @SubscribeMessage('CHANGE_CHANNEL_NAME')
+  change_channel_name(
+    client: Socket,
+    data: {
+      login: string;
+      currentName: string;
+      newName: string;
+    },
+  ) {
+    this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
+    db_channels.find((channel) => {
+      channel.name === data.currentName;
+    }).name = data.newName;
+    db_messages.forEach((message) => {
+      if (message.receiver === data.currentName) {
+        message.receiver = data.newName;
+      }
+    });
   }
 
   @SubscribeMessage('GET_CHANNEL')
@@ -204,13 +332,13 @@ export class ChatGateway {
 
     client.emit(
       'get_conv',
-      messages
+      db_messages
         .sort((a, b) => a.index - b.index)
         .filter((message) => message.receiver == data.receiver),
     );
     this.logger.log(
       'send get_conv to front',
-      messages
+      db_messages
         .sort((a, b) => a.index - b.index)
         .filter((message) => message.receiver == data.receiver),
     );
@@ -224,32 +352,42 @@ export class ChatGateway {
       receiver: string;
     },
   ) {
-    this.logger.log('GET_CONV recu ChatGateway', data);
-
-    client.emit(
-      'get_conv',
-      messages
-        .sort((a, b) => a.index - b.index)
-        .filter(
-          (message) =>
-            (message.sender == data.sender &&
-              message.receiver == data.receiver) ||
-            (message.sender == data.receiver &&
-              message.receiver == data.sender),
-        ),
-    );
-    this.logger.log(
-      'send get_conv to front',
-      messages
-        .sort((a, b) => a.index - b.index)
-        .filter(
-          (message) =>
-            (message.sender == data.sender &&
-              message.receiver == data.receiver) ||
-            (message.sender == data.receiver &&
-              message.receiver == data.sender),
-        ),
-    );
+    if (
+      db_channels.find((channel) => channel.name == data.receiver) != undefined
+    ) {
+      client.emit(
+        'get_conv',
+        db_messages
+          .sort((a, b) => a.index - b.index)
+          .filter((message) => message.receiver === data.receiver),
+      );
+      this.logger.log('send get_conv to front');
+    } else {
+      client.emit(
+        'get_conv',
+        db_messages
+          .sort((a, b) => a.index - b.index)
+          .filter(
+            (message) =>
+              (message.sender == data.sender &&
+                message.receiver == data.receiver) ||
+              (message.sender == data.receiver &&
+                message.receiver == data.sender),
+          ),
+      );
+      this.logger.log(
+        'send get_conv to front',
+        db_messages
+          .sort((a, b) => a.index - b.index)
+          .filter(
+            (message) =>
+              (message.sender == data.sender &&
+                message.receiver == data.receiver) ||
+              (message.sender == data.receiver &&
+                message.receiver == data.sender),
+          ),
+      );
+    }
   }
 
   @SubscribeMessage('GET_ALL_CONV_INFO')
@@ -267,7 +405,24 @@ export class ChatGateway {
       new_conv: boolean;
     }>();
 
-    messages
+    db_participants
+      .filter((participant) => participant.login == data.sender)
+      .map((room) => {
+        const tmp = db_messages
+          .sort((a, b) => b.index - a.index)
+          .find((message) => message.receiver == room.channel);
+
+        if (tmp != undefined) {
+          retArray.push({
+            receiver: room.channel,
+            last_message_time: tmp.time,
+            last_message_text: tmp.content,
+            new_conv: false,
+          });
+        }
+      });
+
+    db_messages
       .filter(
         (message) =>
           message.receiver == data.sender || message.sender == data.sender,
@@ -280,7 +435,7 @@ export class ChatGateway {
             undefined
           ) {
             // si retArray n'a pas encore la conv avec ce receiver
-            let tmp = messages.sort((a, b) => a.index - b.index);
+            let tmp = db_messages.sort((a, b) => a.index - b.index);
             retArray.push({
               receiver: messageItem.receiver,
               last_message_text: tmp
@@ -304,38 +459,40 @@ export class ChatGateway {
                 ).time,
             });
           }
+        } else if (
+          retArray.find((item) => item.receiver == messageItem.sender) ==
+          undefined
+        ) {
+          let tmp = [...db_messages.sort((a, b) => a.index - b.index)];
+          console.log('tmp time', tmp[0].time);
+          retArray.push({
+            receiver: messageItem.sender,
+            last_message_text: tmp
+              .reverse()
+              .find(
+                (message) =>
+                  (message.sender == data.sender &&
+                    message.receiver == messageItem.sender) ||
+                  (message.receiver == data.sender &&
+                    message.sender == messageItem.sender),
+              ).content,
+            new_conv: false,
+            last_message_time: tmp
+              .reverse()
+              .find(
+                (message) =>
+                  (message.sender == data.sender &&
+                    message.receiver == messageItem.sender) ||
+                  (message.receiver == data.sender &&
+                    message.sender == messageItem.sender),
+              ).time,
+          });
         } else {
-          if (
-            retArray.find((item) => item.receiver == messageItem.sender) ==
-            undefined
-          ) {
-            let tmp = [...messages.sort((a, b) => a.index - b.index)];
-            console.log('tmp time', tmp[0].time);
-            retArray.push({
-              receiver: messageItem.sender,
-              last_message_text: tmp
-                .reverse()
-                .find(
-                  (message) =>
-                    (message.sender == data.sender &&
-                      message.receiver == messageItem.sender) ||
-                    (message.receiver == data.sender &&
-                      message.sender == messageItem.sender),
-                ).content,
-              new_conv: false,
-              last_message_time: tmp
-                .reverse()
-                .find(
-                  (message) =>
-                    (message.sender == data.sender &&
-                      message.receiver == messageItem.sender) ||
-                    (message.receiver == data.sender &&
-                      message.sender == messageItem.sender),
-                ).time,
-            });
-          }
+          console.log(messageItem);
         }
       });
+    console.log(retArray);
+
     client.emit('get_all_conv_info', retArray);
     this.logger.log('send get_all_conv_info to front', retArray);
   }
@@ -364,8 +521,14 @@ export class ChatGateway {
     },
   ) {
     console.log('BLOCK_USER recu ChatGateway', data);
-    this.logger.log('db_block = ', db_blockList)
-    if (db_blockList.find(block => block.loginBlock === data.target && block.loginEmitter === data.login)) return;
+    this.logger.log('db_block = ', db_blockList);
+    if (
+      db_blockList.find(
+        (block) =>
+          block.loginBlock === data.target && block.loginEmitter === data.login,
+      )
+    )
+      return;
     db_blockList.push({
       index: users.length,
       loginBlock: data.target,
@@ -393,5 +556,6 @@ export class ChatGateway {
 
   handleDisconnect(client: Socket) {
     // this.logger.log(`client ${client.id} disconnected`);
+    // users.splice
   }
 }

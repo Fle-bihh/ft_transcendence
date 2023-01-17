@@ -127,25 +127,48 @@
       }
 
       .leftMessages {
+        margin-right: auto;
         margin-left: 2%;
         margin-top: 1px;
         margin-bottom: 1px;
         padding: 5px;
+        // padding-block: 3px;
 
         width: fit-content;
         min-width: 50px;
         max-width: 60%;
+
+        font-size: small;
+        font-weight: bold;
 
         text-align: left;
 
         // overflow: auto;
 
         height: max-content;
-        background-color: rgb(0, 0, 0, 0.8);
-        border-radius: 10px;
+        background-color: rgb(36, 40, 43);
+        border-radius: 15px;
         border-bottom-left-radius: 0;
 
         word-break: break-all;
+      }
+
+      .serverMessagesContainer {
+        display: flex;
+        height: 20px;
+        // background-color: red;
+        justify-content: space-evenly;
+        align-items: center;
+        color: rgb(255, 255, 255, 0.5);
+
+        font-weight: bold;
+
+        .diviser {
+          height: 0;
+          width: 30%;
+
+          border: 1px rgb(255, 255, 255, 0.5) solid;
+        }
       }
     }
 
