@@ -9,5 +9,8 @@ exports.configValidationSchema = Joi.object({
     DB_PASSWORD: Joi.string().required(),
     DB_DATABASE: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
+    CLIENT_ID: Joi.string().required(),
+    CLIENT_SECRET: Joi.string().required(),
+    REDIRECT_URI: Joi.string().required(),
 });
 //# sourceMappingURL=config.schema.js.map

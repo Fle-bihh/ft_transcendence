@@ -9,10 +9,11 @@ export class UserCredentialsDto {
   lastName: string;
 
   @IsNotEmpty()
-  userName: string;
+  username: string;
 
   @MinLength(6)
   @MaxLength(32)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'Password is too weak' })
   password: string;
+
 }
