@@ -12,15 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("axios");
-const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
-    constructor(config, jwtService) {
-        this.config = config;
+    constructor(jwtService) {
         this.jwtService = jwtService;
-        this.clientId = this.config.get('CLIENT_ID');
-        this.clientSecret = this.config.get('CLIENT_SECRET');
-        this.redirectUri = this.config.get('REDIRECT_URI');
+        this.clientId = 'u-s4t2ud-2ba494ca541577ab12aead4ea4f59fc22b4c2bea05058775f2524344f2e602a9';
+        this.clientSecret = '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';
+        this.redirectUri = 'localhost:3000/home';
     }
     async validateOAuthLogin(profile) {
         const { code } = profile;
@@ -47,7 +45,7 @@ let AuthService = class AuthService {
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService, jwt_1.JwtService])
+    __metadata("design:paramtypes", [jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map
