@@ -1,41 +1,174 @@
 .channelSettingsDialog {
-    // width: 80%;
-    // height: 80%;
-    // margin-top: 5%;
-    // margin-left: 10%;
-    // background-color: red;
-  .firstRaw {
-      background-color: rgb(62, 68, 68);
+  .rawContainer {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(42, 38, 48);
+    .firstRaw {
+      background-color: rgb(53, 49, 59);
+      display: flex;
+      width: 90%;
+      height: 15%;
+      margin-left: 5%;
+      margin-top: 2%;
+      border-radius: 25px;
+      .changeChannelName {
+        margin-top: 5%;
+        .changeChannelNameInput {
+        }
+      }
+      .changeChannelPassword {
+        margin-left: auto;
+        margin-top: 5%;
+        .changeChannelPasswordInput {
+        }
+      }
+    }
+    .secondRaw {
+      background-color: rgb(53, 49, 59);
       display: flex;
       width: 90%;
       height: 30%;
-      .changeChannelName {
-      .changeChannelNameInput {
+      margin-left: 5%;
+      margin-top: 2%;
+      border-radius: 25px;
+      .addAdmin {
+        background-color: rgb(42, 38, 48);
+        width: 45%;
+        height: 90%;
+        margin-top: 1%;
+        margin-left: 3%;
+        border-radius: 25px;
+        .addAdminTitle {
+          width: fit-content;
+          margin-left: 30%;
+          height: 10%;
+        }
+        .addAdminContainer {
+          overflow: scroll;
+          display: flex;
+          flex-direction: column;
+          scroll-behavior: smooth;
+          width: 100%;
+          height: 80%;
+          .addAdminContent {
+            width: 90%;
+            height: 30px;
+            min-height: 30px;
+            background-color: rgb(53, 49, 59);
+            margin-left: 5%;
+            border-radius: 25px;
+            margin-top: 10px;
+          }
+        }
+      }
+      .removeAdmin {
+        background-color: rgb(42, 38, 48);
+        width: 45%;
+        height: 90%;
+        margin-top: 1%;
+        margin-left: 3%;
+        border-radius: 25px;
+        .removeAdminTitle {
+          width: fit-content;
+          margin-left: 30%;
+          height: 10%;
+        }
+        .removeAdminContainer {
+          overflow: scroll;
+          display: flex;
+          flex-direction: column;
+          scroll-behavior: smooth;
+          width: 100%;
+          height: 80%;
+          .removeAdminContent {
+            width: 90%;
+            height: 30px;
+            min-height: 30px;
+            background-color: rgb(53, 49, 59);
+            margin-left: 5%;
+            border-radius: 25px;
+            margin-top: 10px;
+          }
+        }
       }
     }
-    .changeChannelPassword {
-      .changeChannelPasswordInput {
+    .thirdRaw {
+      background-color: rgb(53, 49, 59);
+      display: flex;
+      width: 90%;
+      height: 30%;
+      margin-left: 5%;
+      margin-top: 2%;
+      border-radius: 25px;
+      .banUser {
+        background-color: rgb(42, 38, 48);
+        width: 45%;
+        height: 90%;
+        margin-top: 1%;
+        margin-left: 3%;
+        border-radius: 25px;
+        .banUserTitle {
+          width: fit-content;
+          margin-left: 30%;
+          height: 10%;
+        }
+        .banUserContainer {
+          overflow: scroll;
+          display: flex;
+          flex-direction: column;
+          scroll-behavior: smooth;
+          width: 100%;
+          height: 80%;
+          .banUserContent {
+            width: 90%;
+            height: 30px;
+            min-height: 30px;
+            background-color: rgb(53, 49, 59);
+            margin-left: 5%;
+            border-radius: 25px;
+            margin-top: 10px;
+          }
+        }
+      }
+      .muteUser {
+        background-color: rgb(42, 38, 48);
+        width: 45%;
+        height: 90%;
+        margin-top: 1%;
+        margin-left: 3%;
+        border-radius: 25px;
+        .muteUserTitle {
+          width: fit-content;
+          margin-left: 30%;
+          height: 10%;
+        }
+        .muteUserContainer {
+          overflow: scroll;
+          display: flex;
+          flex-direction: column;
+          scroll-behavior: smooth;
+          width: 100%;
+          height: 80%;
+          .muteUserContent {
+            width: 90%;
+            height: 30px;
+            min-height: 30px;
+            background-color: rgb(53, 49, 59);
+            margin-left: 5%;
+            border-radius: 25px;
+            margin-top: 10px;
+          }
+        }
       }
     }
-  }
-  .secondRaw {
-    display: flex;
-    width: 90%;
-    height: 30%;
-    .addAdmin {
+    .leaveChannel {
+      background-color: rgb(53, 49, 59);
+      display: flex;
+      width: 90%;
+      height: 10%;
+      margin-left: 5%;
+      margin-top: 2%;
+      border-radius: 25px;
     }
-    .removeAdmin {
-    }
-  }
-  .thirdRaw {
-    width: 90%;
-    height: 30%;
-    display: flex;
-    .blockUser {
-    }
-    .muteUser {
-    }
-  }
-  .leaveChannel {
   }
 }
