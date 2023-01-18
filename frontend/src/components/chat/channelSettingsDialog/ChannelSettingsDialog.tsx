@@ -60,52 +60,115 @@ const ChannelSettingsDialog = (props: {
   };
 
   return (
-    <Dialog className="channelSettingsDialog" open={props.settingsDialogOpen} onClose={handleClose} fullScreen>
-      <div className="firstRaw">
-        <div className="changeChannelName">
-          <input
-            type="text"
-            placeholder="Change Name"
-            className="changeChannelNameInput"
-            id="outlined-basic"
-            value={nameInputValue}
-            autoComplete={"off"}
-            onChange={(event) => {
-              setNameInputValue(event.currentTarget.value);
-            }}
-            autoFocus
-            onKeyDown={(event) => {
-              if (event.key === "Enter") setNameSecurityDialog(true);
-            }}
-          />
+    <Dialog
+      className="channelSettingsDialog"
+      open={props.settingsDialogOpen}
+      onClose={handleClose}
+      fullScreen
+    >
+      <div className="rawContainer">
+        <div className="firstRaw">
+          <div className="changeChannelName">
+            <input
+              type="text"
+              placeholder="Change Name"
+              className="changeChannelNameInput"
+              id="outlined-basic"
+              value={nameInputValue}
+              autoComplete={"off"}
+              onChange={(event) => {
+                setNameInputValue(event.currentTarget.value);
+              }}
+              autoFocus
+              onKeyDown={(event) => {
+                if (event.key === "Enter") setNameSecurityDialog(true);
+              }}
+            />
+          </div>
+          <div className="changeChannelPassword">
+            <input
+              type="text"
+              placeholder="Change Password"
+              className="changeChannelPasswordInput"
+              id="outlined-basic"
+              value={passwordInputValue}
+              autoComplete={"off"}
+              onChange={(event) => {
+                setPasswordInputValue(event.currentTarget.value);
+              }}
+              autoFocus
+              onKeyDown={(event) => {
+                if (event.key === "Enter") setPasswordSecurityDialog(true);
+              }}
+            />
+          </div>
         </div>
-        <div className="changeChannelPassword">
-          <input
-            type="text"
-            placeholder="Change Password"
-            className="changeChannelPasswordInput"
-            id="outlined-basic"
-            value={passwordInputValue}
-            autoComplete={"off"}
-            onChange={(event) => {
-              setPasswordInputValue(event.currentTarget.value);
-            }}
-            autoFocus
-            onKeyDown={(event) => {
-              if (event.key === "Enter") setPasswordSecurityDialog(true);
-            }}
-          />
+        <div className="secondRaw">
+          <div className="addAdmin">
+            <div className="addAdminTitle">ADD ADMIN</div>
+            <div className="addAdminContainer">
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+              <div className="addAdminContent">PARTICIPANTS LIST ...</div>
+            </div>
+          </div>
+          <div className="removeAdmin">
+            <div className="removeAdminTitle">REMOVE ADMIN</div>
+            <div className="removeAdminContainer">
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+              <div className="removeAdminContent">ADMIN LIST ...</div>
+            </div>
+          </div>
         </div>
+        <div className="thirdRaw">
+          <div className="banUser">
+            <div className="banUserTitle">BAN PARTICIPANT</div>
+            <div className="banUserContainer">
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              <div className="banUserContent">PARTICIPANTS LIST ...</div>
+            </div>
+          </div>
+          <div className="muteUser">
+            <div className="muteUserTitle">MUTE PARTICIPANT</div>
+            <div className="muteUserContainer">
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+            </div>
+          </div>
+        </div>
+        <div className="leaveChannel">Leave Channel</div>
       </div>
-      <div className="secondRaw">
-        <div className="addAdmin">Add admin</div>
-        <div className="removeAdmin">Remove Admin</div>
-      </div>
-      <div className="thirdRaw">
-        <div className="banUser">Ban User</div>
-        <div className="muteUser">Mute User</div>
-      </div>
-      <div className="leaveChannel">Leave Channel</div>
       <Dialog open={nameSecurityDialog} onClose={handleCloseSecuName}>
         <div className="securityText">Are you sure ?</div>
         <div
