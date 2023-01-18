@@ -24,7 +24,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], UserCredentialsDto.prototype, "userName", void 0);
+], UserCredentialsDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.MinLength)(6),
     (0, class_validator_1.MaxLength)(32),
