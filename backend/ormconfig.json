@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "host": "database",
+  "port": 5432,
+  "username": "postgres",
+  "password": "root",
+  "database": "nest",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "autoLoadEntities": true,
+  "synchronize": false,
+  "migrationsTableName": "custom_migration_table",
+  "migrations": ["migrations/*.ts"],
+  "cli": {
+    "migrationsDir": "migrations",
+    "entitiesDir": "src/entities"
+  }
+}

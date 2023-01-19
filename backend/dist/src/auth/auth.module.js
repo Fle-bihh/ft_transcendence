@@ -15,14 +15,17 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../entities/user.entity");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
-const _42_strategy_1 = require("./42.strategy");
 const jwt_strategy_1 = require("./jwt.strategy");
+const axios_1 = require("@nestjs/axios");
+const users_module_1 = require("../users/users.module");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule,
+            axios_1.HttpModule,
+            users_module_1.UsersModule,
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.registerAsync({
@@ -37,8 +40,8 @@ AuthModule = __decorate([
             }),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, _42_strategy_1.ApiStrategy, jwt_strategy_1.JwtStrategy],
-        exports: [typeorm_1.TypeOrmModule, passport_1.PassportModule, _42_strategy_1.ApiStrategy, jwt_strategy_1.JwtStrategy],
+        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
+        exports: [typeorm_1.TypeOrmModule, passport_1.PassportModule, jwt_strategy_1.JwtStrategy],
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;

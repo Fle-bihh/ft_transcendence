@@ -1,9 +1,9 @@
-import { AuthService } from './auth.service';
+import { AuthService } from "./auth.service";
+import { Auth42Dto } from "./dto/auth-42.dto";
 export declare class AuthController {
-    private readonly authService;
+    private authService;
     constructor(authService: AuthService);
-    redirectTo42(): Promise<{}>;
-    ApiCallback(req: any): Promise<{
-        jwt: string;
+    signIn42(auth42Dto: Auth42Dto): Promise<{
+        accessToken: string;
     }>;
 }

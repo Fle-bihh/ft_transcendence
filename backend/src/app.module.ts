@@ -8,6 +8,8 @@ import { EventsModule } from './events/events.module'
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ChannelModule } from './channel/channel.module';
+import "reflect-metadata";
+import {DataSource} from 'typeorm';
 
 @Module({
   imports: [EventsModule, ConfigModule.forRoot({
@@ -20,6 +22,7 @@ import { ChannelModule } from './channel/channel.module';
     useFactory: async (configService: ConfigService) => {
       return {
         type: 'postgres',
+        entities: ["dist/**/*.entity{.ts,.js}"],
         autoLoadEntities: true,
         synchronize: true,
         host: configService.get('DB_HOST'),
@@ -37,4 +40,6 @@ import { ChannelModule } from './channel/channel.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}
