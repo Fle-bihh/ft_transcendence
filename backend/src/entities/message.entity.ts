@@ -13,11 +13,11 @@ export class Message {
   @Column()
   date: string;
 
-  @ManyToOne(type => User, user => user.messagesSend, {cascade: false})
-  sender: User;
+  // @ManyToOne(type => User, user => user.messagesSend, {cascade: false})
+  // sender: User;
 
-  @ManyToOne(type => User, user => user.messagesReceive, {nullable: true, cascade: false})
-  receiver: User | null;
+  // @ManyToOne(type => User, user => user.messagesReceive, {nullable: true, cascade: false})
+  // receiver: User | null;
 
   @ManyToOne(type => Channel, channel => channel.messages, {nullable: true})
   channel: Channel | null;

@@ -11,21 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FriendRequest = void 0;
 const typeorm_1 = require("typeorm");
-const user_entity_1 = require("./user.entity");
 let FriendRequest = class FriendRequest {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
     __metadata("design:type", String)
 ], FriendRequest.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.requestFrom),
-    __metadata("design:type", user_entity_1.User)
-], FriendRequest.prototype, "from", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.requestTo),
-    __metadata("design:type", user_entity_1.User)
-], FriendRequest.prototype, "to", void 0);
 FriendRequest = __decorate([
     (0, typeorm_1.Entity)()
 ], FriendRequest);

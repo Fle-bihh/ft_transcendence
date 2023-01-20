@@ -12,11 +12,11 @@ export class Game {
     @Column()
     ranked: boolean;
 
-    @ManyToOne(type => User, user => user.games)
-    player1: User;
+    // @ManyToOne(type => User, user => user.games)
+    // player1: User;
 
-    @ManyToOne(type => User, user => user.games)
-    player2: User;
+    // @ManyToOne(type => User, user => user.games)
+    // player2: User;
 
     @Column()
     score1: number;
