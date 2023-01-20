@@ -22,6 +22,7 @@ const users_module_1 = require("./users/users.module");
 const channel_module_1 = require("./channel/channel.module");
 require("reflect-metadata");
 const typeorm_2 = require("typeorm");
+const game_module_1 = require("./game/game.module");
 let AppModule = class AppModule {
     constructor(dataSource) {
         this.dataSource = dataSource;
@@ -52,7 +53,8 @@ AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
-            channel_module_1.ChannelModule,],
+            channel_module_1.ChannelModule,
+            game_module_1.GameModule,],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     }),

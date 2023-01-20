@@ -73,8 +73,8 @@ export class User {
   @Column({default: 0})
   Hater: number;
 
-  // @OneToMany(type => Game, games => games.player1 || games.player2)
-  // games: Game[];
+  @OneToMany(type => Game, games => games.player1 || games.player2)
+  games: Game[];
 
   // @OneToMany(type => FriendRequest, request => request.from)
   // requestFrom: FriendRequest[];

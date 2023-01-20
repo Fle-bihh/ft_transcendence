@@ -33,7 +33,7 @@ import {UsersModule} from 'src/users/users.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, /*ApiStrategy,*/ JwtStrategy],
-  exports: [TypeOrmModule, PassportModule, /*ApiStrategy,*/ JwtStrategy],
+  exports: [TypeOrmModule, PassportModule, /*ApiStrategy,*/ JwtStrategy, AuthService],
 })
 export class AuthModule {}
 

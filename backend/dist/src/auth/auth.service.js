@@ -48,10 +48,11 @@ let AuthService = class AuthService {
                 password: 'Qwert_123',
                 firstName: data.first_name,
                 lastName: data.last_name,
-                profileImage: data.image_url,
+                profileImage: data.image.link,
                 email: data.email,
                 admin: auth42Dto.admin,
             };
+            console.log(data.image.link);
             const { username } = authCredentialsDto;
             let user = await this.usersRepository.findOne({ where: {
                     username: username,
@@ -67,6 +68,11 @@ let AuthService = class AuthService {
             }
             const payload = { username };
             const accessToken = this.jwtService.sign(payload);
+            user = await this.usersRepository.findOne({ where: {
+                    username: username,
+                } });
+            console.log(user);
+            await this.usersRepository.save(user);
             return { accessToken: accessToken };
         }
         catch (error) {

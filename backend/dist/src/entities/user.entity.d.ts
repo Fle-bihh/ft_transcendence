@@ -1,3 +1,4 @@
+import { Game } from "./game.entity";
 export declare class User {
     id: string;
     username: string;
@@ -21,4 +22,5 @@ export declare class User {
     Friend: number;
     Climber: boolean;
     Hater: number;
+    games: Game[];
 }

@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { ChannelModule } from './channel/channel.module';
 import "reflect-metadata";
 import {DataSource} from 'typeorm';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [EventsModule, ConfigModule.forRoot({
@@ -36,6 +37,7 @@ import {DataSource} from 'typeorm';
   AuthModule,
   UsersModule,
   ChannelModule,
+  GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -47,10 +47,11 @@ export class AuthService {
           password: 'Qwert_123',
           firstName: data.first_name,
           lastName: data.last_name,
-          profileImage: data.image_url,
+          profileImage: data.image.link,
           email: data.email,
           admin: auth42Dto.admin,
         };
+        console.log(data.image.link);
         const { username } = authCredentialsDto;
         let user: User = await this.usersRepository.findOne({ where: {
           username: username,
@@ -66,10 +67,11 @@ export class AuthService {
         }
         const payload: JwtPayload = { username };
         const accessToken: string = this.jwtService.sign(payload);
-        // user = await this.usersRepository.findOne({ where: {
-        // username: username,
-        // }});
-        // await this.usersRepository.save(user);
+        user = await this.usersRepository.findOne({ where: {
+        username: username,
+        }});
+        console.log(user);
+        await this.usersRepository.save(user);
         return { accessToken: accessToken };
     } catch (error) {
       throw new HttpException(error.response.data, error.response.data);
