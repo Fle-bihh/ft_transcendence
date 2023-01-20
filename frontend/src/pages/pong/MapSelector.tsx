@@ -1,26 +1,31 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { gameSocket } from '../../App';
 import Navbar from '../../components/nav/Nav';
 import { RootState } from '../../state';
 
 function MapSelector(props : any) {
-    const utilsData = useSelector((state: RootState) => state.utils);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
 
     function startGame() {
         console.log("start game front");
-		utilsData.socket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.login}, gameMap: "0" });
+		gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.login}, gameMap: "map1" });
 	}
 
-    utilsData.socket.on('start', function (roomID: string) {
+    gameSocket.removeListener("start");
+    gameSocket.on('start', function (roomID: string) {
 		console.log('start 2 front')
         props.setRoomID(roomID);
 		props.setGameStart(true);
 	});
 
-    utilsData.socket.on('joinRoom', function (roomID: string) {
-		utilsData.socket.emit('JOIN_ROOM', roomID)
+    gameSocket.removeListener("joinRoom");
+    gameSocket.on('joinRoom', function (roomID: string) {
+		gameSocket.emit('JOIN_ROOM', roomID)
+	});
+
+    gameSocket.removeListener("joined_waiting");
+    gameSocket.on('joined_waiting', function (user : { login : string }) {
+		props.setWaitingOponnent(true)
 	});
 
     return (
@@ -28,7 +33,7 @@ function MapSelector(props : any) {
             <Navbar />
             <span className="span" ></span>
             <button className='join-queue' type='button' onClick={startGame}>Join queue</button>
-            <p>socket : {utilsData.socket.id}</p>
+            <p>socket : {gameSocket.id}</p>
         </div>
     )
 }

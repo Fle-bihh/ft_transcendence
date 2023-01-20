@@ -7,9 +7,13 @@ import { AppService } from './app.service';
 import { EventsModule } from './events/events.module'
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ChannelModule } from './channel/channel.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [EventsModule, ConfigModule.forRoot({
+  imports: [EventsModule, 
+    ScheduleModule.forRoot(), 
+    ConfigModule.forRoot({
     envFilePath: [`.env.backend`],
     validationSchema: configValidationSchema,
   }),
@@ -21,7 +25,6 @@ import { UsersModule } from './users/users.module';
         type: 'postgres',
         autoLoadEntities: true,
         synchronize: true,
-        // host: configService.get('database'),
         host: configService.get('DB_HOST'),
         port: configService.get('DB_PORT'),
         username: configService.get('DB_USERNAME'),
@@ -32,6 +35,7 @@ import { UsersModule } from './users/users.module';
   }),
   AuthModule,
   UsersModule,
+  ChannelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

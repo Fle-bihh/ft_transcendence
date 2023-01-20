@@ -84,7 +84,7 @@ let ChatGateway = class ChatGateway {
             index: db_messages.length,
             sender: '___server___',
             receiver: data.name,
-            content: `${data.owner} create channel`,
+            content: `${data.owner} created channel`,
             time: new Date(),
         });
         console.log(db_messages);
@@ -123,7 +123,7 @@ let ChatGateway = class ChatGateway {
                             index: db_messages.length,
                             sender: '___server___',
                             receiver: data.channelName,
-                            content: `${data.login} join \'${data.channelName}\'`,
+                            content: `${data.login} joined \'${data.channelName}\'`,
                             time: new Date(),
                         });
                         client.emit('channel_joined', {
@@ -161,14 +161,47 @@ let ChatGateway = class ChatGateway {
     }
     change_channel_name(client, data) {
         this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
-        db_channels.find((channel) => {
-            channel.name === data.currentName;
-        }).name = data.newName;
+        db_channels.forEach((channel) => {
+            if (channel.name === data.currentName) {
+                channel.name = data.newName;
+            }
+        });
+        db_participants.forEach((participant) => {
+            if (participant.channel === data.currentName) {
+                participant.channel = data.newName;
+            }
+        });
         db_messages.forEach((message) => {
             if (message.receiver === data.currentName) {
                 message.receiver = data.newName;
             }
         });
+        db_messages.push({
+            index: db_messages.length,
+            sender: '___server___',
+            receiver: data.newName,
+            content: `${data.login} changed the channel name to \'${data.newName}\'`,
+            time: new Date(),
+        });
+        this.get_all_conv_info(client, { sender: data.login });
+        this.get_all_channels(client, data.login);
+    }
+    change_channel_password(client, data) {
+        this.logger.log('CHANGE_CHANNEL_PASSWORD recu ChatGateway', data);
+        db_channels.forEach((channel) => {
+            if (channel.name === data.channelName) {
+                channel.password = data.newPassword;
+            }
+        });
+        db_messages.push({
+            index: db_messages.length,
+            sender: '___server___',
+            receiver: data.channelName,
+            content: `${data.login} changed the channel password'`,
+            time: new Date(),
+        });
+        this.get_all_conv_info(client, { sender: data.login });
+        this.get_all_channels(client, data.login);
     }
     get_channel(client, data) {
         this.logger.log('GET_CHANNEL recu ChatGateway', data);
@@ -350,6 +383,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", void 0)
 ], ChatGateway.prototype, "change_channel_name", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('CHANGE_CHANNEL_PASSWORD'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatGateway.prototype, "change_channel_password", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('GET_CHANNEL'),
     __metadata("design:type", Function),

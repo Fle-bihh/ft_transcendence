@@ -7,4 +7,4 @@ RUN npm install
 COPY ./src .
 # Value set in .env file.
 EXPOSE $BACKEND_PORT
-CMD ["npm", "run", "start:debug"]
+CMD ["npm", "run", "start"]

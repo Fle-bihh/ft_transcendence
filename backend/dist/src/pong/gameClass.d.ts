@@ -25,36 +25,42 @@ export declare class GameClass {
     SPACEBAR: string;
     constructor(gameMap: string, username: string, roomID: string, playerId: string);
     setOponnent(id: string, username: string): void;
+    checkCollisionPlayer(id: number): boolean;
+    movePlayer(): void;
+    moveBall(): void;
+    reset(): void;
+    moveAll(): void;
 }
 export declare class Player {
-    username: string;
     id: string;
+    username: string;
     width: number;
     height: number;
-    color: string;
-    posX: number;
-    posY: number;
     goUp: boolean;
     goDown: boolean;
+    posX: number;
+    posY: number;
     score: number;
-    originalPosition: string;
     ready: boolean;
-    constructor(position: string, username?: string, id?: string);
+    speed: number;
+    reco: number;
+    inGame: boolean;
+    constructor(canvas: Canvas, username?: string, id?: string);
+    reset(canvas: Canvas): void;
 }
 export declare class Map {
     mapColor: string;
     constructor(gameMap: string);
 }
 export declare class Ball {
-    width: number;
-    height: number;
-    color: string;
     posX: number;
     posY: number;
     directionX: number;
     directionY: number;
-    inGame: boolean;
     speed: number;
     radius: number;
+    old_x: number;
+    old_y: number;
     constructor(canvas: Canvas);
+    reset(canvas: Canvas): void;
 }

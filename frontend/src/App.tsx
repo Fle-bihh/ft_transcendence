@@ -15,6 +15,9 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./state/store";
 import NotifInterceptor from "./components/NotifInterceptor/NotifInterceptor";
 import Notif from "./pages/notif/Notif";
+import { io } from "socket.io-client";
+
+export const gameSocket = io(`ws://127.0.0.1:5002`, { transports: ['websocket'] });
 
 function App() {
   return (

@@ -28,7 +28,8 @@ const ChannelSettingsDialog = (props: {
 }) => {
   const [nameInputValue, setNameInputValue] = useState("");
   const [passwordInputValue, setPasswordInputValue] = useState("");
-  const [securityDialog, setSecurityDialog] = useState(false);
+  const [nameSecurityDialog, setNameSecurityDialog] = useState(false);
+  const [passwordSecurityDialog, setPasswordSecurityDialog] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
@@ -46,48 +47,113 @@ const ChannelSettingsDialog = (props: {
 
   const handleClose = () => {
     props.setSettingsDialogOpen(false);
+    setNameInputValue("");
+    setPasswordInputValue("");
   };
 
-  const handleCloseSecu = () => {
-    setSecurityDialog(false);
+  const handleCloseSecuName = () => {
+    setNameSecurityDialog(false);
+  };
+
+  const handleCloseSecuPassword = () => {
+    setPasswordSecurityDialog(false);
   };
 
   return (
-    <Dialog open={props.settingsDialogOpen} onClose={handleClose}>
-      <div className="changeChannelName">
-        <input
-          type="text"
-          placeholder="Change Name"
-          className="newConvMessageInput"
-          id="outlined-basic"
-          value={nameInputValue}
-          autoComplete={"off"}
-          onChange={(event) => {
-            setNameInputValue(event.currentTarget.value);
-          }}
-          autoFocus
-          onKeyDown={(event) => {
-            if (event.key === "Enter")
-              setSecurityDialog(true);
-            
-          }}
-        />
+    <Dialog className="channelSettingsDialog" open={props.settingsDialogOpen} onClose={handleClose} fullScreen>
+      <div className="firstRaw">
+        <div className="changeChannelName">
+          <input
+            type="text"
+            placeholder="Change Name"
+            className="changeChannelNameInput"
+            id="outlined-basic"
+            value={nameInputValue}
+            autoComplete={"off"}
+            onChange={(event) => {
+              setNameInputValue(event.currentTarget.value);
+            }}
+            autoFocus
+            onKeyDown={(event) => {
+              if (event.key === "Enter") setNameSecurityDialog(true);
+            }}
+          />
+        </div>
+        <div className="changeChannelPassword">
+          <input
+            type="text"
+            placeholder="Change Password"
+            className="changeChannelPasswordInput"
+            id="outlined-basic"
+            value={passwordInputValue}
+            autoComplete={"off"}
+            onChange={(event) => {
+              setPasswordInputValue(event.currentTarget.value);
+            }}
+            autoFocus
+            onKeyDown={(event) => {
+              if (event.key === "Enter") setPasswordSecurityDialog(true);
+            }}
+          />
+        </div>
       </div>
-      <div className="changeChannelPassword">Change Password</div>
-      <div className="addAdmin">Add admin</div>
-      <div className="removeAdmin">Remove Admin</div>
-      <div className="banUser">Ban User</div>
-      <div className="muteUser">Mute User</div>
+      <div className="secondRaw">
+        <div className="addAdmin">Add admin</div>
+        <div className="removeAdmin">Remove Admin</div>
+      </div>
+      <div className="thirdRaw">
+        <div className="banUser">Ban User</div>
+        <div className="muteUser">Mute User</div>
+      </div>
       <div className="leaveChannel">Leave Channel</div>
-      <Dialog open={securityDialog} onClose={handleCloseSecu}>
-          <div className="securityText">Are you sure ?</div>
-          <div className="yesButton" onClick={() => {
+      <Dialog open={nameSecurityDialog} onClose={handleCloseSecuName}>
+        <div className="securityText">Are you sure ?</div>
+        <div
+          className="yesButton"
+          onClick={() => {
             utils.socket.emit("CHANGE_CHANNEL_NAME", {
               login: user.user?.login,
               currentName: props.openConvName,
               newName: nameInputValue,
-            })}}>Yes</div>
-            <div className="noButton" onClick={handleCloseSecu}>No</div>
+            });
+            console.log(
+              "send CHANGE_CHANNEL_NAME to back from ",
+              user.user?.login
+            );
+            props.setOpenConvName(nameInputValue);
+            handleCloseSecuName();
+            handleClose();
+          }}
+        >
+          Yes
+        </div>
+        <div className="noButton" onClick={handleCloseSecuName}>
+          No
+        </div>
+      </Dialog>
+      <Dialog open={passwordSecurityDialog} onClose={handleCloseSecuPassword}>
+        <div className="securityText">Are you sure ?</div>
+        <div
+          className="yesButton"
+          onClick={() => {
+            utils.socket.emit("CHANGE_CHANNEL_PASSWORD", {
+              login: user.user?.login,
+              channelName: props.openConvName,
+              newPassword: passwordInputValue,
+            });
+            console.log(
+              "send CHANGE_CHANNEL_PASSWORD to back from ",
+              user.user?.login
+            );
+            handleCloseSecuPassword();
+            handleClose();
+          }}
+        >
+          Yes
+        </div>
+        <div className="noButton" onClick={handleCloseSecuPassword}>
+          No
+        </div>
       </Dialog>
     </Dialog>
   );

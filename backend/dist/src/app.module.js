@@ -16,11 +16,15 @@ const app_service_1 = require("./app.service");
 const events_module_1 = require("./events/events.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const channel_module_1 = require("./channel/channel.module");
+const schedule_1 = require("@nestjs/schedule");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [events_module_1.EventsModule, config_1.ConfigModule.forRoot({
+        imports: [events_module_1.EventsModule,
+            schedule_1.ScheduleModule.forRoot(),
+            config_1.ConfigModule.forRoot({
                 envFilePath: [`.env.backend`],
                 validationSchema: config_schema_1.configValidationSchema,
             }),
@@ -41,7 +45,8 @@ AppModule = __decorate([
                 },
             }),
             auth_module_1.AuthModule,
-            users_module_1.UsersModule,],
+            users_module_1.UsersModule,
+            channel_module_1.ChannelModule,],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
