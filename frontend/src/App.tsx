@@ -1,6 +1,8 @@
 import Chat from "./pages/chat/Chat";
 import Versions from "./components/versions/Versions";
 import Profile from "./pages/profile/Profile";
+import ProfileOther from "./pages/profilOther/ProfileOther";
+
 import Pong from "./pages/pong/Pong";
 import Home from "./pages/home/Home";
 import Signin from "./pages/signin/Signin";
@@ -81,6 +83,16 @@ function App() {
               <ConnectionChecker>
                 <NotifInterceptor>
                   <Profile />
+                </NotifInterceptor>
+              </ConnectionChecker>
+            }
+          />
+                 <Route
+            path="/profileother"
+            element={
+              <ConnectionChecker>
+                <NotifInterceptor>
+                  <ProfileOther />
                 </NotifInterceptor>
               </ConnectionChecker>
             }
