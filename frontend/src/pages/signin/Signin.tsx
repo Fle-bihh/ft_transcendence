@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../state";
+import axios from "axios";
 
 // import Checkbox from '@mui/material/Checkbox';
 // const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -68,22 +69,31 @@ const Signin = () => {
           />
 
           {/* <FormControlLabel control={<Checkbox />} label="Remember me" /> */}
-          <NavLink to="/">
-          <Button
-            type="submit"
-            color="primary"
-            variant="contained"
-            style={btnStyle}
-            fullWidth
-            onClick={() => {
-              setUser({ login: inputUsernameValue });
-              utils.socket.emit("ADD_USER", { login: inputUsernameValue });
-              // <NavLink to='/'></NavLink>
-            }}
-          >
-            Sign in
+          {/* <NavLink to="/"> */}
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              style={btnStyle}
+              fullWidth
+              onClick={() => {
+
+                axios.get(`http://localhost:5001/user/login/${inputUsernameValue}`).then(response => {
+                  if (response.data != null) {
+                    utils.socket.emit("ADD_USER", { login: inputUsernameValue });
+                    setUser(response.data);
+                    window.location.replace('http://localhost:3000/');
+                  }
+
+                  console.log(response);
+                })
+                // setUser({ login: inputUsernameValue });
+                // <NavLink to='/'></NavLink>
+              }}
+            >
+              Sign in
           </Button>
-            </NavLink>
+          {/* </NavLink> */}
           <Typography style={askStyle}>
             <Link href="#">Forgot password ?</Link>
           </Typography>

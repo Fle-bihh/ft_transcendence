@@ -38,6 +38,51 @@ let UsersService = class UsersService {
             }
         }
     }
+    async getGames(user) {
+        const users = await this.usersRepository.find({
+            relations: ['games'],
+        });
+        const games = users.find((u) => u.username === user.username).games;
+        return { games };
+    }
+    async getMatchHistory(id, user) {
+        const found = await this.usersRepository.findOneBy({ id });
+        if (found)
+            return this.getGames(found);
+        return null;
+    }
+    async getUserById(id, user) {
+        if (id === 'me') {
+            id = user.id;
+        }
+        const found = await this.usersRepository.findOneBy({ id });
+        if (found)
+            return found;
+        return null;
+    }
+    async getUserByLogin(username) {
+        const found = await this.usersRepository.findOneBy({ username });
+        if (found)
+            return found;
+        return null;
+    }
+    async patchUsername(id, user, username) {
+        const found = await this.getUserById(id, user);
+        console.log(found);
+        if (found) {
+            found.username = username;
+            await this.usersRepository.save(found);
+            return found;
+        }
+        return null;
+    }
+    async activate2FA(user) {
+        user.twoFactorAuth = true;
+        this.usersRepository.save(user);
+    }
+    async get2FA(user) {
+        return { twoFactorAuth: user.twoFactorAuth };
+    }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),

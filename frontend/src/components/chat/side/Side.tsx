@@ -91,8 +91,8 @@ const Side = (props: {
               props.setOpenConvName("");
             }
             handleClickOpen();
-            utils.socket.emit("GET_ALL_CHANNELS", user.user?.login);
-            console.log("send GET_ALL_CHANNELS to back from", user.user?.login);
+            utils.socket.emit("GET_ALL_CHANNELS", user.user?.username);
+            console.log("send GET_ALL_CHANNELS to back from", user.user?.username);
           }}
         >
           <div className="newConvButtonText">New Channel</div>
@@ -156,7 +156,7 @@ const Side = (props: {
                     props.setNewConvMessageBool(false);
                   }
                   props.setOpenConvName(convInfo.receiver);
-                  utils.socket.emit("GET_ALL_CHANNELS", user.user?.login);
+                  utils.socket.emit("GET_ALL_CHANNELS", user.user?.username);
                 }}
               >
                 <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>

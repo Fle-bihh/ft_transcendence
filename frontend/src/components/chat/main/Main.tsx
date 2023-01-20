@@ -57,7 +57,7 @@ const Main = (props: {
 
   useEffect(() => {
     utils.socket.emit("GET_CONV", {
-      sender: user.user?.login,
+      sender: user.user?.username,
       receiver: props.openConvName,
     });
     console.log("send GET_CONV to back");
@@ -123,7 +123,7 @@ const Main = (props: {
         owner: string;
       }>
     ) => {
-      console.log("get_all_channels recu", user.user?.login, "with", data);
+      console.log("get_all_channels recu", user.user?.username, "with", data);
       props.setAllChannels([...data]);
     }
   );
@@ -191,10 +191,10 @@ const Main = (props: {
               component="label"
               onClick={() => {
                 utils.socket.emit("BLOCK_USER", {
-                  login: user.user?.login,
+                  login: user.user?.username,
                   target: props.openConvName,
                 });
-                console.log("send BLOCK_USER to back from", user.user?.login);
+                console.log("send BLOCK_USER to back from", user.user?.username);
               }}
             >
               {/* <input hidden accept="image/*" type="file" /> */}
@@ -206,7 +206,7 @@ const Main = (props: {
       <div className="messagesContainer">
         <div className="messagesDisplay" id="messagesDisplay">
           {convMessages.map((message, index) => {
-            if (message.sender == user.user?.login)
+            if (message.sender == user.user?.username)
               return (
                 <div key={index.toString()} className="rightMessages">
                   {message.content}
@@ -247,13 +247,13 @@ const Main = (props: {
               onKeyDown={(event) => {
                 if (event.key == "Enter") {
                   utils.socket.emit("ADD_MESSAGE", {
-                    sender: user.user?.login,
+                    sender: user.user?.username,
                     receiver: props.openConvName,
                     content: inputValue,
                   });
                   console.log("send ADD_MESSAGE to back");
                   // utils.socket.emit("GET_CONV", {
-                  //   sender: user.user?.login,
+                  //   sender: user.user?.username,
                   //   receiver: props.openConvName,
                   // });
                   setInputValue("");

@@ -1,14 +1,20 @@
-// import {MinLength} from "@nestjs/class-validator";
+import {MinLength} from "@nestjs/class-validator";
 import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-// import {Channel} from "./channel.entity";
-// import {FriendRequest} from "./friend-request.entity";
-// import {Game} from "./game.entity";
-// import {Message} from "./message.entity";
+import {Channel} from "./channel.entity";
+import {FriendRequest} from "./friend-request.entity";
+import {Game} from "./game.entity";
+import {Message} from "./message.entity";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ unique: true })
+  username: string;
+
+  @Column({nullable: true})
+  password?: string | null;
 
   @Column()
   firstName: string;
@@ -16,92 +22,59 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ unique: true })
-  userName: string;
+  @Column({nullable: true})
+  nickName?: string | null;
+
+  @Column({nullable: true})
+  profileImage?: string | null;
 
   @Column()
-  password: string;
+  email: string;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column({default: 'offline'})
+  isLogged: string;
 
-  @Column({ default: 0 })
-  wins: number;
+  @Column({default: false})
+  isAdmin: boolean;
 
-  @Column({ default: 0 })
-  losses: number;
+  @Column({default: 0})
+  GoalTaken: number;
 
-  @Column({ default: 0 })
-  rank: number;
+  @Column({default: 0})
+  GoalSet: number;
 
-  // @PrimaryGeneratedColumn('uuid')
-  // id: string;
+  @Column({default: 0})
+  NormalGameNumber: number;
 
-  // @Column({ unique: true })
-  // username: string;
+  @Column({default: 0})
+  RankedGameNumber: number;
 
-  // @Column({nullable: true})
-  // password?: string | null;
+  @Column({default: 0})
+  NormalWinNumber: number;
 
-  // @Column()
-  // firstName: string;
+  @Column({default: 0})
+  RankedWinNumber: number;
 
-  // @Column()
-  // lastName: string;
+  @Column({default: 0})
+  PP: number;
 
-  // @Column({nullable: true})
-  // nickName?: string | null;
+  @Column({default: false})
+  twoFactorAuth: boolean;
 
-  // @Column({nullable: true})
-  // profileImage?: string | null;
+  @Column({default: false})
+  Security: boolean;
 
-  // @Column()
-  // email: string;
+  @Column({default: 0})
+  Friend: number;
 
-  // @Column({default: 'offline'})
-  // isLogged: string;
+  @Column({default: false})
+  Climber: boolean;
 
-  // @Column({default: false})
-  // isAdmin: boolean;
+  @Column({default: 0})
+  Hater: number;
 
-  // @Column()
-  // GoalTaken: number;
-
-  // @Column()
-  // GoalSet: number;
-
-  // @Column()
-  // NormalGameNumber: number;
-
-  // @Column()
-  // RankedGameNumber: number;
-
-  // @Column()
-  // NormalWinNumber: number;
-
-  // @Column()
-  // RankedWinNumber: number;
-
-  // @Column()
-  // PP: number;
-
-  // @Column({default: false})
-  // twoFactorAuth: boolean;
-
-  // @Column({default: false})
-  // Security: boolean;
-
-  // @Column({default: 0})
-  // Friend: number;
-
-  // @Column({default: false})
-  // Climber: boolean;
-
-  // @Column({default: 0})
-  // Hater: number;
-
-  // @OneToMany(type => Game, games => games.player1 || games.player2)
-  // games: Game[];
+  @OneToMany(type => Game, games => games.player1 || games.player2)
+  games: Game[];
 
   // @OneToMany(type => FriendRequest, request => request.from)
   // requestFrom: FriendRequest[];

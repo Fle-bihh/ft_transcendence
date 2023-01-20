@@ -145,7 +145,7 @@ exports.Player = Player;
 class Map {
     constructor(gameMap) {
         if (gameMap == "map1")
-            this.mapColor = "rgb(255, 255, 255)";
+            this.mapColor = "black";
         else if (gameMap == "map2") {
             this.mapColor = 'yellow';
         }

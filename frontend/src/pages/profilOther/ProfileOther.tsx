@@ -1,5 +1,6 @@
 import Navbar from '../../components/nav/Nav';
-import * as React from 'react';
+import queryString from 'query-string';
+//import * as React from 'react';
 import "./profileOther.scss"
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -20,10 +21,14 @@ ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 import { Button, Typography } from '@mui/material';
 import { userInfo } from 'os';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { PasswordRounded } from '@mui/icons-material';
+import { NavLink } from 'react-router-dom';
 
 const ProfileOther = () => {
 
-    const [matchHistory, setMatchHistory] = React.useState(Array<{
+    const [matchHistory, setMatchHistory] = useState(Array<{
         id: number,
         user1_login: string,
         user2_login: string,
@@ -37,8 +42,51 @@ const ProfileOther = () => {
         (state: RootState) => state.persistantReducer.userReducer
     );
 
+    const [userDisplay, setUserDisplay] = useState<{
+        id: string,
+        username: string,
+        password: string,
+        firstName: string,
+        lastName: string,
+        nickName: string,
+        profileImage: string,
+        email: string,
+        isLogged: boolean,
+        isAdmin: boolean,
+        GoalTaken: number,
+        GoalSet: number,
+        NormalGameNumber: number,
+        RankedGameNumber: number,
+        NormalWinNumber: number,
+        RankedWinNumber: number,
+        PP: number,
+        twoFactorAuth: boolean,
+        Security: boolean,
+        Friend: number,
+        Climber: boolean,
+        Hater: number,
+    } | null>(null);
+
+    useEffect(() => {
+        if (userDisplay == null) {
+            const parsed = queryString.parse(window.location.search);
+            console.log(parsed)
+            if (parsed.username == '' || parsed.username == undefined) {
+                window.location.replace("http://localhost:3000/")
+            }
+            else {
+                axios.get(`http://localhost:5001/user/login/${parsed.username}`).then(response => {
+                    if (response.data != null) {
+                        setUserDisplay(response.data);
+                    }
+                    console.log(response);
+                })
+            }
+        }
+    })
+
     return (
-        <React.Fragment >
+        <>
             <Navbar />
 
             <div className="profilePageContainerOther">
@@ -46,17 +94,17 @@ const ProfileOther = () => {
                 <div className="profileOther" >
 
                     <Stack direction="row" spacing={2} className="avatarItemOther">
-                        <img alt="Cerise" src={Cerise} className="avatarOther" />
+                        <img alt="Cerise" src={userDisplay!.profileImage} className="avatarOther" />
                     </Stack>
 
                     <div className="userConnect">
 
                         <div className="circleConnectLigne"></div>
-                        
+
                         <div className="connect">
                             Online
                         </div>
-                        
+
                     </div>
                     <div className="userConnectHorsLigne">
 
@@ -68,14 +116,14 @@ const ProfileOther = () => {
                             Not Connected
                         </div>
                     </div>
-                    
+
 
                     <div className="infoUserOther">
                         <h3 className="userNameOther">
                             Login :
                             </h3>
                         <Typography className="userNamePrintOther">
-                            {user.user?.login}
+                            {userDisplay?.username}
                         </Typography>
 
                     </div>
@@ -85,11 +133,11 @@ const ProfileOther = () => {
                             userName :
                             </h3>
                         <Typography className="userNamePrintChangeOther">
-                            {user.user?.login}
+                            {userDisplay?.username}
                         </Typography>
 
                     </div>
-                    <Button className="buttonChangeOther" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.login, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
+                    <Button className="buttonChangeOther" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: userDisplay!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
                         Change UserName
                         </Button>
                 </div>
@@ -99,7 +147,7 @@ const ProfileOther = () => {
                 <div className="statOther">
 
                     <Box className="rectangleOther">
-                        <h2 style={{ color: 'white' }}>Game History {user.user?.login}</h2>
+                        <h2 style={{ color: 'white' }}>Game History {userDisplay?.username}</h2>
                         <h3 style={{ textAlign: 'center' }}>Number of parts</h3>
                         <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{matchHistory.length}</h3>
 
@@ -107,7 +155,7 @@ const ProfileOther = () => {
 
                     {matchHistory.map((match) => {
                         return (
-                            <div className={match.winner_login == user.user!.login ? 'itemWinnerOther' : 'itemLoserOther'} key={match.id.toString()}  >
+                            <div className={match.winner_login == userDisplay?.username ? 'itemWinnerOther' : 'itemLoserOther'} key={match.id.toString()}  >
 
                                 <div className="resultsOther" >
                                     <div className="nameOther">{match.user1_login}</div>
@@ -134,7 +182,7 @@ const ProfileOther = () => {
                     })}
                 </div>
             </div>
-        </React.Fragment >
+        </>
 
     )
 };

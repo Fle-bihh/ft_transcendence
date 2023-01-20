@@ -14,6 +14,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
+const get_user_decorator_1 = require("../auth/get-user.decorator");
+const user_entity_1 = require("../entities/user.entity");
 const user_credentials_dto_1 = require("./dto/user-credentials.dto");
 const users_service_1 = require("./users.service");
 let UsersController = class UsersController {
@@ -23,6 +25,25 @@ let UsersController = class UsersController {
     async signUp(usersCredentialsDto) {
         return this.usersService.signUp(usersCredentialsDto);
     }
+    async patchUsername(id, user, username) {
+        console.log('bonjour');
+        return this.usersService.patchUsername(id, user, username);
+    }
+    async activate2FA(user) {
+        return await this.usersService.activate2FA(user);
+    }
+    async getUserById(id, user) {
+        return await this.usersService.getUserById(id, user);
+    }
+    async getUserByLogin(login) {
+        return await this.usersService.getUserByLogin(login);
+    }
+    async getMatchHistory(id, user) {
+        return await this.usersService.getMatchHistory(id, user);
+    }
+    async get2FA(user) {
+        return await this.usersService.get2FA(user);
+    }
 };
 __decorate([
     (0, common_1.Post)('/signup'),
@@ -31,8 +52,54 @@ __decorate([
     __metadata("design:paramtypes", [user_credentials_dto_1.UserCredentialsDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "signUp", null);
+__decorate([
+    (0, common_1.Patch)('/:id/username'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
+    __param(2, (0, common_1.Body)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_entity_1.User, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "patchUsername", null);
+__decorate([
+    (0, common_1.Patch)('2FA/activate'),
+    __param(0, (0, get_user_decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "activate2FA", null);
+__decorate([
+    (0, common_1.Get)('/id/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_entity_1.User]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserById", null);
+__decorate([
+    (0, common_1.Get)('/login/:login'),
+    __param(0, (0, common_1.Param)('login')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserByLogin", null);
+__decorate([
+    (0, common_1.Get)('/:id/match_history'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_entity_1.User]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getMatchHistory", null);
+__decorate([
+    (0, common_1.Get)('2FA/active'),
+    __param(0, (0, get_user_decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "get2FA", null);
 UsersController = __decorate([
-    (0, common_1.Controller)('users'),
+    (0, common_1.Controller)('user'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 exports.UsersController = UsersController;

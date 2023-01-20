@@ -112,13 +112,13 @@ const ChannelSettingsDialog = (props: {
           className="yesButton"
           onClick={() => {
             utils.socket.emit("CHANGE_CHANNEL_NAME", {
-              login: user.user?.login,
+              login: user.user?.username,
               currentName: props.openConvName,
               newName: nameInputValue,
             });
             console.log(
               "send CHANGE_CHANNEL_NAME to back from ",
-              user.user?.login
+              user.user?.username
             );
             props.setOpenConvName(nameInputValue);
             handleCloseSecuName();
@@ -137,13 +137,13 @@ const ChannelSettingsDialog = (props: {
           className="yesButton"
           onClick={() => {
             utils.socket.emit("CHANGE_CHANNEL_PASSWORD", {
-              login: user.user?.login,
+              login: user.user?.username,
               channelName: props.openConvName,
               newPassword: passwordInputValue,
             });
             console.log(
               "send CHANGE_CHANNEL_PASSWORD to back from ",
-              user.user?.login
+              user.user?.username
             );
             handleCloseSecuPassword();
             handleClose();

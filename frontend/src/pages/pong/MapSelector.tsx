@@ -8,7 +8,7 @@ function MapSelector(props : any) {
 
     function startGame() {
         console.log("start game front");
-		gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.login}, gameMap: "map1" });
+		gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username}, gameMap: "map1" });
 	}
 
     gameSocket.removeListener("start");

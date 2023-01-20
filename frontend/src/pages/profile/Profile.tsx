@@ -97,7 +97,7 @@ const Profile = () => {
                             Login :
                             </h3>
                         <Typography className="userNamePrint">
-                            {user.user?.login}
+                            {user.user?.username}
                         </Typography>
 
                     </div>
@@ -107,11 +107,11 @@ const Profile = () => {
                             userName :
                             </h3>
                         <Typography className="userNamePrintChange">
-                            {user.user?.login}
+                            {user.user?.username}
                         </Typography>
 
                     </div>
-                    <Button className="buttonChange" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.login, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
+                    <Button className="buttonChange" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
                         Change UserName
                         </Button>
 
@@ -125,7 +125,7 @@ const Profile = () => {
                 <div className="stat">
 
                     <Box className="rectangle">
-                        <h2 style={{ color: 'white' }}>Game History {user.user?.login}</h2>
+                        <h2 style={{ color: 'white' }}>Game History {user.user?.username}</h2>
                         <h3 style={{ textAlign: 'center' }}>Number of parts</h3>
                         <h3 style={{ textAlign: 'center', fontWeight: '900' , marginBottom: '3px'}}>{matchHistory.length}</h3>
 
@@ -133,7 +133,7 @@ const Profile = () => {
 
                     {matchHistory.map((match) => {
                         return (
-                            <div className={match.winner_login == user.user!.login ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}  >
+                            <div className={match.winner_login == user.user!.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}  >
 
                                 <div className="results" >
                                     <div className="name">{match.user1_login}</div>

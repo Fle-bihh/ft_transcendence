@@ -17,13 +17,25 @@ import NotifInterceptor from "./components/NotifInterceptor/NotifInterceptor";
 import Notif from "./pages/notif/Notif";
 import { io } from "socket.io-client";
 
+import Connect from "./pages/signup/Connect";
+import {Switch} from "@mui/material";
+
 export const gameSocket = io(`ws://127.0.0.1:5002`, { transports: ['websocket'] });
+export const ip = '127.0.0.1';
 
 function App() {
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>
         <Routes>
+          <Route
+            path="/home"
+            element={
+              <NotifInterceptor>
+                <Connect />
+              </NotifInterceptor>
+            }
+          />
           <Route
             path="/signin"
             element={
@@ -126,4 +138,4 @@ function App() {
   );
 }
 
-export default App;
+          export default App;
