@@ -8,9 +8,12 @@ import { EventsModule } from './events/events.module'
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ChannelModule } from './channel/channel.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [EventsModule, ConfigModule.forRoot({
+  imports: [EventsModule, 
+    ScheduleModule.forRoot(), 
+    ConfigModule.forRoot({
     envFilePath: [`.env.backend`],
     validationSchema: configValidationSchema,
   }),

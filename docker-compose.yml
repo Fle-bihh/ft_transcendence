@@ -29,6 +29,7 @@
        - transcendence
      ports:
        - "${BACKEND_PORT}:${BACKEND_PORT}"
+       - "5002:5002"
      depends_on:
        - dev-db
      links:

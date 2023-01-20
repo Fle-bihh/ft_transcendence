@@ -32,7 +32,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
     async validate(payload) {
         const { username } = payload;
         const user = await this.usersRepository.findOne({ where: {
-                username: username,
+                userName: username,
             } });
         if (!user) {
             throw new common_1.UnauthorizedException();
