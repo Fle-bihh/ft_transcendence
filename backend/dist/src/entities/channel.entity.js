@@ -25,6 +25,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Channel.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(type => message_entity_1.Message, message => message.channel),
+    __metadata("design:type", Array)
+], Channel.prototype, "messages", void 0);
 Channel = __decorate([
     (0, typeorm_1.Entity)()
 ], Channel);

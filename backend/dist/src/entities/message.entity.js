@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
 const typeorm_1 = require("typeorm");
+const channel_entity_1 = require("./channel.entity");
 let Message = class Message {
 };
 __decorate([
@@ -25,6 +26,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Message.prototype, "date", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(type => channel_entity_1.Channel, channel => channel.messages, { nullable: true }),
+    __metadata("design:type", channel_entity_1.Channel)
+], Message.prototype, "channel", void 0);
 Message = __decorate([
     (0, typeorm_1.Entity)()
 ], Message);

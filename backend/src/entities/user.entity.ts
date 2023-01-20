@@ -7,41 +7,8 @@ import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column({ unique: true })
-  userName: string;
-
-  @Column()
-  password: string;
-
-  @Column({ default: true })
-  isActive: boolean;
-
-  @Column({ default: 0 })
-  wins: number;
-
-  @Column({ default: 0 })
-  losses: number;
-
-  @Column({ default: 0 })
-  rank: number;
-
   // @PrimaryGeneratedColumn('uuid')
   // id: string;
-
-  // @Column({ unique: true })
-  // username: string;
-
-  // @Column({nullable: true})
-  // password?: string | null;
 
   // @Column()
   // firstName: string;
@@ -49,56 +16,89 @@ export class User {
   // @Column()
   // lastName: string;
 
-  // @Column({nullable: true})
-  // nickName?: string | null;
-
-  // @Column({nullable: true})
-  // profileImage?: string | null;
+  // @Column({ unique: true })
+  // userName: string;
 
   // @Column()
-  // email: string;
+  // password: string;
 
-  // @Column({default: 'offline'})
-  // isLogged: string;
+  // @Column({ default: true })
+  // isActive: boolean;
 
-  // @Column({default: false})
-  // isAdmin: boolean;
+  // @Column({ default: 0 })
+  // wins: number;
 
-  // @Column()
-  // GoalTaken: number;
+  // @Column({ default: 0 })
+  // losses: number;
 
-  // @Column()
-  // GoalSet: number;
+  // @Column({ default: 0 })
+  // rank: number;
 
-  // @Column()
-  // NormalGameNumber: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  // @Column()
-  // RankedGameNumber: number;
+  @Column({ unique: true })
+  username: string;
 
-  // @Column()
-  // NormalWinNumber: number;
+  @Column({nullable: true})
+  password?: string | null;
 
-  // @Column()
-  // RankedWinNumber: number;
+  @Column()
+  firstName: string;
 
-  // @Column()
-  // PP: number;
+  @Column()
+  lastName: string;
 
-  // @Column({default: false})
-  // twoFactorAuth: boolean;
+  @Column({nullable: true})
+  nickName?: string | null;
 
-  // @Column({default: false})
-  // Security: boolean;
+  @Column({nullable: true})
+  profileImage?: string | null;
 
-  // @Column({default: 0})
-  // Friend: number;
+  @Column()
+  email: string;
 
-  // @Column({default: false})
-  // Climber: boolean;
+  @Column({default: 'offline'})
+  isLogged: string;
 
-  // @Column({default: 0})
-  // Hater: number;
+  @Column({default: false})
+  isAdmin: boolean;
+
+  @Column()
+  GoalTaken: number;
+
+  @Column()
+  GoalSet: number;
+
+  @Column()
+  NormalGameNumber: number;
+
+  @Column()
+  RankedGameNumber: number;
+
+  @Column()
+  NormalWinNumber: number;
+
+  @Column()
+  RankedWinNumber: number;
+
+  @Column()
+  PP: number;
+
+  @Column({default: false})
+  twoFactorAuth: boolean;
+
+  @Column({default: false})
+  Security: boolean;
+
+  @Column({default: 0})
+  Friend: number;
+
+  @Column({default: false})
+  Climber: boolean;
+
+  @Column({default: 0})
+  Hater: number;
 
   // @OneToMany(type => Game, games => games.player1 || games.player2)
   // games: Game[];
@@ -124,11 +124,11 @@ export class User {
   // @ManyToMany(type => Channel, channel => channel.userConnected)
   // channelsConnected: Channel[];
 
-  // @ManyToMany(type => User, user => user.friends, {cascade: false})
-  // @JoinTable()
-  // friends: User[];
+  @ManyToMany(type => User, user => user.friends, {cascade: false})
+  @JoinTable()
+  friends: User[];
 
-  // @ManyToMany(type => User, user => user.blackList, {cascade: false})
-  // @JoinTable()
-  // blackList: User[];
+  @ManyToMany(type => User, user => user.blackList, {cascade: false})
+  @JoinTable()
+  blackList: User[];
 }

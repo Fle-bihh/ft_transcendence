@@ -1,11 +1,26 @@
 export declare class User {
     id: string;
+    username: string;
+    password?: string | null;
     firstName: string;
     lastName: string;
-    userName: string;
-    password: string;
-    isActive: boolean;
-    wins: number;
-    losses: number;
-    rank: number;
+    nickName?: string | null;
+    profileImage?: string | null;
+    email: string;
+    isLogged: string;
+    isAdmin: boolean;
+    GoalTaken: number;
+    GoalSet: number;
+    NormalGameNumber: number;
+    RankedGameNumber: number;
+    NormalWinNumber: number;
+    RankedWinNumber: number;
+    PP: number;
+    twoFactorAuth: boolean;
+    Security: boolean;
+    Friend: number;
+    Climber: boolean;
+    Hater: number;
+    friends: User[];
+    blackList: User[];
 }

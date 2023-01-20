@@ -15,7 +15,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../entities/user.entity");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
-const _42_strategy_1 = require("./42.strategy");
 const jwt_strategy_1 = require("./jwt.strategy");
 let AuthModule = class AuthModule {
 };
@@ -37,8 +36,8 @@ AuthModule = __decorate([
             }),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, _42_strategy_1.ApiStrategy, jwt_strategy_1.JwtStrategy],
-        exports: [typeorm_1.TypeOrmModule, passport_1.PassportModule, _42_strategy_1.ApiStrategy, jwt_strategy_1.JwtStrategy],
+        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
+        exports: [typeorm_1.TypeOrmModule, passport_1.PassportModule, jwt_strategy_1.JwtStrategy],
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;
