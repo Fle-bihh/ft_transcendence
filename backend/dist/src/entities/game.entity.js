@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
-const user_entity_1 = require("./user.entity");
 const typeorm_1 = require("typeorm");
 let Game = class Game {
 };
@@ -26,14 +25,6 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Boolean)
 ], Game.prototype, "ranked", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(type => user_entity_1.User, user => user.games),
-    __metadata("design:type", user_entity_1.User)
-], Game.prototype, "player1", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(type => user_entity_1.User, user => user.games),
-    __metadata("design:type", user_entity_1.User)
-], Game.prototype, "player2", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)

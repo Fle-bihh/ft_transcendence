@@ -1,10 +1,13 @@
+$primary: rgb(42, 38, 48);
+$secondary: rgb(53, 49, 59);
+
 .channelSettingsDialog {
   .rawContainer {
     width: 100%;
     height: 100%;
-    background-color: rgb(42, 38, 48);
+    background-color: $primary;
     .firstRaw {
-      background-color: rgb(53, 49, 59);
+      background-color: $primary;
       display: flex;
       width: 90%;
       height: 15%;
@@ -12,8 +15,17 @@
       margin-top: 2%;
       border-radius: 25px;
       .changeChannelName {
-        margin-top: 5%;
+        background-color: $secondary;
+        display: flex;
+        width: 40%;
+        height: 70%;
+        margin-left: 5%;
+        margin-top: 2%;
+        border-radius: 25px;
         .changeChannelNameInput {
+          width: 80%;
+          height: 50%;
+          margin-left: 10%;
         }
       }
       .changeChannelPassword {
@@ -24,7 +36,6 @@
       }
     }
     .secondRaw {
-      background-color: rgb(53, 49, 59);
       display: flex;
       width: 90%;
       height: 30%;
@@ -32,7 +43,8 @@
       margin-top: 2%;
       border-radius: 25px;
       .addAdmin {
-        background-color: rgb(42, 38, 48);
+        background-color: $secondary;
+        // background-color: rgb(42, 38, 48);
         width: 45%;
         height: 90%;
         margin-top: 1%;
@@ -54,7 +66,7 @@
             width: 90%;
             height: 30px;
             min-height: 30px;
-            background-color: rgb(53, 49, 59);
+            background-color: $primary;
             margin-left: 5%;
             border-radius: 25px;
             margin-top: 10px;
@@ -62,7 +74,7 @@
         }
       }
       .removeAdmin {
-        background-color: rgb(42, 38, 48);
+        background-color: $secondary;
         width: 45%;
         height: 90%;
         margin-top: 1%;
@@ -84,7 +96,7 @@
             width: 90%;
             height: 30px;
             min-height: 30px;
-            background-color: rgb(53, 49, 59);
+            background-color: $primary;
             margin-left: 5%;
             border-radius: 25px;
             margin-top: 10px;
@@ -93,7 +105,7 @@
       }
     }
     .thirdRaw {
-      background-color: rgb(53, 49, 59);
+      background-color: $primary;
       display: flex;
       width: 90%;
       height: 30%;
@@ -101,7 +113,7 @@
       margin-top: 2%;
       border-radius: 25px;
       .banUser {
-        background-color: rgb(42, 38, 48);
+        background-color: $secondary;
         width: 45%;
         height: 90%;
         margin-top: 1%;
@@ -123,7 +135,7 @@
             width: 90%;
             height: 30px;
             min-height: 30px;
-            background-color: rgb(53, 49, 59);
+            background-color: $primary;
             margin-left: 5%;
             border-radius: 25px;
             margin-top: 10px;
@@ -131,7 +143,7 @@
         }
       }
       .muteUser {
-        background-color: rgb(42, 38, 48);
+        background-color: $secondary;
         width: 45%;
         height: 90%;
         margin-top: 1%;
@@ -153,7 +165,7 @@
             width: 90%;
             height: 30px;
             min-height: 30px;
-            background-color: rgb(53, 49, 59);
+            background-color: $primary;
             margin-left: 5%;
             border-radius: 25px;
             margin-top: 10px;
@@ -162,11 +174,11 @@
       }
     }
     .leaveChannel {
-      background-color: rgb(53, 49, 59);
+      background-color: $secondary;
       display: flex;
-      width: 90%;
+      width: 20%;
       height: 10%;
-      margin-left: 5%;
+      margin-left: 40%;
       margin-top: 2%;
       border-radius: 25px;
     }
