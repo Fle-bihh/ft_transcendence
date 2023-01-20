@@ -31,12 +31,6 @@ export class User {
   @Column()
   email: string;
 
-  @Column({default: 'offline'})
-  isLogged: string;
-
-  @Column({default: false})
-  isAdmin: boolean;
-
   @Column({default: 0})
   GoalTaken: number;
 
@@ -47,31 +41,16 @@ export class User {
   NormalGameNumber: number;
 
   @Column({default: 0})
-  RankedGameNumber: number;
-
-  @Column({default: 0})
   NormalWinNumber: number;
 
-  @Column({default: 0})
-  RankedWinNumber: number;
-
-  @Column({default: 0})
-  PP: number;
+  @Column({ default: 0 })
+  NormalLossNumber: number;
 
   @Column({default: false})
   twoFactorAuth: boolean;
 
-  @Column({default: false})
-  Security: boolean;
-
   @Column({default: 0})
   Friend: number;
-
-  @Column({default: false})
-  Climber: boolean;
-
-  @Column({default: 0})
-  Hater: number;
 
   @OneToMany(type => Game, games => games.player1 || games.player2)
   games: Game[];
