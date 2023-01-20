@@ -10,48 +10,22 @@ export class Canvas {
 }
 
 export class GameClass {
-    groundWidth: number
-    groundHeight : number
-    groundColor: string
-    netWidth : number
-    netColor : string
-    scorePosPlayer1 : number
-    scorePosPlayer2 : number
     gameOn : boolean
-    startGameButton : any
     map : Map
     roomID : string
     canvas : Canvas
     ball : Ball
     players : Array<Player>
-    KEYDOWN : string
-    KEYUP : string
-    KEYZ : string
-    KEYS : string
-    SPACEBAR : string
 
     constructor(gameMap : string, username : string, roomID : string, playerId : string){
-        this.groundWidth = 700
-        this.groundHeight = 400
-        this.groundColor = "#000000"
-        this.netWidth = 6
-        this.netColor = "#FFFFFF"
-        this.scorePosPlayer1 = 300
-        this.scorePosPlayer2 = 365
         this.gameOn = false
         this.roomID = roomID
         this.map = new Map(gameMap)
-        this.startGameButton = null
         this.canvas = new Canvas()
         this.ball = new Ball(this.canvas)
         this.players = new Array()
         this.players.push(new Player(this.canvas, username, playerId))
 		this.players.push(new Player(this.canvas))
-        this.KEYDOWN = "ArrowDown"
-        this.KEYUP = "ArrowUp"
-        this.KEYZ = "z"
-        this.KEYS = "s"
-        this.SPACEBAR = " "
     }
 
     setOponnent(id: string, username: string) {
@@ -189,6 +163,7 @@ export class Map {
 	mapColor: string
 
 	constructor(gameMap: string) {
+		this.mapColor = "black"
 		if (gameMap == "map1")
 			this.mapColor = "black"
 		else if (gameMap == "map2") {
@@ -207,30 +182,20 @@ export class Ball {
     directionY : number
     speed : number
     radius : number
-    old_x: number
-	old_y: number
 
     constructor(canvas : Canvas) {
         this.posX = canvas.width / 2
         this.posY = canvas.height / 2
-        this.speed = 3
+        this.speed = 2
         this.directionX = random(0, 1) ? -this.speed : this.speed
         this.directionY = 0
         this.radius = 10;
-        this.old_x = -1;
-		this.old_y = -1;
     }
 
     reset(canvas: Canvas) {
-		if (this.old_x < 0) {
-			this.posX = canvas.width / 2
-			this.posY = canvas.height / 2
-		}
-		else {
-			this.posX = this.old_x
-			this.posY = this.old_y
-		}
-		this.speed = 3
+		this.posX = canvas.width / 2
+		this.posY = canvas.height / 2
+		this.speed = 2
 		this.directionX = random(0, 1) ? -this.speed : this.speed
 		this.directionY = 0
 		this.radius = 10

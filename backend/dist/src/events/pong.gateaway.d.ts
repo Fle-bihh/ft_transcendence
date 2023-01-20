@@ -9,9 +9,6 @@ export declare class PongGateway implements OnGatewayConnection, OnGatewayDiscon
     getRoomByID(roomID: string): [number, GameClass] | null;
     getRoomByClientLogin(ClientLogin: string): [number, GameClass] | null;
     getAllRoomByClientID(ClientID: string): any[];
-    update_user(client: Socket, user: {
-        login: string;
-    }): Promise<void>;
     joinRoom(client: Socket, roomId: string): Promise<void>;
     render(roomID: string): Promise<void>;
     handleConnection(client: Socket): void;

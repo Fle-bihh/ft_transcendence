@@ -10,27 +10,14 @@ class Canvas {
 exports.Canvas = Canvas;
 class GameClass {
     constructor(gameMap, username, roomID, playerId) {
-        this.groundWidth = 700;
-        this.groundHeight = 400;
-        this.groundColor = "#000000";
-        this.netWidth = 6;
-        this.netColor = "#FFFFFF";
-        this.scorePosPlayer1 = 300;
-        this.scorePosPlayer2 = 365;
         this.gameOn = false;
         this.roomID = roomID;
         this.map = new Map(gameMap);
-        this.startGameButton = null;
         this.canvas = new Canvas();
         this.ball = new Ball(this.canvas);
         this.players = new Array();
         this.players.push(new Player(this.canvas, username, playerId));
         this.players.push(new Player(this.canvas));
-        this.KEYDOWN = "ArrowDown";
-        this.KEYUP = "ArrowUp";
-        this.KEYZ = "z";
-        this.KEYS = "s";
-        this.SPACEBAR = " ";
     }
     setOponnent(id, username) {
         this.players[1].id = id;
@@ -144,8 +131,9 @@ class Player {
 exports.Player = Player;
 class Map {
     constructor(gameMap) {
+        this.mapColor = "black";
         if (gameMap == "map1")
-            this.mapColor = "rgb(255, 255, 255)";
+            this.mapColor = "black";
         else if (gameMap == "map2") {
             this.mapColor = 'yellow';
         }
@@ -159,23 +147,15 @@ class Ball {
     constructor(canvas) {
         this.posX = canvas.width / 2;
         this.posY = canvas.height / 2;
-        this.speed = 3;
+        this.speed = 2;
         this.directionX = random(0, 1) ? -this.speed : this.speed;
         this.directionY = 0;
         this.radius = 10;
-        this.old_x = -1;
-        this.old_y = -1;
     }
     reset(canvas) {
-        if (this.old_x < 0) {
-            this.posX = canvas.width / 2;
-            this.posY = canvas.height / 2;
-        }
-        else {
-            this.posX = this.old_x;
-            this.posY = this.old_y;
-        }
-        this.speed = 3;
+        this.posX = canvas.width / 2;
+        this.posY = canvas.height / 2;
+        this.speed = 2;
         this.directionX = random(0, 1) ? -this.speed : this.speed;
         this.directionY = 0;
         this.radius = 10;

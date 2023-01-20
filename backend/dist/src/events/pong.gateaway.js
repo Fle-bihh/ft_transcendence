@@ -48,15 +48,6 @@ let PongGateway = class PongGateway {
         });
         return (tmp);
     }
-    async update_user(client, user) {
-        console.log("updateeeeeeeeeeeee");
-        allClients.find(item => item.id == client.id).username = user.login;
-        const room = this.getRoomByClientLogin(user.login);
-        if (room) {
-            console.log('Update User ', user.login, " id : ", client.id, " roomID : ", room);
-            this.joinRoom(client, room[1].roomID);
-        }
-    }
     async joinRoom(client, roomId) {
         this.logger.log(`[Pong-Gateway] { joinRoom } Client \'${allClients.find(item => item.id == client.id).username}\' join room \'${roomId}\'`);
         client.join(roomId);
@@ -124,6 +115,7 @@ let PongGateway = class PongGateway {
         }
     }
     async checkReconnexion(client, user) {
+        allClients.find(item => item.id == client.id).username = user.login;
         const room = this.getRoomByClientLogin(user.login);
         if (room != null) {
             this.joinRoom(client, this.allGames[room[0]].roomID);
@@ -243,12 +235,6 @@ __decorate([
     (0, websockets_1.WebSocketServer)(),
     __metadata("design:type", socket_io_2.Server)
 ], PongGateway.prototype, "io", void 0);
-__decorate([
-    (0, websockets_1.SubscribeMessage)('UPDATE_USER'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
-    __metadata("design:returntype", Promise)
-], PongGateway.prototype, "update_user", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('JOIN_ROOM'),
     __metadata("design:type", Function),

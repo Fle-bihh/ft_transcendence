@@ -18,7 +18,7 @@ const GamePage = (props: any) => {
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
             ctx.fillStyle = room.map.mapColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, room.canvas.width, room.canvas.height);
         }
     }
 

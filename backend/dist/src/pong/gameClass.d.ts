@@ -4,25 +4,12 @@ export declare class Canvas {
     constructor();
 }
 export declare class GameClass {
-    groundWidth: number;
-    groundHeight: number;
-    groundColor: string;
-    netWidth: number;
-    netColor: string;
-    scorePosPlayer1: number;
-    scorePosPlayer2: number;
     gameOn: boolean;
-    startGameButton: any;
     map: Map;
     roomID: string;
     canvas: Canvas;
     ball: Ball;
     players: Array<Player>;
-    KEYDOWN: string;
-    KEYUP: string;
-    KEYZ: string;
-    KEYS: string;
-    SPACEBAR: string;
     constructor(gameMap: string, username: string, roomID: string, playerId: string);
     setOponnent(id: string, username: string): void;
     checkCollisionPlayer(id: number): boolean;
@@ -59,8 +46,6 @@ export declare class Ball {
     directionY: number;
     speed: number;
     radius: number;
-    old_x: number;
-    old_y: number;
     constructor(canvas: Canvas);
     reset(canvas: Canvas): void;
 }

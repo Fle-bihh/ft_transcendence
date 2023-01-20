@@ -60,18 +60,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return (tmp)
   }
 
-  @SubscribeMessage('UPDATE_USER')
-  async update_user(client: Socket, user: { login: string }) {
-    console.log("updateeeeeeeeeeeee")
-    allClients.find(item => item.id == client.id)!.username = user.login
-    const room = this.getRoomByClientLogin(user.login)
-    if (room)
-    {
-      console.log('Update User ', user.login, " id : ", client.id, " roomID : ", room)
-      this.joinRoom(client, room[1].roomID)
-    }
-  }
-
   @SubscribeMessage('JOIN_ROOM')
   async joinRoom(client: Socket, roomId: string) {
     this.logger.log(`[Pong-Gateway] { joinRoom } Client \'${allClients.find(item => item.id == client.id).username}\' join room \'${roomId}\'`)
@@ -159,6 +147,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('CHECK_RECONNEXION')
   async checkReconnexion( client: Socket, user: { login: string }) {
+    allClients.find(item => item.id == client.id)!.username = user.login
     const room = this.getRoomByClientLogin(user.login)
     if (room != null) {
       this.joinRoom(client, this.allGames[room[0]].roomID)
