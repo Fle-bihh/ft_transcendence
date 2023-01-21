@@ -109,7 +109,9 @@ let ChatGateway = class ChatGateway {
     join_channel(client, data) {
         if (db_channels.find((item) => item.name == data.channelName) != undefined) {
             if (db_participants.filter((item) => item.channel == data.channelName)
-                .length < 50) {
+                .length < 50 &&
+                db_participants.filter((item) => item.channel == data.channelName)
+                    .length > 0) {
                 if (db_participants.find((item) => item.login == data.login && item.channel == data.channelName) == undefined) {
                     if (db_channels.find((item) => item.name == data.channelName)
                         .password == data.channelPassword) {
@@ -133,7 +135,56 @@ let ChatGateway = class ChatGateway {
                     }
                 }
             }
+            else if (db_participants.filter((item) => item.channel == data.channelName)
+                .length === 0) {
+                if (db_channels.find((item) => item.name == data.channelName).password ==
+                    data.channelPassword) {
+                    db_participants.push({
+                        index: db_participants.length,
+                        login: data.login,
+                        channel: data.channelName,
+                        admin: true,
+                    });
+                    db_messages.push({
+                        index: db_messages.length,
+                        sender: '___server___',
+                        receiver: data.channelName,
+                        content: `${data.login} joined \'${data.channelName}\'`,
+                        time: new Date(),
+                    });
+                    db_channels.forEach((channel) => {
+                        if (channel.name === data.channelName) {
+                            channel.owner = data.login;
+                        }
+                    });
+                    client.emit('channel_joined', {
+                        channelName: data.channelName,
+                    });
+                    this.get_all_conv_info(client, { sender: data.login });
+                }
+            }
         }
+    }
+    leave_channel(client, data) {
+        let index = -1;
+        db_participants.forEach((participant) => {
+            index++;
+            if (participant.login === data.login &&
+                participant.channel === data.channelName) {
+                db_participants.splice(index, 1);
+                db_messages.push({
+                    index: db_messages.length,
+                    sender: '___server___',
+                    receiver: data.channelName,
+                    content: `${data.login} left \'${data.channelName}\'`,
+                    time: new Date(),
+                });
+                client.emit('channel_left', {
+                    channelName: data.channelName,
+                });
+                this.get_all_conv_info(client, { sender: data.login });
+            }
+        });
     }
     add_participant(client, data) {
         console.log('ADD_PARTICIPANT recu ChatGateway', data);
@@ -158,6 +209,46 @@ let ChatGateway = class ChatGateway {
                 tmp.socket.emit('new_message');
         });
         console.log('db_participants after ADD = ', db_participants);
+    }
+    get_participants(client, data) {
+        this.logger.log('GET_PARTICIPANTS received in back with', data);
+        let tmpArray = Array();
+        db_participants.forEach((participant) => {
+            if (participant.channel === data.channel) {
+                tmpArray.push({
+                    login: participant.login,
+                    admin: participant.admin,
+                });
+            }
+        });
+        client.emit('get_participants', tmpArray);
+        this.logger.log('send get_participants to', data.login);
+    }
+    get_participant_role(client, data) {
+        console.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
+        let role;
+        db_channels.forEach((channel) => {
+            if (channel.name === data.channel) {
+                if (channel.owner === data.login) {
+                    role = 'owner';
+                }
+                else {
+                    db_participants.forEach((participant) => {
+                        if (participant.login === data.login) {
+                            if (participant.channel === data.channel) {
+                                if (participant.admin) {
+                                    role = 'admin';
+                                }
+                                else {
+                                    role = 'participant';
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        client.emit('get_participant_role', { role: role });
     }
     change_channel_name(client, data) {
         this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
@@ -372,11 +463,29 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ChatGateway.prototype, "join_channel", null);
 __decorate([
+    (0, websockets_1.SubscribeMessage)('LEAVE_CHANNEL'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatGateway.prototype, "leave_channel", null);
+__decorate([
     (0, websockets_1.SubscribeMessage)('ADD_PARTICIPANT'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", void 0)
 ], ChatGateway.prototype, "add_participant", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('GET_PARTICIPANTS'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatGateway.prototype, "get_participants", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('GET_PARTICIPANT_ROLE'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatGateway.prototype, "get_participant_role", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('CHANGE_CHANNEL_NAME'),
     __metadata("design:type", Function),
