@@ -50,8 +50,7 @@ const Navbar = (props: any) => {
   });
   const HomeItems = [
     { Name: "Home", Link: "/" },
-    // ,
-    // {Name: 'Versions', Link:'/versions'}
+    {Name: 'Pong', Link:'/pong'}
   ];
   const [open, Setopen] = useState(false);
   const [open2, Setopen2] = useState(false);

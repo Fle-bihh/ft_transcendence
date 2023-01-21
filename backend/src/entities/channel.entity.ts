@@ -16,8 +16,8 @@ export class Channel {
   // @ManyToOne(type => User, user => user.channels, { nullable: true })
   // creator: User | null;
 
-  @OneToMany(type => Message, message => message.channel)
-  messages: Message[];
+  // @OneToMany(type => Message, message => message.channel)
+  // messages: Message[];
 
   // @ManyToMany(type => User, user => user.channelsAdmin)
   // @JoinTable()

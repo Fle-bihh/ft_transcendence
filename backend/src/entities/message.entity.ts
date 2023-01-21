@@ -19,6 +19,6 @@ export class Message {
   // @ManyToOne(type => User, user => user.messagesReceive, {nullable: true, cascade: false})
   // receiver: User | null;
 
-  @ManyToOne(type => Channel, channel => channel.messages, {nullable: true})
-  channel: Channel | null;
+  // @ManyToOne(type => Channel, channel => channel.messages, {nullable: true})
+  // channel: Channel | null;
 }
