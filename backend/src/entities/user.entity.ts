@@ -55,32 +55,32 @@ export class User {
   @OneToMany(type => Game, games => games.player1 || games.player2)
   games: Game[];
 
-  // @OneToMany(type => FriendRequest, request => request.from)
-  // requestFrom: FriendRequest[];
+  @OneToMany(type => FriendRequest, request => request.from)
+  requestFrom: FriendRequest[];
 
-  // @OneToMany(type => FriendRequest, request => request.to)
-  // requestTo: FriendRequest[];
+  @OneToMany(type => FriendRequest, request => request.to)
+  requestTo: FriendRequest[];
 
-  // @OneToMany(type => Message, message => message.sender)
-  // messagesSend: Message[];
+  @OneToMany(type => Message, message => message.sender)
+  messagesSend: Message[];
 
-  // @OneToMany(type => Message, message => message.receiver)
-  // messagesReceive: Message[];
+  @OneToMany(type => Message, message => message.receiver)
+  messagesReceive: Message[];
 
-  // @OneToMany(type => Channel, channel => channel.creator)
-  // channels: Channel[];
+  @OneToMany(type => Channel, channel => channel.creator)
+  channels: Channel[];
 
-  // @ManyToMany(type => Channel, channel => channel.admin)
-  // channelsAdmin: Channel[];
+  @ManyToMany(type => Channel, channel => channel.admin)
+  channelsAdmin: Channel[];
 
-  // @ManyToMany(type => Channel, channel => channel.userConnected)
-  // channelsConnected: Channel[];
+  @ManyToMany(type => Channel, channel => channel.userConnected)
+  channelsConnected: Channel[];
 
-  // @ManyToMany(type => User, user => user.friends, {cascade: false})
-  // @JoinTable()
-  // friends: User[];
+  @ManyToMany(type => User, user => user.friends, {cascade: false})
+  @JoinTable()
+  friends: User[];
 
-  // @ManyToMany(type => User, user => user.blackList, {cascade: false})
-  // @JoinTable()
-  // blackList: User[];
+  @ManyToMany(type => User, user => user.blackList, {cascade: false})
+  @JoinTable()
+  blackList: User[];
 }
