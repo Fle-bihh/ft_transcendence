@@ -12,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import "reflect-metadata";
 import {DataSource} from 'typeorm';
 import { GameModule } from './game/game.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [EventsModule, 

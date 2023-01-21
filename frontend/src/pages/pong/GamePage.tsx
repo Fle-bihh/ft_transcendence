@@ -18,7 +18,7 @@ const GamePage = (props: any) => {
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
             ctx.fillStyle = room.map.mapColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, room.canvas.width, room.canvas.height);
         }
     }
 
@@ -74,7 +74,7 @@ const GamePage = (props: any) => {
 
     function drawText(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const index_p = persistantReducer.userReducer.user!.username == room.players[0].username ? 0 : 1
+            const index_p = persistantReducer.userReducer.user!.login == room.players[0].username ? 0 : 1
             if (!room.players[index_p].ready) {
                 ctx.font = 'bold 50px Arial';
                 ctx.fillStyle = 'white';

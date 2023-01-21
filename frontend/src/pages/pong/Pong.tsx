@@ -17,7 +17,7 @@ const Pong = (props : any) => {
     useEffect(() => {
         if (!verif)
         {
-            gameSocket.emit('UPDATE_USER', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
+            gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
             setVerif(true)
         }
     })

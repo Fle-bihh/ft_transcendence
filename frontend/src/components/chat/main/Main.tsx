@@ -1,7 +1,8 @@
 //
 import "./Main.scss";
 import { RootState } from "../../../state";
-import ChannelSettingsDialog from "../channelSettingsDialog/ChannelSettingsDialog"
+import ChannelSettingsDialog from "../channelSettingsDialog/ChannelSettingsDialog";
+import UserProfileDialog from "../../userProfileDialog/UserProfileDialog";
 
 //
 import React, { useState, useEffect } from "react";
@@ -14,6 +15,7 @@ import {
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
+import Person2Icon from "@mui/icons-material/Person2";
 import { useSelector } from "react-redux";
 
 const Main = (props: {
@@ -49,6 +51,7 @@ const Main = (props: {
   );
   const [inputValue, setInputValue] = useState("");
   const [topInputValue, setTopInputValue] = useState("");
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
@@ -128,6 +131,8 @@ const Main = (props: {
     }
   );
 
+  
+
   return (
     <div className="main">
       {props.newConvMessageBool ? (
@@ -171,35 +176,52 @@ const Main = (props: {
                 <SettingsIcon />
               </IconButton>
             ) : (
-              <div></div>
+              <div className="messageButtons">
+                <IconButton
+                  className="profileButton"
+                  color="secondary"
+                  style={{ color: "white", marginRight: "2%" }}
+                  aria-label="upload picture"
+                  component="label"
+                  onClick={() => {
+                    setProfileDialogOpen(true);
+                  }}
+                >
+                  {/* <input hidden accept="image/*" type="file" /> */}
+                  <Person2Icon />
+                </IconButton>
+                <IconButton
+                  className="startGameButton"
+                  color="secondary"
+                  style={{ color: "white", marginRight: "2%" }}
+                  aria-label="upload picture"
+                  component="label"
+                >
+                  {/* <input hidden accept="image/*" type="file" /> */}
+                  <SportsEsportsIcon />
+                </IconButton>
+                <IconButton
+                  className="blockButton"
+                  color="secondary"
+                  style={{ color: "white", marginRight: "2%" }}
+                  aria-label="upload picture"
+                  component="label"
+                  onClick={() => {
+                    utils.socket.emit("BLOCK_USER", {
+                      login: user.user?.login,
+                      target: props.openConvName,
+                    });
+                    console.log(
+                      "send BLOCK_USER to back from",
+                      user.user?.login
+                    );
+                  }}
+                >
+                  {/* <input hidden accept="image/*" type="file" /> */}
+                  <BlockIcon />
+                </IconButton>
+              </div>
             )}
-            <IconButton
-              className="startGameButton"
-              color="secondary"
-              style={{ color: "white", marginRight: "2%" }}
-              aria-label="upload picture"
-              component="label"
-            >
-              {/* <input hidden accept="image/*" type="file" /> */}
-              <SportsEsportsIcon />
-            </IconButton>
-            <IconButton
-              className="blockButton"
-              color="secondary"
-              style={{ color: "white", marginRight: "2%" }}
-              aria-label="upload picture"
-              component="label"
-              onClick={() => {
-                utils.socket.emit("BLOCK_USER", {
-                  login: user.user?.username,
-                  target: props.openConvName,
-                });
-                console.log("send BLOCK_USER to back from", user.user?.username);
-              }}
-            >
-              {/* <input hidden accept="image/*" type="file" /> */}
-              <BlockIcon />
-            </IconButton>
           </div>
         </div>
       )}
@@ -270,6 +292,11 @@ const Main = (props: {
         settingsDialogOpen={settingsDialogOpen}
         openConvName={props.openConvName}
         setOpenConvName={props.setOpenConvName}
+        allChannels={props.allChannels}
+      />
+      <UserProfileDialog
+        profileDialogOpen={profileDialogOpen}
+        setProfileDialogOpen={setProfileDialogOpen}
       />
     </div>
   );
