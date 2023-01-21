@@ -25,9 +25,14 @@ export class UsersController {
     return await this.usersService.activate2FA(user);
   }
 
-  @Get('/:id')
+  @Get('/id/:id')
   async getUserById(@Param('id') id: string, @GetUser() user: User): Promise<User> {
     return await this.usersService.getUserById(id, user);
+  }
+
+  @Get('/login/:login')
+  async getUserByLogin(@Param('login') login: string): Promise<User> {
+    return await this.usersService.getUserByLogin(login);
   }
 
   @Get('/:id/match_history')

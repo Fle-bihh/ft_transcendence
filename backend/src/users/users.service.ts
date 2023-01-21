@@ -59,6 +59,13 @@ export class UsersService {
     return null;
   }
 
+  async getUserByLogin(username: string): Promise<User> {
+    const found = await this.usersRepository.findOneBy({ username });
+    if (found)
+      return found;
+    return null;
+  }
+
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     const found = await this.getUserById(id, user);
     console.log(found);

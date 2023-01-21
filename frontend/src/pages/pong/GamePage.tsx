@@ -34,7 +34,7 @@ const GamePage = (props: any) => {
 
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const currentPlayer = room.players.find(item => item.username == persistantReducer.userReducer.user?.login)
+            const currentPlayer = room.players.find(item => item.username == persistantReducer.userReducer.user?.username)
             ctx.font = 'bold 20px Arial';
             ctx.fillStyle = 'white';
             ctx.textAlign = "center";
@@ -157,7 +157,7 @@ const GamePage = (props: any) => {
             window.location.replace('http://localhost:3000');
         }, 10000);
 
-        if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.login) {
+        if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.username) {
             U = finishRoom?.players[0]
             H = finishRoom?.players[1]
         } else {

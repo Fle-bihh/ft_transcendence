@@ -8,6 +8,7 @@ import { EventsModule } from './events/events.module'
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ChannelModule } from './channel/channel.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import "reflect-metadata";
 import {DataSource} from 'typeorm';
 import { GameModule } from './game/game.module';

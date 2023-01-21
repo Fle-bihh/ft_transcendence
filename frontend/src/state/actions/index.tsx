@@ -3,7 +3,28 @@ import { userActionType } from "../action-types";
 type SetUserAction = {
     type: userActionType.SETUSER
     payload: {
-        login: string
+        id: string,
+        username: string,
+        password: string,
+        firstName: string,
+        lastName: string,
+        nickName: string,
+        profileImage: string,
+        email: string,
+        isLogged: boolean,
+        isAdmin: boolean,
+        GoalTaken: number,
+        GoalSet: number,
+        NormalGameNumber: number,
+        RankedGameNumber: number,
+        NormalWinNumber: number,
+        RankedWinNumber: number,
+        PP: number,
+        twoFactorAuth: boolean,
+        Security: boolean,
+        Friend: number,
+        Climber: boolean,
+        Hater: number,
     } | null
 }
 

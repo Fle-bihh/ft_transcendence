@@ -47,25 +47,25 @@ const Friends = () => {
 
   useEffect(() => {
     if (openFriendsPage) {
-      utils.socket.emit("GET_USER_FRIENDS", user.user?.login);
-      console.log(user.user?.login, "send GET_USER_FRIENDS to backend");
-      utils.socket.emit("GET_USERNAME", user.user?.login);
-      console.log(user.user?.login, "send GET_USERNAME to backend");
-      utils.socket.emit("GET_ALL_USERS", user.user?.login);
-      console.log(user.user?.login, "send GET_ALL_USERS to backend");
+      utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
+      console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
+      utils.socket.emit("GET_USERNAME", user.user?.username);
+      console.log(user.user?.username, "send GET_USERNAME to backend");
+      utils.socket.emit("GET_ALL_USERS", user.user?.username);
+      console.log(user.user?.username, "send GET_ALL_USERS to backend");
     }
     setOpenFriendsPage(false);
   });
 
   utils.socket.removeListener("get_username");
   utils.socket.on("get_username", (username: string) => {
-    console.log(user.user?.login, "received get_username with", username);
+    console.log(user.user?.username, "received get_username with", username);
     setMyUsername(username);
   });
 
   utils.socket.removeListener("get_all_users");
   utils.socket.on("get_all_users", (users: Array<{ username: string }>) => {
-    console.log(user.user?.login, "received get_all_users with", users);
+    console.log(user.user?.username, "received get_all_users with", users);
     let tmpArray = Array<{ index: number; username: string }>();
     users.map((user) => {
       tmpArray.push({
@@ -82,7 +82,7 @@ const Friends = () => {
     (
       data: Array<{ username: string; username2: string; friendshipDate: Date }>
     ) => {
-      console.log(user.user?.login, "received get_user_friends with", data);
+      console.log(user.user?.username, "received get_user_friends with", data);
       let tmpArray = Array<{
         index: number;
         username: string;

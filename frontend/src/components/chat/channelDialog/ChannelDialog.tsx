@@ -119,7 +119,7 @@ const ChannelDialog = (props: {
         owner: string;
       }>
     ) => {
-      console.log("get_all_channels recu", user.user?.login, "with", data);
+      console.log("get_all_channels recu", user.user?.username, "with", data);
       props.setAllChannels([...data]);
     }
   );
@@ -263,23 +263,23 @@ const ChannelDialog = (props: {
                 window.addEventListener("keydown", handleKeyDown);
               }
               utils.socket.emit('JOIN_CHANNEL', {
-                login: user.user?.login,
+                username: user.user?.username,
                 channelName: joinChannelSelect,
                 channelPassword: joinChannelPasswordInput,
               })
               //   utils.socket.emit("ADD_PARTICIPANT", {
-              //     login: user.user?.login,
+              //     username: user.user?.username,
               //     channel: channel.name,
               //     admin: false,
               //   });
               //   console.log(
               //     "send ADD_PARTICIPANT to back from ",
-              //     user.user?.login
+              //     user.user?.username
               //   );
               //   console.log("channel: ", channel.name);
               //   props.setOpenConvName(channel.name);
               //   const newParticipantMsg =
-              //     user.user?.login + " joined this Channel";
+              //     user.user?.username + " joined this Channel";
               //   handleClose();
             }}
           >
@@ -376,13 +376,13 @@ const ChannelDialog = (props: {
                 name: channelNameInput,
                 password: channelPasswordInput,
                 description: descriptionInput,
-                owner: user.user?.login,
+                owner: user.user?.username,
               });
               console.log(
                 "send CREATE_CHANNEL to back from ",
-                user.user?.login
+                user.user?.username
               );
-              console.log("send ADD_MESSAGE to back from ", user.user?.login);
+              console.log("send ADD_MESSAGE to back from ", user.user?.username);
               console.log("privacy: ", alignment);
               console.log("name: ", channelNameInput);
               console.log("password: ", channelPasswordInput);
@@ -426,7 +426,7 @@ const ChannelDialog = (props: {
               } else {
                 // setShowJoinChannelPasswordModal(false);
                 utils.socket.emit('JOIN_CHANNEL', {
-                  login: user.user?.login,
+                  username: user.user?.username,
                   channelName: joinChannelSelect,
                   channelPassword: joinChannelPasswordInput,
                 })

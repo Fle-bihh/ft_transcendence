@@ -38,9 +38,9 @@ const Chat = () => {
 
   useEffect(() => {
     if (!allConv.length && launchChatBool) {
-      utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.login });
+      utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.username });
       console.log("send GET_ALL_CONV_INFO to back");
-      utils.socket.emit("UPDATE_USER_SOCKET", { login: user.user?.login });
+      utils.socket.emit("UPDATE_USER_SOCKET", { login: user.user?.username });
       console.log("send UPDATE_USER_SOCKET to back");
       utils.socket.emit("GET_ALL_USERS");
       console.log("send GET_ALL_USERS to back");
@@ -73,7 +73,7 @@ const Chat = () => {
   utils.socket.removeListener("new_message");
   utils.socket.on("new_message", () => {
     console.log("new_message recu front");
-    utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.login });
+    utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.username });
     console.log("send GET_ALL_CONV_INFO to back");
   });
 

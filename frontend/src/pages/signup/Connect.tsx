@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ip } from "../../App";
 
 const Connect = () => {
@@ -10,14 +10,14 @@ const Connect = () => {
   const err = urlParams.get("error") as string;
 
 
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   if (err) {
     alert(`Error: ${err} !\nIf you want to connect with 42 you must authorize !`)
     navigate({
       pathname: '/',
       state: { reason: `${err}` }
-    } as any, {replace: true});
+    } as any, { replace: true });
   }
 
   // if (err) { 
@@ -33,21 +33,24 @@ const Connect = () => {
     url: '/auth/api42/signin',
     method: 'post',
     baseURL: `http://${ip}:5001`,
-      params: {
+    params: {
       "code": code,
       "nickName": null,
     }
   }
-               ).then((response: AxiosResponse<any, any>) =>  {
-                 window.open(`http://${ip}:3000/cookies?token=${response.data.accessToken}`, '_self')
-                   console.log(response.data.accessToken)}).catch(err =>{
-                   console.log('ouiioun')
-                 })
+  ).then((response: AxiosResponse<any, any>) => {
+    console.log('response,', response);
+    // window.open(`http://${ip}:3000/cookies?token=${response.data.accessToken}`, '_self')
+    console.log(response.data.accessToken)
+  }).catch(err => {
+    console.log('ouiioun')
+  })
 
-                 return (
-                   <div>
-                   </div>
-               )
+
+
+  return (
+      <Navigate to='/signin' ></Navigate>
+  )
 
 };
 

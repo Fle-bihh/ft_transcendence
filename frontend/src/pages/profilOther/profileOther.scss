@@ -1,16 +1,15 @@
-
 //------------PETIT ECRAN----------------
 
 @media screen and (max-width: 630px) {
-    .profilePageContainer {
+    .profilePageContainerOther {
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color: greenyellow;
+        background-color: olivedrab;
 
         // line-Height: 19%;
 
-        .profile {
+        .profileOther {
             height: 96%;
             width: 96%;
             background-color: white;
@@ -18,9 +17,9 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
-
+            // align-items: center;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-            .avatarItem {
+            .avatarItemOther {
                 height: 50%;
                 // position: relative;
                 display: flex;
@@ -29,7 +28,7 @@
                 flex-direction: column;
                 position: relative;
 
-                .avatar {
+                .avatarOther {
                     margin-top: 2%;
                     height: auto;
                     width: 45%;
@@ -38,39 +37,87 @@
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
-            .avatarChange {
-                // variant:"contained";
-
+            .userConnect {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
                 display: flex;
-
-                color: white;
-                font-family: "system-ui";
-                background-color: black;
-                margin-inline: auto;
                 margin-top: 7%;
 
-                // align-items: center;
-                text-transform: capitalize;
+                // vertical-align: middle;
 
-                &:hover {
-                    color: white;
-                    background-color: grey;
+                .circleConnectLigne {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: green;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
+                }
+            }
+            .userConnectHorsLigne {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+
+                .circleConnectHorsLigne {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: red;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
                 }
             }
         }
-        .infoUser {
+        .infoUserOther {
             color: black;
             justify-content: center;
-            // margin-top: 2%;
+            // margin-top: 3%;
             display: flex;
             align-items: center;
 
-            .userName {
+            .userNameOther {
                 color: grey;
                 // border: 2px solid green;
                 font-family: "system-ui";
             }
-            .userNamePrint {
+            .userNamePrintOther {
                 white-space: pre-line;
                 margin-left: 1.66%;
                 text-transform: capitalize;
@@ -82,7 +129,7 @@
                 // text-overflow: ellipsis;
             }
         }
-        .infoUsername {
+        .infoUsernameOther {
             color: black;
             justify-content: center;
             // margin-top: 2%;
@@ -90,12 +137,12 @@
             align-items: center;
             // white-space:pre-line;
 
-            .userNameChange {
+            .userNameChangeOther {
                 color: grey;
                 font-family: "system-ui";
                 // text-align: left;
             }
-            .userNamePrintChange {
+            .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
 
@@ -104,7 +151,7 @@
                 // font-weight: 200;
             }
         }
-        .buttonChange {
+        .buttonChangeOther {
             // variant:"contained";
             display: flex;
             color: white;
@@ -112,18 +159,17 @@
             background-color: black;
             margin-inline: auto;
 
-
             // align-items: center;
             text-transform: capitalize;
             //  white-space:normal;
         }
 
-        .buttonChange:hover {
+        .buttonChangeOther:hover {
             color: white;
             background-color: grey;
         }
 
-        .stat {
+        .statOther {
             height: 96%;
             width: 96%;
             background-color: white;
@@ -135,7 +181,7 @@
 
             overflow-x: scroll;
 
-            .rectangle {
+            .rectangleOther {
                 height: 28%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
@@ -148,7 +194,7 @@
                 box-sizing: border-box;
             }
 
-            .itemLoser {
+            .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
                 // width: 100%;
@@ -160,8 +206,8 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-// 
-            .itemWinner {
+            //
+            .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
                 // width: 100%;
@@ -173,7 +219,7 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-            .results {
+            .resultsOther {
                 width: 20%;
                 padding: 10px;
                 background-color: none;
@@ -186,16 +232,15 @@
                 vertical-align: middle;
                 justify-content: space-between;
             }
-            .score {
+            .scoreOther {
                 font-size: x-small;
                 padding: 2px;
                 font-weight: 900;
             }
-            .avatarStatuser{
+            .avatarStatuserOther {
                 padding: 2px;
-
             }
-            .name {
+            .nameOther {
                 padding: 2px;
 
                 font-size: x-small;
@@ -203,7 +248,6 @@
 
                 // text-transform: uppercase;
             }
-
         }
     }
 }
@@ -213,15 +257,15 @@
 //------------MOYEN ECRAN----------------------------------------------------------------------------
 
 @media screen and (min-width: 630px) {
-    .profilePageContainer {
+    .profilePageContainerOther {
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color:lightblue;
+        background-color: mediumblue;
 
         // line-Height: 19%;
 
-        .profile {
+        .profileOther {
             height: 96%;
             width: 96%;
             background-color: white;
@@ -231,7 +275,7 @@
             min-width: 400px;
 
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-            .avatarItem {
+            .avatarItemOther {
                 height: 50%;
                 // position: relative;
                 display: flex;
@@ -240,7 +284,7 @@
                 flex-direction: column;
                 position: relative;
 
-                .avatar {
+                .avatarOther {
                     margin-top: 2%;
                     height: auto;
                     width: 30%;
@@ -249,28 +293,73 @@
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
-            .avatarChange {
-                // variant:"contained";
+            .userConnect {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                // vertical-align: middle;
 
+                .circleConnectLigne {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: green;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
+                }
+            }
+            .userConnectHorsLigne {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
                 display: flex;
 
-                color: white;
-                font-family: "system-ui";
-                background-color: black;
-                margin-inline: auto;
-                // margin-top: 3%;
-                // z-index: 999;
+                .circleConnectHorsLigne {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: red;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
 
-                // align-items: center;
-                text-transform: capitalize;
+                    // display: flex;
 
-                &:hover {
-                    color: white;
-                    background-color: grey;
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
                 }
             }
         }
-        .infoUser {
+        .infoUserOther {
             color: black;
             justify-content: center;
             margin-top: 1%;
@@ -278,14 +367,13 @@
             display: flex;
             align-items: center;
 
-            .userName {
+            .userNameOther {
                 color: grey;
                 // border: 2px solid green;
                 font-family: "system-ui";
-            // margin-top: 3%;
-
+                // margin-top: 3%;
             }
-            .userNamePrint {
+            .userNamePrintOther {
                 // white-space: pre-line;
                 margin-left: 1.66%;
                 text-transform: capitalize;
@@ -297,7 +385,7 @@
                 // text-overflow: ellipsis;
             }
         }
-        .infoUsername {
+        .infoUsernameOther {
             color: black;
             justify-content: center;
             margin-top: 2%;
@@ -305,12 +393,12 @@
             align-items: center;
             // white-space:pre-line;
 
-            .userNameChange {
+            .userNameChangeOther {
                 color: grey;
                 font-family: "system-ui";
                 // text-align: left;
             }
-            .userNamePrintChange {
+            .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
 
@@ -319,7 +407,7 @@
                 // font-weight: 200;
             }
         }
-        .buttonChange {
+        .buttonChangeOther {
             // variant:"contained";
             display: flex;
             color: white;
@@ -327,18 +415,17 @@
             background-color: black;
             margin-inline: auto;
 
-
             // align-items: center;
             text-transform: capitalize;
             //  white-space:normal;
         }
 
-        .buttonChange:hover {
+        .buttonChangeOther:hover {
             color: white;
             background-color: grey;
         }
 
-        .stat {
+        .statOther {
             height: 96%;
             width: 96%;
             background-color: white;
@@ -350,7 +437,7 @@
 
             overflow-x: scroll;
 
-            .rectangle {
+            .rectangleOther {
                 height: 28%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
@@ -363,7 +450,7 @@
                 box-sizing: border-box;
             }
 
-            .itemLoser {
+            .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
                 // width: 100%;
@@ -375,8 +462,8 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-// 
-            .itemWinner {
+            //
+            .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
                 // width: 100%;
@@ -388,7 +475,7 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-            .results {
+            .resultsOther {
                 width: 20%;
                 padding: 10px;
                 background-color: none;
@@ -401,16 +488,15 @@
                 vertical-align: middle;
                 justify-content: space-between;
             }
-            .score {
+            .scoreOther {
                 font-size: x-small;
                 padding: 2px;
                 font-weight: 900;
             }
-            .avatarStatuser{
+            .avatarStatuserOther {
                 padding: 2px;
-
             }
-            .name {
+            .nameOther {
                 padding: 2px;
 
                 font-size: x-small;
@@ -418,24 +504,21 @@
 
                 // text-transform: uppercase;
             }
-
         }
     }
 }
 //------------GRAND ECRAN----------------------------------------------------------------------
 @media screen and (min-width: 800px) {
-    .profilePageContainer {
+    .profilePageContainerOther {
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-    display: flex;
-    background-color:hotpink;
-
+        display: flex;
+        background-color: magenta;
 
         // line-Height: 19%;
 
-        .profile {
-        
+        .profileOther {
             margin-top: 3%;
             height: 90%;
             width: 30%;
@@ -446,18 +529,17 @@
             min-width: 400px;
 
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-            .avatarItem {
+            .avatarItemOther {
                 height: 50%;
                 // position: relative;
                 display: flex;
                 justify-content: center;
 
-
                 // align-items: center;
                 // flex-direction: column;
                 position: relative;
 
-                .avatar {
+                .avatarOther {
                     margin-top: 2%;
                     height: 50%;
                     width: auto;
@@ -466,39 +548,85 @@
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
-            .avatarChange {
-                // variant:"contained";
+            .userConnect {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                // vertical-align: middle;
 
+                .circleConnectLigne {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: green;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
+                }
+            }
+            .userConnectHorsLigne {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
                 display: flex;
 
-                color: white;
-                font-family: "system-ui";
-                background-color: black;
-                margin-inline: auto;
-                margin-top: 2%;
+                .circleConnectHorsLigne {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: red;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
 
-                // align-items: center;
-                text-transform: capitalize;
+                    // display: flex;
 
-                &:hover {
-                    color: white;
-                    background-color: grey;
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
                 }
             }
         }
-        .infoUser {
+        .infoUserOther {
             color: black;
             justify-content: center;
             margin-top: 3%;
             display: flex;
             align-items: center;
 
-            .userName {
+            .userNameOther {
                 color: grey;
                 // border: 2px solid green;
                 font-family: "system-ui";
             }
-            .userNamePrint {
+            .userNamePrintOther {
                 white-space: pre-line;
                 margin-left: 1.66%;
                 text-transform: capitalize;
@@ -510,7 +638,7 @@
                 // text-overflow: ellipsis;
             }
         }
-        .infoUsername {
+        .infoUsernameOther {
             color: black;
             justify-content: center;
             margin-top: 5%;
@@ -518,12 +646,12 @@
             align-items: center;
             // white-space:pre-line;
 
-            .userNameChange {
+            .userNameChangeOther {
                 color: grey;
                 font-family: "system-ui";
                 // text-align: left;
             }
-            .userNamePrintChange {
+            .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
 
@@ -532,7 +660,7 @@
                 // font-weight: 200;
             }
         }
-        .buttonChange {
+        .buttonChangeOther {
             // variant:"contained";
             display: flex;
             color: white;
@@ -540,18 +668,17 @@
             background-color: black;
             margin-inline: auto;
 
-
             // align-items: center;
             text-transform: capitalize;
             //  white-space:normal;
         }
 
-        .buttonChange:hover {
+        .buttonChangeOther:hover {
             color: white;
             background-color: grey;
         }
 
-        .stat {
+        .statOther {
             height: 90%;
             width: 65%;
             background-color: white;
@@ -567,7 +694,7 @@
 
             overflow-x: scroll;
 
-            .rectangle {
+            .rectangleOther {
                 height: 29%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
@@ -579,7 +706,7 @@
                 box-sizing: border-box;
             }
 
-            .itemLoser {
+            .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
                 // width: 100%;
@@ -591,8 +718,8 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-// 
-            .itemWinner {
+            //
+            .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
                 // width: 100%;
@@ -604,7 +731,7 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-            .results {
+            .resultsOther {
                 width: 20%;
                 // padding: 60px;
                 background-color: none;
@@ -612,28 +739,27 @@
 
                 display: inline-flex;
                 margin-left: 10%;
-                flex-direction:row;
-                
+                flex-direction: row;
+
                 text-align: center;
                 align-content: space-between;
                 justify-content: space-between;
                 vertical-align: middle;
                 // display: flex;
             }
-            .score {
+            .scoreOther {
                 font-size: x-large;
                 // padding: 12px;
 
                 font-weight: 900;
                 // z-index: 999;
             }
-            .avatarStatuser{
+            .avatarStatuserOther {
                 // padding: 10px;
                 margin-left: 12px;
                 align-items: center;
-
             }
-            .name {
+            .nameOther {
                 font-size: x-small;
                 // padding: 2px;
 
