@@ -11,9 +11,12 @@ import { ChannelModule } from './channel/channel.module';
 import "reflect-metadata";
 import {DataSource} from 'typeorm';
 import { GameModule } from './game/game.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [EventsModule, ConfigModule.forRoot({
+  imports: [EventsModule, 
+    ScheduleModule.forRoot(), 
+    ConfigModule.forRoot({
     envFilePath: [`.env.backend`],
     validationSchema: configValidationSchema,
   }),

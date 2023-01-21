@@ -1,6 +1,7 @@
 //
 import "./Friends.scss";
 import { RootState } from "../../state";
+import UserProfileDialog from "../../components/userProfileDialog/UserProfileDialog";
 
 //
 import React, { useState, useEffect } from "react";
@@ -10,7 +11,7 @@ import { Avatar, Dialog } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import CloseIcon from "@mui/icons-material/Close";
-import MessageIcon from '@mui/icons-material/Message';
+import MessageIcon from "@mui/icons-material/Message";
 
 const Friends = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -217,43 +218,10 @@ const Friends = () => {
           </div>
         </div>
 
-        {dialogOpen ? (
-          <Dialog
-            className="userInfoDialog"
-            fullScreen
-            open={dialogOpen}
-            onClose={handleClose}
-          >
-            <div className="userInfoNavbar">
-              <div className="exitUserInfoDialogButton" onClick={handleClose}>
-                <CloseIcon />
-              </div>
-              <div className="userInfoName">{userInfo}</div>
-              <div className="userHandleFriendshipContainer">
-                userHandleFriendshipContainer
-              </div>
-              <div className="userInviteGameButton"><SportsEsportsIcon /></div>
-              <div className="userLaunchChatButton"><MessageIcon /></div>
-            </div>
-            <div className="userInfoMainContainer">
-              <div className="userInfoStatsContainer">
-                userInfoStatsContainer
-              </div>
-              <div className="userMatchHistoryContainer">
-                userMatchHistoryContainer
-                <div className="matchHistoryItem">matchHistoryItem</div>
-              </div>
-              <div className="mutualMatchHistoryContainer">
-                mutualMatchHistoryContainer
-                <div className="mutualMatchHistoryItem">
-                  mutualMatchHistoryItem
-                </div>
-              </div>
-            </div>
-          </Dialog>
-        ) : (
-          <div></div>
-        )}
+        <UserProfileDialog
+          profileDialogOpen={dialogOpen}
+          setProfileDialogOpen={setDialogOpen}
+        />
       </div>
     </div>
   );

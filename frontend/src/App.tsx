@@ -17,6 +17,9 @@ import Connect from "./pages/signup/Connect";
 import {Switch} from "@mui/material";
 
 export const ip = '127.0.0.1';
+import { io } from "socket.io-client";
+
+export const gameSocket = io(`ws://127.0.0.1:5002`, { transports: ['websocket'] });
 
 function App() {
   return (

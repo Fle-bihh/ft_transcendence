@@ -10,6 +10,7 @@ import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { channel } from 'diagnostics_channel';
+import { any } from '@hapi/joi';
 
 const db_messages = Array<{
   index: number;
@@ -211,7 +212,9 @@ export class ChatGateway {
     ) {
       if (
         db_participants.filter((item) => item.channel == data.channelName)
-          .length < 50
+          .length < 50 &&
+        db_participants.filter((item) => item.channel == data.channelName)
+          .length > 0
       ) {
         if (
           db_participants.find(
@@ -244,8 +247,73 @@ export class ChatGateway {
             this.get_all_conv_info(client, { sender: data.login });
           }
         }
+      } else if (
+        db_participants.filter((item) => item.channel == data.channelName)
+          .length === 0
+      ) {
+        if (
+          db_channels.find((item) => item.name == data.channelName).password ==
+          data.channelPassword
+        ) {
+          db_participants.push({
+            index: db_participants.length,
+            login: data.login,
+            channel: data.channelName,
+            admin: true,
+          });
+          db_messages.push({
+            index: db_messages.length,
+            sender: '___server___',
+            receiver: data.channelName,
+            content: `${data.login} joined \'${data.channelName}\'`,
+            time: new Date(),
+          });
+          db_channels.forEach((channel) => {
+            if (channel.name === data.channelName) {
+              channel.owner = data.login;
+            }
+          });
+          client.emit('channel_joined', {
+            channelName: data.channelName,
+          });
+
+          this.get_all_conv_info(client, { sender: data.login });
+        }
       }
     }
+  }
+
+  @SubscribeMessage('LEAVE_CHANNEL')
+  leave_channel(
+    client: Socket,
+    data: {
+      login: string;
+      channelName: string;
+    },
+  ) {
+    let index = -1;
+    db_participants.forEach((participant) => {
+      index++;
+      if (
+        participant.login === data.login &&
+        participant.channel === data.channelName
+      ) {
+        db_participants.splice(index, 1);
+        db_messages.push({
+          index: db_messages.length,
+          sender: '___server___',
+          receiver: data.channelName,
+          content: `${data.login} left \'${data.channelName}\'`,
+          time: new Date(),
+        });
+
+        client.emit('channel_left', {
+          channelName: data.channelName,
+        });
+
+        this.get_all_conv_info(client, { sender: data.login });
+      }
+    });
   }
 
   @SubscribeMessage('ADD_PARTICIPANT')
@@ -280,6 +348,63 @@ export class ChatGateway {
       });
 
     console.log('db_participants after ADD = ', db_participants);
+  }
+
+  @SubscribeMessage('GET_PARTICIPANTS')
+  get_participants(
+    client: Socket,
+    data: {
+      login: string;
+      channel: string;
+    },
+  ) {
+    this.logger.log('GET_PARTICIPANTS received in back with', data);
+    let tmpArray = Array<{
+      login: string;
+      admin: boolean;
+    }>();
+    db_participants.forEach((participant) => {
+      if (participant.channel === data.channel) {
+        tmpArray.push({
+          login: participant.login,
+          admin: participant.admin,
+        });
+      }
+    });
+    client.emit('get_participants', tmpArray);
+    this.logger.log('send get_participants to', data.login);
+  }
+
+  @SubscribeMessage('GET_PARTICIPANT_ROLE')
+  get_participant_role(
+    client: Socket,
+    data: {
+      login: string;
+      channel: string;
+    },
+  ) {
+    console.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
+    let role: string;
+    db_channels.forEach((channel) => {
+      if (channel.name === data.channel) {
+        if (channel.owner === data.login) {
+          role = 'owner';
+        } else {
+          db_participants.forEach((participant) => {
+            if (participant.login === data.login) {
+              if (participant.channel === data.channel) {
+                if (participant.admin) {
+                  role = 'admin';
+                } else {
+                  role = 'participant';
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+    client.emit('get_participant_role', { role: role });
   }
 
   @SubscribeMessage('CHANGE_CHANNEL_NAME')

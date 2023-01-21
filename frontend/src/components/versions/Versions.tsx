@@ -9,28 +9,22 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
-import Navbar from "../nav/Nav"
 
 const images = [
   {
     url: Version1,
     title: 'Play1',
     width: '33.33%',
-    
   },
   {
     url: Version2,
     title: 'Play2',
     width: '33.33%',
-   
   },
   {
     url: Version3,
-    // url: '/static/images/buttons/camera.jpg',
     title: 'Play3',
     width: '33.33%',
-  
-   
   },
 ];
 
@@ -62,9 +56,6 @@ const ImageSrc = styled('span')({
   top: 0,
   bottom: 0,
   backgroundPosition: 'center 4%',
-  
- 
-
 });
 
 const Image = styled('span')(({ theme }) => ({
@@ -79,8 +70,6 @@ const Image = styled('span')(({ theme }) => ({
   color: theme.palette.common.white,
   border: '5px solid',
   borderColor: 'white',
-  // padding: '10px 12px',
-  
 }));
 
 const ImageBackdrop = styled('span')(({ theme }) => ({

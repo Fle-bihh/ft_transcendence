@@ -25,11 +25,24 @@ const ChannelSettingsDialog = (props: {
   setSettingsDialogOpen: Function;
   openConvName: string;
   setOpenConvName: Function;
+  allChannels: Array<{
+    index: number;
+    privacy: string;
+    name: string;
+    password: string;
+    description: string;
+    owner: string;
+  }>;
 }) => {
   const [nameInputValue, setNameInputValue] = useState("");
   const [passwordInputValue, setPasswordInputValue] = useState("");
   const [nameSecurityDialog, setNameSecurityDialog] = useState(false);
   const [passwordSecurityDialog, setPasswordSecurityDialog] = useState(false);
+  const [participantRole, setParticipantRole] = useState("");
+  const [participants, setParticipants] = useState(Array<{
+    login: string,
+    admin: boolean,
+  }>());
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
@@ -59,53 +72,171 @@ const ChannelSettingsDialog = (props: {
     setPasswordSecurityDialog(false);
   };
 
+  useEffect(() => {
+    utils.socket.emit("GET_PARTICIPANT_ROLE", {
+      login: user.user?.login,
+      channel: props.openConvName,
+    });
+    console.log("send GET_PARTICIPANT_ROLE to back from", user.user?.login);
+    utils.socket.emit("GET_PARTICIPANTS", {
+      login: user.user?.login,
+      channel: props.openConvName,
+    });
+    console.log("send GET_PARTICIPANTS to back from", user.user?.login);
+  }, [props.settingsDialogOpen]);
+
+  utils.socket.removeListener("channel_left");
+  utils.socket.on("channel_left", (data: { channelName: string }) => {
+    console.log(user.user?.login, 'received channel_left from back with', )
+    props.setSettingsDialogOpen(false);
+    props.setOpenConvName("");
+    handleClose();
+  });
+
+  utils.socket.removeListener("get_participant_role");
+  utils.socket.on("get_participant_role", (data: { role: string }) => {
+    setParticipantRole(data.role);
+  });
+
+  utils.socket.removeListener("get_participants");
+  utils.socket.on("get_participants", (data:  Array<{
+    login: string,
+    admin: boolean
+  }>) => {
+    setParticipants([...data]);
+  });
+
   return (
-    <Dialog className="channelSettingsDialog" open={props.settingsDialogOpen} onClose={handleClose} fullScreen>
-      <div className="firstRaw">
-        <div className="changeChannelName">
-          <input
-            type="text"
-            placeholder="Change Name"
-            className="changeChannelNameInput"
-            id="outlined-basic"
-            value={nameInputValue}
-            autoComplete={"off"}
-            onChange={(event) => {
-              setNameInputValue(event.currentTarget.value);
-            }}
-            autoFocus
-            onKeyDown={(event) => {
-              if (event.key === "Enter") setNameSecurityDialog(true);
-            }}
-          />
+    <Dialog
+      className="channelSettingsDialog"
+      open={props.settingsDialogOpen}
+      onClose={handleClose}
+      fullScreen
+    >
+      <div className="rawContainer">
+        {participantRole === "owner" ? (
+          <div className="firstRaw">
+            <div className="changeChannelName">
+              <input
+                type="text"
+                placeholder="Change Name"
+                className="changeChannelNameInput"
+                id="outlined-basic"
+                value={nameInputValue}
+                autoComplete={"off"}
+                onChange={(event) => {
+                  setNameInputValue(event.currentTarget.value);
+                }}
+                autoFocus
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") setNameSecurityDialog(true);
+                }}
+              />
+            </div>
+            <div className="changeChannelPassword">
+              <input
+                type="text"
+                placeholder="Change Password"
+                className="changeChannelPasswordInput"
+                id="outlined-basic"
+                value={passwordInputValue}
+                autoComplete={"off"}
+                onChange={(event) => {
+                  setPasswordInputValue(event.currentTarget.value);
+                }}
+                autoFocus
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") setPasswordSecurityDialog(true);
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {participantRole === "owner" ? (
+          <div className="secondRaw">
+            <div className="addAdmin">
+              <div className="addAdminTitle">ADD ADMIN</div>
+              <div className="addAdminContainer">
+                {participants.map(participant => {
+                  if (!participant.admin) {
+                    return (
+                      <div className="addAdminContent">{participant.login}</div>
+                    )
+                  }
+                })}
+              </div>
+            </div>
+            <div className="removeAdmin">
+              <div className="removeAdminTitle">REMOVE ADMIN</div>
+              <div className="removeAdminContainer">
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+                <div className="removeAdminContent">ADMIN LIST ...</div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {participantRole != "participant" ? (
+          <div className="thirdRaw">
+            <div className="banUser">
+              <div className="banUserTitle">BAN PARTICIPANT</div>
+              <div className="banUserContainer">
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+                <div className="banUserContent">PARTICIPANTS LIST ...</div>
+              </div>
+            </div>
+            <div className="muteUser">
+              <div className="muteUserTitle">MUTE PARTICIPANT</div>
+              <div className="muteUserContainer">
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+                <div className="muteUserContent">PARTICIPANTS LIST ...</div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        <div
+          className="leaveChannel"
+          onClick={() => {
+            utils.socket.emit("LEAVE_CHANNEL", {
+              login: user.user?.login,
+              channelName: props.openConvName,
+            });
+            console.log("send LEAVE_CHANNEL to back from ", user.user?.login);
+            handleClose();
+          }}
+        >
+          <div className="leaveChannelText">Leave This Channel</div>
         </div>
-        <div className="changeChannelPassword">
-          <input
-            type="text"
-            placeholder="Change Password"
-            className="changeChannelPasswordInput"
-            id="outlined-basic"
-            value={passwordInputValue}
-            autoComplete={"off"}
-            onChange={(event) => {
-              setPasswordInputValue(event.currentTarget.value);
-            }}
-            autoFocus
-            onKeyDown={(event) => {
-              if (event.key === "Enter") setPasswordSecurityDialog(true);
-            }}
-          />
-        </div>
       </div>
-      <div className="secondRaw">
-        <div className="addAdmin">Add admin</div>
-        <div className="removeAdmin">Remove Admin</div>
-      </div>
-      <div className="thirdRaw">
-        <div className="banUser">Ban User</div>
-        <div className="muteUser">Mute User</div>
-      </div>
-      <div className="leaveChannel">Leave Channel</div>
       <Dialog open={nameSecurityDialog} onClose={handleCloseSecuName}>
         <div className="securityText">Are you sure ?</div>
         <div
