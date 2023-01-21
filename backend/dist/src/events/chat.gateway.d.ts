@@ -24,10 +24,22 @@ export declare class ChatGateway {
         channelName: string;
         channelPassword: string;
     }): void;
+    leave_channel(client: Socket, data: {
+        login: string;
+        channelName: string;
+    }): void;
     add_participant(client: Socket, data: {
         login: string;
         channel: string;
         admin: boolean;
+    }): void;
+    get_participants(client: Socket, data: {
+        login: string;
+        channel: string;
+    }): void;
+    get_participant_role(client: Socket, data: {
+        login: string;
+        channel: string;
     }): void;
     change_channel_name(client: Socket, data: {
         login: string;
