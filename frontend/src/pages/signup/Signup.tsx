@@ -9,7 +9,9 @@ import FormControl from '@mui/material/FormControl';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
-import SnackAlert from '../../components/snackAlert/Alert';
+import FlashMessage from '../../components/alert-message/Alert'
+
+
 
 // const url = 'http://localhost:3000/signup'
 
@@ -36,6 +38,14 @@ const Signup = () => {
     // const [error, seterror] = useState ('');
     // const [openError, setopenError] = useState ('');
 
+    // const redirectTo42 = async () => {
+    //     try {
+    //         const response = await axios.get('http://localhost:5001/auth/42');
+    //         window.location.href = response.data.url;
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
 
     const HandleCountAdding =  (e: React.ChangeEvent<any>) => {
         const count = {userName, lastName, firstName, password}
@@ -56,12 +66,16 @@ const Signup = () => {
             // Handle data
         })
         .catch((error) => {
-            if (error.response.status === 400 ) {
+            if (error.response!.status === 400) {
                 setmessage2(error.response.status + ' veuillez remplir correctement');
+                // setmessage2(error.request);
+
                 seterror(true)
+             
             } else {
                 setmessage2(error.response.status + ' user existe deja');
                 seterror(true)
+              
             }
             
             // setmessage2(error.response.status)
@@ -158,20 +172,23 @@ const Signup = () => {
                         Sign in
                     </NavLink>
                     </form>
+        <button className="i42-button" onClick={() => window.open(`https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2ba494ca541577ab12aead4ea4f59fc22b4c2bea05058775f2524344f2e602a9&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fhome&response_type=code`, '_self')}>
+            <img className="i42-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/42_Logo.svg/langfr-280px-42_Logo.svg.png" alt="" />
+            Connect with ouiiiiiiiiiii
+        </button>
                     </Paper>
             </Grid>
-
             {
-                succes ?  <SnackAlert
+                succes ?  <FlashMessage 
                 message={message} /> : ''
             }
             {
-                error ? <SnackAlert message2={message2} /> : ''
+                error ? <FlashMessage message2={message2} /> : ''
             }
 
 
             {/* {
-                error ? <snackAlert message={message} /> : ''
+                error ? <FlashMessage message={message} /> : ''
 
             }  */}
 {/* 
@@ -186,3 +203,5 @@ const Signup = () => {
  };
 
 export default Signup;
+
+

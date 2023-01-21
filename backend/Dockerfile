@@ -5,6 +5,5 @@ RUN npm i -g @nestjs/cli --silent
 COPY package*.json ./
 RUN npm install
 COPY ./src .
-# Value set in .env file.
 EXPOSE $BACKEND_PORT
-CMD ["npm", "run", "start"]
+CMD ["npm", "start", "run:debug"]

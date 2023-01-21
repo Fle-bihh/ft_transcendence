@@ -17,3 +17,5 @@ logs:
 	docker-compose -f docker-compose.yml logs --tail=100 -f 
 ps:
 	docker-compose -f docker-compose.yml ps
+prune:
+	docker-compose -f docker-compose.yml prune

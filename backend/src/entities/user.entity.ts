@@ -1,134 +1,86 @@
-// import {MinLength} from "@nestjs/class-validator";
+import {MinLength} from "@nestjs/class-validator";
 import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-// import {Channel} from "./channel.entity";
-// import {FriendRequest} from "./friend-request.entity";
-// import {Game} from "./game.entity";
-// import {Message} from "./message.entity";
+import {Channel} from "./channel.entity";
+import {FriendRequest} from "./friend-request.entity";
+import {Game} from "./game.entity";
+import {Message} from "./message.entity";
 
 @Entity()
 export class User {
-  // @PrimaryGeneratedColumn('uuid')
-  // id: string;
+@PrimaryGeneratedColumn('uuid')
+id: string;
 
-  // @Column()
-  // firstName: string;
+@Column({ unique: true })
+username: string;
 
-  // @Column()
-  // lastName: string;
+@Column({nullable: true})
+password?: string | null;
 
-  // @Column({ unique: true })
-  // userName: string;
+@Column()
+firstName: string;
 
-  // @Column()
-  // password: string;
+@Column()
+lastName: string;
 
-  // @Column({ default: true })
-  // isActive: boolean;
+@Column({nullable: true})
+nickName?: string | null;
 
-  // @Column({ default: 0 })
-  // wins: number;
+@Column({nullable: true})
+profileImage?: string | null;
 
-  // @Column({ default: 0 })
-  // losses: number;
+@Column()
+email: string;
 
-  // @Column({ default: 0 })
-  // rank: number;
+@Column({default: 0})
+GoalTaken: number;
 
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@Column({default: 0})
+GoalSet: number;
 
-  @Column({ unique: true })
-  username: string;
+@Column({default: 0})
+NormalGameNumber: number;
 
-  @Column({nullable: true})
-  password?: string | null;
+@Column({default: 0})
+NormalWinNumber: number;
 
-  @Column()
-  firstName: string;
+@Column({ default: 0 })
+NormalLossNumber: number;
 
-  @Column()
-  lastName: string;
+@Column({default: false})
+twoFactorAuth: boolean;
 
-  @Column({nullable: true})
-  nickName?: string | null;
+@Column({default: 0})
+Friend: number;
 
-  @Column({nullable: true})
-  profileImage?: string | null;
+@OneToMany(type => Game, games => games.player1 || games.player2)
+games: Game[];
 
-  @Column()
-  email: string;
+@OneToMany(type => FriendRequest, request => request.from)
+requestFrom: FriendRequest[];
 
-  @Column({default: 'offline'})
-  isLogged: string;
+@OneToMany(type => FriendRequest, request => request.to)
+requestTo: FriendRequest[];
 
-  @Column({default: false})
-  isAdmin: boolean;
+@OneToMany(type => Message, message => message.sender)
+messagesSend: Message[];
 
-  @Column()
-  GoalTaken: number;
+@OneToMany(type => Message, message => message.receiver)
+messagesReceive: Message[];
 
-  @Column()
-  GoalSet: number;
+@OneToMany(type => Channel, channel => channel.creator)
+channels: Channel[];
 
-  @Column()
-  NormalGameNumber: number;
+@ManyToMany(type => Channel, channel => channel.admin)
+channelsAdmin: Channel[];
 
-  @Column()
-  RankedGameNumber: number;
+@ManyToMany(type => Channel, channel => channel.userConnected)
+channelsConnected: Channel[];
 
-  @Column()
-  NormalWinNumber: number;
+@ManyToMany(type => User, user => user.friends, {cascade: false})
+@JoinTable()
+friends: User[];
 
-  @Column()
-  RankedWinNumber: number;
-
-  @Column()
-  PP: number;
-
-  @Column({default: false})
-  twoFactorAuth: boolean;
-
-  @Column({default: false})
-  Security: boolean;
-
-  @Column({default: 0})
-  Friend: number;
-
-  @Column({default: false})
-  Climber: boolean;
-
-  @Column({default: 0})
-  Hater: number;
-
-  // @OneToMany(type => Game, games => games.player1 || games.player2)
-  // games: Game[];
-
-  // @OneToMany(type => FriendRequest, request => request.from)
-  // requestFrom: FriendRequest[];
-
-  // @OneToMany(type => FriendRequest, request => request.to)
-  // requestTo: FriendRequest[];
-
-  // @OneToMany(type => Message, message => message.sender)
-  // messagesSend: Message[];
-
-  // @OneToMany(type => Message, message => message.receiver)
-  // messagesReceive: Message[];
-
-  // @OneToMany(type => Channel, channel => channel.creator)
-  // channels: Channel[];
-
-  // @ManyToMany(type => Channel, channel => channel.admin)
-  // channelsAdmin: Channel[];
-
-  // @ManyToMany(type => Channel, channel => channel.userConnected)
-  // channelsConnected: Channel[];
-
-  @ManyToMany(type => User, user => user.friends, {cascade: false})
-  @JoinTable()
-  friends: User[];
-
-  @ManyToMany(type => User, user => user.blackList, {cascade: false})
-  @JoinTable()
-  blackList: User[];
+@ManyToMany(type => User, user => user.blackList, {cascade: false})
+@JoinTable()
+blackList: User[];
 }

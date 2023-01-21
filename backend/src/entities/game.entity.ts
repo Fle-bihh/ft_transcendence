@@ -6,21 +6,18 @@ export class Game {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
-    date: string;
+    @ManyToOne(type => User, user => user.games)
+    player1: User;
 
-    @Column()
-    ranked: boolean;
-
-    // @ManyToOne(type => User, user => user.games)
-    // player1: User;
-
-    // @ManyToOne(type => User, user => user.games)
-    // player2: User;
+    @ManyToOne(type => User, user => user.games)
+    player2: User;
 
     @Column()
     score1: number;
 
     @Column()
     score2: number;
+
+    @ManyToOne(type =>User, user => user.games)
+    winner: User;
 }

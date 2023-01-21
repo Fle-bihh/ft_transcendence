@@ -8,6 +8,9 @@ import { EventsModule } from './events/events.module'
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ChannelModule } from './channel/channel.module';
+import "reflect-metadata";
+import {DataSource} from 'typeorm';
+import { GameModule } from './game/game.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
@@ -23,6 +26,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     useFactory: async (configService: ConfigService) => {
       return {
         type: 'postgres',
+        entities: ["dist/**/*.entity{.ts,.js}"],
         autoLoadEntities: true,
         synchronize: true,
         host: configService.get('DB_HOST'),
@@ -36,8 +40,11 @@ import { ScheduleModule } from '@nestjs/schedule';
   AuthModule,
   UsersModule,
   ChannelModule,
+  GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}

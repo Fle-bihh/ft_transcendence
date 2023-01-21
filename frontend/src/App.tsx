@@ -13,6 +13,10 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./state/store";
 import NotifInterceptor from "./components/NotifInterceptor/NotifInterceptor";
 import Notif from "./pages/notif/Notif";
+import Connect from "./pages/signup/Connect";
+import {Switch} from "@mui/material";
+
+export const ip = '127.0.0.1';
 import { io } from "socket.io-client";
 
 export const gameSocket = io(`ws://127.0.0.1:5002`, { transports: ['websocket'] });
@@ -22,6 +26,14 @@ function App() {
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>
         <Routes>
+          <Route
+            path="/home"
+            element={
+              <NotifInterceptor>
+                <Connect />
+              </NotifInterceptor>
+            }
+          />
           <Route
             path="/signin"
             element={
@@ -114,4 +126,4 @@ function App() {
   );
 }
 
-export default App;
+          export default App;
