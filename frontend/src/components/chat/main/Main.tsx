@@ -208,12 +208,12 @@ const Main = (props: {
                   component="label"
                   onClick={() => {
                     utils.socket.emit("BLOCK_USER", {
-                      login: user.user?.login,
+                      login: user.user?.username,
                       target: props.openConvName,
                     });
                     console.log(
                       "send BLOCK_USER to back from",
-                      user.user?.login
+                      user.user?.username
                     );
                   }}
                 >

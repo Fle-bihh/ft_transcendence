@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { gameSocket } from '../../App';
 import { RootState } from '../../state';
 import { GameClass } from './gameClass';
+import { ip } from '../../App';
 import "./Pong.scss"
 
 var canvas = {
@@ -74,7 +75,7 @@ const GamePage = (props: any) => {
 
     function drawText(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const index_p = persistantReducer.userReducer.user!.login == room.players[0].username ? 0 : 1
+            const index_p = persistantReducer.userReducer.user!.username == room.players[0].username ? 0 : 1
             if (!room.players[index_p].ready) {
                 ctx.font = 'bold 50px Arial';
                 ctx.fillStyle = 'white';
@@ -154,7 +155,7 @@ const GamePage = (props: any) => {
     function affFinishScreen() {
         let U, H;
         setTimeout(function () {
-            window.location.replace('http://localhost:3000');
+            window.location.replace(`http://${ip}:3000`);
         }, 10000);
 
         if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.username) {

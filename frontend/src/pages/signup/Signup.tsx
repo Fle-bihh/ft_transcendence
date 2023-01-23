@@ -11,9 +11,10 @@ import axios from 'axios';
 import FlashMessage from '../../components/alert-message/Alert'
 import { Avatar, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 
+import { ip } from '../../App';
 
 
-// const url = 'http://localhost:3000/signup'
+// const url = 'http://${ip}:3000/signup'
 
 const Signup = () => {
 
@@ -40,7 +41,7 @@ const Signup = () => {
 
     // const redirectTo42 = async () => {
     //     try {
-    //         const response = await axios.get('http://localhost:5001/auth/42');
+    //         const response = await axios.get('http://${ip}:5001/auth/42');
     //         window.location.href = response.data.url;
     //     } catch (error) {
     //         console.log(error);
@@ -52,7 +53,7 @@ const Signup = () => {
         e.preventDefault();
 
 
-        axios.post('http://localhost:5001/users/signup', {
+        axios.post(`http://${ip}:5001/users/signup`, {
             userName: userName,
             lastName: lastName,
             firstName: firstName,

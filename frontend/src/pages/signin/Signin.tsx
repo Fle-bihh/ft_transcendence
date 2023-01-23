@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators, RootState } from "../../state";
 import axios from "axios";
+import { ip } from '../../App';
 
 // import Checkbox from '@mui/material/Checkbox';
 // const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -78,11 +79,11 @@ const Signin = () => {
               fullWidth
               onClick={() => {
 
-                axios.get(`http://localhost:5001/user/login/${inputUsernameValue}`).then(response => {
+                axios.get(`http://${ip}:5001/user/login/${inputUsernameValue}`).then(response => {
                   if (response.data != null) {
                     utils.socket.emit("ADD_USER", { login: inputUsernameValue });
                     setUser(response.data);
-                    window.location.replace('http://localhost:3000/');
+                    window.location.replace(`http://${ip}:3000/`);
                   }
 
                   console.log(response);

@@ -74,20 +74,20 @@ const ChannelSettingsDialog = (props: {
 
   useEffect(() => {
     utils.socket.emit("GET_PARTICIPANT_ROLE", {
-      login: user.user?.login,
+      login: user.user?.username,
       channel: props.openConvName,
     });
-    console.log("send GET_PARTICIPANT_ROLE to back from", user.user?.login);
+    console.log("send GET_PARTICIPANT_ROLE to back from", user.user?.username);
     utils.socket.emit("GET_PARTICIPANTS", {
-      login: user.user?.login,
+      login: user.user?.username,
       channel: props.openConvName,
     });
-    console.log("send GET_PARTICIPANTS to back from", user.user?.login);
+    console.log("send GET_PARTICIPANTS to back from", user.user?.username);
   }, [props.settingsDialogOpen]);
 
   utils.socket.removeListener("channel_left");
   utils.socket.on("channel_left", (data: { channelName: string }) => {
-    console.log(user.user?.login, 'received channel_left from back with', )
+    console.log(user.user?.username, 'received channel_left from back with', )
     props.setSettingsDialogOpen(false);
     props.setOpenConvName("");
     handleClose();
@@ -227,10 +227,10 @@ const ChannelSettingsDialog = (props: {
           className="leaveChannel"
           onClick={() => {
             utils.socket.emit("LEAVE_CHANNEL", {
-              login: user.user?.login,
+              login: user.user?.username,
               channelName: props.openConvName,
             });
-            console.log("send LEAVE_CHANNEL to back from ", user.user?.login);
+            console.log("send LEAVE_CHANNEL to back from ", user.user?.username);
             handleClose();
           }}
         >

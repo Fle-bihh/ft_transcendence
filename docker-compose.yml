@@ -10,7 +10,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     volumes:
-      - "./frontend/src:/usr/src/app/src/frontend"
+      - "./frontend/src:/usr/src/app/src"
     networks:
       - transcendence
     command: "npm start"
@@ -29,6 +29,7 @@ services:
       - transcendence
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - 5002:5002
     depends_on:
       - dev-db
     links:

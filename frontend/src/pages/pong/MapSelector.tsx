@@ -18,15 +18,15 @@ function MapSelector(props : any) {
 
     function startGame1() {
         console.log("start game front 1");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.login}, gameMap: "map1" });
+        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username}, gameMap: "map1" });
 	}
     function startGame2() {
         console.log("start game front 2");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.login}, gameMap: "map2" });
+        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username}, gameMap: "map2" });
 	}
     function startGame3() {
         console.log("start game front 3");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.login}, gameMap: "map3" });
+        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username}, gameMap: "map3" });
 	}
 
     gameSocket.removeListener("start");
