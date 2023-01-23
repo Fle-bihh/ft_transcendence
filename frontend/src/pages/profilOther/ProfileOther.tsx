@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import "./profileOther.scss"
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import Cerise from '../../styles/asset/Cerise.jpg'
+import Cerise from '../../styles/asset/cerise.jpg'
 import Laurine from '../../styles/asset/ananas.png'
 
 
