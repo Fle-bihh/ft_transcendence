@@ -10,7 +10,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     volumes:
-      - "./frontend/src:/usr/src/app/src"
+      - ./frontend/src:/usr/src/app/src
     networks:
       - transcendence
     command: "npm start"
@@ -23,7 +23,7 @@ services:
     env_file: .env
     volumes:
       - ./backend:/svr/app
-      - "./scripts/wait.sh:/wait.sh"
+      - ./scripts/wait.sh:/wait.sh
       - /svr/app/node_modules
     networks:
       - transcendence
@@ -31,10 +31,10 @@ services:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
       - 5002:5002
     depends_on:
-      - dev-db
+      - database
     links:
-      - dev-db
-  dev-db:
+      - database
+  database:
     image: postgres:13-alpine
     restart: always
     container_name: database
@@ -65,7 +65,7 @@ services:
     ports:
       - "${PGADMIN_PORT}:80"
     depends_on:
-      - dev-db
+      - database
     networks:
       - transcendence
 volumes:
@@ -74,3 +74,6 @@ volumes:
 networks:
   transcendence:
     driver: bridge
+
+
+      
