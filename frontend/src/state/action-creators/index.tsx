@@ -11,22 +11,15 @@ export const setUser = (
     firstName: string,
     lastName: string,
     nickName: string,
-    profileImage: string,
+    profileImage: string
     email: string,
-    isLogged: boolean,
-    isAdmin: boolean,
     GoalTaken: number,
     GoalSet: number,
     NormalGameNumber: number,
-    RankedGameNumber: number,
     NormalWinNumber: number,
-    RankedWinNumber: number,
-    PP: number,
+    NormalLossNumber: number,
     twoFactorAuth: boolean,
-    Security: boolean,
     Friend: number,
-    Climber: boolean,
-    Hater: number,
 
 
   } | null

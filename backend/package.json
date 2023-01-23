@@ -46,7 +46,6 @@
     "class-validator": "^0.14.0",
     "nestjs-schedule": "^0.1.6",
     "npx": "^10.2.2",
-    "nestjs-schedule": "^0.1.6",
     "passport": "^0.6.0",
     "passport-42": "^1.2.6",
     "passport-jwt": "^4.0.1",

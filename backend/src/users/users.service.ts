@@ -60,6 +60,7 @@ export class UsersService {
   }
 
   async getUserByLogin(username: string): Promise<User> {
+    console.log(username);
     const found = await this.usersRepository.findOneBy({ username });
     if (found)
       return found;

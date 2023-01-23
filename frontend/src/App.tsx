@@ -2,29 +2,23 @@ import Chat from "./pages/chat/Chat";
 import Versions from "./components/versions/Versions";
 import Profile from "./pages/profile/Profile";
 import ProfileOther from "./pages/profilOther/ProfileOther";
-
 import Pong from "./pages/pong/Pong";
 import Home from "./pages/home/Home";
 import Signin from "./pages/signin/Signin";
 import Signup from "./pages/signup/Signup";
 import Friends from "./pages/friends/Friends";
 import ConnectionChecker from "./modules/ConnectionChecker";
-
 import { Routes, Route } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./state/store";
 import NotifInterceptor from "./components/NotifInterceptor/NotifInterceptor";
 import Notif from "./pages/notif/Notif";
 import { io } from "socket.io-client";
-
 import Connect from "./pages/signup/Connect";
-import {Switch} from "@mui/material";
 
-export const gameSocket = io(`ws://127.0.0.1:5002`, { transports: ['websocket'] });
-export const ip = '127.0.0.1';
-import { io } from "socket.io-client";
+export const ip = window.location.hostname;
+export const gameSocket = io(`ws://${ip}:5002`, { transports: ['websocket'] });
 
-export const gameSocket = io(`ws://127.0.0.1:5002`, { transports: ['websocket'] });
 
 function App() {
   return (
@@ -58,11 +52,7 @@ function App() {
           <Route
             path="/"
             element={
-              <ConnectionChecker>
-                <NotifInterceptor>
-                  <Home />
-                </NotifInterceptor>
-              </ConnectionChecker>
+              <ConnectionChecker children={<Home/>}/>
             }
           />
           <Route

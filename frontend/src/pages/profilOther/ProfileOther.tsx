@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PasswordRounded } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
+import { ip } from '../../App';
 
 const ProfileOther = () => {
 
@@ -72,10 +73,10 @@ const ProfileOther = () => {
             const parsed = queryString.parse(window.location.search);
             console.log(parsed)
             if (parsed.username == '' || parsed.username == undefined) {
-                window.location.replace("http://localhost:3000/")
+                window.location.replace("http://${ip}:3000/")
             }
             else {
-                axios.get(`http://localhost:5001/user/login/${parsed.username}`).then(response => {
+                axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
                     if (response.data != null) {
                         setUserDisplay(response.data);
                     }
