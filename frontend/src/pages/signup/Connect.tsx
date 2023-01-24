@@ -29,14 +29,6 @@ const Connect = () => {
     );
   }
 
-  // if (err) {
-  //   alert(`Error: ${err} !\nIf you want to connect with 42 you must authorize !`)
-  //   return (<Redirect to={{
-  //     pathname: '/',
-  //     state: { reason: `${err}` }
-  //     }} />)
-  // }
-
   axios
     .request({
       url: "/auth/api42/Signin",
@@ -50,12 +42,8 @@ const Connect = () => {
     .then((response: AxiosResponse<any, any>) => {
       setUser(response.data.user);
       window.location.replace(`http://${ip}:3000`);
-      // window.open(`http://${ip}:3000/cookies?token=${response.data.accessToken}`, '_self')
-      console.log(response.data.accessToken);
-      console.log(response.data.user);
     })
     .catch((err) => {
-      console.log("ouiioun");
     });
 
   return <div></div>;

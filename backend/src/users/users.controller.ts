@@ -32,7 +32,7 @@ export class UsersController {
 
   @Get('/login/:login')
   async getUserByLogin(@Param('login') login: string): Promise<User> {
-    return await this.usersService.getUserByLogin(login);
+      return await this.usersService.getUserByLogin(login);
   }
 
   @Get('/:id/match_history')

@@ -1,5 +1,5 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import React, { Component, SyntheticEvent, useState } from "react";
+import React, { Component, SyntheticEvent, useEffect, useState } from "react";
 
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
@@ -20,10 +20,15 @@ import {
 } from "@mui/material";
 
 import { ip } from "../../App";
+import { RootState } from "../../state";
+import { useSelector } from "react-redux";
 
 // const url = 'http://${ip}:3000/signup'
 
 const Signup = () => {
+  const userReducer = useSelector(
+    (state: RootState) => state.persistantReducer.userReducer
+  );
   const paperStyle = { padding: 20, height: 500, width: 300, margin: "0 auto" };
   const avatarStyle = { backgroundColor: "red", margin: "10px auto" };
   // const textStyle={textAlign:'center'}
@@ -41,17 +46,15 @@ const Signup = () => {
   const [message, setmessage] = useState("");
   const [message2, setmessage2] = useState("");
 
-  // const [error, seterror] = useState ('');
-  // const [openError, setopenError] = useState ('');
 
-  // const redirectTo42 = async () => {
-  //     try {
-  //         const response = await axios.get('http://${ip}:5001/auth/42');
-  //         window.location.href = response.data.url;
-  //     } catch (error) {
-  //         console.log(error);
-  //     }
-  // };
+  useEffect(() => {
+    if (userReducer.user != null) {
+      axios
+        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`).then(() => {
+          window.location.replace(`http://${ip}:3000`);
+        }).catch((err) => {})
+    }
+  }, [])
 
   const HandleCountAdding = (e: React.ChangeEvent<any>) => {
     const count = { userName, lastName, firstName, password };
@@ -65,8 +68,6 @@ const Signup = () => {
         password: password,
       })
       .then((response) => {
-        console.log("cocoucoucouc");
-        // console.log(response.data);
         setmessage("Welcome " + userName);
         setsucces(true);
         // Handle data
@@ -81,109 +82,14 @@ const Signup = () => {
           setmessage2(error.response.status + " user existe deja");
           seterror(true);
         }
-
-        // setmessage2(error.response.status)
-        //  seterror(true)
-        //  console.log(JSON.stringify(error))
-        // console.log("PROBLEME")
-        // console.log(error.response.status);
       });
     setsucces(false);
     seterror(false);
-
-    // showError = (err: any) => {
-
-    //     const error = err.response && err.response.data || err.message;
-    //     this.setState({error, openError: true});
-    //                 };
-
-    // this.showError
     // pour que quand on écrit de la merde ca recharge pas quand on valide avce le bouton
   };
 
   return (
-    <React.Fragment>
-      <Grid>
-        <Paper style={paperStyle}>
-          <Grid>
-            <Avatar style={avatarStyle}>
-              <AddCircleOutlineIcon />
-            </Avatar>
-            <h2>Sign Up</h2>
-            <Typography align="center" variant={"body2"} lineHeight="3">
-              Please fill this form to create an account
-            </Typography>
-          </Grid>
-          <form onSubmit={HandleCountAdding} style={formStyle}>
-            <FormControl variant="standard" style={btnStyle}>
-              <InputLabel htmlFor="input-with-icon-adornment">
-                Pseudo
-              </InputLabel>
-              <Input
-                type="text"
-                id="input-with-icon-adornment"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                }
-                value={userName}
-                onChange={(e) => setuserName(e.target.value)} //nous permet de mettre userName à la valeur rentré, on appelle la fonction setuserName
-              />
-            </FormControl>
-
-            <Box className="align">
-              <TextField
-                type="text"
-                variant="standard"
-                label="Last Name"
-                placeholder="Enter Name"
-                value={lastName}
-                onChange={(e) => setlastName(e.target.value)}
-              />
-              <TextField
-                type="text"
-                variant="standard"
-                label="First Name"
-                placeholder="Enter Firstname"
-                value={firstName}
-                onChange={(e) => setfirstName(e.target.value)}
-              />
-            </Box>
-
-            <TextField
-              type="text"
-              variant="standard"
-              fullWidth
-              label="Email"
-              placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setemail(e.target.value)}
-            />
-            <TextField
-              variant="standard"
-              fullWidth
-              label="Password"
-              type="password"
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setpassword(e.target.value)}
-            />
-
-            <TextField
-              variant="standard"
-              fullWidth
-              label=" Confirm Password"
-              type="password"
-              placeholder="Enter Password"
-            />
-            <Button type="submit" variant="contained" color="primary">
-              Sign Up
-            </Button>
-            {/* <NavLink to='/Signin' style={styleSignin}>
-                        Sign in
-                    </NavLink> */}
-          </form>
+    
           <button
             className="i42-button"
             onClick={() =>
@@ -198,24 +104,7 @@ const Signup = () => {
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/42_Logo.svg/langfr-280px-42_Logo.svg.png"
               alt=""
             />
-            Connect with ouiiiiiiiiiii
           </button>
-        </Paper>
-      </Grid>
-      {succes ? <FlashMessage message={message} /> : ""}
-      {error ? <FlashMessage message2={message2} /> : ""}
-
-      {/* {
-                error ? <FlashMessage message={message} /> : ''
-
-            }  */}
-      {/* 
-            <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert severity="error">
-                  COUCOU
-             </Alert>
-             </Stack> */}
-    </React.Fragment>
   );
 };
 
