@@ -31,7 +31,7 @@ export class AuthService {
     private userService: UsersService,
   ) {}
 
-  async signIn42(auth42Dto: Auth42Dto): Promise<{ accessToken: string }> {
+  async signIn42(auth42Dto: Auth42Dto): Promise<{ accessToken: string, user: User }> {
     try {
       const token = this.http.post(
         `${this.authorizationURI}?grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${auth42Dto.code}&redirect_uri=http://127.0.0.1:3000/home`,
@@ -72,7 +72,7 @@ export class AuthService {
         }});
         console.log(user);
         await this.usersRepository.save(user);
-        return { accessToken: accessToken };
+        return { accessToken: accessToken, user: user };
     } catch (error) {
       throw new HttpException(error.response.data, error.response.data);
     }

@@ -55,48 +55,58 @@ import { actionCreators, RootState } from "../state";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 // import InvitationChecker from "../InvitationChecker/InvitationChecker";
-import { useLocation } from 'react-router-dom'
+import { useLocation } from "react-router-dom";
 import { ip } from "../App";
+import { useEffect, useState } from "react";
 // import NotFound from "../../Page/NotFound/NotFound";
 
-var test = false
-
-function ConnectionChecker(props: {
-  children: any;
-  sign: boolean
-}): JSX.Element {
-
-  const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-  const utils = useSelector((state: RootState) => state.utils)
+function ConnectionChecker(props: { children: any }): JSX.Element {
+  const userReducer = useSelector(
+    (state: RootState) => state.persistantReducer.userReducer
+  );
+  const [isConnected, setIsConnected] = useState(true);
+  const utils = useSelector((state: RootState) => state.utils);
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
-  if (!test)
-  {
-    console.log(persistantReducer.userReducer.user?.username);
-    // axios.get(`http://${ip}:5001/user/login/` + persistantReducer.userReducer.user?.username).then((item) => { 
-    //   setUser(item.data);
-    //   utils.socket.emit("ADD_USER", { login: item.data.user.username});
-    //   test = true;
-    // }).catch((err) => setUser(null));
+  useEffect(() => {
+    console.log(userReducer.user)
+    if (userReducer.user === null) {
+      setIsConnected(false);
+    } else {
+      axios
+        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`)
+        .catch((error) => {
+          setIsConnected(false)
+        });
+    }
+  });
+  if (isConnected) {
+    return <>{props.children}</>;
   }
+  return <Navigate to="/Signup"></Navigate>;
 
-  if (persistantReducer.userReducer.user?.username !== undefined && props.sign == false) {
-    console.log("1");
-    return (<>{props.children}</>)
-  }
-  else if (props.sign == false) {
-    console.log("2");
-    return <Navigate to="/Signup" />
-  }
-  else if (persistantReducer.userReducer.user?.username == undefined) {
-    console.log("3");
-    return (<>{props.children}</>)
-  }
-  else {
-    console.log("4");
-    return (<Navigate to="/" />)
-  }
+  // console.log('username', )
+  // return (
+  //   <div></div>
+  // )
+
+  // if (persistantReducer.userReducer.user?.username !== undefined && props.sign == false) {
+  //   console.log("1");
+  //   return (<>{props.children}</>)
+  // }
+  // else if (props.sign == false) {
+  //   console.log("2");
+  //   return <Navigate to="/Signup" />
+  // }
+  // else if (persistantReducer.userReducer.user?.username == undefined) {
+  //   console.log("3");
+  //   return (<>{props.children}</>)
+  // }
+  // else {
+  //   console.log("4");
+  //   return (<Navigate to="/" />)
+  // }
 }
 
 export default ConnectionChecker;
