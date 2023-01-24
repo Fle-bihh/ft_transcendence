@@ -20,8 +20,6 @@ export const setUser = (
     NormalLossNumber: number,
     twoFactorAuth: boolean,
     Friend: number,
-
-
   } | null
 ) => {
   return (dispatch: Dispatch<userAction>) => {

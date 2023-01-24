@@ -18,7 +18,6 @@ type SetUserAction = {
     NormalLossNumber: number,
     twoFactorAuth: boolean,
     Friend: number,
-
     } | null
 }
 

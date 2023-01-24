@@ -43,7 +43,7 @@
 //   }
 //   else {
 //     console.log('quoii');
-//     return <Navigate to="/signin"/>;
+//     return <Navigate to="/Signin"/>;
 //   }
 // }
 
@@ -63,6 +63,7 @@ var test = false
 
 function ConnectionChecker(props: {
   children: any;
+  sign: boolean
 }): JSX.Element {
 
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
@@ -81,12 +82,14 @@ function ConnectionChecker(props: {
   }
 
 
-  if (persistantReducer.userReducer.user?.username !== undefined)
-    {
-      return (<>{props.children}</>)
-    }
-    else
-      return <Navigate to="/signin" />
+  if (persistantReducer.userReducer.user?.username !== undefined && props.sign == false)
+    return (<>{props.children}</>)
+  else if (props.sign == false)
+    return <Navigate to="/Signin" />
+  else if (persistantReducer.userReducer.user?.username == undefined)
+    return (<>{props.children}</>)
+  else
+    return (<Navigate to="/" />)
 }
 
 export default ConnectionChecker;

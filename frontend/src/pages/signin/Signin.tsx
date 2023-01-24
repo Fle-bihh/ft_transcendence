@@ -35,9 +35,35 @@ const Signin = () => {
   const askStyle = { lineHeight: "2" };
 
   const [inputUsernameValue, setInputUsernameValue] = useState("");
+  const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
+
+  const submitForm = () => {
+    console.log("submit form Signin")
+    console.log('inputvalue = ', inputUsernameValue)
+    console.log('pass = ', password)
+    axios.get(`http://${ip}:5001/user/login/${inputUsernameValue}`).then(response => {
+      console.log('data = ', response.data);
+      if (response.data != null) {
+        console.log("EMIIIIIT")
+        utils.socket.emit("ADD_USER", { login: inputUsernameValue });
+        setUser(response.data);
+        window.location.replace(`http://localhost:3000/`);
+      }
+      else
+      {
+        console.log("NUUUUUUULLLLLLLL")
+      }
+    }).catch(error => {
+      console.log("error catch : ")
+      console.log(error);
+    })
+    // utils.socket.emit("ADD_USER", { login: inputUsernameValue });
+    // if ()
+    // window.location.replace(`http://${ip}:3000/`);
+  }
 
   return (
     <Grid>
@@ -48,7 +74,7 @@ const Signin = () => {
           </Avatar>
           <h2>Sign In</h2>
         </Grid>
-        <form style={formStyle}>
+        <form style={formStyle} onSubmit={submitForm}>
           <TextField
             label="Login"
             variant="standard"
@@ -67,32 +93,18 @@ const Signin = () => {
             type="password"
             fullWidth
             required
+            value={password}
+            onChange={(value) =>
+              setPassword(value.currentTarget.value)
+            }
           />
 
           {/* <FormControlLabel control={<Checkbox />} label="Remember me" /> */}
           {/* <NavLink to="/"> */}
-            <Button
-              type="submit"
-              color="primary"
-              variant="contained"
-              style={btnStyle}
-              fullWidth
-              onClick={() => {
-
-                axios.get(`http://${ip}:5001/user/login/${inputUsernameValue}`).then(response => {
-                  if (response.data != null) {
-                    utils.socket.emit("ADD_USER", { login: inputUsernameValue });
-                    setUser(response.data);
-                    window.location.replace(`http://${ip}:3000/`);
-                  }
-
-                  console.log(response);
-                })
-                // setUser({ login: inputUsernameValue });
-                // <NavLink to='/'></NavLink>
-              }}
-            >
-              Sign in
+          <Button type="submit" color="primary"
+            variant="contained"
+            style={btnStyle}
+            fullWidth > Sign in
           </Button>
           {/* </NavLink> */}
           <Typography style={askStyle}>
