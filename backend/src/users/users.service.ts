@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {UserCredentialsDto} from './dto/user-credentials.dto';
@@ -59,9 +59,13 @@ export class UsersService {
     return null;
   }
 
-  async getUserByLogin(username: string): Promise<User> {
+  async getUserByLogin(username: string): Promise<User | null> {
     console.log(username);
     const found = await this.usersRepository.findOneBy({ username });
+    console.log('found = ', found);
+    if (found == null) {
+      throw new HttpException('User Not Found', 404);
+    }
     if (found)
       return found;
     return null;

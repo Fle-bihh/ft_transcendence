@@ -44,4 +44,5 @@ export class UsersController {
   async get2FA(@GetUser() user: User): Promise<{ twoFactorAuth: boolean }> {
     return await this.usersService.get2FA(user);
   }
+
 }
