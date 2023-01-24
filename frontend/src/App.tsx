@@ -31,16 +31,6 @@ function App() {
                   <Connect />
             }
           />
-          {/* <Route
-            path="/Signin"
-            element={
-              <ConnectionChecker sign={true} >
-                <NotifInterceptor>
-                  <Signin />
-                </NotifInterceptor>
-              </ConnectionChecker>
-            }
-          /> */}
           <Route
             path="/signup"
             element={
