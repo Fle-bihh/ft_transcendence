@@ -67,29 +67,36 @@ function ConnectionChecker(props: {
 }): JSX.Element {
 
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer)
-  const utilsData = useSelector((state: RootState) => state.utils)
+  const utils = useSelector((state: RootState) => state.utils)
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
-  if (!test) {
-    // axios.get("https://localhost:5001/user/login/", { withCredentials: true }).then((item) => { setUser(item.data) }).catch((err) => setUser(null));
-    axios.get(`http://${ip}:5001/user/login/` + persistantReducer.userReducer.user?.username).then((item) => { 
-      setUser(item.data);
-    test = true }).catch((err) => setUser(null));
-
-
-    // utilsData.socket.emit('storeClientInfo', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
+  if (!test)
+  {
+    console.log(persistantReducer.userReducer.user?.username);
+    // axios.get(`http://${ip}:5001/user/login/` + persistantReducer.userReducer.user?.username).then((item) => { 
+    //   setUser(item.data);
+    //   utils.socket.emit("ADD_USER", { login: item.data.user.username});
+    //   test = true;
+    // }).catch((err) => setUser(null));
   }
 
-
-  if (persistantReducer.userReducer.user?.username !== undefined && props.sign == false)
+  if (persistantReducer.userReducer.user?.username !== undefined && props.sign == false) {
+    console.log("1");
     return (<>{props.children}</>)
-  else if (props.sign == false)
-    return <Navigate to="/Signin" />
-  else if (persistantReducer.userReducer.user?.username == undefined)
+  }
+  else if (props.sign == false) {
+    console.log("2");
+    return <Navigate to="/Signup" />
+  }
+  else if (persistantReducer.userReducer.user?.username == undefined) {
+    console.log("3");
     return (<>{props.children}</>)
-  else
+  }
+  else {
+    console.log("4");
     return (<Navigate to="/" />)
+  }
 }
 
 export default ConnectionChecker;

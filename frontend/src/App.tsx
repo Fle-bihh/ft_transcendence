@@ -28,12 +28,14 @@ function App() {
           <Route
             path="/home"
             element={
-              <NotifInterceptor>
-                <Connect />
-              </NotifInterceptor>
+              <ConnectionChecker sign={false} >
+                <NotifInterceptor>
+                  <Connect />
+                </NotifInterceptor>
+              </ConnectionChecker>
             }
           />
-          <Route
+          {/* <Route
             path="/Signin"
             element={
               <ConnectionChecker sign={true} >
@@ -42,7 +44,7 @@ function App() {
                 </NotifInterceptor>
               </ConnectionChecker>
             }
-          />
+          /> */}
           <Route
             path="/signup"
             element={
