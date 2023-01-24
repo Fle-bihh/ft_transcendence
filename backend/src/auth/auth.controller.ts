@@ -6,7 +6,7 @@ import {Auth42Dto} from "./dto/auth-42.dto";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/api42/signin')
+  @Post('/api42/Signin')
   async signIn42(@Query() auth42Dto: Auth42Dto): Promise <{ accessToken: string }> {
     return await this.authService.signIn42(auth42Dto);
   }

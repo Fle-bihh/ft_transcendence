@@ -34,31 +34,39 @@ function App() {
             }
           />
           <Route
-            path="/signin"
+            path="/Signin"
             element={
-              <NotifInterceptor>
-                <Signin />
-              </NotifInterceptor>
+              <ConnectionChecker sign={true} >
+                <NotifInterceptor>
+                  <Signin />
+                </NotifInterceptor>
+              </ConnectionChecker>
             }
           />
           <Route
             path="/signup"
             element={
-              <NotifInterceptor>
-                <Signup />
-              </NotifInterceptor>
+              <ConnectionChecker sign={true}>
+                <NotifInterceptor>
+                  <Signup />
+                </NotifInterceptor>
+              </ConnectionChecker>
             }
           />
           <Route
             path="/"
             element={
-              <ConnectionChecker children={<Home/>}/>
+              <ConnectionChecker sign={false}>
+                <NotifInterceptor>
+                  <Home />
+                </NotifInterceptor>
+              </ConnectionChecker>
             }
           />
           <Route
             path="/versions"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <Versions />
                 </NotifInterceptor>
@@ -68,7 +76,7 @@ function App() {
           <Route
             path="/pong"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <Pong />
                 </NotifInterceptor>
@@ -78,7 +86,7 @@ function App() {
           <Route
             path="/friends"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <Friends />
                 </NotifInterceptor>
@@ -88,7 +96,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <Profile />
                 </NotifInterceptor>
@@ -98,7 +106,7 @@ function App() {
                  <Route
             path="/profileother"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <ProfileOther />
                 </NotifInterceptor>
@@ -108,7 +116,7 @@ function App() {
           <Route
             path="/notif"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <Notif />
                 </NotifInterceptor>
@@ -118,7 +126,7 @@ function App() {
           <Route
             path="/chat"
             element={
-              <ConnectionChecker>
+              <ConnectionChecker sign={false}>
                 <NotifInterceptor>
                   <Chat />
                 </NotifInterceptor>

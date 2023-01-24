@@ -30,7 +30,7 @@ const Connect = () => {
 
 
   axios.request({
-    url: '/auth/api42/signin',
+    url: '/auth/api42/Signin',
     method: 'post',
     baseURL: `http://${ip}:5001`,
     params: {
@@ -49,7 +49,7 @@ const Connect = () => {
 
 
   return (
-      <Navigate to='/signin' ></Navigate>
+      <Navigate to='/Signin' ></Navigate>
   )
 
 };

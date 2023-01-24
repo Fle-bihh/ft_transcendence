@@ -169,7 +169,7 @@ const Signup = () => {
 
                     <TextField variant="standard" fullWidth label=' Confirm Password' type='password' placeholder='Enter Password'/>
                     <Button type='submit' variant='contained' color='primary'  >Sign Up</Button>
-                    <NavLink to='/signin' style={styleSignin}>
+                    <NavLink to='/Signin' style={styleSignin}>
                         Sign in
                     </NavLink>
                     </form>
