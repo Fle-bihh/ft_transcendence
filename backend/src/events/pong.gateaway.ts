@@ -123,6 +123,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
             id_user2: this.allGames[allRoom[i].index].players[1].id,
             score_u2: this.allGames[allRoom[i].index].players[1].score,
             winner_id: this.allGames[allRoom[i].index].players[0].score === 3 ? this.allGames[allRoom[i].index].players[0].id : this.allGames[allRoom[i].index].players[1].id,
+            //add mapstring
           }
           //creer dans la DB le résultat du match
           // const match = this.MatchesHistoryService.createMatch(data);

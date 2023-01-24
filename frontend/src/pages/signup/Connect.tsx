@@ -49,7 +49,7 @@ const Connect = () => {
 
 
   return (
-      <Navigate to='/Signin' ></Navigate>
+      <Navigate to='/Signup' ></Navigate>
   )
 
 };
