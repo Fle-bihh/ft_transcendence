@@ -28,35 +28,19 @@ function App() {
           <Route
             path="/home"
             element={
-              <NotifInterceptor>
-                <Connect />
-              </NotifInterceptor>
-            }
-          />
-          <Route
-            path="/Signin"
-            element={
-              <ConnectionChecker sign={true} >
-                <NotifInterceptor>
-                  <Signin />
-                </NotifInterceptor>
-              </ConnectionChecker>
+                  <Connect />
             }
           />
           <Route
             path="/signup"
             element={
-              <ConnectionChecker sign={true}>
-                <NotifInterceptor>
                   <Signup />
-                </NotifInterceptor>
-              </ConnectionChecker>
             }
           />
           <Route
             path="/"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Home />
                 </NotifInterceptor>
@@ -66,7 +50,7 @@ function App() {
           <Route
             path="/versions"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Versions />
                 </NotifInterceptor>
@@ -76,7 +60,7 @@ function App() {
           <Route
             path="/pong"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Pong />
                 </NotifInterceptor>
@@ -86,7 +70,7 @@ function App() {
           <Route
             path="/friends"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Friends />
                 </NotifInterceptor>
@@ -96,7 +80,7 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Profile />
                 </NotifInterceptor>
@@ -106,7 +90,7 @@ function App() {
                  <Route
             path="/profileother"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <ProfileOther />
                 </NotifInterceptor>
@@ -116,7 +100,7 @@ function App() {
           <Route
             path="/notif"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Notif />
                 </NotifInterceptor>
@@ -126,7 +110,7 @@ function App() {
           <Route
             path="/chat"
             element={
-              <ConnectionChecker sign={false}>
+              <ConnectionChecker>
                 <NotifInterceptor>
                   <Chat />
                 </NotifInterceptor>
