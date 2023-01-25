@@ -9,6 +9,8 @@ import { createServer } from 'http';
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import {UsersService} from 'src/users/users.service';
+import {User} from 'src/entities/user.entity';
 
 const db_users = Array<{
   index: number;
@@ -32,6 +34,10 @@ const users = Array<{ index: number; login: string; socket: Socket }>();
 export class EventsGateway {
   private logger: Logger = new Logger('AppGateway');
 
+  constructor(
+    private userService: UsersService,
+  ) {}
+
   @WebSocketServer()
   httpServer = createServer();
   io = new Server(this.httpServer);
@@ -42,11 +48,11 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('CHECK_USER_EXIST')
-  check_user_exist(client: Socket, userLogin: string) {
+  async check_user_exist(client: Socket, userLogin: string) {
     this.logger.log(db_users);
     client.emit(
       'check_user_exist',
-      db_users.find((user) => user.login == userLogin) != undefined,
+      await this.userService.getUserByLogin(userLogin) != null,
     );
   }
 
@@ -91,14 +97,14 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('GET_USERNAME')
-  get_username(client: Socket, login: string) {
+  async get_username(client: Socket, login: string) {
     this.logger.log('GET_USERNAME received back from', login);
-    let tmpString: string;
-     db_users.map((user) => {
-      if (user.login === login) {
-        tmpString = user.username;
-      }
-    })
+    let tmpString: string = (await this.userService.getUserByLogin(login)).username;
+     // db_users.map((user) => {
+     //  if (user.login === login) {
+     //    tmpString = user.username;
+     //  }
+    // })
 
     client.emit('get_username', tmpString);
     this.logger.log(
@@ -112,16 +118,16 @@ export class EventsGateway {
   @SubscribeMessage('GET_ALL_USERS')
   get_all_users(client: Socket, login: string) {
     this.logger.log('GET_ALL_USERS received back');
-    const retArray = Array<{ id: number; username: string }>();
-    db_users.map((user) => {
-      retArray.push({
-        id: user.index,
-        // login: user.login,
-        username: user.login
-      });
-    });
-    client.emit('get_all_users', retArray);
-    this.logger.log('send get_all_users to front', retArray);
+    // const retArray = Array<{ id: number; username: string }>();
+    // db_users.map((user) => {
+    //   retArray.push({
+    //     id: user.index,
+    //     // login: user.login,
+    //     username: user.login
+    //   });
+    // });
+    client.emit('get_all_users', this.userService.getAll());
+    this.logger.log('send get_all_users to front', this.userService.getAll());
   }
 
   @SubscribeMessage('ADD_FRIENDSHIP')

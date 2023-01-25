@@ -22,7 +22,7 @@ export class Message {
   // @ManyToOne(type => Channel, channel => channel.messages, {nullable: true})
   // channel: Channel | null;
   //
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()

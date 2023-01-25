@@ -44,6 +44,7 @@ export class AuthService {
         const { status, data } = await lastValueFrom(response$);
         const authCredentialsDto: AuthCredentialsDto = {
           username: data.login,
+          login: data.login,
           password: 'Qwert_123',
           firstName: data.first_name,
           lastName: data.last_name,

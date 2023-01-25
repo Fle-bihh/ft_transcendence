@@ -31,12 +31,6 @@ export class GameService {
     console.log(player2);
     console.log(gameResultsDto);
 
-    player1.GoalSet += score1;
-    player1.GoalTaken += score2;
-
-    player2.GoalSet += score2;
-    player2.GoalTaken += score1;
-
     const game: Game = this.gameRepository.create({
       player1,
       player2,

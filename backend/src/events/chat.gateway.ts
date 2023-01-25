@@ -98,20 +98,21 @@ export class ChatGateway {
     }
     const actualTime: Date = new Date();
     const messageDto: MessagesDto = {
-      id: db_messages.length,
+      // id: db_messages.length,
       sender: data.sender,
       receiver: data.receiver,
       content: data.content,
       date: actualTime,
     }
+    console.log(messageDto);
     this.messageRepository.save(messageDto);
-    db_messages.push({
-      index: db_messages.length,
-      sender: data.sender,
-      receiver: data.receiver,
-      content: data.content,
-      time: actualTime,
-    });
+    // db_messages.push({
+    //   index: db_messages.length,
+    //   sender: data.sender,
+    //   receiver: data.receiver,
+    //   content: data.content,
+    //   time: actualTime,
+    // });
 
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 

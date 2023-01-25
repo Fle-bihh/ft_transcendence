@@ -19,12 +19,6 @@ login: string;
 @Column({nullable: true})
 password?: string | null;
 
-@Column()
-firstName: string;
-
-@Column()
-lastName: string;
-
 @Column({nullable: true})
 profileImage?: string | null;
 

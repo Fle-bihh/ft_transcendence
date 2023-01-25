@@ -7,7 +7,6 @@ export class MessagesDto {
   // receiver: User | null;
   // body: string;
   // channel: Channel | null;
-  id: number;
   sender: string;
   receiver: string;
   content: string;
