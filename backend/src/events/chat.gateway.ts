@@ -11,6 +11,11 @@ import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { channel } from 'diagnostics_channel';
 import { any } from '@hapi/joi';
+import {Repository} from 'typeorm';
+import {Message} from 'src/entities/message.entity';
+import {MessagesDto} from 'src/channel/dto/messages.dto';
+import {User} from 'src/entities/user.entity';
+import {InjectRepository} from '@nestjs/typeorm';
 
 const db_messages = Array<{
   index: number;
@@ -59,6 +64,10 @@ const users = Array<{ index: number; login: string; socket: Socket }>();
 })
 export class ChatGateway {
   private logger: Logger = new Logger('AppGateway');
+  constructor(
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
+  ) {}
 
   @WebSocketServer()
   httpServer = createServer();
@@ -88,6 +97,14 @@ export class ChatGateway {
       return;
     }
     const actualTime: Date = new Date();
+    const messageDto: MessagesDto = {
+      id: db_messages.length,
+      sender: data.sender,
+      receiver: data.receiver,
+      content: data.content,
+      date: actualTime,
+    }
+    this.messageRepository.save(messageDto);
     db_messages.push({
       index: db_messages.length,
       sender: data.sender,
