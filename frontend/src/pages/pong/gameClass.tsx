@@ -1,3 +1,4 @@
+
 export class Canvas {
 	width: number
 	height: number
@@ -160,9 +161,11 @@ export class Player {
 export class Map {
 
 	mapColor: string
+	mapName: string
 
 	constructor(gameMap: string) {
 		this.mapColor = "black"
+		this.mapName = gameMap
 		if (gameMap == "map1")
 			this.mapColor = "black"
 		else if (gameMap == "map2") {

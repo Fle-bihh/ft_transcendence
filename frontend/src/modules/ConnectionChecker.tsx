@@ -18,7 +18,7 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
-    console.log(userReducer.user)
+    // console.log(userReducer.user)
     if (userReducer.user === null) {
       setIsConnected(false);
     } else {
