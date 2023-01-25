@@ -13,10 +13,10 @@ export class Game {
     player2: User;
 
     @Column()
-    score1: number;
+    score_u1: number;
 
     @Column()
-    score2: number;
+    score_u2: number;
 
     @ManyToOne(type =>User, user => user.games)
     winner: User;

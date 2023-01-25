@@ -10,6 +10,7 @@ import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { GameClass } from 'src/pong/gameClass';
 import { Interval } from 'nestjs-schedule'
+import {GameService} from 'src/game/game.service';
 
 interface Client {
 id : string;
@@ -30,6 +31,9 @@ const UserToReconnect = []
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('PongGateway');
   private allGames: Array<GameClass> = new Array();
+  constructor(
+    private gameService: GameService,
+  ) {}
 
   @WebSocketServer() io: Server;
 
@@ -71,13 +75,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (room != null) {
       if (this.allGames[room[0]].players[0].score == 3 || this.allGames[room[0]].players[1].score == 3) {
         const data = {
-          id_user1: room[1].players[0].id,
+          id_user1: room[1].players[0].username,
           score_u1: room[1].players[0].score,
-          id_user2: room[1].players[1].id,
+          id_user2: room[1].players[1].username,
           score_u2: room[1].players[1].score,
-          winner_id: room[1].players[0].score === 3 ? room[1].players[0].id : room[1].players[1].id,
+          winner_id: room[1].players[0].score === 3 ? room[1].players[0].username : room[1].players[1].username,
+          map: room[1].map.mapName,
         }
-        //push DB
+        this.gameService.createGame(data);
         this.allGames.splice(room[0], 1)
         this.io.to(room[1].roomID).emit('finish', room[1])
         return;
@@ -120,15 +125,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (this.allGames[allRoom[i].index].players[1].username != "") {
           this.allGames[allRoom[i].index].players[player].score = 3
           const data = {
-            id_user1: this.allGames[allRoom[i].index].players[0].id,
+            id_user1: this.allGames[allRoom[i].index].players[0].username,
             score_u1: this.allGames[allRoom[i].index].players[0].score,
-            id_user2: this.allGames[allRoom[i].index].players[1].id,
+            id_user2: this.allGames[allRoom[i].index].players[1].username,
             score_u2: this.allGames[allRoom[i].index].players[1].score,
-            winner_id: this.allGames[allRoom[i].index].players[0].score === 3 ? this.allGames[allRoom[i].index].players[0].id : this.allGames[allRoom[i].index].players[1].id,
-            //add mapstring
+            winner_id: this.allGames[allRoom[i].index].players[0].score === 3 ? this.allGames[allRoom[i].index].players[0].username : this.allGames[allRoom[i].index].players[1].username,
+            map: this.allGames[allRoom[i].index].map.mapName,
           }
-          //creer dans la DB le résultat du match
-          // const match = this.MatchesHistoryService.createMatch(data);
+          this.gameService.createGame(data);
           //send notif to user qui a perdu a cause de la connection pour lui dire qu'il a perdu
           this.allGames[allRoom[i].index].players.forEach((item, index) => {
             if (!item.inGame && item.id != client.id) {
@@ -190,13 +194,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 var room = this.getRoomByID(this.allGames[index].roomID)
                 this.allGames[index].players[i ? 0 : 1].score = 3
                 const data = {
-                  id_user1: room[1].players[0].id,
+                  id_user1: room[1].players[0].username,
                   score_u1: room[1].players[0].score,
-                  id_user2: room[1].players[1].id,
+                  id_user2: room[1].players[1].username,
                   score_u2: room[1].players[1].score,
-                  winner_id: room[1].players[0].score === 3 ? room[1].players[0].id : room[1].players[1].id,
+                  winner_id: room[1].players[0].score === 3 ? room[1].players[0].username : room[1].players[1].username,
+                  map: room[1].map.mapName,
                 }
-                // const match = this.MatchesHistoryService.createMatch(data);
+                this.gameService.createGame(data);
                 room[1].players.forEach((item, index) => {
                   if (!item.inGame) {
                     allClients.forEach((client) => {

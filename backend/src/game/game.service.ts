@@ -21,21 +21,21 @@ export class GameService {
   async createGame(gameResultsDto: GameResultsDto): Promise<void> {
     console.log(gameResultsDto);
     const {
-      player1,
-      player2,
-      score1,
-      score2,
-      winner,
+      id_user1,
+      id_user2,
+      score_u1,
+      score_u2,
+      winner_id,
     } = gameResultsDto;
-    console.log(player1);
-    console.log(player2);
-    console.log(gameResultsDto);
 
+    const player1 = await this.userService.getUserByLogin(id_user1);
+    const player2 = await this.userService.getUserByLogin(id_user2);
+    const winner = await this.userService.getUserByLogin(winner_id);
     const game: Game = this.gameRepository.create({
       player1,
       player2,
-      score1,
-      score2,
+      score_u1,
+      score_u2,
       winner,
     })
 
