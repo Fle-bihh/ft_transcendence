@@ -22,47 +22,20 @@ ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Button, Typography } from '@mui/material';
 import { userInfo } from 'os';
 
+
+// rajouter bouton activer A2FA ou non 
+
 const Profile = () => {
 
     const [matchHistory, setMatchHistory] = React.useState(Array<{
         id: number,
         user1_login: string,
-        user2_login: string,
+        user2_login: string, // class user
         user1_score: number,
         user2_score: number,
         winner_login: string,
     }>())
 
-    //  const paperStyle={padding:20, height:500, width:300, backgroundColor: 'red', margin:100}
-    // const paperStyleState={padding:20, height:500, width:700, backgroundColor: 'blue', margin:100}
-    // const StyledBadge = styled(Badge)(({ theme }) => ({
-    //     '& .MuiBadge-badge': {
-    //         backgroundColor: '#44b700',
-    //         color: '#44b700',
-    //         boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    //         '&::after': {
-    //             position: 'absolute',
-    //             top: 0,
-    //             left: 0,
-    //             width: '100%',
-    //             height: '100%',
-    //             borderRadius: '0%',
-    //             animation: 'ripple 1.2s infinite ease-in-out',
-    //             border: '1px solid currentColor',
-    //             content: '""',
-    //         },
-    //     },
-    //     '@keyframes ripple': {
-    //         '0%': {
-    //             transform: 'scale(.8)',
-    //             opacity: 1,
-    //         },
-    //         '100%': {
-    //             transform: 'scale(2.4)',
-    //             opacity: 0,
-    //         },
-    //     },
-    // }));
     const utils = useSelector((state: RootState) => state.utils);
     const user = useSelector(
         (state: RootState) => state.persistantReducer.userReducer
@@ -114,22 +87,26 @@ const Profile = () => {
                     <Button className="buttonChange" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
                         Change UserName
                         </Button>
-
-
-
-
-
                 </div>
                 {/* </Grid>
                     <Grid xs={6}> */}
                 <div className="stat">
 
-                    <Box className="rectangle">
-                        <h2 style={{ color: 'white' }}>Game History {user.user?.username}</h2>
-                        <h3 style={{ textAlign: 'center' }}>Number of parts</h3>
-                        <h3 style={{ textAlign: 'center', fontWeight: '900' , marginBottom: '3px'}}>{matchHistory.length}</h3>
-
-                    </Box>
+                    <div className="rectangle">
+                        <div className="textRectangle">
+                            <p>nbr Win</p>
+                            <p>9</p>
+                        </div>
+                        <div className="textRectangle">
+                            <h2 style={{ color: 'white' }}>Scoring {user.user?.username}</h2>
+                            {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
+                            <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{matchHistory.length}</h3>
+                        </div>
+                        <div className="textRectangle">
+                            <p>nbr Loose</p>
+                            <p>2</p>
+                        </div>
+                    </div>
 
                     {matchHistory.map((match) => {
                         return (
