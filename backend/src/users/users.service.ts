@@ -49,8 +49,8 @@ export class UsersService {
     return null;
   }
 
-  getAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  async getAll(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
   async getUserById(id: string, user?: User): Promise<User> {
@@ -63,8 +63,22 @@ export class UsersService {
     return null;
   }
 
-  async getUserByLogin(username: string): Promise<User> {
-    const found = await this.usersRepository.findOneBy({ username });
+  async getFriends(login: string): Promise<{ friends: User[] }> {
+    const currentUser: User = await this.getUserByLogin(login);
+
+    const allUser: User[] = await this.usersRepository.find({
+      relations: ['friends'],
+    });
+
+    const friends: User[] = allUser.find((user) => {
+      return user.login === currentUser.login;
+    }).friends;
+
+    return { friends: friends };
+  }
+
+  async getUserByLogin(login: string): Promise<User> {
+    const found = await this.usersRepository.findOneBy({ login });
     // if (found == null) {
     //   throw new HttpException('User Not Found', 404);
     // }
