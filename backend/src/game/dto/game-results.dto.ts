@@ -1,13 +1,13 @@
 import {User} from "src/entities/user.entity";
 
 export class GameResultsDto {
-  player1: User;
+  id_user1: string;
 
-  player2: User;
+  id_user2: string;
 
-  score1: number;
+  score_u1: number;
   
-  score2: number;
+  score_u2: number;
 
-  winner: User;
+  winner_id: string;
 }
