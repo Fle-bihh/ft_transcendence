@@ -73,23 +73,24 @@ const ProfileOther = () => {
 
     } | null>(null);
 
-    useEffect(() => {
-        if (userDisplay == null) {
-            const parsed = queryString.parse(window.location.search);
-            console.log(parsed)
-            if (parsed.username == '' || parsed.username == undefined) {
-                window.location.replace("http://${ip}:3000/")
-            }
-            else { //
-                axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
-                    if (response.data != null) {
-                        setUserDisplay(response.data);
-                    }
-                    console.log(response);
-                })
-            }
-        }
-    })
+    // useEffect(() => {
+    //     if (userDisplay == null) {
+    //         const parsed = queryString.parse(window.location.search);
+    //         console.log(parsed)
+    //         if (parsed.username == '' || parsed.username == undefined) {
+    //             window.location.replace("http://${ip}:3000/")
+    //         }
+    //         else { //
+    //             axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
+    //                 if (response.data != null) {
+    //                     setUserDisplay(response.data);
+    //                 }
+    //                 console.log(response);
+    //             })
+    //         }
+    //     }
+    // })
+
 
     return (
         <React.Fragment >

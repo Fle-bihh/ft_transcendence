@@ -29,6 +29,9 @@ import axios from 'axios';
 
 
 
+
+// rajouter bouton activer A2FA ou non 
+
 const Profile = () => {
 
     const [matchHistory, setMatchHistory] = React.useState(Array<{
@@ -155,6 +158,7 @@ const Profile = () => {
                         </Typography>
 
                     </div>
+
                     {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
 
                     <Button className="buttonChange" type="submit" onClick={handleClickOpen}>
@@ -187,6 +191,7 @@ const Profile = () => {
 
                         </div>
                     </Dialog>
+
                 </div>
                 {/* </Grid>
                     <Grid xs={6}> */}
