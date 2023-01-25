@@ -12,6 +12,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
+import { Button } from '@mui/material';
 
 function MapSelector(props : any) {
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
@@ -108,7 +109,7 @@ function MapSelector(props : any) {
 
     return (
         <React.Fragment>
-            <Navbar />
+            {/* <Navbar /> */}
             <Box paddingTop={"10%"} paddingBottom={"5%"}>
                 <Typography align ="center" variant="h1" sx={{fontWeight:900}} >
                     <b style={{color:'black'}}>Jouez au Pong</b>
@@ -145,6 +146,14 @@ function MapSelector(props : any) {
                         </Typography>
                     </Image>
                 </ImageButton>
+            </Box>
+            <Box alignContent={"center"} sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 100, width: '100%', }}>
+                { props.listGame == "" ?
+                    <Button variant="outlined" onClick={() => {
+                        gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username);
+                    }}>See the list of Live Game</Button> :
+                    <></>
+                }
             </Box>
         </React.Fragment>
     )
