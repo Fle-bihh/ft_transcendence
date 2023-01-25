@@ -86,14 +86,14 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('GET_ALL_USERS')
-  get_all_users(client: Socket, login: string) {
+  async get_all_users(client: Socket, login: string) {
     this.logger.log('GET_ALL_USERS received back');
-    const retArray = Array<{ id: number; username: string }>();
-    db_users.map((user) => {                              // JE RECUP LES USERS ET JE RANGE LEUR USERNAME DANS retArray AVANT DE LE RETURN
+    const retArray = Array<{ id: string; username: string }>();
+    const user = await this.userService.getAll();
+    user.map((user) => {
       retArray.push({
-        id: user.index,
-        // login: user.login,
-        username: user.login,
+        id: user.id,
+        username: user.username,
       });
     });
     client.emit('get_all_users', retArray);
@@ -127,24 +127,25 @@ export class EventsGateway {
   // }
 
   @SubscribeMessage('GET_USER_FRIENDS')
-  get_user_friends(client: Socket, login: string) {
+  async get_user_friends(client: Socket, login: string) {
     this.logger.log('GET_USER_FRIENDS received in backend from', login);
     let tmpArray = Array<{
       login: string;
       login2: string;
       friendshipDate: Date;
     }>();
-    db_friendList.map((friend) => {                                 // IL FAUT ENVOYER TOUS LES FRIENDS DU login RECU EN ARG, TU PEUX UTILISER TA FONCTION MANY DU COUP
-      if (friend.login === login || friend.login2 === login) {
-        tmpArray.push({
-          login: friend.login,
-          login2: friend.login2,
-          friendshipDate: friend.friendshipDate,
-        });
-      }
-    });
-    client.emit('get_user_friends', tmpArray);
-    this.logger.log('send get_user_friends to ', login, 'with', tmpArray);
+    const friends = await this.userService.getFriends(login);
+    // db_friendList.map((friend) => {                                 // IL FAUT ENVOYER TOUS LES FRIENDS DU login RECU EN ARG, TU PEUX UTILISER TA FONCTION MANY DU COUP
+    //   if (friend.login === login || friend.login2 === login) {
+    //     tmpArray.push({
+    //       login: friend.login,
+    //       login2: friend.login2,
+    //       friendshipDate: friend.friendshipDate,
+    //     });
+    //   }
+    // });
+    client.emit('get_user_friends', friends);
+    this.logger.log('send get_user_friends to ', login, 'with', friends);
   }
 
   handleConnection(client: Socket) {
