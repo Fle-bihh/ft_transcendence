@@ -17,19 +17,19 @@ username: string;
 password?: string | null;
 
 @Column()
-firstName: string;
+firstName: string; 
 
 @Column()
-lastName: string;
+lastName: string; //
 
 @Column({nullable: true})
-nickName?: string | null;
+nickName?: string | null; //
 
 @Column({nullable: true})
 profileImage?: string | null;
 
 @Column()
-email: string;
+email: string; 
 
 @Column({default: 0})
 GoalTaken: number;

@@ -46,7 +46,7 @@ export class EventsGateway {
     this.logger.log(db_users);
     client.emit(
       'check_user_exist',
-      db_users.find((user) => user.login == userLogin) != undefined,
+      db_users.find((user) => user.login == userLogin) != undefined, // IL FAUT FAIRE LE FIND DANS LA VRAIE DB POUR VERIFIER QUE LE USER EXIST, REVOYER TRUE SI OUI
     );
   }
 
@@ -57,23 +57,12 @@ export class EventsGateway {
       login: string;
     },
   ) {
-    console.log('ADD_USER recu EventGateway', data);
+    console.log('ADD_USER recu EventGateway', data); // NE RIEN FAIRE POUR L'INSTANT
     users.push({
       index: users.length,
       login: data.login,
       socket: client,
     });
-    // PUSH USER DATA INTO DB
-    if (!db_users.find((user) => user.login == data.login))
-      db_users.push({
-        index: users.length,
-        login: data.login,
-        password: '',
-        username: data.login,
-      });
-    // users.map((user) => {
-    //   this.get_all_users(user.socket);
-    // });
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
@@ -84,40 +73,21 @@ export class EventsGateway {
     },
   ) {
     if (users.findIndex((user) => user.login === data.login) >= 0) {
-      users[users.findIndex((user) => user.login === data.login)].socket =
+      users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
         client;
     }
     this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
-  }
-
-  @SubscribeMessage('GET_USERNAME')
-  get_username(client: Socket, login: string) {
-    this.logger.log('GET_USERNAME received back from', login);
-    let tmpString: string;
-     db_users.map((user) => {
-      if (user.login === login) {
-        tmpString = user.username;
-      }
-    })
-
-    client.emit('get_username', tmpString);
-    this.logger.log(
-      'send get_username to ',
-      login,
-      ' with',
-      tmpString
-    );
   }
 
   @SubscribeMessage('GET_ALL_USERS')
   get_all_users(client: Socket, login: string) {
     this.logger.log('GET_ALL_USERS received back');
     const retArray = Array<{ id: number; username: string }>();
-    db_users.map((user) => {
+    db_users.map((user) => {                              // JE RECUP LES USERS ET JE RANGE LEUR USERNAME DANS retArray AVANT DE LE RETURN
       retArray.push({
         id: user.index,
         // login: user.login,
-        username: user.login
+        username: user.login,
       });
     });
     client.emit('get_all_users', retArray);
@@ -126,7 +96,7 @@ export class EventsGateway {
 
   @SubscribeMessage('ADD_FRIENDSHIP')
   add_friendship(
-    client: Socket,
+    client: Socket,                             // RIEN POUR L INSTANT
     data: {
       login: string;
       login2: string;
@@ -158,7 +128,7 @@ export class EventsGateway {
       login2: string;
       friendshipDate: Date;
     }>();
-    db_friendList.map((friend) => {
+    db_friendList.map((friend) => {                                 // IL FAUT ENVOYER TOUS LES FRIENDS DU login RECU EN ARG, TU PEUX UTILISER TA FONCTION MANY DU COUP
       if (friend.login === login || friend.login2 === login) {
         tmpArray.push({
           login: friend.login,
