@@ -21,15 +21,10 @@ import { actionCreators, RootState } from "../../state";
 import axios from "axios";
 import { ip } from '../../App';
 
-// import Checkbox from '@mui/material/Checkbox';
-// const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-
-// const Login =({handleChange})=>{
 const Signin = () => {
   const paperStyle = { padding: 20, height: 500, width: 300, margin: "0 auto" };
   const utils = useSelector((state: RootState) => state.utils);
   const avatarStyle = { backgroundColor: "red", margin: "20px auto" };
-  // const textStyle={textAlign:'center'}
   const btnStyle = { margin: "8px 0" };
   const formStyle = { lineHeight: "4" };
   const askStyle = { lineHeight: "2" };
@@ -50,7 +45,7 @@ const Signin = () => {
         console.log("EMIIIIIT")
         utils.socket.emit("ADD_USER", { login: inputUsernameValue });
         setUser(response.data);
-        window.location.replace(`http://localhost:3000/`);
+        // window.location.replace(`http://localhost:3000/`);
       }
       else
       {
@@ -60,9 +55,6 @@ const Signin = () => {
       console.log("error catch : ")
       console.log(error);
     })
-    // utils.socket.emit("ADD_USER", { login: inputUsernameValue });
-    // if ()
-    // window.location.replace(`http://${ip}:3000/`);
   }
 
   return (

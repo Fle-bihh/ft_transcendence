@@ -21,10 +21,13 @@ import {
   Message,
   Menu as MenuIcon,
 } from "@mui/icons-material/";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators, RootState } from "../../state";
+import { bindActionCreators } from "redux";
 
 const Navbar = (props: any) => {
+  const dispatch = useDispatch();
+  const { setUser } = bindActionCreators(actionCreators, dispatch);
   const persistantReducer = useSelector(
     (state: RootState) => state.persistantReducer
   );
@@ -41,7 +44,7 @@ const Navbar = (props: any) => {
     { Name: <Notifications />, Link: "/Notif" },
     { Name: <Message />, Link: "/Chat" },
     { Name: <AccountCircle />, Link: "/Profile" },
-    { Name: <LogoutIcon />, Link: "/Signin" },
+    { Name: <LogoutIcon />, Link: "/Signup" },
   ];
 
   const HomeBox = styled(Box)({
@@ -50,7 +53,7 @@ const Navbar = (props: any) => {
   });
   const HomeItems = [
     { Name: "Home", Link: "/" },
-    {Name: 'Pong', Link:'/pong'}
+    { Name: "Pong", Link: "/pong" },
   ];
   const [open, Setopen] = useState(false);
   const [open2, Setopen2] = useState(false);
@@ -61,7 +64,7 @@ const Navbar = (props: any) => {
         {/* La barre des Items HOME */}
         <HomeBox sx={{ display: { xs: "none", sm: "none", md: "flex" } }}>
           {HomeItems.map((item) => (
-            <NavLink to={`${item.Link}`} className="link">
+            <NavLink key={item.Link} to={`${item.Link}`} className="link">
               <Typography
                 sx={{ cursor: "pointer", frontSize: "14px", color: "black" }}
               >
@@ -83,7 +86,7 @@ const Navbar = (props: any) => {
           {ItemsInNav.map((item) => {
             if (item.Link == "/Notif")
               return (
-                <NavLink to={`${item.Link}`} className="link">
+                <NavLink key={item.Link} to={`${item.Link}`} className="link">
                   <Badge
                     badgeContent={
                       persistantReducer.notifReducer.notifArray.filter(
@@ -105,10 +108,31 @@ const Navbar = (props: any) => {
                   </Badge>
                 </NavLink>
               );
-            else
+            else if (item.Link == "/Signup") {
+              return (
+                <NavLink
+                key={item.Link}
+                  to={`/`}
+                  className="link"
+                  onClick={() => {
+                    setUser(null);
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      cursor: "pointer",
+                      frontSize: "14px",
+                      color: "black",
+                    }}
+                  >
+                    {item.Name}
+                  </Typography>
+                </NavLink>
+              );
+            } else
               return (
                 /* <a href={item.Link} className='link'> */
-                <NavLink to={`${item.Link}`} className="link">
+                <NavLink key={item.Link} to={`${item.Link}`} className="link">
                   <Typography
                     sx={{
                       cursor: "pointer",
@@ -150,7 +174,7 @@ const Navbar = (props: any) => {
         <Box sx={{ width: 150, height: "21vh" }}>
           {ItemsInNav.map((item) => (
             // <a href={item.Link} className='little-link'>
-            <NavLink to={`${item.Link}`} className="little-link">
+            <NavLink key={item.Link} to={`${item.Link}`} className="little-link">
               <MenuItem
                 sx={{ cursor: "pointer", frontSize: "14px", color: "balck" }}
               >
@@ -179,7 +203,7 @@ const Navbar = (props: any) => {
       >
         <Box sx={{ width: 150, height: "10vh" }}>
           {HomeItems.map((item) => (
-            <NavLink to={`${item.Link}`} className="little-link">
+            <NavLink key={item.Link} to={`${item.Link}`} className="little-link">
               <MenuItem
                 sx={{ cursor: "pointer", frontSize: "14px", color: "balck" }}
               >

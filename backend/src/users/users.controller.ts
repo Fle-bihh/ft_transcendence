@@ -32,7 +32,7 @@ export class UsersController {
 
   @Get('/login/:login')
   async getUserByLogin(@Param('login') login: string): Promise<User> {
-    return await this.usersService.getUserByLogin(login);
+      return await this.usersService.getUserByLogin(login);
   }
 
   @Get('/:id/match_history')
@@ -44,4 +44,5 @@ export class UsersController {
   async get2FA(@GetUser() user: User): Promise<{ twoFactorAuth: boolean }> {
     return await this.usersService.get2FA(user);
   }
+
 }
