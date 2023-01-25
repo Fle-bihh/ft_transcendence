@@ -1,47 +1,142 @@
 import React from 'react';
-import {Box, Typography} from "@mui/material"
+import { Box, Typography, Button } from "@mui/material"
 import HomesImage from "../../styles/asset/gif_pong.gif"
 import Navbar from '../../components/nav/Nav';
 import { NavLink } from "react-router-dom";
 import "./home.scss"
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { useEffect, useRef } from "react";
 
-  const Home = (data: any) => {
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
-    return (
-      <React.Fragment >
-        <Navbar />
-        <Box 
-        sx={{
-          backgroundImage:`url(${HomesImage})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition:'center',
-          backgroundSize: 'cover',
-          backgroundColor: 'black',
-          display:'flex',
-          justifyContent:'center',
-          height: 750,
-          width:'100%',
-        }}
-        >
-          <Box sx={{width: {xs:"100%", sm:"50%", md:"40%"}, padding: {xs:3, sm:2, md:20}}}>
-            <Box sx={{background:"white", opacity:"0.8"}}>
-            <Typography align ="center" variant="h1" sx={{fontWeight:900}} >
-                <b style={{color:'black'}}>Pong</b>
-            </Typography>
-            <Typography align ="center" variant={"h2"} pt={8}>
-                 Règles :
-            </Typography>
-            <Typography align ="center" variant={"body1"} pt={8}>
-                 Utilisez les commandes pour déplacer la raquette vers le haut ou le bas de manière à renvoyer la balle à votre adversaire, en l'empêchant de passer. 
-                 Celui qui remporte le match est bien entendu celui qui marque le plus de points.
-            </Typography>
-            <NavLink to='/pong'>Jouer</NavLink>
-            </Box>
-          </Box>
-        </Box>
-      </React.Fragment>
-    );
- };
 
- export default Home;
+// const titleRef = useRef()
+const Home = (data: any) => {
+  
+
+  const slideInTop = (elem:any, delay:any) => {
+    gsap.fromTo(
+      elem,
+      {
+        y: -200,
+        opacity: 0,
+
+      },
+      {
+        opacity: 1,
+        y: 10,
+        delay: delay || 0,
+        scrollTrigger: {
+          trigger: elem,
+          // start : "top center",
+          // end: "bottom center",
+        }
+      }
+    )
+  }
+
+  const onLoad = () => {
+    gsap.timeline().fromTo(".letter",
+      {
+        x: -100,
+        opacity: 0,
+      },
+      {
+        x: 0,
+        opacity: 1,
+        stagger: 0.33,
+        delay: 0.7,
+      }
+    )
+    .to(".letter", {
+      margin:"0 15 vw",
+      delay:0.8,
+      duration:0.5,
+    })
+    .to(".letter", {
+      margin:"0 0 vw",
+      delay:0.8,
+      duration:0.5,
+    })
+    // .to(".title", {
+    //   x: -1000,
+    //   delay:0.8,
+    //   duration:0.5,
+    // })
+    .to(window, {
+      duration:2,
+      y:20,
+      scrollTo: "#section"
+
+    })
+  }
+  useEffect(() => {
+    onLoad();
+
+  }, [])
+
+  useEffect(() => {
+    slideInTop("#section", 0);
+
+  }, [])
+
+
+  return (
+    <React.Fragment >
+      <Navbar />
+
+      {/* sx={{ */}
+      {/* //   backgroundImage: `url(${HomesImage})`,
+        //   backgroundRepeat: 'no-repeat',
+        //   backgroundPosition: 'center',
+        //   backgroundSize: 'cover',
+        //   backgroundColor: 'black',
+        //   display: 'flex',
+        //   justifyContent: 'center',
+        //   height: "120%",
+        //   width: 'auto',
+        // }}
+      
+    //    className="zoneText" */}
+
+
+      
+      <div className="fondText" >
+        <h1 className="title" >
+          <span className="letter">P</span>
+          <span className="letter">O</span>
+          <span className="letter">N</span>
+          <span className="letter">G</span>
+        </h1>
+        <div className="fondText" >
+
+        <section className="zoneText" id="section">
+
+          <h1 >
+            <b style={{ color: 'black', border: 'solid', borderWidth: 'thick', borderSpacing: "2" }}>Pong</b>
+          </h1>
+          <h2  >
+            Règles :
+            </h2>
+          <div className="rules" >
+            Utilisez les commandes pour déplacer la raquette vers le haut ou le bas de manière à renvoyer la balle à votre adversaire, en l'empêchant de passer.
+            Celui qui remporte le match est bien entendu celui qui marque le plus de points.
+            </div>
+          <NavLink to='/pong' className="btnPlay"  >
+        
+            
+            <Button className="btn2">
+              Jouer
+                </Button>
+          </NavLink>
+        </section>
+    </div>
+      </div>
+    </React.Fragment>
+  );
+};
+
+export default Home;
 
