@@ -49,6 +49,10 @@ export class UsersService {
     return null;
   }
 
+  getAll(): Promise<User[]> {
+    return this.usersRepository.find();
+  }
+
   async getUserById(id: string, user?: User): Promise<User> {
     if (id === 'me') {
       id = user.id;
@@ -59,15 +63,14 @@ export class UsersService {
     return null;
   }
 
-  async getUserByLogin(username: string): Promise<User | null> {
-    console.log(username);
+  async getUserByLogin(username: string): Promise<User> {
     const found = await this.usersRepository.findOneBy({ username });
-    console.log('found = ', found);
-    if (found == null) {
-      throw new HttpException('User Not Found', 404);
-    }
-    if (found)
+    // if (found == null) {
+    //   throw new HttpException('User Not Found', 404);
+    // }
+    if (found != null) {
       return found;
+    }
     return null;
   }
 

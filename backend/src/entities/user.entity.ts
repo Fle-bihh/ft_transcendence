@@ -3,7 +3,7 @@ import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn
 import {Channel} from "./channel.entity";
 import {FriendRequest} from "./friend-request.entity";
 import {Game} from "./game.entity";
-import {Message} from "./message.entity";
+// import {Message} from "./message.entity";
 
 @Entity()
 export class User {
@@ -13,17 +13,11 @@ id: string;
 @Column({ unique: true })
 username: string;
 
+@Column({ unique: true })
+login: string;
+
 @Column({nullable: true})
 password?: string | null;
-
-@Column()
-firstName: string; 
-
-@Column()
-lastName: string; //
-
-@Column({nullable: true})
-nickName?: string | null; //
 
 @Column({nullable: true})
 profileImage?: string | null;
@@ -32,19 +26,13 @@ profileImage?: string | null;
 email: string; 
 
 @Column({default: 0})
-GoalTaken: number;
-
-@Column({default: 0})
-GoalSet: number;
-
-@Column({default: 0})
-NormalGameNumber: number;
-
-@Column({default: 0})
-NormalWinNumber: number;
+WinNumber: number;
 
 @Column({ default: 0 })
-NormalLossNumber: number;
+LossNumber: number;
+
+@Column({ default: 0 })
+Rank: number;
 
 @Column({default: false})
 twoFactorAuth: boolean;
@@ -61,20 +49,20 @@ requestFrom: FriendRequest[];
 @OneToMany(type => FriendRequest, request => request.to)
 requestTo: FriendRequest[];
 
-@OneToMany(type => Message, message => message.sender)
-messagesSend: Message[];
+// @OneToMany(type => Message, message => message.sender)
+// messagesSend: Message[];
 
-@OneToMany(type => Message, message => message.receiver)
-messagesReceive: Message[];
+// @OneToMany(type => Message, message => message.receiver)
+// messagesReceive: Message[];
 
-@OneToMany(type => Channel, channel => channel.creator)
-channels: Channel[];
+// @OneToMany(type => Channel, channel => channel.creator)
+// channels: Channel[];
 
-@ManyToMany(type => Channel, channel => channel.admin)
-channelsAdmin: Channel[];
+// @ManyToMany(type => Channel, channel => channel.admin)
+// channelsAdmin: Channel[];
 
-@ManyToMany(type => Channel, channel => channel.userConnected)
-channelsConnected: Channel[];
+// @ManyToMany(type => Channel, channel => channel.userConnected)
+// channelsConnected: Channel[];
 
 @ManyToMany(type => User, user => user.friends, {cascade: false})
 @JoinTable()
