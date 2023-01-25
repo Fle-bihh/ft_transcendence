@@ -79,7 +79,7 @@ export class ChatGateway {
     },
   ) {
     if (
-      db_blockList.find(
+      db_blockList.find(    // VERIFIER QUE LE USER EST PAS BLOCK, A VOIR PLUS TARD SI TU VEUX QU ON CHANGE LA METHODE DE BLOCKLIST
         (block) =>
           block.loginBlock === data.sender &&
           block.loginEmitter === data.receiver,
@@ -88,7 +88,7 @@ export class ChatGateway {
       return;
     }
     const actualTime: Date = new Date();
-    db_messages.push({
+    db_messages.push({                  // PUSH LE NOUVEAU MESSAGE DANS LA DB
       index: db_messages.length,
       sender: data.sender,
       receiver: data.receiver,
@@ -113,24 +113,7 @@ export class ChatGateway {
 
       if (senderUser != undefined) senderUser.socket.emit('new_message');
       if (receiverUser != undefined) receiverUser.socket.emit('new_message');
-      // if (receiverUser != undefined) receiverUser.socket.emit('add_notif', {type: 'FRIENDREQUEST', data: {sender: 'Leo'}});
     }
-
-    //   if (db_channels.find((channel) => channel.name === data.receiver)) {
-    //     db_participants
-    //       .filter((participant) => participant.channel === data.receiver)
-    //       .map((target) => {
-    //         users
-    //           .find((user) => user.login === target.login)
-    //           .socket.emit('new_message');
-    //         this.logger.log('send new_message to front', data.receiver);
-    //       });
-    //   } else {
-    //     users
-    //       .find((user) => user.login === data.receiver)
-    //       .socket.emit('new_message');
-    //     this.logger.log('send new_message to front', data.receiver);
-    //   }
   }
 
   @SubscribeMessage('CREATE_CHANNEL')

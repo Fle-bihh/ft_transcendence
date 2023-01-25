@@ -93,7 +93,6 @@ const Main = (props: {
 
   utils.socket.removeListener("check_user_exist");
   utils.socket.on("check_user_exist", (exist: boolean) => {
-    console.log("test");
     if (exist) {
       const tmpArray = [...props.allConv];
       tmpArray.shift();
