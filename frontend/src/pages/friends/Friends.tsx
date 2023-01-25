@@ -16,7 +16,6 @@ import MessageIcon from "@mui/icons-material/Message";
 const Friends = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userInfo, setUserInfo] = useState("");
-  const [myUsername, setMyUsername] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [rightInputValue, setRightInputValue] = useState("");
   const [openFriendsPage, setOpenFriendsPage] = useState(true);
@@ -38,6 +37,7 @@ const Friends = () => {
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
+  const [myUsername, setMyUsername] = useState(user.user?.username);
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -49,8 +49,6 @@ const Friends = () => {
     if (openFriendsPage) {
       utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
       console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
-      utils.socket.emit("GET_USERNAME", user.user?.username);
-      console.log(user.user?.username, "send GET_USERNAME to backend");
       utils.socket.emit("GET_ALL_USERS", user.user?.username);
       console.log(user.user?.username, "send GET_ALL_USERS to backend");
     }
