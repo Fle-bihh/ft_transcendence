@@ -11,6 +11,11 @@ import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { channel } from 'diagnostics_channel';
 import { any } from '@hapi/joi';
+import {Repository} from 'typeorm';
+import {Message} from 'src/entities/message.entity';
+import {MessagesDto} from 'src/channel/dto/messages.dto';
+import {User} from 'src/entities/user.entity';
+import {InjectRepository} from '@nestjs/typeorm';
 
 const db_messages = Array<{
   index: number;
@@ -59,6 +64,10 @@ const users = Array<{ index: number; login: string; socket: Socket }>();
 })
 export class ChatGateway {
   private logger: Logger = new Logger('AppGateway');
+  constructor(
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
+  ) {}
 
   @WebSocketServer()
   httpServer = createServer();
@@ -79,7 +88,7 @@ export class ChatGateway {
     },
   ) {
     if (
-      db_blockList.find(
+      db_blockList.find(    // VERIFIER QUE LE USER EST PAS BLOCK, A VOIR PLUS TARD SI TU VEUX QU ON CHANGE LA METHODE DE BLOCKLIST
         (block) =>
           block.loginBlock === data.sender &&
           block.loginEmitter === data.receiver,
@@ -88,13 +97,21 @@ export class ChatGateway {
       return;
     }
     const actualTime: Date = new Date();
-    db_messages.push({
-      index: db_messages.length,
+    const messageDto: MessagesDto = {
       sender: data.sender,
       receiver: data.receiver,
       content: data.content,
-      time: actualTime,
-    });
+      date: actualTime,
+    }
+    console.log(messageDto);
+    this.messageRepository.save(messageDto);
+    // db_messages.push({
+    //   index: db_messages.length,
+    //   sender: data.sender,
+    //   receiver: data.receiver,
+    //   content: data.content,
+    //   time: actualTime,
+    // });
 
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 
@@ -113,24 +130,7 @@ export class ChatGateway {
 
       if (senderUser != undefined) senderUser.socket.emit('new_message');
       if (receiverUser != undefined) receiverUser.socket.emit('new_message');
-      // if (receiverUser != undefined) receiverUser.socket.emit('add_notif', {type: 'FRIENDREQUEST', data: {sender: 'Leo'}});
     }
-
-    //   if (db_channels.find((channel) => channel.name === data.receiver)) {
-    //     db_participants
-    //       .filter((participant) => participant.channel === data.receiver)
-    //       .map((target) => {
-    //         users
-    //           .find((user) => user.login === target.login)
-    //           .socket.emit('new_message');
-    //         this.logger.log('send new_message to front', data.receiver);
-    //       });
-    //   } else {
-    //     users
-    //       .find((user) => user.login === data.receiver)
-    //       .socket.emit('new_message');
-    //     this.logger.log('send new_message to front', data.receiver);
-    //   }
   }
 
   @SubscribeMessage('CREATE_CHANNEL')

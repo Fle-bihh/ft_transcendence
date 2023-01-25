@@ -8,6 +8,9 @@ export class AuthCredentialsDto {
   username: string;
 
   @IsNotEmpty()
+  login: string;
+
+  @IsNotEmpty()
   @IsString()
   @MinLength(8)
   @MaxLength(32)
