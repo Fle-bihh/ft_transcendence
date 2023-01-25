@@ -20,6 +20,16 @@ export interface User {
     Friend: number,
     } | null;
 }
+// id: string,
+// username: string
+// login: string,
+// profileImage: string,
+// email: string,
+// nWinNumber: number,
+// LossNumber: number,
+// Rank: number,
+// twoFactorAuth: boolean,
+// friend: number,
 
 export const initialState: User = {
     user: null
