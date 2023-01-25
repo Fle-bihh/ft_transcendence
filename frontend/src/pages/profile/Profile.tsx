@@ -40,12 +40,13 @@ const Profile = () => {
         winner_login: string,
     }>())
 
+    const [firstOpen, setFirstOpen] = useState(true)
     const utils = useSelector((state: RootState) => state.utils);
     const user = useSelector(
         (state: RootState) => state.persistantReducer.userReducer
     );
 
-        const [inputValue, setInputValue] = useState("")
+    const [inputValue, setInputValue] = useState("")
 
     const [userDisplay, setUserDisplay] = useState<{
 
@@ -54,9 +55,11 @@ const Profile = () => {
         login: string, // prenom  to --> login 
         profileImage: string, // oui
         email: string,
-        xpLogin: number, // la XP de notre joueur 
-        nbrWin: number, // nbr de gagne
-        nbrLoose: number,// nbr de perdu
+        Rank: number, // la XP de notre joueur 
+        WinNumber: number, // nbr de gagne
+        LossNumber: number,// nbr de perdu
+        twoFactorAuth: boolean,
+
     } | null>(null);
 
 
@@ -82,24 +85,30 @@ const Profile = () => {
 
 
     useEffect(() => {
-        axios.get(`http://localhost:5001/user/login/${user.user?.username}`).then(response => {
+        if (firstOpen) {
+            axios.get(`http://localhost:5001/user/login/${user.user?.username}`).then(response => {
 
-            if (response.data = ! null) {
-                setUserDisplay({
-                    id: response.data.id,
-                    username: response.data.username,
-                    login: response.data.login,
-                    profileImage: response.data.profileImage,
-                    email: response.data.email,
-                    xpLogin: response.data.rank,
-                    nbrWin: response.data.nbrWin,
-                    nbrLoose: response.data.nbrLoose,
-                })
-            }
-        }).catch(error => {
-            console.log(error);
-        })
-    }
+                if (response.data = ! null) {
+                    setUserDisplay({
+                        id: response.data.id,
+                        username: response.data.username,
+                        login: response.data.login,
+                        profileImage: response.data.profileImage,
+                        email: response.data.email,
+                        WinNumber: response.data.WinNumber,
+                        LossNumber: response.data.LossNumber,
+                        Rank: response.data.Rank,
+                        twoFactorAuth: response.data.twoFactorAuth,
+
+                    })
+                    console.log("response data =", response.data)
+                    setFirstOpen(false)
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+    }, [firstOpen]
     )
 
 
@@ -162,11 +171,11 @@ const Profile = () => {
                         <div>
                             <input
                                 placeholder="Enter new username"
-                                 value= {inputValue}
-                                 onChange={(event) => setInputValue(event.currentTarget.value)}
+                                value={inputValue}
+                                onChange={(event) => setInputValue(event.currentTarget.value)}
                             >
                             </input>
-                            <div onClick={
+                            {/* <div onClick={
                                 axios.put('/api/article/123', {
                                     title: 'Making PUT Requests with Axios',
                                     status: 'published',
@@ -174,8 +183,8 @@ const Profile = () => {
                                 handleClose
                             }>
                                 Validé
-                            </div>
-                        
+                            </div> */}
+
                         </div>
                     </Dialog>
                 </div>
