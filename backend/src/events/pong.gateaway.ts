@@ -28,7 +28,7 @@ const UserToReconnect = []
 
 @WebSocketGateway(5002, { transports: ['websocket'] })
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private logger: Logger = new Logger('AppGateway');
+  private logger: Logger = new Logger('PongGateway');
   private allGames: Array<GameClass> = new Array();
 
   @WebSocketServer() io: Server;
@@ -87,6 +87,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleConnection(client: Socket) {
+    this.logger.log(`new client connected ${client.id}`);
       const newClient: Client = {
         id: client.id,
         username: "",
@@ -98,6 +99,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect(client: Socket) {
     //cherche l'utilisateur
     const user = allClients.find(clients => clients.id == client.id)
+    this.logger.log(`client disconnected ${client.id} : ${user.username}`);
     //ajouter l'utilisateur au tableau de gens a reconnecter si il existe
     if (user != undefined && user.username != "" && user.username != undefined) {
       UserToReconnect.push({ username: user.username, date: new Date() })
@@ -147,15 +149,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('CHECK_RECONNEXION')
-  async checkReconnexion( client: Socket, user: { login: string }) {
-    allClients.find(item => item.id == client.id)!.username = user.login
-    const room = this.getRoomByClientLogin(user.login)
+  async checkReconnexion( client: Socket, user: { username: string }) {
+    allClients.find(item => item.id == client.id)!.username = user.username
+    console.log(`Check reco ${client.id} : ${user.username}`);
+    const room = this.getRoomByClientLogin(user.username)
     if (room != null) {
       this.joinRoom(client, this.allGames[room[0]].roomID)
-      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.login)].id = client.id
-      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.login)].inGame = true
+      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].id = client.id
+      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].inGame = true
       allClients.forEach((client) => {
-        this.io.to(client.id).emit('getClientStatus', { user: this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.login)].username, status: 'in-game', emitFrom: 'CHECK_RECONNEXION' })
+        this.io.to(client.id).emit('getClientStatus', { user: this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].username, status: 'in-game', emitFrom: 'CHECK_RECONNEXION' })
       })
       this.io.to(client.id).emit('start', room[1].roomID)
     }
@@ -280,5 +283,23 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       waintingForGame.push({ map: info.gameMap, user: info.user })
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
-}
+  }
+  @SubscribeMessage('SEE_LIST_GAME')
+  async seeListGame(client: Socket, username : string) {
+    console.log("length de all games : ", this.allGames.length)
+    console.log("username de see list game : ", username)
+    if (this.allGames.length != 0)
+    {
+      console.log("option 1 ")
+      this.allGames.map((room) => {
+        this.io.to(client.id).emit('add_room_playing', room);
+      })
+      this.io.to(client.id).emit('set_list_game', "yes");
+    }
+    else {
+      console.log("option 2")
+      this.io.to(client.id).emit('set_list_game', "noGame");
+    }
+
+  }
 }
