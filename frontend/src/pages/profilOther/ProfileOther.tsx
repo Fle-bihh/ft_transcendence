@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Cerise from '../../styles/asset/cerise.jpg'
 import Laurine from '../../styles/asset/ananas.png'
+import * as React from 'react';
 
 
 import Avatar from '@mui/material/Avatar';
@@ -45,49 +46,54 @@ const ProfileOther = () => {
 
     const [userDisplay, setUserDisplay] = useState<{
         id: string,
-        username: string,
-        password: string,
-        firstName: string,
-        lastName: string,
-        nickName: string,
-        profileImage: string,
-        email: string,
-        isLogged: boolean,
-        isAdmin: boolean,
-        GoalTaken: number,
-        GoalSet: number,
-        NormalGameNumber: number,
-        RankedGameNumber: number,
-        NormalWinNumber: number,
-        RankedWinNumber: number,
-        PP: number,
-        twoFactorAuth: boolean,
-        Security: boolean,
-        Friend: number,
-        Climber: boolean,
-        Hater: number,
+        username: string, //pseudo
+        password: string, // pas besoin 
+        firstName: string, // prenom  to --> login 
+        lastName: string, // pas besoin 
+        nickName: string, //degage 
+        profileImage: string, // oui 
+        email: string, // non
+        isLogged: boolean, // pas besoin 
+        isAdmin: boolean, // pas besoin
+        GoalTaken: number, // pas besoin
+        GoalSet: number, // pas besoin 
+        NormalGameNumber: number, // pas besoin
+        RankedGameNumber: number, // pas besoin
+        NormalWinNumber: number, // to -> win 
+        // perdu
+
+        RankedWinNumber: number, // pas besoin
+        PP: number, // pas besoin --> XP
+        twoFactorAuth: boolean, // pas besoin
+        Security: boolean, // pas besoin
+        Friend: number, // ouiiiii 
+        Climber: boolean, // pas besoin
+        Hater: number, // pas besoin
+        // http://localhost:3000/Profileother?username=ldauga
+
     } | null>(null);
 
-    useEffect(() => {
-        if (userDisplay == null) {
-            const parsed = queryString.parse(window.location.search);
-            console.log(parsed)
-            if (parsed.username == '' || parsed.username == undefined) {
-                window.location.replace("http://${ip}:3000/")
-            }
-            else {
-                axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
-                    if (response.data != null) {
-                        setUserDisplay(response.data);
-                    }
-                    console.log(response);
-                })
-            }
-        }
-    })
+    // useEffect(() => {
+    //     if (userDisplay == null) {
+    //         const parsed = queryString.parse(window.location.search);
+    //         console.log(parsed)
+    //         if (parsed.username == '' || parsed.username == undefined) {
+    //             window.location.replace("http://${ip}:3000/")
+    //         }
+    //         else { //
+    //             axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
+    //                 if (response.data != null) {
+    //                     setUserDisplay(response.data);
+    //                 }
+    //                 console.log(response);
+    //             })
+    //         }
+    //     }
+    // })
 
     return (
-        <>
+        <React.Fragment >
+
             <Navbar />
 
             <div className="profilePageContainerOther">
@@ -183,7 +189,8 @@ const ProfileOther = () => {
                     })}
                 </div>
             </div>
-        </>
+            </React.Fragment >
+
 
     )
 };

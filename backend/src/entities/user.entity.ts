@@ -23,7 +23,7 @@ password?: string | null;
 profileImage?: string | null;
 
 @Column()
-email: string;
+email: string; 
 
 @Column({default: 0})
 WinNumber: number;
