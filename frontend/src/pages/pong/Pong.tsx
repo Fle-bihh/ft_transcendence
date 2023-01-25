@@ -8,7 +8,7 @@ import { GameClass } from './gameClass';
 import GamePage from './GamePage';
 import MapSelector from './MapSelector';
 import "./Pong.scss"
-import WatchingGame from './WatchingGame';
+import WatchingListGame from './WatchingListGame';
 
 const Pong = (props : any) => {
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
@@ -47,7 +47,7 @@ const Pong = (props : any) => {
     function affishListGame() {
         console.log("affish allrooms : ", allrooms);
         if (listGame == 'yes') return (
-            <WatchingGame all_rooms={allrooms} />
+            <WatchingListGame all_rooms={allrooms} />
         )
         else return (
             <p>No game</p>
@@ -73,12 +73,10 @@ const Pong = (props : any) => {
             setGameStart = {setGameStart}
             setRoomID = {setRoomID}
             setWaitingOponnent = {setWaitingOponnent}
+            listGame = {listGame}
             />
             { listGame == "" ?
-                <Button variant="outlined" onClick={() => {
-                    gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username);
-                }}>See the list of Live Game</Button> :
-                <>{affishListGame()}</>
+                <></> : <>{affishListGame()}</>
             }
         </div>
     );
