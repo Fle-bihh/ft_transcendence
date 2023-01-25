@@ -15,15 +15,19 @@ import Stack from '@mui/material/Stack';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state';
+import { useEffect, useState } from 'react';
 
 import Fab from '@mui/material/Fab'; import
 ModeEditIcon from '@mui/icons-material/ModeEdit';
 
-import { Button, Typography } from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle, Input, TextField, Typography } from '@mui/material';
 import { userInfo } from 'os';
+import axios from 'axios';
 
 
 // rajouter bouton activer A2FA ou non 
+
+
 
 const Profile = () => {
 
@@ -40,7 +44,65 @@ const Profile = () => {
     const user = useSelector(
         (state: RootState) => state.persistantReducer.userReducer
     );
-    //  const Item = classNames="Item"
+
+        const [inputValue, setInputValue] = useState("")
+
+    const [userDisplay, setUserDisplay] = useState<{
+
+        id: string,
+        username: string, //pseudo
+        login: string, // prenom  to --> login 
+        profileImage: string, // oui
+        email: string,
+        xpLogin: number, // la XP de notre joueur 
+        nbrWin: number, // nbr de gagne
+        nbrLoose: number,// nbr de perdu
+    } | null>(null);
+
+
+    const [userMatchHistory, setUserMatchHistory] = useState(
+        Array<{
+            login: string,
+            scoreLogin: number,
+            login2: string,
+            scoreLogin2: number,
+            matchWin: string, // login de la personne qui a gagné
+        }>()
+    );
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+
+    useEffect(() => {
+        axios.get(`http://localhost:5001/user/login/${user.user?.username}`).then(response => {
+
+            if (response.data = ! null) {
+                setUserDisplay({
+                    id: response.data.id,
+                    username: response.data.username,
+                    login: response.data.login,
+                    profileImage: response.data.profileImage,
+                    email: response.data.email,
+                    xpLogin: response.data.rank,
+                    nbrWin: response.data.nbrWin,
+                    nbrLoose: response.data.nbrLoose,
+                })
+            }
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+    )
+
+
 
     return (
         <React.Fragment >
@@ -70,7 +132,7 @@ const Profile = () => {
                             Login :
                             </h3>
                         <Typography className="userNamePrint">
-                            {user.user?.username}
+                            {userDisplay?.username}
                         </Typography>
 
                     </div>
@@ -84,9 +146,38 @@ const Profile = () => {
                         </Typography>
 
                     </div>
-                    <Button className="buttonChange" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
+                    {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
+
+                    <Button className="buttonChange" type="submit" onClick={handleClickOpen}>
                         Change UserName
-                        </Button>
+                    </Button>
+                    <Dialog
+                        // fullScreen={fullScreen}
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <div>
+                            Write your new username
+                        </div>
+                        <div>
+                            <input
+                                placeholder="Enter new username"
+                                 value= {inputValue}
+                                 onChange={(event) => setInputValue(event.currentTarget.value)}
+                            >
+                            </input>
+                            <div onClick={
+                                axios.put('/api/article/123', {
+                                    title: 'Making PUT Requests with Axios',
+                                    status: 'published',
+                                }),
+                                handleClose
+                            }>
+                                Validé
+                            </div>
+                        
+                        </div>
+                    </Dialog>
                 </div>
                 {/* </Grid>
                     <Grid xs={6}> */}
