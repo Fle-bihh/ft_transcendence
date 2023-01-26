@@ -23,6 +23,7 @@ ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Button, Dialog, DialogContent, DialogTitle, Input, TextField, Typography } from '@mui/material';
 import { userInfo } from 'os';
 import axios from 'axios';
+import { InputText } from 'primereact/inputtext';
 
 
 // rajouter bouton activer A2FA ou non 
@@ -68,11 +69,11 @@ const Profile = () => {
 
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
-            login: string,
-            scoreLogin: number,
-            login2: string,
-            scoreLogin2: number,
-            matchWin: string, // login de la personne qui a gagné
+            player1id: string,
+            score1: number,
+            player2id: string,
+            login2: number,
+            winnerid: string, // login de la personne qui a gagné
         }>()
     );
 
@@ -83,15 +84,28 @@ const Profile = () => {
     };
 
     const handleClose = () => {
+        console.log("inputValue0 =", inputValue)
+
+        if (inputValue != "") {
+            // setFirstOpen(true)
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`,
+                {
+                    username: inputValue
+                })
+                console.log("inputValue1 =", inputValue)
+        };
+        setInputValue("")
+        console.log("userDisplay2 =", userDisplay)
+        console.log("inputValue2 =", inputValue)
         setOpen(false);
     };
 
 
-    useEffect(() => {
-        if (firstOpen) {
-            axios.get(`http://localhost:5001/user/login/${user.user?.username}`).then(response => {
+     useEffect(() => {
+        //   if (firstOpen) {
+             axios.get(`http://localhost:5001/user/id/${user.user?.id}`).then(response => {
 
-                if (response.data = ! null) {
+                if (response.data != null) {
                     setUserDisplay({
                         id: response.data.id,
                         username: response.data.username,
@@ -102,19 +116,21 @@ const Profile = () => {
                         LossNumber: response.data.LossNumber,
                         Rank: response.data.Rank,
                         twoFactorAuth: response.data.twoFactorAuth,
-
                     })
-                    console.log("response data =", response.data)
+                    console.log("response data =", response.data.username)
                     setFirstOpen(false)
                 }
             }).catch(error => {
                 console.log(error);
             });
-        }
-    }, [firstOpen]
+            console.log("userDisplay =", userDisplay)
+        // }
+    }, 
+    // [firstOpen]
     )
 
 
+        // http://localhost:5001/user/id/${user.user?.games}
 
     return (
         <React.Fragment >
@@ -133,18 +149,19 @@ const Profile = () => {
                             variant="dot"
                             className="avatarItem"
                         > */}
-                        <img alt="Cerise" src={Cerise} className="avatar" />
+                        <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
                     </Stack>
                     <Button className="avatarChange" type="submit">
                         Change Profile Picture
                         </Button>
+                    <InputText type="file" />
 
                     <div className="infoUser">
                         <h3 className="userName">
                             Login :
                             </h3>
                         <Typography className="userNamePrint">
-                            {userDisplay?.username}
+                            {userDisplay?.login}
                         </Typography>
 
                     </div>
@@ -154,7 +171,7 @@ const Profile = () => {
                             userName :
                             </h3>
                         <Typography className="userNamePrintChange">
-                            {user.user?.username}
+                            {userDisplay?.username}
                         </Typography>
 
                     </div>
@@ -179,15 +196,9 @@ const Profile = () => {
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
                             >
                             </input>
-                            {/* <div onClick={
-                                axios.put('/api/article/123', {
-                                    title: 'Making PUT Requests with Axios',
-                                    status: 'published',
-                                }),
-                                handleClose
-                            }>
+                            <div onClick={handleClose}>
                                 Validé
-                            </div> */}
+                            </div>
 
                         </div>
                     </Dialog>
@@ -200,16 +211,16 @@ const Profile = () => {
                     <div className="rectangle">
                         <div className="textRectangle">
                             <p>nbr Win</p>
-                            <p>9</p>
+                            {userDisplay?.WinNumber}
                         </div>
                         <div className="textRectangle">
-                            <h2 style={{ color: 'white' }}>Scoring {user.user?.username}</h2>
+                            <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
                             {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
                             <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{matchHistory.length}</h3>
                         </div>
                         <div className="textRectangle">
                             <p>nbr Loose</p>
-                            <p>2</p>
+                            {userDisplay?.LossNumber}
                         </div>
                     </div>
 
