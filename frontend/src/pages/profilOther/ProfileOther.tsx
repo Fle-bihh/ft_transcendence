@@ -44,52 +44,37 @@ const ProfileOther = () => {
         (state: RootState) => state.persistantReducer.userReducer
     );
 
-    const [userDisplay, setUserDisplay] = useState<{
-        id: string,
-        username: string, //pseudo
-        password: string, // pas besoin 
-        firstName: string, // prenom  to --> login 
-        lastName: string, // pas besoin 
-        nickName: string, //degage 
-        profileImage: string, // oui 
-        email: string, // non
-        isLogged: boolean, // pas besoin 
-        isAdmin: boolean, // pas besoin
-        GoalTaken: number, // pas besoin
-        GoalSet: number, // pas besoin 
-        NormalGameNumber: number, // pas besoin
-        RankedGameNumber: number, // pas besoin
-        NormalWinNumber: number, // to -> win 
-        // perdu
-
-        RankedWinNumber: number, // pas besoin
-        PP: number, // pas besoin --> XP
-        twoFactorAuth: boolean, // pas besoin
-        Security: boolean, // pas besoin
-        Friend: number, // ouiiiii 
-        Climber: boolean, // pas besoin
-        Hater: number, // pas besoin
+    const [userDisplay, setUserDisplay] = useState({
+        id: "",
+        username: '', //pseudo
+        login: '', // prenom  to --> login 
+        profileImage: '', // oui
+        email: '',
+        Rank: 0, // la XP de notre joueur 
+        WinNumber: 0, // nbr de gagne
+        LossNumber: 0,// nbr de perdu
+        twoFactorAuth: false,
+        getData : false,
         // http://localhost:3000/Profileother?username=ldauga
+    });
 
-    } | null>(null);
-
-    // useEffect(() => {
-    //     if (userDisplay == null) {
-    //         const parsed = queryString.parse(window.location.search);
-    //         console.log(parsed)
-    //         if (parsed.username == '' || parsed.username == undefined) {
-    //             window.location.replace("http://${ip}:3000/")
-    //         }
-    //         else { //
-    //             axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
-    //                 if (response.data != null) {
-    //                     setUserDisplay(response.data);
-    //                 }
-    //                 console.log(response);
-    //             })
-    //         }
-    //     }
-    // })
+    useEffect(() => {
+        if (userDisplay == null) {
+            const parsed = queryString.parse(window.location.search);
+            console.log(parsed)
+            if (parsed.username == '' || parsed.username == undefined) {
+                window.location.replace("http://${ip}:3000/")
+            }
+            else { //
+                axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
+                    if (response.data != null) {
+                        setUserDisplay(response.data);
+                    }
+                    console.log(response);
+                })
+            }
+        }
+    })
 
 
     return (
