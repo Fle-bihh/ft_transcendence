@@ -188,7 +188,7 @@ export class Ball {
     constructor(canvas : Canvas) {
         this.posX = canvas.width / 2
         this.posY = canvas.height / 2
-        this.speed = 2
+        this.speed = 3
         this.directionX = random(0, 1) ? -this.speed : this.speed
         this.directionY = 0
         this.radius = 10;
@@ -197,7 +197,7 @@ export class Ball {
     reset(canvas: Canvas) {
 		this.posX = canvas.width / 2
 		this.posY = canvas.height / 2
-		this.speed = 2
+		this.speed = 3
 		this.directionX = random(0, 1) ? -this.speed : this.speed
 		this.directionY = 0
 		this.radius = 10

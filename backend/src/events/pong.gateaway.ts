@@ -9,8 +9,8 @@ import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { GameClass } from 'src/pong/gameClass';
-import { Interval } from 'nestjs-schedule'
-import {GameService} from 'src/game/game.service';
+import { Interval } from '@nestjs/schedule'
+import { GameService } from 'src/game/game.service';
 
 interface Client {
 id : string;
@@ -27,7 +27,7 @@ map: string, user: {
 
 const UserToReconnect = []
 
-@WebSocketGateway(5002, { transports: ['websocket'] })
+@WebSocketGateway(5002, { transports: ['websocket'], "pingInterval": 5000, "pingTimeout": 20000  })
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('PongGateway');
   private allGames: Array<GameClass> = new Array();
@@ -182,7 +182,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     })
   }
 
-  @SubscribeMessage('HANDLE_INTERVAL')
+  @Interval(16)
   async handleInterval() {
       for (let index = 0; index < this.allGames.length; index++) {
         if (this.allGames[index].gameOn) {
@@ -292,19 +292,27 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('SEE_LIST_GAME')
   async seeListGame(client: Socket, username : string) {
     console.log("length de all games : ", this.allGames.length)
-    console.log("username de see list game : ", username)
     if (this.allGames.length != 0)
     {
-      console.log("option 1 ")
       this.allGames.map((room) => {
         this.io.to(client.id).emit('add_room_playing', room);
       })
       this.io.to(client.id).emit('set_list_game', "yes");
     }
     else {
-      console.log("option 2")
       this.io.to(client.id).emit('set_list_game', "noGame");
     }
+  }
 
+  @SubscribeMessage('START_SPECTATE')
+  start_spectate(client : Socket, data : { roomID : string, start : boolean}) {
+    const room = this.getRoomByID(data.roomID);
+    if (room) {
+      if (data.start == false)
+        this.joinRoom(client, room[1].roomID)
+      this.io.to(client.id).emit('start_spectate', room[1])
+    }
+    else
+      this.io.to(client.id).emit('error_page')
   }
 }

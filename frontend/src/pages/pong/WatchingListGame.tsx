@@ -9,12 +9,14 @@ import { ListItemButton, ListItemIcon } from '@mui/material';
 
 export default function WatchingListGame(props  : {
     all_rooms : Array<GameClass>
+    setRoomID : any
+    setSpectator : any
 }) {
     let room_map1: Array<GameClass> = new Array();
     let room_map2: Array<GameClass> = new Array();
     let room_map3: Array<GameClass> = new Array();
     let rooms : Array<GameClass []> = new Array();
-    // let allrooms : Array<GameClass> = new Array();
+    
     props.all_rooms.map((room) => {
         if (room.map.mapName == "map1")
             room_map1.push(room);
@@ -40,7 +42,9 @@ export default function WatchingListGame(props  : {
                     <ul>
                         <ListSubheader>{`Map ${rooms.indexOf(room_arr) + 1}`}</ListSubheader>
                         {room_arr.map((room) => (
-                            <ListItemButton key={`item-${rooms.indexOf(room_arr)}-${room.roomID}`}>
+                            <ListItemButton key={`item-${rooms.indexOf(room_arr)}-${room.roomID}`} onClick={() => {
+                                props.setRoomID(room.roomID);
+                                props.setSpectator(true)}}>
                                 <ListItemText primary={`Room ${room.players[0].username} : ${room.players[1].username}`} />
                                 <ListItemIcon>
                                     <VisibilityIcon />

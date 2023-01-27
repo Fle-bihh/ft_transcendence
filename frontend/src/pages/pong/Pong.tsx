@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { gameSocket } from '../../App';
@@ -8,6 +8,7 @@ import { GameClass } from './gameClass';
 import GamePage from './GamePage';
 import MapSelector from './MapSelector';
 import "./Pong.scss"
+import SpectatorPage from './Spectator';
 import WatchingListGame from './WatchingListGame';
 
 const Pong = (props : any) => {
@@ -17,6 +18,7 @@ const Pong = (props : any) => {
     const [allrooms, setAllRooms] = useState(Array<GameClass>);
     const [listGame, setListGame] = useState("");
     const [waitingOponnent, setWaitingOponnent] = useState(false);
+    const [spectator, setSpectator] = useState(false);
     const [roomID, setRoomID] = useState("");
 
     useEffect(() => {
@@ -27,7 +29,7 @@ const Pong = (props : any) => {
             setVerif(true)
         }
     })
-
+    
     gameSocket.removeListener("set_list_game");
     gameSocket.on('set_list_game', function (gameExist : string) {
 		if (gameExist == 'yes')
@@ -47,10 +49,19 @@ const Pong = (props : any) => {
     function affishListGame() {
         console.log("affish allrooms : ", allrooms);
         if (listGame == 'yes') return (
-            <WatchingListGame all_rooms={allrooms} />
+            <WatchingListGame all_rooms={allrooms} setRoomID={setRoomID} setSpectator={setSpectator}/>
         )
         else return (
-            <p>No game</p>
+            <Box>
+                <Box alignContent={"center"} sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 100, width: '100%', }}>
+                    <Button variant="outlined" onClick={() => {
+                        gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username);
+                    }}>Refresh the list of Live Game</Button>
+                </Box>
+                <Box>
+                    <p>No game</p>
+                </Box>
+            </Box>
         )
     }
 
@@ -58,6 +69,12 @@ const Pong = (props : any) => {
         <div>
             <Navbar />
             <GamePage gameStart={gameStart} setGameStart={setGameStart} roomID={roomID} />
+        </div>
+    )
+    else if (spectator) return (
+        <div>
+            <Navbar />
+            <SpectatorPage roomID={roomID}/>
         </div>
     )
     else if (waitingOponnent) return (

@@ -11,10 +11,23 @@ var canvas = {
     "height": 600
 }
 
-const GamePage = (props: any) => {
+const SpectatorPage = (props: any) => {
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [finishGame, setFinishGame] = useState(false);
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
+    const [verif, setVerif] = useState(false)
+    useEffect(() => {
+        if (!verif)
+        {
+            gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : false})
+            setVerif(true);
+        }
+    })
+    if (verif)
+        setInterval(() => { gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : true} ) }, 16)
+
+    gameSocket.removeListener("start_spectate");
+    gameSocket.on("start_spectate", (room : GameClass) => { render(room); });
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
@@ -35,12 +48,14 @@ const GamePage = (props: any) => {
 
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const currentPlayer = room.players.find(item => item.username == persistantReducer.userReducer.user?.username)
             ctx.font = 'bold 20px Arial';
             ctx.fillStyle = 'white';
             ctx.textAlign = "center";
-            if (currentPlayer != undefined)
-                ctx.fillText("YOU", currentPlayer!.posX + currentPlayer!.width / 2, currentPlayer!.posY - 10);
+            ctx.fillText(room.players[0].username, room.players[0].posX + room.players[0].width / 2, room.players[0].posY - 10);
+            ctx.font = 'bold 20px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = "center";
+            ctx.fillText(room.players[1].username, room.players[1].posX + room.players[1].width / 2, room.players[1].posY - 10);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(room.players[0].posX, room.players[0].posY, room.players[0].width, room.players[0].height);
             ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -75,21 +90,10 @@ const GamePage = (props: any) => {
 
     function drawText(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const index_p = persistantReducer.userReducer.user!.username == room.players[0].username ? 0 : 1
-            if (!room.players[index_p].ready) {
-                ctx.font = 'bold 50px Arial';
-                ctx.fillStyle = 'white';
-                ctx.textAlign = "center";
-                ctx.fillText("Press ENTER to play !", canvas.width / 2, canvas.height / 2);
-            }
-            else {
-                if (!room.players[index_p * -1 + 1].ready) {
-                    ctx.font = 'bold 50px Arial';
-                    ctx.fillStyle = 'white';
-                    ctx.textAlign = "center";
-                    ctx.fillText("Wainting for the opponent !", canvas.width / 2, canvas.height / 2);
-                }
-            }
+            ctx.font = 'bold 50px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = "center";
+            ctx.fillText("Players Not ready", canvas.width / 2, canvas.height / 2);
         }
     }
 
@@ -125,73 +129,41 @@ const GamePage = (props: any) => {
         }
     }
 
-    gameSocket.on('render', function (room: GameClass) {
-        render(room)
-    });
-
     gameSocket.on('finish', (room: GameClass) => {
         console.log('finish front')
         setFinishGame(true)
         setFinishRoom(room)
     });
-   
-    function onKeyDown(e: any) {
-        if (e.key === 'ArrowUp')
-            gameSocket.emit('ARROW_UP', [props.roomID, true]);
-        if (e.key === 'ArrowDown')
-            gameSocket.emit('ARROW_DOWN', [props.roomID, true]);
-        if (e.key === 'Enter') {
-            gameSocket.emit('ENTER', [props.roomID, true]);
-        }
-    }
-
-    function onKeyUp(e: any) {
-        if (e.key === 'ArrowUp')
-            gameSocket.emit('ARROW_UP', [props.roomID, false]);
-        if (e.key === 'ArrowDown')
-            gameSocket.emit('ARROW_DOWN', [props.roomID, false]);
-    }
 
     function affFinishScreen() {
-        let U, H;
+        let player0, player1;
         setTimeout(function () {
             window.location.replace(`http://${ip}:3000`);
         }, 10000);
-
-        if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.username) {
-            U = finishRoom?.players[0]
-            H = finishRoom?.players[1]
-        } else {
-            U = finishRoom?.players[1]
-            H = finishRoom?.players[0]
-        }
-
+        player0 = finishRoom?.players[0]
+        player1 = finishRoom?.players[1]
         return (
             <div className='game-finished'>
-                <h1>{U?.score === 3 ? 'Victory' : 'Defeat'}</h1>
+                <h1>Winner is {player0?.score === 3 ? player0.username : player1?.username}</h1>
                 <div className='result'>
                     <span>
-                        <p>YOU</p>
+                        <p>{player0?.username}</p>
                     </span>
                     <span>
-                        {U?.score} - {H?.score}
+                        {player0?.score} - {player1?.score}
                     </span>
                     <span>
-                        <p>HIM</p>
+                        <p>{player1?.username}</p>
                     </span>
                 </div>
             </div>
         )
 
     }
-    const [verif, setVerif] = useState(false)
-    useEffect(() => {
-        if (!verif) {
-            document.addEventListener("keydown", onKeyDown);
-            document.addEventListener("keyup", onKeyUp);
-            setVerif(true);
-        }
-    })
+
+    setInterval(() => {
+        gameSocket.emit('HANDLE_INTERVAL', props.roomID);
+    }, 10)
 
     return (
         <div className="mainDiv">
@@ -214,4 +186,4 @@ const GamePage = (props: any) => {
     );
 };
 
-export default GamePage;
+export default SpectatorPage;
