@@ -12,9 +12,8 @@ import { actionCreators, RootState } from '../../state';
 import { useEffect, useState } from 'react';
 import PinInput from 'react-pin-input';
 
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Input, TextField, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import axios from 'axios';
-import { InputText } from 'primereact/inputtext';
 import { bindActionCreators } from 'redux';
 
 
@@ -22,28 +21,29 @@ import { bindActionCreators } from 'redux';
 
 const Profile = () => {
 
-    const [matchHistory, setMatchHistory] = React.useState(Array<{
-        id: number,
-        user1_login: string,
-        user2_login: string, // class user
-        user1_score: number,
-        user2_score: number,
-        winner_login: string,
-    }>())
+    // const [matchHistory, setMatchHistory] = React.useState(Array<{
+    //     id: number,
+    //     user1_login: string,
+    //     user2_login: string, // class user
+    //     user1_score: number,
+    //     user2_score: number,
+    //     winner_login: string,
+    // }>())
 
     const [firstOpen, setFirstOpen] = useState(true)
     const utils = useSelector((state: RootState) => state.utils);
-    const user = useSelector( (state: RootState) => state.persistantReducer.userReducer );
+    const user = useSelector((state: RootState) => state.persistantReducer.userReducer);
     const [inputValue, setInputValue] = useState("")
     const [open, setOpen] = React.useState(false);
     //2FA
     const [open2FA, setOpen2FA] = React.useState(false);
     const [qrCode2FA, setQrCode2FA] = useState("");
     const [code2FA, setCode2FA] = useState("");
-	const [res2FA, setRes2FA] = useState(0);
+    const [res2FA, setRes2FA] = useState(0);
     const [codePin, setCodePin] = useState(0);
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
+    // const [image, setimage] = userState("")
 
     const [userDisplay, setUserDisplay] = useState({
         id: "",
@@ -55,26 +55,32 @@ const Profile = () => {
         WinNumber: 0, // nbr de gagne
         LossNumber: 0,// nbr de perdu
         twoFactorAuth: false,
-        getData : false,
+        getData: false,
     });
+
+    // const [userMatchHistory, setUserMatchHistory] = useState({
+    //         player1id: "",
+    //         score1: 0,
+    //         player2id: "",
+    //         score2: 0,
+    //         winnerid: "", // login de la personne qui a gagné
+    // });
 
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             player1id: string,
             score1: number,
             player2id: string,
-            login2: number,
+            score2: number,
             winnerid: string, // login de la personne qui a gagné
         }>()
     );
-
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    const handleClose = (change : boolean) => {
-        if (change && inputValue != "")
-        {
+    const handleClose = (change: boolean) => {
+        if (change && inputValue != "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue })
             userDisplay.username = inputValue;
         }
@@ -91,80 +97,119 @@ const Profile = () => {
     const handleClose2FA = () => {
         setOpen2FA(false);
         setQrCode2FA("")
-		setCode2FA("")
-		setRes2FA(0)
+        setCode2FA("")
+        setRes2FA(0)
     };
 
     const send2FARequest = (value: string) => {
-		axios.get('https://localhost:5001/auth/2fa/activate/' + value)
-			.then(res => {
-				setUser(res.data);
-				setCode2FA('');
-				setRes2FA(res.status);
-			})
-			.catch(err => {
-				setRes2FA(err.response.status);
-			});
-	}
+        axios.get('https://localhost:5001/auth/2fa/activate/' + value)
+            .then(res => {
+                setUser(res.data);
+                setCode2FA('');
+                setRes2FA(res.status);
+            })
+            .catch(err => {
+                setRes2FA(err.response.status);
+            });
+    }
 
     // useEffect(() => {
-	// 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-	// 	if (codePin && res2FA === 401) {
-	// 		if (wrongCode)
-	// 			wrongCode.style.display = 'block';
-	// 	} else {
-	// 		if (wrongCode)
-	// 			wrongCode.style.display = 'none';
-	// 	}
-	// }, [res2FA]);
+    // 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
+    // 	if (codePin && res2FA === 401) {
+    // 		if (wrongCode)
+    // 			wrongCode.style.display = 'block';
+    // 	} else {
+    // 		if (wrongCode)
+    // 			wrongCode.style.display = 'none';
+    // 	}
+    // }, [res2FA]);
     //fin 2FA
 
     const getUserData = () => {
         axios.get(`http://localhost:5001/user/id/${user.user?.id}`).then(response => {
-                if (response.data != null) {
-                    setUserDisplay({
-                        id: response.data.id,
-                        username: response.data.username,
-                        login: response.data.login,
-                        profileImage: response.data.profileImage,
-                        email: response.data.email,
-                        WinNumber: response.data.WinNumber,
-                        LossNumber: response.data.LossNumber,
-                        Rank: response.data.Rank,
-                        twoFactorAuth: response.data.twoFactorAuth,
-                        getData: true,
-                    })
-                    setFirstOpen(false)
+            if (response.data != null) {
+                setUserDisplay({
+                    id: response.data.id,
+                    username: response.data.username,
+                    login: response.data.login,
+                    profileImage: response.data.profileImage,
+                    email: response.data.email,
+                    WinNumber: response.data.WinNumber,
+                    LossNumber: response.data.LossNumber,
+                    Rank: response.data.Rank,
+                    twoFactorAuth: response.data.twoFactorAuth,
+                    getData: true,
+                })
+                setFirstOpen(false)
+            }
+        }).catch(error => {
+            console.log(error);
+        });
+        axios.get(`http://localhost:5001/user/user/${user.user?.id}/games`).then(response => {
+            if (response.data != null) {
+
+                {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */ }
+
+                setUserMatchHistory([...userMatchHistory, {
+                    player1id: response.data.player1id,
+                    score1: response.data.score1,
+                    player2id: response.data.player2id,
+                    score2: response.data.score2,
+                    winnerid: response.data.winnerid,
                 }
-            }).catch(error => {
-                console.log(error);
-            });
+                ])
+                // })
+            }
+        }).catch(error => {
+            console.log(error);
+        });
+
+
     }
+
 
     useEffect(() => {
         console.log("effect : ", userDisplay)
         if (!userDisplay?.getData)
             getUserData();
-    }, [userDisplay?.getData])
+    }, [userDisplay?.getData])         
 
+    //----------------image pour téléchager--------------------------------------------
+    const [filebase64,setFileBase64] = useState<string>("")
+
+    function convertFile(files: FileList|null) {
+        if (files) {
+          const fileRef = files[0] || ""
+          const fileType: string= fileRef.type || ""
+          console.log("This file upload is of type:",fileType)
+          const reader = new FileReader()
+          reader.readAsBinaryString(fileRef)
+          reader.onload=(ev: any) => {
+            // convert it to base64
+            setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
+          }
+
+        }
+        
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 })
+            userDisplay.profileImage = filebase64;
+      }
+    //_____________________________________------------------------------------
     return (
         <React.Fragment >
             <Navbar />
             <div className="profilePageContainer">
                 <div className="profile" >
+
                     <Stack direction="row" spacing={2} className="avatarItem">
-                        {/* <StyledBadge
-                            overlap="circular"
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                            variant="dot"
-                            className="avatarItem"
-                        > */}
                         <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
                     </Stack>
-                    <Button className="avatarChange" type="submit">
-                        Change Profile Picture
+                    
+                    <Button  component="label" className="avatarChange">
+                    Change Profile Picture
+                        <input type="file" hidden onChange={(e) => convertFile(e.target.files)}/>
                     </Button>
-                    <InputText type="file" />
+
                     <div className="infoUser">
                         <h3 className="userName">
                             Login :
@@ -186,7 +231,7 @@ const Profile = () => {
                     </div>
                     {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
                     <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
-                    <Dialog  open={open} onClose={() => handleClose(false)} >
+                    <Dialog open={open} onClose={() => handleClose(false)} >
                         <DialogTitle>Write your new username</DialogTitle>
                         <DialogContent>
                             <TextField
@@ -207,90 +252,97 @@ const Profile = () => {
                             <Button onClick={() => handleClose(false)}>Cancel</Button>
                         </DialogActions>
                     </Dialog>
-                    { !user.user?.twoFactorAuth ? 
-                    <div>
-                        <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
-                            Activate 2FA
+                    {!user.user?.twoFactorAuth ?
+                        <div>
+                            <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
+                                Activate 2FA
                         </Button>
-                        <Dialog open={open2FA} onClose={handleClose2FA} >
-                            <div>
-                                <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
-								<DialogContent className='2FA'>
-									<img src={qrCode2FA} />
-									<PinInput length={6}
-										focus
-										onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
-										type="numeric"
-										inputFocusStyle={{ borderColor: '#f55951' }}
-										inputMode="number"
-										style={{ padding: '10px' }}
-										onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
-										autoSelect={true} />
-									<p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
-								</DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleClose2FA}>Cancel</Button>
-                                </DialogActions>
-                            </div>
-                        </Dialog>
-                    </div> : 
-                    <div>
-                        <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get('https://localhost:5001/auth/2fa/deactivate/').then(res => { setUser(res.data) }) }}>
-                            Deactivate 2FA
+                            <Dialog open={open2FA} onClose={handleClose2FA} >
+                                <div>
+                                    <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
+                                    <DialogContent className='2FA'>
+                                        <img src={qrCode2FA} />
+                                        <PinInput length={6}
+                                            focus
+                                            onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
+                                            type="numeric"
+                                            inputFocusStyle={{ borderColor: '#f55951' }}
+                                            inputMode="number"
+                                            style={{ padding: '10px' }}
+                                            onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
+                                            autoSelect={true} />
+                                        <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleClose2FA}>Cancel</Button>
+                                    </DialogActions>
+                                </div>
+                            </Dialog>
+                        </div> :
+                        <div>
+                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get('https://localhost:5001/auth/2fa/deactivate/').then(res => { setUser(res.data) }) }}>
+                                Deactivate 2FA
                         </Button>
-                    </div>
+                        </div>
                     }
                 </div>
+
                 <div className="stat">
+                    <>
+                        <div className="rectangle">
+                            <div className="textRectangle">
+                                <p>nbr Win</p>
+                                {userDisplay?.WinNumber}
+                            </div>
+                            <div className="textRectangle">
+                                <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
+                                {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
+                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay?.Rank}</h3>
+                            </div>
+                            <div className="textRectangle">
+                                <p>nbr Loose</p>
+                                {userDisplay?.LossNumber}
+                            </div>
+                        </div>
 
-                    <div className="rectangle">
-                        <div className="textRectangle">
-                            <p>nbr Win</p>
-                            {userDisplay?.WinNumber}
-                        </div>
-                        <div className="textRectangle">
-                            <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
-                            {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
-                            <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{matchHistory.length}</h3>
-                        </div>
-                        <div className="textRectangle">
-                            <p>nbr Loose</p>
-                            {userDisplay?.LossNumber}
-                        </div>
-                    </div>
+                        {userMatchHistory.map((match) => {
+                            {/* return ( */ }
 
-                    {matchHistory.map((match) => {
-                        return (
-                            <div className={match.winner_login == user.user!.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}  >
+                            <div className={match.winnerid == userDisplay.username ? 'itemWinner' : 'itemLoser'} key={match.winnerid.toString()}   >
+                                {/* key={match.id.toString()}  */}
 
                                 <div className="results" >
-                                    <div className="name">{match.user1_login}</div>
-                                    <div className="score">-{match.user1_score.toString()}-</div>
+                                    <div className="name">{match.player1id}</div>
+                                    <div className="score">-{match.score1}-</div>
 
                                 </div>
 
                                 <div className="results" >
 
-                                    <Avatar alt="Cerise" src={Cerise}
+                                    <Avatar alt="Cerise" src={userDisplay?.profileImage}
                                         className="avatarStatuser" variant="square" />
 
                                     <Avatar alt="Laurine" src={Laurine}
                                         className="avatarStatuser" variant="square" />
                                 </div>
                                 <div className="results">
-                                    <div className="score">-{match.user2_score.toString()}-</div>
-                                    <div className="name">{match.user2_login}</div>
+                                    <div className="score">-{match.player2id}-</div>
+                                    <div className="name">{match.score2}</div>
                                 </div>
 
 
                             </div>
-                        )
-                    })}
+                            {/* ) */ }
+                            {/* }) */ }
+                            {/* } */ }
+                            // )
+                        })
+                        }
+                    </>
                     {/* spacing={5} */}
-
-
                 </div>
             </div>
+
         </React.Fragment >
 
     )
