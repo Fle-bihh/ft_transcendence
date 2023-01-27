@@ -1,4 +1,3 @@
-
 //------------PETIT ECRAN----------------
 
 @media screen and (max-width: 630px) {
@@ -7,6 +6,7 @@
         width: 100vw;
         margin-top: 64px;
         background-color: yellow;
+        overflow: scroll;
         // scroll-snap-type: x mandatory;
         // overflow-x: scroll;
 
@@ -20,8 +20,9 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
-
+            overflow: scroll;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
+
             .avatarItem {
                 height: 50%;
                 // position: relative;
@@ -40,6 +41,7 @@
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
+
             .avatarChange {
                 // variant:"contained";
 
@@ -59,21 +61,8 @@
                     background-color: grey;
                 }
             }
-
-            .buttonChange2FA {
-                display: flex;
-                color: white;
-                font-family: "system-ui";
-                background-color: black;
-                margin-inline: auto;
-                margin-top: 1%;
-                text-transform: capitalize;
-                &:hover {
-                    color: white;
-                    background-color: grey;
-                }
-            }
         }
+
         .infoUser {
             color: black;
             justify-content: center;
@@ -86,6 +75,7 @@
                 // border: 2px solid green;
                 font-family: "system-ui";
             }
+
             .userNamePrint {
                 white-space: pre-line;
                 margin-left: 1.66%;
@@ -98,6 +88,7 @@
                 // text-overflow: ellipsis;
             }
         }
+
         .infoUsername {
             color: black;
             justify-content: center;
@@ -111,6 +102,7 @@
                 font-family: "system-ui";
                 // text-align: left;
             }
+
             .userNamePrintChange {
                 margin-left: 1.66%;
                 text-transform: capitalize;
@@ -135,21 +127,38 @@
             background-color: grey;
         }
 
+        .buttonChange2FA {
+            display: flex;
+            color: white;
+            font-family: "system-ui";
+            background-color: black;
+            margin-inline: auto;
+            margin-top: 1%;
+            text-transform: capitalize;
+
+            &:hover {
+                color: white;
+                background-color: grey;
+            }
+        }
+
         .stat {
             height: 96%;
             width: 96%;
             background-color: white;
             margin-top: 2%;
+            margin-bottom: 2%;
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-
+            overflow: scroll;
             overflow-x: scroll;
 
             * {
                 box-sizing: border-box;
             }
+
             .rectangle {
                 height: 29%;
                 width: 100%;
@@ -161,17 +170,17 @@
                 // display:flow-root;
                 text-align: center;
             }
-            
-            .textRectangle{
-                
+
+            .textRectangle {
+
                 display: inline-block;
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
-                padding:2%;
+                padding: 2%;
 
             }
-        
+
             * {
                 box-sizing: border-box;
             }
@@ -188,7 +197,8 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-// 
+
+            // 
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
@@ -201,6 +211,7 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
+
             .results {
                 width: 20%;
                 padding: 10px;
@@ -214,15 +225,18 @@
                 vertical-align: middle;
                 justify-content: space-between;
             }
+
             .score {
                 font-size: x-small;
                 padding: 2px;
                 font-weight: 900;
             }
-            .avatarStatuser{
+
+            .avatarStatuser {
                 padding: 2px;
 
             }
+
             .name {
                 padding: 2px;
 
@@ -235,6 +249,7 @@
         }
     }
 }
+
 // .grid{
 //     align-items: center;
 // }
@@ -245,8 +260,8 @@
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color:lightblue;
-
+        background-color: lightblue;
+        overflow: scroll;
         // line-Height: 19%;
 
         .profile {
@@ -257,8 +272,10 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
+            overflow: scroll;
 
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
+
             .avatarItem {
                 height: 50%;
                 // position: relative;
@@ -277,6 +294,7 @@
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
+
             .avatarChange {
                 // variant:"contained";
 
@@ -297,6 +315,7 @@
                     background-color: grey;
                 }
             }
+
             .buttonChange2FA {
                 display: flex;
                 color: white;
@@ -305,12 +324,14 @@
                 margin-inline: auto;
                 margin-top: 1%;
                 text-transform: capitalize;
+
                 &:hover {
                     color: white;
                     background-color: grey;
                 }
             }
         }
+
         .infoUser {
             color: black;
             justify-content: center;
@@ -323,9 +344,10 @@
                 color: grey;
                 // border: 2px solid green;
                 font-family: "system-ui";
-            // margin-top: 3%;
+                // margin-top: 3%;
 
             }
+
             .userNamePrint {
                 // white-space: pre-line;
                 margin-left: 1.66%;
@@ -338,6 +360,7 @@
                 // text-overflow: ellipsis;
             }
         }
+
         .infoUsername {
             color: black;
             justify-content: center;
@@ -351,6 +374,7 @@
                 font-family: "system-ui";
                 // text-align: left;
             }
+
             .userNamePrintChange {
                 margin-left: 1.66%;
                 text-transform: capitalize;
@@ -360,6 +384,7 @@
                 // font-weight: 200;
             }
         }
+
         .buttonChange {
             // variant:"contained";
             display: flex;
@@ -385,15 +410,17 @@
             background-color: white;
             margin-top: 2%;
             margin-left: 2%;
+            margin-bottom: 2%;
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-
+            overflow: scroll;
             overflow-x: scroll;
 
             * {
                 box-sizing: border-box;
             }
+
             .rectangle {
                 height: 29%;
                 width: 100%;
@@ -405,16 +432,17 @@
                 // display:flow-root;
                 text-align: center;
             }
-            
-            .textRectangle{
-                
+
+            .textRectangle {
+
                 display: inline-block;
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
-                padding:6%;
+                padding: 6%;
 
             }
+
             * {
                 box-sizing: border-box;
             }
@@ -431,7 +459,8 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-// 
+
+            // 
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
@@ -444,6 +473,7 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
+
             .results {
                 width: 20%;
                 padding: 10px;
@@ -457,15 +487,18 @@
                 vertical-align: middle;
                 justify-content: space-between;
             }
+
             .score {
                 font-size: x-small;
                 padding: 2px;
                 font-weight: 900;
             }
-            .avatarStatuser{
+
+            .avatarStatuser {
                 padding: 2px;
 
             }
+
             .name {
                 padding: 2px;
 
@@ -478,20 +511,20 @@
         }
     }
 }
+
 //------------GRAND ECRAN----------------------------------------------------------------------
 @media screen and (min-width: 928px) {
     .profilePageContainer {
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-    display: flex;
-    background-color:hotpink;
-
-
+        display: flex;
+        background-color: hotpink;
+        overflow: scroll;
         // line-Height: 19%;
 
         .profile {
-        
+
             margin-top: 3%;
             height: 90%;
             width: 30%;
@@ -502,6 +535,7 @@
             min-width: 400px;
 
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
+
             .avatarItem {
                 height: 50%;
                 // position: relative;
@@ -522,6 +556,7 @@
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
+
             .avatarChange {
                 // variant:"contained";
 
@@ -541,7 +576,7 @@
                     background-color: grey;
                 }
             }
-            
+
             .buttonChange2FA {
                 display: flex;
                 color: white;
@@ -550,12 +585,14 @@
                 margin-inline: auto;
                 margin-top: 1%;
                 text-transform: capitalize;
+
                 &:hover {
                     color: white;
                     background-color: grey;
                 }
             }
         }
+
         .infoUser {
             color: black;
             justify-content: center;
@@ -568,6 +605,7 @@
                 // border: 2px solid green;
                 font-family: "system-ui";
             }
+
             .userNamePrint {
                 white-space: pre-line;
                 margin-left: 1.66%;
@@ -580,6 +618,7 @@
                 // text-overflow: ellipsis;
             }
         }
+
         .infoUsername {
             color: black;
             justify-content: center;
@@ -593,6 +632,7 @@
                 font-family: "system-ui";
                 // text-align: left;
             }
+
             .userNamePrintChange {
                 margin-left: 1.66%;
                 text-transform: capitalize;
@@ -602,6 +642,7 @@
                 // font-weight: 200;
             }
         }
+
         .buttonChange {
             // variant:"contained";
             display: flex;
@@ -628,17 +669,20 @@
             margin-top: 2%;
             margin-left: 2%;
             margin-right: 2%;
+            margin-bottom: 2%;
             // justify-content: space-between;
             // align-content: space-between;
 
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-
+            overflow: scroll;
             overflow-x: scroll;
+
             * {
                 box-sizing: border-box;
             }
+
             .rectangle {
                 height: 29%;
                 width: 100%;
@@ -650,16 +694,17 @@
                 // display:flow-root;
                 text-align: center;
             }
-            
-            .textRectangle{
-                
+
+            .textRectangle {
+
                 display: inline-block;
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
-                padding:6%;
+                padding: 6%;
 
             }
+
             * {
                 box-sizing: border-box;
             }
@@ -676,7 +721,8 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-// 
+
+            // 
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
@@ -689,6 +735,7 @@
                 // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
+
             .results {
                 width: 20%;
                 // padding: 60px;
@@ -697,14 +744,15 @@
 
                 display: inline-flex;
                 margin-left: 10%;
-                flex-direction:row;
-                
+                flex-direction: row;
+
                 text-align: center;
                 align-content: space-between;
                 justify-content: space-between;
                 vertical-align: middle;
                 // display: flex;
             }
+
             .score {
                 font-size: x-large;
                 // padding: 12px;
@@ -712,12 +760,14 @@
                 font-weight: 900;
                 // z-index: 999;
             }
-            .avatarStatuser{
+
+            .avatarStatuser {
                 // padding: 10px;
                 margin-left: 12px;
                 align-items: center;
 
             }
+
             .name {
                 font-size: x-small;
                 // padding: 2px;
