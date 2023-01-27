@@ -59,6 +59,20 @@
                     background-color: grey;
                 }
             }
+
+            .buttonChange2FA {
+                display: flex;
+                color: white;
+                font-family: "system-ui";
+                background-color: black;
+                margin-inline: auto;
+                margin-top: 1%;
+                text-transform: capitalize;
+                &:hover {
+                    color: white;
+                    background-color: grey;
+                }
+            }
         }
         .infoUser {
             color: black;
@@ -106,18 +120,14 @@
                 // font-weight: 200;
             }
         }
+
         .buttonChange {
-            // variant:"contained";
             display: flex;
             color: white;
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
-
-
-            // align-items: center;
             text-transform: capitalize;
-            //  white-space:normal;
         }
 
         .buttonChange:hover {
@@ -282,6 +292,19 @@
                 // align-items: center;
                 text-transform: capitalize;
 
+                &:hover {
+                    color: white;
+                    background-color: grey;
+                }
+            }
+            .buttonChange2FA {
+                display: flex;
+                color: white;
+                font-family: "system-ui";
+                background-color: black;
+                margin-inline: auto;
+                margin-top: 1%;
+                text-transform: capitalize;
                 &:hover {
                     color: white;
                     background-color: grey;
@@ -513,6 +536,20 @@
                 // align-items: center;
                 text-transform: capitalize;
 
+                &:hover {
+                    color: white;
+                    background-color: grey;
+                }
+            }
+            
+            .buttonChange2FA {
+                display: flex;
+                color: white;
+                font-family: "system-ui";
+                background-color: black;
+                margin-inline: auto;
+                margin-top: 1%;
+                text-transform: capitalize;
                 &:hover {
                     color: white;
                     background-color: grey;
