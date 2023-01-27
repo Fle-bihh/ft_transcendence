@@ -2,33 +2,20 @@
 import Navbar from '../../components/nav/Nav';
 import * as React from 'react';
 import "./profil.scss"
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import Cerise from '../../styles/asset/cerise.jpg'
 import Laurine from '../../styles/asset/ananas.png'
 
-
 import Avatar from '@mui/material/Avatar';
-import { styled } from '@mui/material/styles';
-import Badge from '@mui/material/Badge';
 import Stack from '@mui/material/Stack';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../state';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionCreators, RootState } from '../../state';
 import { useEffect, useState } from 'react';
+import PinInput from 'react-pin-input';
 
-import Fab from '@mui/material/Fab'; import
-ModeEditIcon from '@mui/icons-material/ModeEdit';
-
-import { Button, Dialog, DialogContent, DialogTitle, Input, TextField, Typography } from '@mui/material';
-import { userInfo } from 'os';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Input, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
-
-
-// rajouter bouton activer A2FA ou non 
-
-
+import { bindActionCreators } from 'redux';
 
 
 // rajouter bouton activer A2FA ou non 
@@ -46,26 +33,30 @@ const Profile = () => {
 
     const [firstOpen, setFirstOpen] = useState(true)
     const utils = useSelector((state: RootState) => state.utils);
-    const user = useSelector(
-        (state: RootState) => state.persistantReducer.userReducer
-    );
-
+    const user = useSelector( (state: RootState) => state.persistantReducer.userReducer );
     const [inputValue, setInputValue] = useState("")
+    const [open, setOpen] = React.useState(false);
+    //2FA
+    const [open2FA, setOpen2FA] = React.useState(false);
+    const [qrCode2FA, setQrCode2FA] = useState("");
+    const [code2FA, setCode2FA] = useState("");
+	const [res2FA, setRes2FA] = useState(0);
+    const [codePin, setCodePin] = useState(0);
+    const dispatch = useDispatch();
+    const { setUser } = bindActionCreators(actionCreators, dispatch);
 
-    const [userDisplay, setUserDisplay] = useState<{
-
-        id: string,
-        username: string, //pseudo
-        login: string, // prenom  to --> login 
-        profileImage: string, // oui
-        email: string,
-        Rank: number, // la XP de notre joueur 
-        WinNumber: number, // nbr de gagne
-        LossNumber: number,// nbr de perdu
-        twoFactorAuth: boolean,
-
-    } | null>(null);
-
+    const [userDisplay, setUserDisplay] = useState({
+        id: "",
+        username: '', //pseudo
+        login: '', // prenom  to --> login 
+        profileImage: '', // oui
+        email: '',
+        Rank: 0, // la XP de notre joueur 
+        WinNumber: 0, // nbr de gagne
+        LossNumber: 0,// nbr de perdu
+        twoFactorAuth: false,
+        getData : false,
+    });
 
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
@@ -77,34 +68,57 @@ const Profile = () => {
         }>()
     );
 
-    const [open, setOpen] = React.useState(false);
-
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    const handleClose = () => {
-        console.log("inputValue0 =", inputValue)
-
-        if (inputValue != "") {
-            // setFirstOpen(true)
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`,
-                {
-                    username: inputValue
-                })
-                console.log("inputValue1 =", inputValue)
-        };
+    const handleClose = (change : boolean) => {
+        if (change && inputValue != "")
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue })
         setInputValue("")
-        console.log("userDisplay2 =", userDisplay)
-        console.log("inputValue2 =", inputValue)
         setOpen(false);
+        userDisplay.getData = false;
     };
 
+    //2FA
+    const handleClickOpen2FA = () => {
+        setOpen2FA(true);
+        axios.get('https://localhost:5001/auth/2fa/generate/').then(res => (setQrCode2FA(res.data)))
+    };
 
-     useEffect(() => {
-        //   if (firstOpen) {
-             axios.get(`http://localhost:5001/user/id/${user.user?.id}`).then(response => {
+    const handleClose2FA = () => {
+        setOpen2FA(false);
+        setQrCode2FA("")
+		setCode2FA("")
+		setRes2FA(0)
+    };
 
+    const send2FARequest = (value: string) => {
+		axios.get('https://localhost:5001/auth/2fa/activate/' + value)
+			.then(res => {
+				setUser(res.data);
+				setCode2FA('');
+				setRes2FA(res.status);
+			})
+			.catch(err => {
+				setRes2FA(err.response.status);
+			});
+	}
+
+    useEffect(() => {
+		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
+		if (codePin && res2FA === 401) {
+			if (wrongCode)
+				wrongCode.style.display = 'block';
+		} else {
+			if (wrongCode)
+				wrongCode.style.display = 'none';
+		}
+	}, [res2FA]);
+    //fin 2FA
+
+    const getUserData = () => {
+        axios.get(`http://localhost:5001/user/id/${user.user?.id}`).then(response => {
                 if (response.data != null) {
                     setUserDisplay({
                         id: response.data.id,
@@ -116,32 +130,25 @@ const Profile = () => {
                         LossNumber: response.data.LossNumber,
                         Rank: response.data.Rank,
                         twoFactorAuth: response.data.twoFactorAuth,
+                        getData: true,
                     })
-                    console.log("response data =", response.data.username)
                     setFirstOpen(false)
                 }
             }).catch(error => {
                 console.log(error);
             });
-            console.log("userDisplay =", userDisplay)
-        // }
-    }, 
-    // [firstOpen]
-    )
+    }
 
-
-        // http://localhost:5001/user/id/${user.user?.games}
+    useEffect(() => {
+        if (!userDisplay?.getData)
+            getUserData();
+    }, [userDisplay?.getData])
 
     return (
         <React.Fragment >
-            {/* <div className="navSpace"></div> */}
             <Navbar />
-
             <div className="profilePageContainer">
-                {/* <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} > */}
-                {/* <Grid xs={6} > */}
                 <div className="profile" >
-
                     <Stack direction="row" spacing={2} className="avatarItem">
                         {/* <StyledBadge
                             overlap="circular"
@@ -155,7 +162,6 @@ const Profile = () => {
                         Change Profile Picture
                         </Button>
                     <InputText type="file" />
-
                     <div className="infoUser">
                         <h3 className="userName">
                             Login :
@@ -175,37 +181,63 @@ const Profile = () => {
                         </Typography>
 
                     </div>
-
                     {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
-
-                    <Button className="buttonChange" type="submit" onClick={handleClickOpen}>
-                        Change UserName
-                    </Button>
-                    <Dialog
-                        // fullScreen={fullScreen}
-                        open={open}
-                        onClose={handleClose}
-                    >
-                        <div>
-                            Write your new username
-                        </div>
-                        <div>
-                            <input
-                                placeholder="Enter new username"
+                    <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
+                    <Dialog  open={open} onClose={() => handleClose(false)} >
+                        <DialogTitle>Write your new username</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="New Username"
+                                type="text"
+                                fullWidth
+                                variant="standard"
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
-                            >
-                            </input>
-                            <div onClick={handleClose}>
-                                Validé
-                            </div>
-
-                        </div>
+                                onKeyUp={(e) => { if (e.key === 'Enter') { handleClose(true) } }}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => handleClose(true)}>Confirm</Button>
+                            <Button onClick={() => handleClose(false)}>Cancel</Button>
+                        </DialogActions>
                     </Dialog>
-
+                    { !user.user?.twoFactorAuth ? 
+                    <div>
+                        <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
+                            Activate 2FA
+                        </Button>
+                        <Dialog open={open2FA} onClose={handleClose2FA} >
+                            <div>
+                                <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
+								<DialogContent className='2FA'>
+									<img src={qrCode2FA} />
+									<PinInput length={6}
+										focus
+										onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
+										type="numeric"
+										inputFocusStyle={{ borderColor: '#f55951' }}
+										inputMode="number"
+										style={{ padding: '10px' }}
+										onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
+										autoSelect={true} />
+									<p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
+								</DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleClose2FA}>Cancel</Button>
+                                </DialogActions>
+                            </div>
+                        </Dialog>
+                    </div> : 
+                    <div>
+                        <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get('https://localhost:5001/auth/2fa/deactivate/').then(res => { setUser(res.data) }) }}>
+                            Deactivate 2FA
+                        </Button>
+                    </div>
+                    }
                 </div>
-                {/* </Grid>
-                    <Grid xs={6}> */}
                 <div className="stat">
 
                     <div className="rectangle">
