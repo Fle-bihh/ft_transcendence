@@ -74,10 +74,12 @@ const Profile = () => {
 
     const handleClose = (change : boolean) => {
         if (change && inputValue != "")
+        {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue })
+            userDisplay.username = inputValue;
+        }
         setInputValue("")
         setOpen(false);
-        userDisplay.getData = false;
     };
 
     //2FA
@@ -105,16 +107,16 @@ const Profile = () => {
 			});
 	}
 
-    useEffect(() => {
-		const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-		if (codePin && res2FA === 401) {
-			if (wrongCode)
-				wrongCode.style.display = 'block';
-		} else {
-			if (wrongCode)
-				wrongCode.style.display = 'none';
-		}
-	}, [res2FA]);
+    // useEffect(() => {
+	// 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
+	// 	if (codePin && res2FA === 401) {
+	// 		if (wrongCode)
+	// 			wrongCode.style.display = 'block';
+	// 	} else {
+	// 		if (wrongCode)
+	// 			wrongCode.style.display = 'none';
+	// 	}
+	// }, [res2FA]);
     //fin 2FA
 
     const getUserData = () => {
@@ -140,6 +142,7 @@ const Profile = () => {
     }
 
     useEffect(() => {
+        console.log("effect : ", userDisplay)
         if (!userDisplay?.getData)
             getUserData();
     }, [userDisplay?.getData])
@@ -160,7 +163,7 @@ const Profile = () => {
                     </Stack>
                     <Button className="avatarChange" type="submit">
                         Change Profile Picture
-                        </Button>
+                    </Button>
                     <InputText type="file" />
                     <div className="infoUser">
                         <h3 className="userName">
