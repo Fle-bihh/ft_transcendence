@@ -132,7 +132,7 @@ const Profile = () => {
     // 	}
     // }, [res2FA]);
     //fin 2FA
-
+   
     const getUserData = () => {
         axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
@@ -188,6 +188,7 @@ const Profile = () => {
         // console.log("effect : ", userDisplay)
         if (!userDisplay?.getData)
             getUserData();
+            
     }, [userDisplay?.getData])
 
     //----------------image pour téléchager--------------------------------------------

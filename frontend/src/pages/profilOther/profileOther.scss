@@ -6,6 +6,7 @@
         width: 100vw;
         margin-top: 64px;
         background-color: olivedrab;
+        overflow: scroll;
 
         // line-Height: 19%;
 
@@ -17,8 +18,9 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
-            // align-items: center;
+            overflow: scroll;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
+
             .avatarItemOther {
                 height: 50%;
                 // position: relative;
@@ -72,11 +74,47 @@
                     text-transform: capitalize;
                 }
             }
+            .userInGame {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                margin-top: 7%;
+
+                // vertical-align: middle;
+
+                .circleInGame {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: orange;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                    // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
+                }
+            }
             .userConnectHorsLigne {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
+                margin-top: 7%;
 
                 .circleConnectHorsLigne {
                     width: 20px;
@@ -88,7 +126,7 @@
                     // text-align: center;
                 }
                 .connect {
-                    // variant:"contained";
+                // variant:"contained";
 
                     // display: flex;
 
@@ -145,7 +183,6 @@
             .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
                 // font-weight: 200;
@@ -158,10 +195,7 @@
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
-
-            // align-items: center;
             text-transform: capitalize;
-            //  white-space:normal;
         }
 
         .buttonChangeOther:hover {
@@ -174,25 +208,40 @@
             width: 96%;
             background-color: white;
             margin-top: 2%;
+            margin-bottom: 2%;
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-
+            overflow: scroll;
             overflow-x: scroll;
 
             .rectangleOther {
-                height: 28%;
+                height: 29%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
                 position: sticky;
                 top: 0;
-
                 z-index: 999;
+                text-align: center;
             }
             * {
                 box-sizing: border-box;
+                
             }
+            .textRectangle {
+
+                display: inline-block;
+                vertical-align: middle;
+                align-content: space-between;
+                justify-content: space-between;
+                padding: 2%;
+
+            }
+
+            // * {
+            //     box-sizing: border-box;
+            // }
 
             .itemLoserOther {
                 align-content: space-between;
@@ -262,6 +311,8 @@
         width: 100vw;
         margin-top: 64px;
         background-color: mediumblue;
+        overflow: scroll;
+
 
         // line-Height: 19%;
 
@@ -273,6 +324,7 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
+            overflow: scroll;
 
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
             .avatarItemOther {
@@ -311,6 +363,38 @@
                 }
                 .connect {
                     // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
+                }
+            }
+            .userInGame {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                // vertical-align: middle;
+                .circleInGame {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: orange;
+                    // margin-top: 1%;
+                    // margin-left: 12%;
+                    // text-align: center;
+                }
+                .connect {
+                   // variant:"contained";
 
                     // display: flex;
 
@@ -430,24 +514,34 @@
             width: 96%;
             background-color: white;
             margin-top: 2%;
+            margin-bottom: 2%;
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-
+            overflow: scroll;
             overflow-x: scroll;
 
             .rectangleOther {
-                height: 28%;
+                height: 29%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
-                position: sticky;
                 top: 0;
-
                 z-index: 999;
+                // vertical-align: middle;
+                // display: inline-block;
+                // display:flow-root;
+                text-align: center;
             }
             * {
                 box-sizing: border-box;
+            }
+            .textRectangle {
+                display: inline-block;
+                vertical-align: middle;
+                align-content: space-between;
+                justify-content: space-between;
+                padding: 6%;
             }
 
             .itemLoserOther {
@@ -581,6 +675,35 @@
                     text-transform: capitalize;
                 }
             }
+            .userInGame {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                // vertical-align: middle;
+                .circleInGame {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 20px;
+                    background-color: orange;
+                }
+                .connect {
+                   // variant:"contained";
+
+                    // display: flex;
+
+                    color: black;
+                    font-family: "system-ui";
+                    margin-left: 2%;
+
+                    // background-color: black;
+                    // margin-inline: auto;
+                    // margin-top: 3%;
+                    text-align: center;
+                    //  align-items: center;
+                    text-transform: capitalize;
+                }
+            }
             .userConnectHorsLigne {
                 flex-direction: row;
                 align-items: center;
@@ -685,13 +808,15 @@
             margin-top: 2%;
             margin-left: 2%;
             margin-right: 2%;
+            margin-bottom: 2%;
+
             // justify-content: space-between;
             // align-content: space-between;
 
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-
+            overflow: scroll;
             overflow-x: scroll;
 
             .rectangleOther {
@@ -705,7 +830,13 @@
             * {
                 box-sizing: border-box;
             }
-
+            .textRectangle {
+                display: inline-block;
+                vertical-align: middle;
+                align-content: space-between;
+                justify-content: space-between;
+                padding: 6%;
+            }
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
