@@ -4,12 +4,14 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { ip } from "../../App";
 import { actionCreators } from "../../state";
+import Cookies from 'universal-cookie';
 
 const Connect = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get("code") as string;
   const err = urlParams.get("error") as string;
+  const cookies = new Cookies();
 
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
@@ -40,6 +42,7 @@ const Connect = () => {
       },
     })
     .then((response: AxiosResponse<any, any>) => {
+      cookies.set('jwt', response.data.accessToken);
       setUser(response.data.user);
       window.location.replace(`http://${ip}:3000`);
     })

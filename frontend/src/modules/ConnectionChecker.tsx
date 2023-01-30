@@ -6,6 +6,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { ip } from "../App";
 import { useEffect, useState } from "react";
+import Cookies from "universal-cookie";
 
 function ConnectionChecker(props: { children: any }): JSX.Element {
   const userReducer = useSelector(
@@ -17,12 +18,20 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
   const { setUser } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
+    const cookies = new Cookies();
+    const jwt = cookies.get('jwt');
+    const options = {
+      headers: {
+        'authorization': `Bearer ${jwt}`
+      }
+    }
     console.log(userReducer.user)
     if (userReducer.user === null) {
       setIsConnected(false);
     } else {
       axios
-        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`)
+        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options)
+        .then(response => { })
         .catch((error) => {
           setIsConnected(false)
         });
