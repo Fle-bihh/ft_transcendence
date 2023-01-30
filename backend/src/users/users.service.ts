@@ -1,17 +1,17 @@
 import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {UserCredentialsDto} from './dto/user-credentials.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserCredentialsDto } from './dto/user-credentials.dto';
 import * as bcrypt from 'bcrypt';
-import {User} from 'src/entities/user.entity';
-import {Game} from 'src/entities/game.entity';
+import { User } from 'src/entities/user.entity';
+import { Game } from 'src/entities/game.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async signUp(userCredentialsDto: UserCredentialsDto): Promise<void> {
     const salt = await bcrypt.genSalt();
@@ -35,14 +35,27 @@ export class UsersService {
       relations: ['games'],
     });
 
-    const games = users.find(
-      (u) => u.username === user.username,
-    ).games;
-
-    return { games };
+    console.log(user);
+    if (users) {
+      console.log(users);
+      const games = users.find(
+        (u) => u.username === user.username,
+      ).games;
+      console.log({ games });
+      return { games };
+    }
+    return null;
   }
 
-  async getMatchHistory(id: string, user: User): Promise<{ games: Game[] }> {
+  async getMatchHistory(id: string, user: User) {
+    // const matchhistory = await this.gameRepository
+    // .createQueryBuilder('game')
+    // .leftJoinAndSelect('game.player1', 'player1')
+    // .leftJoinAndSelect('game.player2', 'player2')
+    // .leftJoinAndSelect('game.winner', 'winner')
+    // .where(`(game.plater1Id = :id OR game.player2ID = :id)`, {id})
+    // .getMany();
+    // return matchhistory;
     const found = await this.usersRepository.findOneBy({ id });
     if (found)
       return this.getGames(found);
@@ -79,11 +92,16 @@ export class UsersService {
 
   async getUserByLogin(login: string): Promise<User> {
     const found = await this.usersRepository.findOneBy({ login });
-    // if (found == null) {
-    //   throw new HttpException('User Not Found', 404);
-    // }
-    if (found != null) {
-      return found;
+    if (found == null) {
+      throw new HttpException('User Not Found', 404);
+    }
+    return found;
+  }
+
+  async getUserByUsername(username: string): Promise<User> {
+    const found = await this.usersRepository.findOneBy({ username });
+    if (found == null) {
+      throw new HttpException('User Not Found', 404);
     }
     return null;
   }
@@ -91,13 +109,12 @@ export class UsersService {
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     const found = await this.getUserById(id, user);
     console.log(found);
-    if (found)
-      {
-        found.username = username;
-        await this.usersRepository.save(found);
-        return found;
-      }
-      return null;
+    if (found) {
+      found.username = username;
+      await this.usersRepository.save(found);
+      return found;
+    }
+    return null;
   }
 
   async activate2FA(user: User): Promise<void> {
