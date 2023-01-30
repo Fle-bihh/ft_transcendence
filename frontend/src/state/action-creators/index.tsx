@@ -6,20 +6,15 @@ import { NotifType } from "../type";
 export const setUser = (
   item: {
     id: string,
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    nickName: string,
-    profileImage: string
+    username: string
+    login: string,
+    profileImage: string,
     email: string,
-    GoalTaken: number,
-    GoalSet: number,
-    NormalGameNumber: number,
-    NormalWinNumber: number,
-    NormalLossNumber: number,
+    nWinNumber: number,
+    LossNumber: number,
+    Rank: number,
     twoFactorAuth: boolean,
-    Friend: number,
+    friend: number,
   } | null
 ) => {
   return (dispatch: Dispatch<userAction>) => {

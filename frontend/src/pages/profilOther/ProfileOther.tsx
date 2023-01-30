@@ -20,15 +20,31 @@ import { RootState } from '../../state';
 import Fab from '@mui/material/Fab'; import
 ModeEditIcon from '@mui/icons-material/ModeEdit';
 
-import { Button, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import { userInfo } from 'os';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PasswordRounded } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { ip } from '../../App';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
+const jwt = cookies.get('jwt');
+const options = {
+    headers: {
+        'authorization': `Bearer ${jwt}`
+    }
+}
+
 
 const ProfileOther = () => {
+
+    const [open, setOpen] = React.useState(false);
+    const [inputValue, setInputValue] = useState("Add Friend")
+    const [inputValueTitle, setInputValueTitle] = useState("Add to my friend list")
+
+
 
     const [matchHistory, setMatchHistory] = useState(Array<{
         id: number,
@@ -54,41 +70,152 @@ const ProfileOther = () => {
         WinNumber: 0, // nbr de gagne
         LossNumber: 0,// nbr de perdu
         twoFactorAuth: false,
-        getData : false,
+        Friend: 0,
+        getData: false,
         // http://localhost:3000/Profileother?username=ldauga
     });
 
-    useEffect(() => {
-        if (userDisplay == null) {
-            const parsed = queryString.parse(window.location.search);
-            console.log("parsed",parsed)
-            //penser a dire que si c moi alors ca ne marche pas
-            if (parsed.username == '' || parsed.username == undefined   ) {
-                window.location.replace("http://${ip}:3000/")
-            }
-            else { //
-                axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
-                    if (response.data != null) {
-                        setUserDisplay({
-                            id: response.data.id,
-                            username: response.data.username,
-                            login: response.data.login,
-                            profileImage: response.data.profileImage,
-                            email: response.data.email,
-                            WinNumber: response.data.WinNumber,
-                            LossNumber: response.data.LossNumber,
-                            Rank: response.data.Rank,
-                            twoFactorAuth: response.data.twoFactorAuth,
-                            getData: true,
-                        });
-                    }
-                    console.log(response);
-                })
-            }
+    const getUserData = () => {
+        // useEffect(() => {
+        // if (userDisplay === null) {
+        const parsed = queryString.parse(window.location.search);
+        console.log("userDisplau", userDisplay)
+        console.log("username moi", user.user?.username)
+        console.log("parsed", parsed)
+
+
+        // axios.get(`http://localhost:5001/user/login/${user.user?.parse.username}` Pas bon :) 
+        if (parsed.username == '' || parsed.username == undefined || parsed.username == user.user?.login)
+        // axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: parsed.username }, options))
+        {
+            console.log("COUCOU")
+            window.location.replace(`http://${ip}:3000`);
         }
-    })
+        else { //
+            axios.get(`http://localhost:5001/user/login/${parsed.username} `, options).then(response => {
+                if (response.data.username != null) {
+                    console.log("on est dedans");
+
+                    setUserDisplay({
+                        id: response.data.id,
+                        username: response.data.username,
+                        login: response.data.login,
+                        profileImage: response.data.profileImage,
+                        email: response.data.email,
+                        WinNumber: response.data.WinNumber,
+                        LossNumber: response.data.LossNumber,
+                        Rank: response.data.Rank,
+                        twoFactorAuth: response.data.twoFactorAuth,
+                        Friend: response.data.Friend,
+                        getData: true,
+
+                    })
+                    console.log("le display du gars :", userDisplay);
+
+                }
+                else {
+
+                    console.log("pas dans le if ");
+                    window.location.replace(`http://${ip}:3000`);
+                }
+                // console.log(response);
+
+            }).catch((error) => {
+                console.log(error);
+            });
+            // }
+        };
+        // })
+    }
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (change: boolean) => {
+        if (change && userDisplay.Friend == 0) {
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { Friend: 1 }, options)
+            userDisplay.Friend = 1;
+            setInputValue("Friend")
+            setInputValueTitle("Remove from my friend list")
+            connect()
+        }
+        else if (change && userDisplay.Friend == 1) {
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { Friend: 0 }, options)
+            userDisplay.Friend = 0;
+            setInputValue("Add Friend")
+            setInputValueTitle("Add to my friend list")
+
+        }
+        setOpen(false);
+        console.log("friend : ", userDisplay.Friend)
+        console.log("tout : ", userDisplay)
 
 
+    };
+
+
+
+    useEffect(() => {
+        console.log("effect : ", userDisplay)
+        if (!userDisplay?.getData)
+            getUserData();
+    }, [userDisplay?.getData])
+
+//-----------------------------------------------------------------------
+    function userConnect() {
+        console.log("SALUT2")
+        return (
+        <div className="userConnect">
+            <div className="circleConnectLigne"></div>
+
+            <div className="connect">
+                Online
+        </div>
+
+        </div>)
+    }
+
+
+    function userInGame() {
+        return (<div className="userInGame">
+
+            <div className="circleInGame"></div>
+
+            <div className="connect">
+                In game
+        </div>
+
+        </div>)
+    }
+
+
+    function userConnectHorsLigne() {
+        return <div className="userConnectHorsLigne">
+
+            <div className="circleConnectHorsLigne"></div>
+            <div className="connect">
+                Not Connected
+        </div>
+        </div>
+
+    }
+
+    function connect() {
+        // const isLoggedIn = props.isLoggedIn;
+        if (userDisplay.Friend == 1) {
+            console.log("SALUT1")
+            return userConnect();
+        }
+        else if (userDisplay.Friend == 0) {
+            return userInGame();
+        }
+        else if (userDisplay.Friend == 0) {
+            return userConnectHorsLigne();
+        }
+
+    }
+
+//----------------------------------------------------------------------------------------
     return (
         <React.Fragment >
 
@@ -96,13 +223,14 @@ const ProfileOther = () => {
 
             <div className="profilePageContainerOther">
 
-                <div className="profileOther" >
+                <div className="profileOther"> 
 
                     <Stack direction="row" spacing={2} className="avatarItemOther">
                         <img alt="Cerise" src={userDisplay!.profileImage} className="avatarOther" />
                     </Stack>
-
-                    <div className="userConnect">
+                    {/* <div className={userDisplay.Friend == 1 ? {connect()} : ""}>
+                    </div> */}
+                        <div className="userConnect" {...connect()}>
 
                         <div className="circleConnectLigne"></div>
 
@@ -111,24 +239,33 @@ const ProfileOther = () => {
                         </div>
 
                     </div>
-                    <div className="userConnectHorsLigne">
 
-                        <div className="circleConnectHorsLigne">
 
-                        </div>
+                        <div className="userInGame">
+
+                        <div className="circleInGame"></div>
 
                         <div className="connect">
-                            Not Connected
+                            In game
                         </div>
+
                     </div>
 
 
+                        <div className="userConnectHorsLigne">
+
+                        <div className="circleConnectHorsLigne"></div>
+                        <div className="connect">
+                            Not Connected
+                        </div>
+                    </div> 
+                {/* </div> */}
                     <div className="infoUserOther">
                         <h3 className="userNameOther">
                             Login :
                             </h3>
                         <Typography className="userNamePrintOther">
-                            {userDisplay?.username}
+                            {userDisplay?.login}
                         </Typography>
 
                     </div>
@@ -142,21 +279,39 @@ const ProfileOther = () => {
                         </Typography>
 
                     </div>
-                    <Button className="buttonChangeOther" type="submit" onClick={() => { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: userDisplay!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) }}>
-                        Change UserName
-                        </Button>
+
+                    {/* { setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: userDisplay!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) } */}
+                    <Button className="buttonChangeOther" type="submit" onClick={handleClickOpen}>
+                        {inputValue}
+                    </Button>
+                    <Dialog open={open} onClose={() => handleClose(false)} >
+                        <DialogTitle>{inputValueTitle}</DialogTitle>
+                        <DialogActions>
+                            <Button onClick={() => handleClose(true)}>Confirm</Button>
+                            <Button onClick={() => handleClose(false)}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
 
 
 
                 <div className="statOther">
 
-                    <Box className="rectangleOther">
-                        <h2 style={{ color: 'white' }}>Game History {userDisplay?.username}</h2>
-                        <h3 style={{ textAlign: 'center' }}>Number of parts</h3>
-                        <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{matchHistory.length}</h3>
-
-                    </Box>
+                    <div className="rectangleOther">
+                        <div className="textRectangle">
+                            <p>nbr Win</p>
+                            {userDisplay?.WinNumber}
+                        </div>
+                        <div className="textRectangle">
+                            <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
+                            {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
+                            <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay?.Rank}</h3>
+                        </div>
+                        <div className="textRectangle">
+                            <p>nbr Loose</p>
+                            {userDisplay?.LossNumber}
+                        </div>
+                    </div>
 
                     {matchHistory.map((match) => {
                         return (
@@ -187,7 +342,7 @@ const ProfileOther = () => {
                     })}
                 </div>
             </div>
-            </React.Fragment >
+        </React.Fragment >
 
 
     )
