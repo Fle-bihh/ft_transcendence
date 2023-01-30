@@ -61,14 +61,26 @@ const ProfileOther = () => {
     useEffect(() => {
         if (userDisplay == null) {
             const parsed = queryString.parse(window.location.search);
-            console.log(parsed)
-            if (parsed.username == '' || parsed.username == undefined) {
+            console.log("parsed",parsed)
+            //penser a dire que si c moi alors ca ne marche pas
+            if (parsed.username == '' || parsed.username == undefined   ) {
                 window.location.replace("http://${ip}:3000/")
             }
             else { //
                 axios.get(`http://${ip}:5001/user/login/${parsed.username}`).then(response => {
                     if (response.data != null) {
-                        setUserDisplay(response.data);
+                        setUserDisplay({
+                            id: response.data.id,
+                            username: response.data.username,
+                            login: response.data.login,
+                            profileImage: response.data.profileImage,
+                            email: response.data.email,
+                            WinNumber: response.data.WinNumber,
+                            LossNumber: response.data.LossNumber,
+                            Rank: response.data.Rank,
+                            twoFactorAuth: response.data.twoFactorAuth,
+                            getData: true,
+                        });
                     }
                     console.log(response);
                 })

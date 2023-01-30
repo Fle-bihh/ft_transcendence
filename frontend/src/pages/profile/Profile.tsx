@@ -198,7 +198,6 @@ const Profile = () => {
             }
 
         }
-
         axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
         userDisplay.profileImage = filebase64;
     }
