@@ -15,7 +15,15 @@ import PinInput from 'react-pin-input';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
+const jwt = cookies.get('jwt');
+const options = {
+    headers: {
+        'authorization': `Bearer ${jwt}`
+    }
+}
 
 // rajouter bouton activer A2FA ou non 
 
@@ -81,7 +89,7 @@ const Profile = () => {
 
     const handleClose = (change: boolean) => {
         if (change && inputValue != "") {
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue })
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
             userDisplay.username = inputValue;
         }
         setInputValue("")
@@ -91,7 +99,7 @@ const Profile = () => {
     //2FA
     const handleClickOpen2FA = () => {
         setOpen2FA(true);
-        axios.get('https://localhost:5001/auth/2fa/generate/').then(res => (setQrCode2FA(res.data)))
+        axios.get('https://localhost:5001/auth/2fa/generate/', options).then(res => (setQrCode2FA(res.data)))
     };
 
     const handleClose2FA = () => {
@@ -102,7 +110,7 @@ const Profile = () => {
     };
 
     const send2FARequest = (value: string) => {
-        axios.get('https://localhost:5001/auth/2fa/activate/' + value)
+        axios.get('https://localhost:5001/auth/2fa/activate/' + value, options)
             .then(res => {
                 setUser(res.data);
                 setCode2FA('');
@@ -126,7 +134,7 @@ const Profile = () => {
     //fin 2FA
 
     const getUserData = () => {
-        axios.get(`http://localhost:5001/user/id/${user.user?.id}`).then(response => {
+        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
                 setUserDisplay({
                     id: response.data.id,
@@ -145,7 +153,7 @@ const Profile = () => {
         }).catch(error => {
             console.log(error);
         });
-        axios.get(`http://localhost:5001/user/user/${user.user?.id}/games`).then(response => {
+        axios.get(`http://localhost:5001/user/user/${user.user?.id}/games`, options).then(response => {
             if (response.data != null) {
 
                 {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */ }
@@ -172,28 +180,28 @@ const Profile = () => {
         console.log("effect : ", userDisplay)
         if (!userDisplay?.getData)
             getUserData();
-    }, [userDisplay?.getData])         
+    }, [userDisplay?.getData])
 
     //----------------image pour téléchager--------------------------------------------
-    const [filebase64,setFileBase64] = useState<string>("")
+    const [filebase64, setFileBase64] = useState<string>("")
 
-    function convertFile(files: FileList|null) {
+    function convertFile(files: FileList | null) {
         if (files) {
-          const fileRef = files[0] || ""
-          const fileType: string= fileRef.type || ""
-          console.log("This file upload is of type:",fileType)
-          const reader = new FileReader()
-          reader.readAsBinaryString(fileRef)
-          reader.onload=(ev: any) => {
-            // convert it to base64
-            setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-          }
+            const fileRef = files[0] || ""
+            const fileType: string = fileRef.type || ""
+            console.log("This file upload is of type:", fileType)
+            const reader = new FileReader()
+            reader.readAsBinaryString(fileRef)
+            reader.onload = (ev: any) => {
+                // convert it to base64
+                setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
+            }
 
         }
-        
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 })
-            userDisplay.profileImage = filebase64;
-      }
+
+        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
+        userDisplay.profileImage = filebase64;
+    }
     //_____________________________________------------------------------------
     return (
         <React.Fragment >
@@ -204,16 +212,16 @@ const Profile = () => {
                     <Stack direction="row" spacing={2} className="avatarItem">
                         <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
                     </Stack>
-                    
-                    <Button  component="label" className="avatarChange">
-                    Change Profile Picture
-                        <input type="file" hidden onChange={(e) => convertFile(e.target.files)}/>
+
+                    <Button component="label" className="avatarChange">
+                        Change Profile Picture
+                        <input type="file" hidden onChange={(e) => convertFile(e.target.files)} />
                     </Button>
 
                     <div className="infoUser">
                         <h3 className="userName">
                             Login :
-                            </h3>
+                        </h3>
                         <Typography className="userNamePrint">
                             {userDisplay?.login}
                         </Typography>
@@ -223,7 +231,7 @@ const Profile = () => {
 
                         <h3 className="userNameChange">
                             userName :
-                            </h3>
+                        </h3>
                         <Typography className="userNamePrintChange">
                             {userDisplay?.username}
                         </Typography>
@@ -256,7 +264,7 @@ const Profile = () => {
                         <div>
                             <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
                                 Activate 2FA
-                        </Button>
+                            </Button>
                             <Dialog open={open2FA} onClose={handleClose2FA} >
                                 <div>
                                     <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
@@ -280,9 +288,9 @@ const Profile = () => {
                             </Dialog>
                         </div> :
                         <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get('https://localhost:5001/auth/2fa/deactivate/').then(res => { setUser(res.data) }) }}>
+                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get('https://localhost:5001/auth/2fa/deactivate/', options).then(res => { setUser(res.data) }) }}>
                                 Deactivate 2FA
-                        </Button>
+                            </Button>
                         </div>
                     }
                 </div>
