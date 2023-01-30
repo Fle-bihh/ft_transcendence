@@ -22,8 +22,17 @@ import {
 import { ip } from "../../App";
 import { RootState } from "../../state";
 import { useSelector } from "react-redux";
+import Cookies from "universal-cookie";
 
 // const url = 'http://${ip}:3000/signup'
+const cookies = new Cookies();
+const jwt = cookies.get('jwt');
+const options = {
+  headers: {
+    Authorization: `Bearer ${jwt}`
+  }
+}
+console.log('Signup cookie == ', options);
 
 const Signup = () => {
   const userReducer = useSelector(
@@ -49,10 +58,11 @@ const Signup = () => {
 
   useEffect(() => {
     if (userReducer.user != null) {
+    console.log(options);
       axios
-        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`).then(() => {
+        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options).then(() => {
           window.location.replace(`http://${ip}:3000`);
-        }).catch((err) => {})
+        }).catch((err) => { })
     }
   }, [])
 
@@ -89,22 +99,22 @@ const Signup = () => {
   };
 
   return (
-    
-          <button
-            className="i42-button"
-            onClick={() =>
-              window.open(
-                `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2ba494ca541577ab12aead4ea4f59fc22b4c2bea05058775f2524344f2e602a9&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fhome&response_type=code`,
-                "_self"
-              )
-            }
-          >
-            <img
-              className="i42-logo"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/42_Logo.svg/langfr-280px-42_Logo.svg.png"
-              alt=""
-            />
-          </button>
+
+    <button
+      className="i42-button"
+      onClick={() =>
+        window.open(
+          `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2ba494ca541577ab12aead4ea4f59fc22b4c2bea05058775f2524344f2e602a9&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fhome&response_type=code`,
+          "_self"
+        )
+      }
+    >
+      <img
+        className="i42-logo"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/42_Logo.svg/langfr-280px-42_Logo.svg.png"
+        alt=""
+      />
+    </button>
   );
 };
 

@@ -1,22 +1,23 @@
-import { Module } from '@nestjs/common';
-import {ConfigModule, ConfigService} from '@nestjs/config';
-import {JwtModule} from '@nestjs/jwt';
-import {PassportModule} from '@nestjs/passport';
-import {TypeOrmModule} from '@nestjs/typeorm';
+import { forwardRef, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import {JwtStrategy} from './jwt.strategy';
-import {UsersController} from 'src/users/users.controller';
-import {UsersService} from 'src/users/users.service';
-import {HttpModule, HttpService} from '@nestjs/axios';
-import {UsersModule} from 'src/users/users.module';
+// import {JwtStrategy} from './jwt.strategy';
+// import { UsersController } from 'src/users/users.controller';
+// import { UsersService } from 'src/users/users.service';
+import { HttpModule } from '@nestjs/axios';
+import { UsersModule } from 'src/users/users.module';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
-    UsersModule,
+    forwardRef(() => UsersModule),
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -25,7 +26,7 @@ import {UsersModule} from 'src/users/users.module';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: 3600,
+          expiresIn: '7d',
         },
       }),
     }),
@@ -34,7 +35,7 @@ import {UsersModule} from 'src/users/users.module';
   providers: [AuthService, JwtStrategy],
   exports: [TypeOrmModule, PassportModule, JwtStrategy, AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }
 
 // import { Module } from '@nestjs/common';
 // import {TypeOrmModule} from '@nestjs/typeorm';

@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {GetUser} from 'src/auth/get-user.decorator';
 import {Game} from 'src/entities/game.entity';
 import {User} from 'src/entities/user.entity';
@@ -6,6 +7,7 @@ import {UserCredentialsDto} from './dto/user-credentials.dto';
 import {UsersService} from './users.service';
 
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
