@@ -26,6 +26,7 @@ function MapSelector(props: any) {
     const [invite, setInvite] = useState(false);
 
     function startGame1() {
+        console.log("invite 1= ", invite);
         if (invite == false) {
             console.log("start game front 1");
             gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
@@ -34,6 +35,7 @@ function MapSelector(props: any) {
         }
     }
     function startGame2() {
+        console.log("invite 2= ", invite);
         if (invite == false) {
             console.log("start game front 2");
             gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
@@ -42,6 +44,7 @@ function MapSelector(props: any) {
         }
     }
     function startGame3() {
+        console.log("invite 3= ", invite);
         if (invite == false)
         {
             console.log("start game front 3");

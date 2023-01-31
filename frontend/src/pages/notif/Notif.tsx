@@ -7,6 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import "./Notif.scss";
 import { useEffect, useState } from "react";
+import { Button } from "@mui/material";
 
 export default function Notif() {
   const persistantReducer = useSelector(
@@ -23,6 +24,10 @@ export default function Notif() {
   useEffect(() => {
 	seenAllNotif()
   }, []);
+
+  const acceptInvitation = (mapID : string) => {
+//send a socket to accept the gaaaaaame
+  }
 
   return (
     <>
@@ -44,6 +49,20 @@ export default function Notif() {
                   </div>
                   <div className="notifTitle">Friend Request</div>
                   <div className="notifText">{`${notif.data.sender} send you a friend's request.`}</div>
+                </div>
+              );
+            }
+            case NotifType.INVITEGAME: {
+              return (
+                <div className="notifElement">
+                  <div className="notifCross" onClick={() => { delNotif(index); }} >
+                    <CloseIcon />
+                  </div>
+                  <div className="notifTitle">Invitation to play</div>
+                  <div className="notifText">{`${notif.data.sender} send you a invitation to play to the pong on the map ${notif.data.mapName}.`}</div>
+                  <div className="notifAccept" onClick={() => { acceptInvitation(notif.data.mapID); }} >
+                    <CloseIcon />
+                  </div>
                 </div>
               );
             }

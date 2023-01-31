@@ -16,7 +16,7 @@ export const setUser = (
         Rank: number,
         twoFactorAuth: boolean,
         friend: number,
-
+        twoFactorVerify: boolean,
   } | null
 ) => {
   return (dispatch: Dispatch<userAction>) => {

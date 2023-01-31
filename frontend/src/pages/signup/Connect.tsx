@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { ip } from "../../App";
-import { actionCreators } from "../../state";
+import { actionCreators, RootState } from "../../state";
 import Cookies from 'universal-cookie';
+import PinInput from "react-pin-input";
 
 const Connect = () => {
   const queryString = window.location.search;
@@ -15,7 +16,7 @@ const Connect = () => {
 
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
-
+  const userReducer = useSelector((state: RootState) => state.persistantReducer.userReducer);
   const navigate = useNavigate();
 
   if (err) {
@@ -31,25 +32,54 @@ const Connect = () => {
     );
   }
 
-  axios
-    .request({
-      url: "/auth/api42/Signin",
-      method: "post",
-      baseURL: `http://${ip}:5001`,
-      params: {
-        code: code,
-        nickName: null,
-      },
-    })
+  axios.request({
+    url: "/auth/api42/Signin",
+    method: "post",
+    baseURL: `http://${ip}:5001`,
+    params: {
+      code: code,
+      nickName: null,
+    },
+  })
     .then((response: AxiosResponse<any, any>) => {
       cookies.set('jwt', response.data.accessToken);
       setUser(response.data.user);
       window.location.replace(`http://${ip}:3000`);
     })
-    .catch((err) => {
-    });
+    .catch((err) => { });
 
-  return <div></div>;
+  function verify2FA(value: string) {
+    axios.get(`http://localhost:5001/user/${userReducer.user?.username}/2fa/verify/` + value, { withCredentials: true })
+      .then((e) => { 
+        if (userReducer.user)
+          userReducer.user.twoFactorVerify = true 
+        })
+      .catch((e) => {
+        const div = document.getElementById("wrong-code") as HTMLDivElement;
+        div.style.display = "flex";
+      });
+  }
+
+  if (userReducer.user && userReducer.user.twoFactorAuth && !userReducer.user.twoFactorVerify) return (
+    <div className="login-2fa">
+      <h1>Google Authenticator Code</h1>
+      <PinInput
+        length={6}
+        focus
+        type="numeric"
+        inputMode="number"
+        style={{ padding: '10px' }}
+        onComplete={(value) => { verify2FA(value); }}
+        autoSelect={true}
+      />
+      <div id="wrong-code" style={{display: "none"}}>
+        <p>Wrong code</p>
+      </div>
+    </div>
+  )
+  else return (
+    <div></div>
+  )
 };
 
 export default Connect;
