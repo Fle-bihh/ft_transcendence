@@ -76,7 +76,7 @@ export default function WatchingListGame(props: {
     return (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%', overflowX: "scroll"}}>
             {props.all_rooms.map((room) => (
-                    <ImageButton focusRipple key={room.roomID} style={{ width: "100%" }}>
+                    <ImageButton focusRipple key={room.roomID} style={{ width: "100%" }} onClick={() => { props.setRoomID(room.roomID); props.setSpectator(true)}}>
                         <ImageSrc style={{ background:"black" }} />
                         <ImageBackdrop className="MuiImageBackdrop-root" />
                         <Image>

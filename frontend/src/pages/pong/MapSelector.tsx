@@ -23,19 +23,32 @@ function MapSelector(props: any) {
     const [allRooms, setAllRooms] = useState(Array<GameClass>);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [listGame, setListGame] = useState("");
-    const [open, setOpen] = React.useState(false);
+    const [invite, setInvite] = useState(false);
 
     function startGame1() {
-        console.log("start game front 1");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
+        if (invite == false) {
+            console.log("start game front 1");
+            gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
+        } else {
+
+        }
     }
     function startGame2() {
-        console.log("start game front 2");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
+        if (invite == false) {
+            console.log("start game front 2");
+            gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
+        } else {
+
+        }
     }
     function startGame3() {
-        console.log("start game front 3");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
+        if (invite == false)
+        {
+            console.log("start game front 3");
+            gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
+        } else {
+
+        }
     }
 
     gameSocket.removeListener("start");
@@ -70,14 +83,13 @@ function MapSelector(props: any) {
         console.log("room : ", room);
         console.log("allRooms : ", allRooms);
         allRooms.push(room);
-        allRooms.push(room);
         // props.setAllRooms(allRooms);
         console.log("allRooms : ", allRooms);
     });
 
     function affishListGame() {
         if (listGame == 'yes') return (
-            <WatchingListGame all_rooms={allRooms} setRoomID={props.setRoomID} setSpectator={props.setSpectator}/>
+            <WatchingListGame all_rooms={allRooms} setRoomID={props.setRoomID} setSpectator={props.setSpectator} />
         )
         else return (
             <ImageButton focusRipple key={images[5].title} style={{ width: images[5].width }} onClick={() => { gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username); }}>
@@ -158,7 +170,7 @@ function MapSelector(props: any) {
     }));
 
     const handleInvite = () => {
-        console.log("coucou");
+        setInvite(true);
     };
 
     return (
@@ -213,15 +225,47 @@ function MapSelector(props: any) {
                     </ImageButton> :
                     <>{affishListGame()}</>
                 }
-                <ImageButton focusRipple key={images[3].title} style={{ width: images[3].width }} onClick={handleInvite}>
-                    <ImageSrc style={{ backgroundImage: `url(${images[3].url})` }} />
-                    <ImageBackdrop className="MuiImageBackdrop-root" />
-                    <Image>
-                        <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
-                            {images[3].title} <ImageMarked className="MuiImageMarked-root" />
-                        </Typography>
-                    </Image>
-                </ImageButton>
+                {invite == false ?
+                    <ImageButton focusRipple key={images[3].title} style={{ width: images[3].width }} onClick={handleInvite}>
+                        <ImageSrc style={{ backgroundImage: `url(${images[3].url})` }} />
+                        <ImageBackdrop className="MuiImageBackdrop-root" />
+                        <Image>
+                            <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
+                                {images[3].title} <ImageMarked className="MuiImageMarked-root" />
+                            </Typography>
+                        </Image>
+                    </ImageButton> 
+                    :
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%'}}>
+                        <ImageButton focusRipple key={images[0].title} style={{ width: images[0].width }} onClick={startGame1}>
+                            <ImageSrc style={{ backgroundImage: `url(${images[0].url})` }} />
+                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                            <Image>
+                                <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
+                                    {images[0].title} <ImageMarked className="MuiImageMarked-root" />
+                                </Typography>
+                            </Image>
+                        </ImageButton>
+                        <ImageButton focusRipple key={images[1].title} style={{ width: images[1].width }} onClick={startGame2}>
+                            <ImageSrc style={{ backgroundImage: `url(${images[1].url})` }} />
+                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                            <Image>
+                                <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
+                                    {images[1].title} <ImageMarked className="MuiImageMarked-root" />
+                                </Typography>
+                            </Image>
+                        </ImageButton>
+                        <ImageButton focusRipple key={images[2].title} style={{ width: images[2].width }} onClick={startGame3}>
+                            <ImageSrc style={{ backgroundImage: `url(${images[2].url})` }} />
+                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                            <Image>
+                                <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
+                                    {images[2].title} <ImageMarked className="MuiImageMarked-root" />
+                                </Typography>
+                            </Image>
+                        </ImageButton>
+                    </Box>
+                }
             </Box>
         </React.Fragment>
     )
