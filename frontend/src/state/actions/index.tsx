@@ -13,7 +13,6 @@ type SetUserAction = {
         Rank: number,
         twoFactorAuth: boolean,
         friend: number,
-        twoFactorVerify: boolean,
     } | null
 }
 
@@ -40,3 +39,12 @@ type SeenAllNotifAction = {
 }
 
 export type notifAction = AddNotifAction | DelNotifAction | SeenAllNotifAction
+
+import { twoFAActionType } from "../action-types";
+
+type setTwoFA = {
+    type: twoFAActionType.SETTWOFA
+    twoFactorVerify: boolean,
+}
+
+export type twoFAAction = setTwoFA

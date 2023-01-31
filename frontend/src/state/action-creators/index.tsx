@@ -1,12 +1,11 @@
 import { Dispatch } from "redux";
-import { notifActionType, userActionType } from "../action-types/index";
-import { notifAction, userAction } from "../actions/index";
+import { notifActionType, twoFAActionType, userActionType } from "../action-types/index";
+import { notifAction, twoFAAction, userAction } from "../actions/index";
 import { NotifType } from "../type";
 
 export const setUser = (
   item: {
     id: string,
-
         username: string
         login: string,
         profileImage: string,
@@ -16,13 +15,23 @@ export const setUser = (
         Rank: number,
         twoFactorAuth: boolean,
         friend: number,
-        twoFactorVerify: boolean,
   } | null
 ) => {
   return (dispatch: Dispatch<userAction>) => {
     dispatch({
       type: userActionType.SETUSER,
       payload: item,
+    });
+  };
+};
+
+export const setTwoFA = (
+  twoFactorVerify: boolean
+) => {
+  return (dispatch: Dispatch<twoFAAction>) => {
+    dispatch({
+      type: twoFAActionType.SETTWOFA,
+      twoFactorVerify: twoFactorVerify,
     });
   };
 };
