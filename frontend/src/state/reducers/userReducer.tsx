@@ -13,8 +13,10 @@ export interface User {
         Rank: number,
         twoFactorAuth: boolean,
         friend: number,
+
     } | null;
 }
+
 
 export const initialState: User = {
     user: null

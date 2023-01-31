@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {GetUser} from 'src/auth/get-user.decorator';
-import {Game} from 'src/entities/game.entity';
-import {User} from 'src/entities/user.entity';
-import {UserCredentialsDto} from './dto/user-credentials.dto';
-import {UsersService} from './users.service';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { Game } from 'src/entities/game.entity';
+import { User } from 'src/entities/user.entity';
+import { UserCredentialsDto } from './dto/user-credentials.dto';
+import { UsersService } from './users.service';
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Post('/signup')
   async signUp(@Body() usersCredentialsDto: UserCredentialsDto): Promise<void> {
@@ -34,11 +34,16 @@ export class UsersController {
 
   @Get('/login/:login')
   async getUserByLogin(@Param('login') login: string): Promise<User> {
-      return await this.usersService.getUserByLogin(login);
+    return await this.usersService.getUserByLogin(login);
+  }
+
+  @Get('/username/:username')
+  async getUserByUsername(@Param('username') username: string): Promise<User> {
+    return await this.usersService.getUserByUsername(username);
   }
 
   @Get('/:id/match_history')
-  async getMatchHistory(@Param('id') id: string, @GetUser() user: User): Promise<{ games: Game[] }> {
+  async getMatchHistory(@Param('id') id: string, @GetUser() user: User) {
     return await this.usersService.getMatchHistory(id, user);
   }
 
@@ -46,5 +51,10 @@ export class UsersController {
   async get2FA(@GetUser() user: User): Promise<{ twoFactorAuth: boolean }> {
     return await this.usersService.get2FA(user);
   }
+
+  // @Get(':id/games')
+  // async getGames(@Param('id') id: string, @GetUser() user: User): Promise<Game[]> {
+  //   return await this.usersService.getMatchHistory(id, user);
+  // }
 
 }

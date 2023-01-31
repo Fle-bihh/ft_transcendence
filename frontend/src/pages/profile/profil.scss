@@ -53,7 +53,7 @@
                 margin-inline: auto;
                 margin-top: 7%;
                 width: 50%;
-                
+
                 // align-items: center;
                 text-transform: capitalize;
 
@@ -107,7 +107,6 @@
             .userNamePrintChange {
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
                 // font-weight: 200;
@@ -156,35 +155,32 @@
             overflow: scroll;
             overflow-x: scroll;
 
-            * {
-                box-sizing: border-box;
-            }
-
             .rectangle {
                 height: 29%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
                 top: 0;
-                // z-index: 999;
+                z-index: 999;
+                text-align: center;
                 // vertical-align: middle;
                 // display: inline-block;
                 // display:flow-root;
-                text-align: center;
+            }
+            * {
+                box-sizing: border-box;
             }
 
             .textRectangle {
-
                 display: inline-block;
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
                 padding: 2%;
-
             }
 
-            * {
-                box-sizing: border-box;
-            }
+            // * {
+            //     box-sizing: border-box;
+            // }
 
             .itemLoser {
                 align-content: space-between;
@@ -199,7 +195,7 @@
                 padding: 10px;
             }
 
-            // 
+            //
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
@@ -235,7 +231,6 @@
 
             .avatarStatuser {
                 padding: 2px;
-
             }
 
             .name {
@@ -246,7 +241,6 @@
 
                 // text-transform: uppercase;
             }
-
         }
     }
 }
@@ -348,7 +342,6 @@
                 // border: 2px solid green;
                 font-family: "system-ui";
                 // margin-top: 3%;
-
             }
 
             .userNamePrint {
@@ -396,7 +389,6 @@
             background-color: black;
             margin-inline: auto;
 
-
             // align-items: center;
             text-transform: capitalize;
             //  white-space:normal;
@@ -420,35 +412,37 @@
             overflow: scroll;
             overflow-x: scroll;
 
-            * {
-                box-sizing: border-box;
-            }
+            // * {
+            //     box-sizing: border-box;
+            // }
 
             .rectangle {
                 height: 29%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
                 top: 0;
-                // z-index: 999;
+                z-index: 999;
                 // vertical-align: middle;
                 // display: inline-block;
                 // display:flow-root;
                 text-align: center;
             }
 
-            .textRectangle {
+            * {
+                box-sizing: border-box;
+            }
 
+            .textRectangle {
                 display: inline-block;
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
                 padding: 6%;
-
             }
 
-            * {
-                box-sizing: border-box;
-            }
+            // * {
+            //     box-sizing: border-box;
+            // }
 
             .itemLoser {
                 align-content: space-between;
@@ -463,7 +457,7 @@
                 padding: 10px;
             }
 
-            // 
+            //
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
@@ -499,7 +493,6 @@
 
             .avatarStatuser {
                 padding: 2px;
-
             }
 
             .name {
@@ -510,7 +503,6 @@
 
                 // text-transform: uppercase;
             }
-
         }
     }
 }
@@ -527,7 +519,6 @@
         // line-Height: 19%;
 
         .profile {
-
             margin-top: 3%;
             height: 90%;
             width: 30%;
@@ -544,7 +535,6 @@
                 // position: relative;
                 display: flex;
                 justify-content: center;
-
 
                 // align-items: center;
                 // flex-direction: column;
@@ -654,7 +644,6 @@
             background-color: black;
             margin-inline: auto;
 
-
             // align-items: center;
             text-transform: capitalize;
             //  white-space:normal;
@@ -682,35 +671,36 @@
             overflow: scroll;
             overflow-x: scroll;
 
-            * {
-                box-sizing: border-box;
-            }
+            // * {
+            //     box-sizing: border-box;
+            // }
 
             .rectangle {
                 height: 29%;
                 width: 100%;
                 background-color: rgb(122, 122, 122);
                 top: 0;
-                // z-index: 999;
+                 z-index: 999;
                 // vertical-align: middle;
                 // display: inline-block;
                 // display:flow-root;
                 text-align: center;
             }
+            * {
+                box-sizing: border-box;
+            }
 
             .textRectangle {
-
                 display: inline-block;
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
                 padding: 6%;
-
             }
 
-            * {
-                box-sizing: border-box;
-            }
+            // * {
+            //     box-sizing: border-box;
+            // }
 
             .itemLoser {
                 align-content: space-between;
@@ -725,7 +715,7 @@
                 padding: 10px;
             }
 
-            // 
+            //
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
@@ -768,7 +758,6 @@
                 // padding: 10px;
                 margin-left: 12px;
                 align-items: center;
-
             }
 
             .name {

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {AuthService} from 'src/auth/auth.service';
-import {Game} from 'src/entities/game.entity';
-import {User} from 'src/entities/user.entity';
-import {UsersService} from 'src/users/users.service';
-import {Repository} from 'typeorm';
-import {GameResultsDto} from './dto/game-results.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthService } from 'src/auth/auth.service';
+import { Game } from 'src/entities/game.entity';
+import { User } from 'src/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { getRepository, Repository } from 'typeorm';
+import { GameResultsDto } from './dto/game-results.dto';
 
 @Injectable()
 export class GameService {
@@ -16,7 +16,7 @@ export class GameService {
     private usersRepository: Repository<User>,
     private readonly authService: AuthService,
     private readonly userService: UsersService,
-  ) {};
+  ) { };
 
   async createGame(gameResultsDto: GameResultsDto): Promise<void> {
     console.log(gameResultsDto);
@@ -39,11 +39,16 @@ export class GameService {
       winner,
     })
 
-    player1.games = (await this.userService.getGames(player1)).games;
-    player1.games.push(game);
+    console.log(player1);
+    console.log(id_user1);
 
-    player2.games = (await this.userService.getGames(player2)).games;
-    player2.games.push(game);
+    let games = await this.userService.getGames(player1);
+    // if (games)
+    //   player1.games.push(game);
+
+    games = await this.userService.getGames(player2);
+    // if (games)
+    //   player2.games.push(game);
 
     try {
       await this.usersRepository.save(player1);
@@ -52,5 +57,28 @@ export class GameService {
     } catch (error) {
       console.log(error.code);
     }
+  }
+
+  async getGames() {
+    const games = this.gameRepository.createQueryBuilder("game")
+      .leftJoinAndSelect("game.player1", "player1")
+      .leftJoinAndSelect("game.player2", "player2")
+      .leftJoinAndSelect("game.winner", "winner")
+    return await games.getMany();
+  }
+
+  async getGamesByUser(user: User){
+    const allGames = await this.getGames();
+
+    console.log('all games ==', allGames);
+    const result: { game: Game, player1: string, player2: string, winner: string }[] = []
+    for (let game of allGames) {
+      if (game.player1.username === user.username || game.player2.username === user.username) {
+        let r = { game, player1: game.player1.username, player2: game.player2.username, winner: game.winner.username };
+        result.push(r);
+      }
+    }
+    return allGames;
+    // return result;
   }
 }

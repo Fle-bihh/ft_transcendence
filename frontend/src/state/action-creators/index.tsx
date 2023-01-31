@@ -6,6 +6,7 @@ import { NotifType } from "../type";
 export const setUser = (
   item: {
     id: string,
+
         username: string
         login: string,
         profileImage: string,
@@ -15,6 +16,7 @@ export const setUser = (
         Rank: number,
         twoFactorAuth: boolean,
         friend: number,
+
   } | null
 ) => {
   return (dispatch: Dispatch<userAction>) => {
