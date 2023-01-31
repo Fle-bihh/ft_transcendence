@@ -16,7 +16,9 @@ const Connect = () => {
 
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
+  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const userReducer = useSelector((state: RootState) => state.persistantReducer.userReducer);
+  const twoFAReducer = useSelector((state: RootState) => state.persistantReducer.twoFAReducer);
   const navigate = useNavigate();
 
   if (err) {
@@ -31,36 +33,35 @@ const Connect = () => {
       { replace: true }
     );
   }
-
-  axios.request({
-    url: "/auth/api42/Signin",
-    method: "post",
-    baseURL: `http://${ip}:5001`,
-    params: {
-      code: code,
-      nickName: null,
-    },
-  })
-    .then((response: AxiosResponse<any, any>) => {
-      cookies.set('jwt', response.data.accessToken);
-      setUser(response.data.user);
-      window.location.replace(`http://${ip}:3000`);
-    })
-    .catch((err) => { });
+  if (!userReducer.user)
+    axios.request({
+      url: "/auth/api42/Signin",
+      method: "post",
+      baseURL: `http://${ip}:5001`,
+      params: {
+        code: code,
+        nickName: null,
+      }}).then((response: AxiosResponse<any, any>) => {
+        cookies.set('jwt', response.data.accessToken);
+        setUser(response.data.user);
+        // window.location.replace(`http://${ip}:3000`);
+      }).catch((err) => { });
 
   function verify2FA(value: string) {
     axios.get(`http://localhost:5001/user/${userReducer.user?.username}/2fa/verify/` + value, { withCredentials: true })
-      .then((e) => { 
-        if (userReducer.user)
-          userReducer.user.twoFactorVerify = true 
-        })
+      .then((e) => {
+        setTwoFA(true);
+      })
       .catch((e) => {
+        setTwoFA(false);
         const div = document.getElementById("wrong-code") as HTMLDivElement;
         div.style.display = "flex";
       });
   }
-
-  if (userReducer.user && userReducer.user.twoFactorAuth && !userReducer.user.twoFactorVerify) return (
+  if (userReducer.user && !userReducer.user.twoFactorAuth) return (
+    <Navigate to={"/"}/>
+  )
+  else if (userReducer.user && userReducer.user.twoFactorAuth && !twoFAReducer.twoFactorVerify) return (
     <div className="login-2fa">
       <h1>Google Authenticator Code</h1>
       <PinInput
@@ -72,7 +73,7 @@ const Connect = () => {
         onComplete={(value) => { verify2FA(value); }}
         autoSelect={true}
       />
-      <div id="wrong-code" style={{display: "none"}}>
+      <div id="wrong-code" style={{ display: "none" }}>
         <p>Wrong code</p>
       </div>
     </div>

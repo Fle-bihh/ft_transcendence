@@ -7,3 +7,7 @@ export enum notifActionType {
     DELNOTIF = "DELNOTIF",
     SEENALLNOTIF = "SEENALLNOTIF",
 }
+
+export enum twoFAActionType {
+    SETTWOFA = "SETTWOFA",
+}

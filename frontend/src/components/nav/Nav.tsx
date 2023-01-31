@@ -24,6 +24,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../../state";
 import { bindActionCreators } from "redux";
+import Cookies from "universal-cookie"
 
 const Navbar = (props: any) => {
   const dispatch = useDispatch();
@@ -116,6 +117,8 @@ const Navbar = (props: any) => {
                   className="link"
                   onClick={() => {
                     setUser(null);
+                    const cookies = new Cookies();
+                    cookies.remove('jwt');
                   }}
                 >
                   <Typography
