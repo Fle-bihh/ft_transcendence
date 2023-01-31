@@ -29,12 +29,12 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
     if (userReducer.user === null) {
       setIsConnected(false);
     } else {
-      axios
-        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options)
-        .then(response => { })
-        .catch((error) => {
-          setIsConnected(false)
-        });
+      // axios
+      //   .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options)
+      //   .then(response => { })
+      //   .catch((error) => {
+      //     setIsConnected(false)
+      //   });
     }
   });
   if (isConnected) {
