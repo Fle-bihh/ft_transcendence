@@ -42,6 +42,7 @@ const Connect = () => {
     },
   })
     .then((response: AxiosResponse<any, any>) => {
+    console.log("connect ==", response.data);
       cookies.set('jwt', response.data.accessToken);
       setUser(response.data.user);
       window.location.replace(`http://${ip}:3000`);
