@@ -29,6 +29,7 @@ import Cookies from "universal-cookie"
 const Navbar = (props: any) => {
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
+  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const persistantReducer = useSelector(
     (state: RootState) => state.persistantReducer
   );
@@ -116,9 +117,10 @@ const Navbar = (props: any) => {
                   to={`/`}
                   className="link"
                   onClick={() => {
-                    setUser(null);
                     const cookies = new Cookies();
                     cookies.remove('jwt');
+                    setUser(null);
+                    setTwoFA(false);
                   }}
                 >
                   <Typography
