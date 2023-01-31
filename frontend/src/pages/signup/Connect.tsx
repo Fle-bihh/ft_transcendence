@@ -41,14 +41,21 @@ const Connect = () => {
       params: {
         code: code,
         nickName: null,
-      }}).then((response: AxiosResponse<any, any>) => {
-        cookies.set('jwt', response.data.accessToken);
-        setUser(response.data.user);
-        // window.location.replace(`http://${ip}:3000`);
-      }).catch((err) => { });
+      }
+    }).then((response: AxiosResponse<any, any>) => {
+      cookies.set('jwt', response.data.accessToken);
+      setUser(response.data.user);
+      // window.location.replace(`http://${ip}:3000`);
+    }).catch((err) => { });
 
   function verify2FA(value: string) {
-    axios.get(`http://localhost:5001/user/${userReducer.user?.username}/2fa/verify/` + value, { withCredentials: true })
+    const jwt = cookies.get('jwt');
+    const options = {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    }
+    axios.get(`http://localhost:5001/user/${userReducer.user?.id}/2fa/verify/` + value, options)
       .then((e) => {
         setTwoFA(true);
       })
@@ -59,7 +66,7 @@ const Connect = () => {
       });
   }
   if (userReducer.user && !userReducer.user.twoFactorAuth) return (
-    <Navigate to={"/"}/>
+    <Navigate to={"/"} />
   )
   else if (userReducer.user && userReducer.user.twoFactorAuth && !twoFAReducer.twoFactorVerify) return (
     <div className="login-2fa">
@@ -78,8 +85,10 @@ const Connect = () => {
       </div>
     </div>
   )
+  else if (userReducer.user && userReducer.user.twoFactorAuth && twoFAReducer.twoFactorVerify) return (
+    <Navigate to={"/"} />)
   else return (
-    <div></div>
+    <div><p>Coucou c est moi</p></div>
   )
 };
 
