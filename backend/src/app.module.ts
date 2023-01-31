@@ -12,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import "reflect-metadata";
 import {DataSource} from 'typeorm';
 import { GameModule } from './game/game.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [EventsModule, 
@@ -41,6 +42,7 @@ import { GameModule } from './game/game.module';
   UsersModule,
   ChannelModule,
   GameModule,
+  MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

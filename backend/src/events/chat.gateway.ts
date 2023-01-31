@@ -16,6 +16,7 @@ import { Message } from 'src/entities/message.entity';
 import { MessagesDto } from 'src/channel/dto/messages.dto';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MessagesService } from 'src/messages/messages.service';
 
 const db_messages = Array<{
   index: number;
@@ -65,8 +66,7 @@ const users = Array<{ index: number; login: string; socket: Socket }>();
 export class ChatGateway {
   private logger: Logger = new Logger('AppGateway');
   constructor(
-    @InjectRepository(Message)
-    private messageRepository: Repository<Message>,
+    private messagesService: MessagesService,
   ) {}
 
   @WebSocketServer()
@@ -98,6 +98,9 @@ export class ChatGateway {
       return;
     }
     const actualTime: Date = new Date();
+    
+    console.log(data)
+    
     const messageDto: MessagesDto = {
       sender: data.sender,
       receiver: data.receiver,
@@ -105,7 +108,9 @@ export class ChatGateway {
       date: actualTime,
     };
     console.log(messageDto);
-    this.messageRepository.save(messageDto);
+
+    this.messagesService.addMessage(messageDto);
+    // this.messageRepository.save(messageDto);
 
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 
@@ -156,6 +161,9 @@ export class ChatGateway {
       admin: true,
     });
     const actualTime: Date = new Date();
+    
+    
+    
     const messageDto: MessagesDto = {
       // DONE ?
       sender: '___server___',
@@ -163,8 +171,10 @@ export class ChatGateway {
       content: `${data.owner} created channel`,
       date: actualTime,
     };
-    console.log(messageDto);
-    this.messageRepository.save(messageDto);
+
+    this.messagesService.addMessage(messageDto)
+    // console.log(messageDto);
+    // this.messageRepository.save(messageDto);
 
     console.log(db_messages);
 
@@ -448,7 +458,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('GET_CONV')
-  get_conv(
+  async get_conv(
     client: Socket,
     data: {
       sender: string;
@@ -466,18 +476,10 @@ export class ChatGateway {
       );
       this.logger.log('send get_conv to front');
     } else {
-      // IF NOT A CHANNEL, THEN ITS A USER TO USER CONV
+      const ret = await this.messagesService.findConvers(data.receiver, data.sender);      // IF NOT A CHANNEL, THEN ITS A USER TO USER CONV
       client.emit(
         'get_conv',
-        db_messages // EMIT ALL MESSAGES CONTAINING THE RECEIVER !AND! THE SENDER
-          .sort((a, b) => a.index - b.index)
-          .filter(
-            (message) =>
-              (message.sender == data.sender &&
-                message.receiver == data.receiver) ||
-              (message.sender == data.receiver &&
-                message.receiver == data.sender),
-          ),
+        ret
       );
       this.logger.log('send get_conv to front');
     }
