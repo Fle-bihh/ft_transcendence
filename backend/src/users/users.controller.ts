@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req, Response, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { Game } from 'src/entities/game.entity';
@@ -22,9 +22,13 @@ export class UsersController {
     return this.usersService.patchUsername(id, user, username);
   }
 
-  @Patch('2FA/activate')
-  async activate2FA(@GetUser() user: User): Promise<void> {
-    return await this.usersService.activate2FA(user);
+  @Get('/:id/2fa/generate')
+  async register(@Response() response, @Param('id') id: string) {
+    const user: User = await this.usersService.getUserById(id);
+    const { otpAuthUrl } =
+      await this.usersService.generateTwoFactorAuthenticationSecret(user);
+    return response.json(
+      await this.usersService.generateQrCodeDataURL(otpAuthUrl),);
   }
 
   @Get('/id/:id')
@@ -52,9 +56,27 @@ export class UsersController {
     return await this.usersService.get2FA(user);
   }
 
-  // @Get(':id/games')
-  // async getGames(@Param('id') id: string, @GetUser() user: User): Promise<Game[]> {
-  //   return await this.usersService.getMatchHistory(id, user);
-  // }
+  @Get('/:id/2fa/deactivate')
+  async deactivate2FA(@Param('id') id: string) {
+    const user = await this.usersService.getUserById(id);
+    return await this.usersService.deactivate2FA(user);
+  }
 
+  @Get('/:id/2FA/activate/:secret')
+  async activate2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<User> {
+    const user: User = await this.usersService.getUserById(id);
+    const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
+    if (!isCodeValid)
+      throw new UnauthorizedException('Wrong authentication code');
+    return await this.usersService.activate2FA(user);
+  }
+
+  @Get('/:id/2fa/verify/:secret')
+  async verify2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<boolean>{
+    const user: User = await this.usersService.getUserById(id);
+    const isCodeValid: boolean= this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
+    if (!isCodeValid)
+      throw new UnauthorizedException('Wrong authentication code');
+    return isCodeValid;
+  }
 }
