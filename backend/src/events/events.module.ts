@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import { Channel } from 'src/entities/channel.entity';
+import { ChannelService } from 'src/channel/channel.service';
 import {Message} from 'src/entities/message.entity';
 import {GameModule} from 'src/game/game.module';
 import { MessagesService } from 'src/messages/messages.service';
@@ -12,10 +14,10 @@ import { PongGateway } from './pong.gateaway';
   imports: [
     UsersModule,
     GameModule,
-    TypeOrmModule.forFeature([Message]),
+    TypeOrmModule.forFeature([Message, Channel]),
     // MessagesService,
   ],
-  providers: [EventsGateway, ChatGateway, PongGateway, MessagesService],
+  providers: [EventsGateway, ChatGateway, PongGateway, MessagesService, ChannelService],
   exports: [TypeOrmModule],
 })
 export class EventsModule {}

@@ -9,8 +9,8 @@ import { createServer } from 'http';
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import {UsersService} from 'src/users/users.service';
-import {User} from 'src/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/entities/user.entity';
 
 const db_users = Array<{
   index: number;
@@ -34,9 +34,7 @@ const users = Array<{ index: number; login: string; socket: Socket }>();
 export class EventsGateway {
   private logger: Logger = new Logger('AppGateway');
 
-  constructor(
-    private userService: UsersService,
-  ) {}
+  constructor(private userService: UsersService) {}
 
   @WebSocketServer()
   httpServer = createServer();
@@ -50,10 +48,14 @@ export class EventsGateway {
   @SubscribeMessage('CHECK_USER_EXIST')
   async check_user_exist(client: Socket, userLogin: string) {
     this.logger.log(db_users);
-    client.emit(
-      'check_user_exist',
-      await this.userService.getUserByLogin(userLogin) != null,
-    );
+    this.userService
+      .getUserByLogin(userLogin)
+      .then(() => {
+        client.emit('check_user_exist', true);
+      })
+      .catch(() => {
+        client.emit('check_user_exist', false);
+      });
   }
 
   @SubscribeMessage('ADD_USER')
@@ -102,7 +104,7 @@ export class EventsGateway {
 
   @SubscribeMessage('ADD_FRIENDSHIP')
   add_friendship(
-    client: Socket,                             // RIEN POUR L INSTANT
+    client: Socket, // RIEN POUR L INSTANT
     data: {
       login: string;
       login2: string;

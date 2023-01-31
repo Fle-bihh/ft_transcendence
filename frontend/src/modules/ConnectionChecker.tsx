@@ -30,7 +30,7 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
       setIsConnected(false);
     } else {
       axios
-        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options)
+        .get(`http://${ip}:5001/user/login/${userReducer.user.login}`, options)
         .then(response => { })
         .catch((error) => {
           setIsConnected(false)

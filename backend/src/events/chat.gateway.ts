@@ -14,9 +14,12 @@ import { any } from '@hapi/joi';
 import { Repository } from 'typeorm';
 import { Message } from 'src/entities/message.entity';
 import { MessagesDto } from 'src/channel/dto/messages.dto';
+import { ChannelsDto } from 'src/channel/dto/messages.dto';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ChannelService } from 'src/channel/channel.service';
 import { MessagesService } from 'src/messages/messages.service';
+import { UsersService } from 'src/users/users.service';
 
 const db_messages = Array<{
   index: number;
@@ -67,6 +70,8 @@ export class ChatGateway {
   private logger: Logger = new Logger('AppGateway');
   constructor(
     private messagesService: MessagesService,
+    private channelsService: ChannelService,
+    private usersService: UsersService,
   ) {}
 
   @WebSocketServer()
@@ -79,7 +84,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('ADD_MESSAGE')
-  add_message(
+  async add_message(
     client: Socket,
     data: {
       sender: string;
@@ -98,9 +103,6 @@ export class ChatGateway {
       return;
     }
     const actualTime: Date = new Date();
-    
-    console.log(data)
-    
     const messageDto: MessagesDto = {
       sender: data.sender,
       receiver: data.receiver,
@@ -110,13 +112,11 @@ export class ChatGateway {
     console.log(messageDto);
 
     this.messagesService.addMessage(messageDto);
-    // this.messageRepository.save(messageDto);
-
     this.logger.log('ADD_MESSAGE recu ChatGateway');
 
-    // this.get_all_conv_info(client, { sender: data.sender });
+    const channels = await this.channelsService.getAllChannels();
 
-    if (db_channels.find((channel) => channel.name == data.receiver)) {
+    if (channels.find((channel) => channel.name == data.receiver)) {
       // A VOIR APRES SI CA SERT ENCORE D'ENVOYER CA
       db_participants
         .filter((participant) => participant.channel == data.receiver)
@@ -125,11 +125,18 @@ export class ChatGateway {
           if (tmp != undefined) tmp.socket.emit('new_message');
         });
     } else {
-      let senderUser = users.find((user) => user.login == data.sender);
-      let receiverUser = users.find((user) => user.login == data.receiver);
+      let senderUser = this.usersService.getUserByLogin(data.sender);
+      let receiverUser = this.usersService.getUserByLogin(data.receiver);
 
-      if (senderUser != undefined) senderUser.socket.emit('new_message');
-      if (receiverUser != undefined) receiverUser.socket.emit('new_message');
+      let senderSocket = users.find(user => {
+        user.login === data.sender
+      }).socket;
+      let receiverSocket = users.find(user => {
+        user.login === data.receiver
+      }).socket;
+
+      if (senderSocket != undefined) senderSocket.emit('new_message');
+      if (receiverSocket != undefined) receiverSocket.emit('new_message');
     }
   }
 
@@ -144,16 +151,16 @@ export class ChatGateway {
       owner: string;
     },
   ) {
-    this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name); // PUSH NEW CHANNEL INTO DB
-    db_channels.push({
-      index: db_channels.length,
-      privacy: data.privacy,
+    this.logger.log('CREATE_CHANNEL recu ChatGateway with', data); // PUSH NEW CHANNEL INTO DB
+    const channelsDto: ChannelsDto = {
       name: data.name,
-      password: data.password,
+      privacy: data.privacy,
       description: data.description,
+      password: data.password,
       owner: data.owner,
-    });
-    this.logger.log('db_channels after CREATE_CHANNEL = ', db_channels); // PUSH NEW PARTICIPANT INTO DB
+    };
+    this.channelsService.addChannel(channelsDto);
+    // PUSH NEW PARTICIPANT INTO DB
     db_participants.push({
       index: db_participants.length,
       login: data.owner,
@@ -161,54 +168,28 @@ export class ChatGateway {
       admin: true,
     });
     const actualTime: Date = new Date();
-    
-    
-    
+
     const messageDto: MessagesDto = {
-      // DONE ?
       sender: '___server___',
       receiver: data.name,
       content: `${data.owner} created channel`,
       date: actualTime,
     };
 
-    this.messagesService.addMessage(messageDto)
-    // console.log(messageDto);
-    // this.messageRepository.save(messageDto);
-
-    console.log(db_messages);
-
+    this.messagesService.addMessage(messageDto);
     this.get_all_conv_info(client, { sender: data.owner });
   }
 
   @SubscribeMessage('GET_ALL_CHANNELS')
-  get_all_channels(client: Socket, login: string) {
+  async get_all_channels(client: Socket, login: string) {
     this.logger.log('GET_ALL_CHANNELS recu ChatGateway with');
-    let sendArray = Array<{
-      index: number;
-      privacy: string;
-      name: string;
-      password: string;
-      description: string;
-      owner: string;
-    }>();
-    db_channels.map((channel) => {
-      // RECUPERER ALL CHANNELS FROM DB
-      sendArray.push({
-        index: channel.index,
-        privacy: channel.privacy,
-        name: channel.name,
-        password: channel.password,
-        description: channel.description,
-        owner: channel.owner,
-      });
-    });
-    client.emit('get_all_channels', sendArray);
-    this.logger.log('send get_all_channels to ', login, 'with', sendArray);
+    const channels = await this.channelsService.getAllChannels();
+    client.emit('get_all_channels', channels);
+    this.logger.log('send get_all_channels to ', login, 'with', channels);
   }
 
   @SubscribeMessage('JOIN_CHANNEL')
-  join_channel(
+  async join_channel(
     client: Socket,
     data: {
       login: string;
@@ -216,8 +197,9 @@ export class ChatGateway {
       channelPassword: string;
     },
   ) {
+    const channel = await this.channelsService.findChannel(data.channelName);
     if (
-      db_channels.find((item) => item.name == data.channelName) != undefined // IF THE CHANNEL NAME IN ARG EXISTS
+      channel // IF THE CHANNEL NAME IN ARG EXISTS
     ) {
       if (
         // IF CHANNEL PARTICIPANTS LENGTH > 0 && < 50
@@ -392,7 +374,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('CHANGE_CHANNEL_NAME')
-  change_channel_name(
+  async change_channel_name(
     client: Socket,
     data: {
       login: string;
@@ -400,6 +382,8 @@ export class ChatGateway {
       newName: string;
     },
   ) {
+    const messages = await this.messagesService.findAll();
+    const channels = await this.channelsService.getAllChannels();
     this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
     db_channels.forEach((channel) => {
       // CHANGE THE CHANNEL NAME INTO CHANNEL DB WITH NEWNAME
@@ -413,7 +397,7 @@ export class ChatGateway {
         participant.channel = data.newName;
       }
     });
-    db_messages.forEach((message) => {
+    messages.forEach((message) => {
       // CHANGE THE RECEIVER_STRING OF ALL MESSAGES OF THIS CHANNEL (IF CHANNEL MESSAGE : RECEIVER = CHANNEL NAME) WITH NEW_NAME
       if (message.receiver === data.currentName) {
         message.receiver = data.newName;
@@ -465,33 +449,35 @@ export class ChatGateway {
       receiver: string;
     },
   ) {
+    const convers = await this.messagesService.findConvers(
+      data.receiver,
+      data.sender,
+    );
+    const channel = await this.channelsService.findChannel(data.receiver);
     if (
-      db_channels.find((channel) => channel.name == data.receiver) != undefined // IF RECEIVER IS A CHANNEL
+      channel.length // IF RECEIVER IS A CHANNEL
     ) {
       client.emit(
         'get_conv',
-        db_messages // EMIT WITH ALL MESSAGES OF THIS CHANNEL (ALL MESSAGES WITH THE CHANNELNAME AS RECEIVER)
-          .sort((a, b) => a.index - b.index)
-          .filter((message) => message.receiver === data.receiver),
+        (await this.channelsService.getChannelMessages(data.receiver)), // EMIT WITH ALL MESSAGES OF THIS CHANNEL (ALL MESSAGES WITH THE CHANNELNAME AS RECEIVER)
       );
       this.logger.log('send get_conv to front');
     } else {
-      const ret = await this.messagesService.findConvers(data.receiver, data.sender);      // IF NOT A CHANNEL, THEN ITS A USER TO USER CONV
-      client.emit(
-        'get_conv',
-        ret
-      );
+      // IF NOT A CHANNEL, THEN ITS A USER TO USER CONV
+      client.emit('get_conv', convers);
       this.logger.log('send get_conv to front');
     }
   }
 
   @SubscribeMessage('GET_ALL_CONV_INFO')
-  get_all_conv_info(
+  async get_all_conv_info(
     client: Socket,
     data: {
       sender: string;
     },
   ) {
+    const messages = await this.messagesService.findAll();
+    // const channel = await this.channelsService.findChannel(data.receiver);
     this.logger.log('GET_ALL_CONV_INFO recu ChatGateway', data);
     const retArray = Array<{
       receiver: string;
@@ -523,7 +509,7 @@ export class ChatGateway {
         }
       });
 
-    db_messages
+    messages
       .filter(
         (message) =>
           message.receiver == data.sender || message.sender == data.sender,
@@ -535,7 +521,7 @@ export class ChatGateway {
             retArray.find((item) => item.receiver == messageItem.receiver) ==
             undefined // IF THE CONV WITH THIS RECEIVER(messageItem.receiver) IS NOT IN RETARRAY YET
           ) {
-            let tmp = db_messages.sort((a, b) => a.index - b.index); // PUT IN TMP ALL MESSAGES SORTED (IN ORDER TO FIND THE LAST ONE)
+            let tmp = messages.sort((a, b) => a.date.getDate() - b.date.getDate()); // PUT IN TMP ALL MESSAGES SORTED (IN ORDER TO FIND THE LAST ONE)
             retArray.push({
               // PUSH INFO INTO RETARRAY WITH :
               receiver: messageItem.receiver,
@@ -558,15 +544,15 @@ export class ChatGateway {
                       message.receiver == messageItem.receiver) ||
                     (message.receiver == data.sender &&
                       message.sender == messageItem.receiver),
-                ).time, // TAKE THE TIME
+                ).date, // TAKE THE TIME
             });
           }
         } else if (
           retArray.find((item) => item.receiver == messageItem.sender) == // IF USER IS THE RECEIVER
           undefined
         ) {
-          let tmp = [...db_messages.sort((a, b) => a.index - b.index)];
-          console.log('tmp time', tmp[0].time); // SAME THING HERE
+          let tmp = [...messages.sort((a, b) => a.date.getDate() - b.date.getDate())];
+          console.log('tmp time', tmp[0].date); // SAME THING HERE
           retArray.push({
             receiver: messageItem.sender,
             last_message_text: tmp
@@ -587,7 +573,7 @@ export class ChatGateway {
                     message.receiver == messageItem.sender) ||
                   (message.receiver == data.sender &&
                     message.sender == messageItem.sender),
-              ).time,
+              ).date,
           });
         } else {
           console.log(messageItem);
