@@ -21,10 +21,7 @@ const Friends = () => {
   const [openFriendsPage, setOpenFriendsPage] = useState(true);
   const [friendsList, setFriendsList] = useState(
     Array<{
-      index: number;
       username: string;
-      username2: string;
-      friendshipDate: Date;
     }>()
   );
   const [usersList, setUsersList] = useState(
@@ -46,57 +43,38 @@ const Friends = () => {
   };
 
   useEffect(() => {
-    if (openFriendsPage) {
-      utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
-      console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
-      utils.socket.emit("GET_ALL_USERS", user.user?.username);
-      console.log(user.user?.username, "send GET_ALL_USERS to backend");
-    }
-    setOpenFriendsPage(false);
-  });
+    utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
+    console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
+    utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", user.user?.username);
+    console.log(user.user?.username, "send GET_ALL_USERS to backend");
+  }, []);
 
-  utils.socket.removeListener("get_username");
-  utils.socket.on("get_username", (username: string) => {
-    console.log(user.user?.username, "received get_username with", username);
-    setMyUsername(username);
-  });
+  // utils.socket.removeListener("get_username");
+  // utils.socket.on("get_username", (username: string) => {
+  //   console.log(user.user?.username, "received get_username with", username);
+  //   setMyUsername(username);
+  // });
 
-  utils.socket.removeListener("get_all_users");
-  utils.socket.on("get_all_users", (users: Array<{ username: string }>) => {
-    console.log(user.user?.username, "received get_all_users with", users);
-    let tmpArray = Array<{ index: number; username: string }>();
-    users.map((user) => {
-      tmpArray.push({
-        index: tmpArray.length,
-        username: user.username,
-      });
-    });
-    setUsersList(tmpArray);
-  });
-
-  utils.socket.removeListener("get_user_friends");
+  utils.socket.removeListener("get_all_users_not_friend");
   utils.socket.on(
-    "get_user_friends",
-    (
-      data: Array<{ username: string; username2: string; friendshipDate: Date }>
-    ) => {
-      console.log(user.user?.username, "received get_user_friends with", data);
-      let tmpArray = Array<{
-        index: number;
-        username: string;
-        username2: string;
-        friendshipDate: Date;
-      }>();
-      data.map((friend) => {
+    "get_all_users_not_friend",
+    (users: Array<{ username: string }>) => {
+      console.log(user.user?.username, "received get_all_users with", users);
+      let tmpArray = Array<{ index: number; username: string }>();
+      users.map((user) => {
         tmpArray.push({
           index: tmpArray.length,
-          username: friend.username,
-          username2: friend.username2,
-          friendshipDate: friend.friendshipDate,
+          username: user.username,
         });
       });
+      setUsersList(tmpArray);
     }
   );
+
+  utils.socket.removeListener("get_user_friends");
+  utils.socket.on("get_user_friends", (data: Array<{ username: string }>) => {
+    setFriendsList(data);
+  });
 
   return (
     <div className="friendsPage">
@@ -133,24 +111,21 @@ const Friends = () => {
           />
           <div className="friendsListContainer">
             {friendsList.map((friend) => {
-              let friendUsername =
-                friend.username === myUsername
-                  ? friend.username2
-                  : friend.username;
               return (
                 <div
                   className="friendsListItem"
                   onClick={() => {
-                    setDialogOpen(true);
-                    setUserInfo(friendUsername);
+                    window.location.replace(
+                      `http://127.0.0.1:3000/profileother?username=${friend.username}`
+                    );
                   }}
                 >
                   <div className="friendsListAvatar">
                     <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                      {friendUsername[0]}
+                      {friend.username[0]}
                     </Avatar>
                   </div>
-                  <div className="friendsListName">{friendUsername}</div>
+                  <div className="friendsListName">{friend.username}</div>
                   <div className="friendsListStatus">friendsListStatus</div>
                 </div>
               );
@@ -186,40 +161,26 @@ const Friends = () => {
             onKeyDown={(event) => {}}
           />
           <div className="usersListContainer">
-            {usersList.map((user) => {
-              let isFriend = false;
-              friendsList.map((friend) => {
-                friend.username === user.username ||
-                friend.username2 === user.username
-                  ? (isFriend = true)
-                  : (isFriend = false);
-              });
-              return user.username === myUsername || isFriend ? (
-                <div></div>
-              ) : (
-                <div
-                  className="usersListItem"
-                  onClick={() => {
-                    setDialogOpen(true);
-                    setUserInfo(user.username);
-                  }}
-                >
-                  <div className="usersListAvatar">
-                    <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                      {user.username[0]}
-                    </Avatar>
-                  </div>
-                  <div className="usersListName">{user.username}</div>
+            {usersList.map((user) => (
+              <div
+                key={user.username}
+                className="usersListItem"
+                onClick={() => {
+                  window.location.replace(
+                    `http://127.0.0.1:3000/profileother?username=${user.username}`
+                  );
+                }}
+              >
+                <div className="usersListAvatar">
+                  <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
+                    {user.username[0]}
+                  </Avatar>
                 </div>
-              );
-            })}
+                <div className="usersListName">{user.username}</div>
+              </div>
+            ))}
           </div>
         </div>
-
-        <UserProfileDialog
-          profileDialogOpen={dialogOpen}
-          setProfileDialogOpen={setDialogOpen}
-        />
       </div>
     </div>
   );
