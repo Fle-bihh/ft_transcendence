@@ -17,21 +17,7 @@ export interface User {
     } | null;
 }
 
-// id: string,
-// username: string,
-// password: string,
-// firstName: string,
-// lastName: string,
-// nickName: string,
-// profileImage: string,
-// email: string,
-// GoalTaken: number,
-// GoalSet: number,
-// NormalGameNumber: number,
-// NormalWinNumber: number,
-// NormalLossNumber: number,
-// twoFactorAuth: boolean,
-// Friend: number,
+
 export const initialState: User = {
     user: null
 }
