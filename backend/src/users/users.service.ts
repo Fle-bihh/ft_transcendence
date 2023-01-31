@@ -5,6 +5,8 @@ import { UserCredentialsDto } from './dto/user-credentials.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { Game } from 'src/entities/game.entity';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
 
 @Injectable()
 export class UsersService {
@@ -35,13 +37,10 @@ export class UsersService {
       relations: ['games'],
     });
 
-    console.log(user);
     if (users) {
-      console.log(users);
       const games = users.find(
         (u) => u.username === user.username,
       ).games;
-      console.log({ games });
       return { games };
     }
     return null;
@@ -108,7 +107,6 @@ export class UsersService {
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     const found = await this.getUserById(id, user);
-    console.log(found);
     if (found) {
       found.username = username;
       await this.usersRepository.save(found);
@@ -117,9 +115,43 @@ export class UsersService {
     return null;
   }
 
-  async activate2FA(user: User): Promise<void> {
+  isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, user: User) {
+    return authenticator.verify({
+      token: twoFactorAuthenticationCode,
+      secret: user.twoFactorAuthenticationSecret,
+    });
+  }
+
+  async generateQrCodeDataURL(otpAuthUrl: string) {
+    return await toDataURL(otpAuthUrl);
+  }
+
+  async setTwoFactorAuthenticationSecret(secret: string, id: string) {
+    const user: User = await this.getUserById(id);
+    user.twoFactorAuthenticationSecret = secret;
+    await this.usersRepository.save(user);
+  }
+
+  async generateTwoFactorAuthenticationSecret(user: User) {
+    const secret = await authenticator.generateSecret();
+
+    const otpAuthUrl = authenticator.keyuri(user.login, 'ft_transcendence', secret);
+    await this.setTwoFactorAuthenticationSecret(secret, user.id);
+
+    return {
+      secret,
+      otpAuthUrl
+    }
+  }
+
+  async deactivate2FA(user: User): Promise<User> {
+    user.twoFactorAuth = false;
+    return await this.usersRepository.save(user);
+  }
+
+  async activate2FA(user: User): Promise<User> {
     user.twoFactorAuth = true;
-    this.usersRepository.save(user);
+    return await this.usersRepository.save(user);
   }
 
   async get2FA(user: User): Promise<{ twoFactorAuth: boolean }> {

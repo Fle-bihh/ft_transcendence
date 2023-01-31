@@ -74,6 +74,7 @@ export class AuthService {
       const payload: JwtPayload = { login };
       const accessToken: string = this.jwtService.sign(payload);
       await this.usersRepository.save(user);
+      console.log(user);
       return { accessToken: accessToken, user: user };
     } catch (error) {
       throw new HttpException(error.response.data, error.response.data);
