@@ -41,6 +41,9 @@ export class User {
     @Column({ default: 0 })
     Friend: number;
 
+    @OneToMany(type => Game, games => games.player1 || games.player2)
+    games: Game[];
+
 // @OneToMany(type => Message, message => message.sender)
 // messagesSend: Message[];
 
