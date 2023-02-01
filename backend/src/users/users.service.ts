@@ -75,20 +75,6 @@ export class UsersService {
     return null;
   }
 
-  async getFriends(login: string): Promise<{ friends: User[] }> {
-    const currentUser: User = await this.getUserByLogin(login);
-
-    const allUser: User[] = await this.usersRepository.find({
-      relations: ['friends'],
-    });
-
-    const friends: User[] = allUser.find((user) => {
-      return user.login === currentUser.login;
-    }).friends;
-
-    return { friends: friends };
-  }
-
   async getUserByLogin(login: string): Promise<User> {
     const found = await this.usersRepository.findOneBy({ login });
     if (found == null) {

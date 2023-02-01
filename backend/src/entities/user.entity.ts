@@ -1,6 +1,4 @@
-import { MinLength } from "@nestjs/class-validator";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Channel } from "./channel.entity";
 import { FriendRequest } from "./friend-request.entity";
 import { Game } from "./game.entity";
 // import {Message} from "./message.entity";
@@ -43,14 +41,8 @@ export class User {
     @Column({ default: 0 })
     Friend: number;
 
-    @OneToMany(type => Game, games => games.player1 || games.player2)
-    games: Game[];
-
-    @OneToMany(type => FriendRequest, request => request.from)
-    requestFrom: FriendRequest[];
-
-    @OneToMany(type => FriendRequest, request => request.to)
-    requestTo: FriendRequest[];
+// @OneToMany(type => Message, message => message.sender)
+// messagesSend: Message[];
 
     // @OneToMany(type => Message, message => message.sender)
     // messagesSend: Message[];

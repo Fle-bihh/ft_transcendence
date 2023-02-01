@@ -13,6 +13,8 @@ import "reflect-metadata";
 import {DataSource} from 'typeorm';
 import { GameModule } from './game/game.module';
 import { MessagesModule } from './messages/messages.module';
+import { FriendRequestModule } from './friends/friendRequest.module';
+import { FriendShipModule } from './friends/friendShip.module';
 
 @Module({
   imports: [EventsModule, 
@@ -43,6 +45,8 @@ import { MessagesModule } from './messages/messages.module';
   ChannelModule,
   GameModule,
   MessagesModule,
+  FriendRequestModule,
+  FriendShipModule,
   ],
   controllers: [AppController],
   providers: [AppService],

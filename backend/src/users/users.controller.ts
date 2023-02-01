@@ -11,6 +11,11 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private usersService: UsersService) { }
 
+  @Get()
+  async getAll(): Promise<User[]> {
+    return await this.usersService.getAll()
+  }
+
   @Post('/signup')
   async signUp(@Body() usersCredentialsDto: UserCredentialsDto): Promise<void> {
     return this.usersService.signUp(usersCredentialsDto);
