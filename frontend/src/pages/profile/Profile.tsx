@@ -88,6 +88,12 @@ const Profile = () => {
     };
 
     const handleClose = (change: boolean) => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         if (change && inputValue != "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
             userDisplay.username = inputValue;
@@ -144,7 +150,7 @@ const Profile = () => {
     // 	}
     // }, [res2FA]);
     //fin 2FA
-   
+
     const getUserData = () => {
         const jwt = cookies.get('jwt');
         const options = {
@@ -176,13 +182,13 @@ const Profile = () => {
 
                 {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */ }
                 response.data.map((game: any) => {
-                const obj = {
-                player1id: game.player1.username,
-                score1: game.score_u1,
-                player2id: game.player2.username,
-                score2: game.score_u2,
-                winnerid: game.winner.username,
-                }
+                    const obj = {
+                        player1id: game.player1.username,
+                        score1: game.score_u1,
+                        player2id: game.player2.username,
+                        score2: game.score_u2,
+                        winnerid: game.winner.username,
+                    }
                     userMatchHistory.push(obj)
                 })
                 console.log(response.data)
@@ -206,14 +212,21 @@ const Profile = () => {
         // console.log("effect : ", userDisplay)
         if (!userDisplay?.getData)
             getUserData();
-            
+
     }, [userDisplay?.getData])
 
     //----------------image pour téléchager--------------------------------------------
     const [filebase64, setFileBase64] = useState<string>("")
 
     function convertFile(files: FileList | null) {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         if (files) {
+            console.log("files . ", files);
             const fileRef = files[0] || ""
             const fileType: string = fileRef.type || ""
             // console.log("This file upload is of type:", fileType)
@@ -223,7 +236,7 @@ const Profile = () => {
                 // convert it to base64
                 setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
             }
-
+            console.log(filebase64);
         }
         axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
         userDisplay.profileImage = filebase64;
@@ -314,8 +327,12 @@ const Profile = () => {
                             </Dialog>
                         </div> :
                         <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => { console.log('data', res.data)
-                            setUser(res.data) }) }}>
+                            <Button className="buttonChange2FA" type="submit" onClick={() => {
+                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                                    console.log('data', res.data)
+                                    setUser(res.data)
+                                })
+                            }}>
                                 Deactivate 2FA
                             </Button>
                         </div>
