@@ -24,10 +24,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../../state";
 import { bindActionCreators } from "redux";
+import Cookies from "universal-cookie"
 
 const Navbar = (props: any) => {
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
+  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const persistantReducer = useSelector(
     (state: RootState) => state.persistantReducer
   );
@@ -115,7 +117,10 @@ const Navbar = (props: any) => {
                   to={`/`}
                   className="link"
                   onClick={() => {
+                    const cookies = new Cookies();
+                    cookies.remove('jwt');
                     setUser(null);
+                    setTwoFA(false);
                   }}
                 >
                   <Typography

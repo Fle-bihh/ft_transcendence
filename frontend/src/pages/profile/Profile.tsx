@@ -99,7 +99,13 @@ const Profile = () => {
     //2FA
     const handleClickOpen2FA = () => {
         setOpen2FA(true);
-        axios.get('https://localhost:5001/auth/2fa/generate/', options).then(res => (setQrCode2FA(res.data)))
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
     };
 
     const handleClose2FA = () => {
@@ -110,7 +116,13 @@ const Profile = () => {
     };
 
     const send2FARequest = (value: string) => {
-        axios.get('https://localhost:5001/auth/2fa/activate/' + value, options)
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
             .then(res => {
                 setUser(res.data);
                 setCode2FA('');
@@ -134,6 +146,12 @@ const Profile = () => {
     //fin 2FA
    
     const getUserData = () => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
                 setUserDisplay({
@@ -296,7 +314,8 @@ const Profile = () => {
                             </Dialog>
                         </div> :
                         <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get('https://localhost:5001/auth/2fa/deactivate/', options).then(res => { setUser(res.data) }) }}>
+                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => { console.log('data', res.data)
+                            setUser(res.data) }) }}>
                                 Deactivate 2FA
                             </Button>
                         </div>

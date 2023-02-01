@@ -289,6 +289,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }
+  
   @SubscribeMessage('SEE_LIST_GAME')
   async seeListGame(client: Socket, username : string) {
     console.log("length de all games : ", this.allGames.length)

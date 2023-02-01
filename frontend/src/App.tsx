@@ -1,5 +1,4 @@
 import Chat from "./pages/chat/Chat";
-import Versions from "./components/versions/Versions";
 import Profile from "./pages/profile/Profile";
 import ProfileOther from "./pages/profilOther/ProfileOther";
 import Pong from "./pages/pong/Pong";
@@ -43,16 +42,6 @@ function App() {
               <ConnectionChecker>
                 <NotifInterceptor>
                   <Home />
-                </NotifInterceptor>
-              </ConnectionChecker>
-            }
-          />
-          <Route
-            path="/versions"
-            element={
-              <ConnectionChecker>
-                <NotifInterceptor>
-                  <Versions />
                 </NotifInterceptor>
               </ConnectionChecker>
             }

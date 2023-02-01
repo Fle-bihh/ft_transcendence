@@ -5,7 +5,8 @@ export interface User {
 }
 
 export enum NotifType {
-    FRIENDREQUEST='FRIENDREQUEST'
+    FRIENDREQUEST='FRIENDREQUEST',
+    INVITEGAME='INVITEGAME'
 }
 
 export interface Notif {

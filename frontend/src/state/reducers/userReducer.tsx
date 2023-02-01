@@ -13,7 +13,6 @@ export interface User {
         Rank: number,
         twoFactorAuth: boolean,
         friend: number,
-
     } | null;
 }
 
