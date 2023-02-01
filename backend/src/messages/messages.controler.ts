@@ -15,5 +15,4 @@ export class MessagesController {
     console.log(data.login1, data.login2)
     return this.messagesService.findConvers(data.login1, data.login2);
   }
-
 }

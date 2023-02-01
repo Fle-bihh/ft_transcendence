@@ -42,10 +42,10 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('CHECK_USER_EXIST')
-  async check_user_exist(client: Socket, userLogin: string) {
+  async check_user_exist(client: Socket, username: string) {
     client.emit(
       'check_user_exist',
-      (await this.userService.getUserByLogin(userLogin)) != null,
+      (await this.userService.getUserByUsername(username)) != null,
     );
   }
 
