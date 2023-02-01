@@ -99,6 +99,12 @@ const Profile = () => {
     //2FA
     const handleClickOpen2FA = () => {
         setOpen2FA(true);
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
     };
 
@@ -110,6 +116,12 @@ const Profile = () => {
     };
 
     const send2FARequest = (value: string) => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
             .then(res => {
                 setUser(res.data);
@@ -134,6 +146,12 @@ const Profile = () => {
     //fin 2FA
    
     const getUserData = () => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
                 setUserDisplay({

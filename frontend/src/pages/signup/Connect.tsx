@@ -43,10 +43,17 @@ const Connect = () => {
         nickName: null,
       }
     }).then((response: AxiosResponse<any, any>) => {
-      cookies.set('jwt', response.data.accessToken);
+      cookies.set('jwt', response.data.accessToken, { path: `/`});
       setUser(response.data.user);
+      const jwt = cookies.get('jwt');
+      const options = {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
       // window.location.replace(`http://${ip}:3000`);
-    }).catch((err) => { });
+      console.log('Connect 2 cookie == ', options);
+  }).catch((err) => { });
 
   function verify2FA(value: string) {
     const jwt = cookies.get('jwt');
@@ -55,6 +62,7 @@ const Connect = () => {
         Authorization: `Bearer ${jwt}`
       }
     }
+    console.log('Connect 1 cookie == ', options);
     axios.get(`http://localhost:5001/user/${userReducer.user?.id}/2fa/verify/` + value, options)
       .then((e) => {
         setTwoFA(true);

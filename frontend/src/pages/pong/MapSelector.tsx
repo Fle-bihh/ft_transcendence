@@ -26,32 +26,29 @@ function MapSelector(props: any) {
     const [invite, setInvite] = useState(false);
 
     function startGame1() {
-        console.log("invite 1= ", invite);
-        if (invite == false) {
-            console.log("start game front 1");
-            gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
-        } else {
-
-        }
+        console.log("start game front 1");
+        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
     }
     function startGame2() {
-        console.log("invite 2= ", invite);
-        if (invite == false) {
-            console.log("start game front 2");
-            gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
-        } else {
-
-        }
+        console.log("start game front 2");
+        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
     }
     function startGame3() {
-        console.log("invite 3= ", invite);
-        if (invite == false)
-        {
-            console.log("start game front 3");
-            gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
-        } else {
+        console.log("start game front 3");
+        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
+    }
 
-        }
+    function inviteGame1() {
+        // console.log("start game front 1");
+        // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
+    }
+    function inviteGame2() {
+        // console.log("start game front 2");
+        // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
+    }
+    function inviteGame3() {
+        // console.log("start game front 3");
+        // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
     }
 
     gameSocket.removeListener("start");
@@ -237,9 +234,9 @@ function MapSelector(props: any) {
                                 {images[3].title} <ImageMarked className="MuiImageMarked-root" />
                             </Typography>
                         </Image>
-                    </ImageButton> 
+                    </ImageButton>
                     :
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%'}}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%' }}>
                         <ImageButton focusRipple key={images[0].title} style={{ width: images[0].width }} onClick={startGame1}>
                             <ImageSrc style={{ backgroundImage: `url(${images[0].url})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
