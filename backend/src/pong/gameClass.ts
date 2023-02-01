@@ -1,4 +1,3 @@
-
 export class Canvas {
 	width: number
 	height: number
@@ -20,8 +19,8 @@ export class GameClass {
     constructor(gameMap : string, username : string, roomID : string, playerId : string){
         this.gameOn = false
         this.roomID = roomID
-        this.map = new Map(gameMap)
-        this.canvas = new Canvas()
+		this.canvas = new Canvas()
+        this.map = new Map(gameMap, this.canvas)
         this.ball = new Ball(this.canvas)
         this.players = new Array()
         this.players.push(new Player(this.canvas, username, playerId))
@@ -35,6 +34,10 @@ export class GameClass {
 		this.players[1].posX = this.canvas.width / 10 * 9 - this.players[1].width / 2
 	}
 
+	setOponnentObstacle() {
+		this.map.mapObstacles[1].posX = this.canvas.width / 4 * 3 - this.map.mapObstacles[1].width
+	}
+
     checkCollisionPlayer(id: number): boolean {
 		var ptop = this.players[id].posY
 		var pbottom = this.players[id].posY + this.players[id].height
@@ -45,6 +48,18 @@ export class GameClass {
 		var bleft = this.ball.posX - this.ball.radius
 		var bright = this.ball.posX + this.ball.radius
 		return (pleft < bright && ptop < bbottom && pright > bleft && pbottom > btop)
+	}
+
+	checkCollisionObstacle(id: number): boolean {
+		var otop = this.map.mapObstacles[id].posY
+		var obottom = this.map.mapObstacles[id].posY + this.map.mapObstacles[id].height
+		var oleft = this.map.mapObstacles[id].posX
+		var oright = this.map.mapObstacles[id].posX + this.map.mapObstacles[id].width
+		var btop = this.ball.posY - this.ball.radius
+		var bbottom = this.ball.posY + this.ball.radius
+		var bleft = this.ball.posX - this.ball.radius
+		var bright = this.ball.posX + this.ball.radius
+		return (oleft < bright && otop < bbottom && oright > bleft && obottom > btop)
 	}
 
     movePlayer() {
@@ -72,6 +87,11 @@ export class GameClass {
 					this.players[0].speed += 0.1
 					this.players[1].speed += 0.1
 				}
+			}
+        }
+		for (let i = 0; i < 2; i++) {
+			if (this.checkCollisionObstacle(i)) {
+				this.ball.directionX *= -1
 			}
         }
 		if (this.ball.posY < this.ball.radius)
@@ -158,23 +178,50 @@ export class Player {
 	}
 }
 
+
+
 export class Map {
 
 	mapColor: string
 	mapName: string
+	printObstacle: boolean
+	mapObstacles: Array<Obstacle>
 
-	constructor(gameMap: string) {
+	constructor(gameMap: string, canvas: Canvas) {
+		this.printObstacle = false
+		this.mapObstacles = new Array()
 		this.mapColor = "black"
 		this.mapName = gameMap
+
 		if (gameMap == "map1")
 			this.mapColor = "black"
+
 		else if (gameMap == "map2") {
-			this.mapColor = 'yellow'
+			this.mapColor = 'blue'
+			this.printObstacle = true
+			this.mapObstacles.push(new Obstacle(canvas))
+			this.mapObstacles.push(new Obstacle(canvas))
 		}
+
 		else if (gameMap == "map3") {
 			this.mapColor = 'green'
 		}
 	}
+}
+
+export class Obstacle {
+
+	posX : number
+	posY : number
+	height : number
+	width : number
+
+	constructor(canvas: Canvas){
+		this.height = canvas.height / 4
+		this.width = canvas.width / 64
+		this.posX = canvas.width / 4
+		this.posY = random(0, 1) ? canvas.height / 10 : canvas.height - this.height - canvas.height / 10
+    }
 }
 
 export class Ball {
@@ -189,7 +236,7 @@ export class Ball {
         this.posX = canvas.width / 2
         this.posY = canvas.height / 2
         this.speed = 3
-        this.directionX = random(0, 1) ? -this.speed : this.speed
+        this.directionX = random(0, 1) ? - this.speed : this.speed
         this.directionY = 0
         this.radius = 10;
     }
@@ -198,7 +245,7 @@ export class Ball {
 		this.posX = canvas.width / 2
 		this.posY = canvas.height / 2
 		this.speed = 3
-		this.directionX = random(0, 1) ? -this.speed : this.speed
+		this.directionX = random(0, 1) ? - this.speed : this.speed
 		this.directionY = 0
 		this.radius = 10
 	}

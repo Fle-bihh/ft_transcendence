@@ -35,6 +35,7 @@ const GamePage = (props: any) => {
 
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
+            console.log(room)
             const currentPlayer = room.players.find(item => item.username == persistantReducer.userReducer.user?.username)
             ctx.font = 'bold 20px Arial';
             ctx.fillStyle = 'white';
@@ -45,6 +46,16 @@ const GamePage = (props: any) => {
             ctx.fillRect(room.players[0].posX, room.players[0].posY, room.players[0].width, room.players[0].height);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(room.players[1].posX, room.players[1].posY, room.players[1].width, room.players[1].height);
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function drawObstacle(ctx: CanvasRenderingContext2D | null, room: GameClass){
+        if (ctx !== null) {
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(room.map.mapObstacles[0].posX,room.map.mapObstacles[0].posY, room.map.mapObstacles[0].width, room.map.mapObstacles[0].height);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(room.map.mapObstacles[1].posX,room.map.mapObstacles[1].posY, room.map.mapObstacles[1].width, room.map.mapObstacles[1].height);
             ctx.shadowBlur = 0;
         }
     }
@@ -93,6 +104,8 @@ const GamePage = (props: any) => {
         }
     }
 
+    
+
     function resetCanvas() {
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
@@ -118,6 +131,9 @@ const GamePage = (props: any) => {
                 if (!room.players[0].ready || !room.players[1].ready) {
                     drawText(ctx, room)
                     return
+                }
+                if(room.map.printObstacle){
+                    drawObstacle(ctx, room)
                 }
                 drawBall(ctx, room)
                 drawPlayers(ctx, room)
