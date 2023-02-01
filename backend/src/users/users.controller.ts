@@ -19,7 +19,13 @@ export class UsersController {
   @Patch('/:id/username')
   async patchUsername(@Param('id') id: string, @GetUser() user: User, @Body('username') username: string): Promise<User> {
     console.log('bonjour');
-    return this.usersService.patchUsername(id, user, username);
+    return await this.usersService.patchUsername(id, user, username);
+  }
+
+  @Patch('/:id/profileImage')
+  async patchProfileImage(@Param('id') id: string, @GetUser() user: User, @Body('profileImage') profileImage: string) {
+    console.log('ohhhhhhhhhhh', profileImage);
+    return await this.usersService.patchProfileImage(id, user, profileImage);
   }
 
   @Get('/:id/2fa/generate')
@@ -72,9 +78,9 @@ export class UsersController {
   }
 
   @Get('/:id/2fa/verify/:secret')
-  async verify2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<boolean>{
+  async verify2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<boolean> {
     const user: User = await this.usersService.getUserById(id);
-    const isCodeValid: boolean= this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
+    const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
     if (!isCodeValid)
       throw new UnauthorizedException('Wrong authentication code');
     return isCodeValid;
