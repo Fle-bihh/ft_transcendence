@@ -90,6 +90,12 @@ const Profile = () => {
     };
 
     const handleClose = (change: boolean) => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
         if (change && inputValue != "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
             userDisplay.username = inputValue;
@@ -179,12 +185,15 @@ const Profile = () => {
             if (response.data != null) {
                 response.data.map((game: any) => {
                     const obj = {
+
                         id: game.id,
+
                         player1id: game.player1.username,
                         score1: game.score_u1,
                         player2id: game.player2.username,
                         score2: game.score_u2,
                         winnerid: game.winner.username,
+
 
                     }
                     userMatchHistory.push(obj)
@@ -203,11 +212,11 @@ const Profile = () => {
         if (!userDisplay?.getData)
             getUserData();
 
-
     }, [userDisplay?.getData])
 
     //----------------image pour téléchager--------------------------------------------
     const [filebase64, setFileBase64] = useState<string>("")
+
 
     // function convertFile(files: FileList | null) {
     //     if (files) {
@@ -252,6 +261,30 @@ const Profile = () => {
         
         // // console.log("image1", img.{name})
         // console.log("image", img[0])
+
+
+    function convertFile(files: FileList | null) {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        if (files) {
+            console.log("files . ", files);
+            const fileRef = files[0] || ""
+            const fileType: string = fileRef.type || ""
+            // console.log("This file upload is of type:", fileType)
+            const reader = new FileReader()
+            reader.readAsBinaryString(fileRef)
+            reader.onload = (ev: any) => {
+                // convert it to base64
+                setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
+            }
+            console.log(filebase64);
+        }
+        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
+        userDisplay.profileImage = filebase64;
 
     }
 
