@@ -33,7 +33,7 @@ const Connect = () => {
       { replace: true }
     );
   }
-  console.log(userReducer.user);
+
     axios.request({
       url: "/auth/api42/Signin",
       method: "post",
