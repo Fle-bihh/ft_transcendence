@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { gameSocket } from '../../App';
+// import { gameSocket } from './Pong';
 import { RootState } from '../../state';
 import { GameClass } from './gameClass';
 import { ip } from '../../App';
 import "./Pong.scss"
+import { io } from 'socket.io-client';
 
 var canvas = {
     "width": 800,
@@ -12,6 +13,7 @@ var canvas = {
 }
 
 const GamePage = (props: any) => {
+    const utils = useSelector((state: RootState) => state.utils);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [finishGame, setFinishGame] = useState(false);
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
@@ -87,7 +89,7 @@ const GamePage = (props: any) => {
                     ctx.font = 'bold 50px Arial';
                     ctx.fillStyle = 'white';
                     ctx.textAlign = "center";
-                    ctx.fillText("Wainting for the opponent !", canvas.width / 2, canvas.height / 2);
+                    ctx.fillText("Waiting for the opponent !", canvas.width / 2, canvas.height / 2);
                 }
             }
         }
@@ -125,11 +127,11 @@ const GamePage = (props: any) => {
         }
     }
 
-    gameSocket.on('render', function (room: GameClass) {
+    utils.gameSocket.on('render', function (room: GameClass) {
         render(room)
     });
 
-    gameSocket.on('finish', (room: GameClass) => {
+    utils.gameSocket.on('finish', (room: GameClass) => {
         console.log('finish front')
         setFinishGame(true)
         setFinishRoom(room)
@@ -137,19 +139,19 @@ const GamePage = (props: any) => {
    
     function onKeyDown(e: any) {
         if (e.key === 'ArrowUp')
-            gameSocket.emit('ARROW_UP', [props.roomID, true]);
+            utils.gameSocket.emit('ARROW_UP', [props.roomID, true]);
         if (e.key === 'ArrowDown')
-            gameSocket.emit('ARROW_DOWN', [props.roomID, true]);
+            utils.gameSocket.emit('ARROW_DOWN', [props.roomID, true]);
         if (e.key === 'Enter') {
-            gameSocket.emit('ENTER', [props.roomID, true]);
+            utils.gameSocket.emit('ENTER', [props.roomID, true]);
         }
     }
 
     function onKeyUp(e: any) {
         if (e.key === 'ArrowUp')
-            gameSocket.emit('ARROW_UP', [props.roomID, false]);
+            utils.gameSocket.emit('ARROW_UP', [props.roomID, false]);
         if (e.key === 'ArrowDown')
-            gameSocket.emit('ARROW_DOWN', [props.roomID, false]);
+            utils.gameSocket.emit('ARROW_DOWN', [props.roomID, false]);
     }
 
     function affFinishScreen() {
