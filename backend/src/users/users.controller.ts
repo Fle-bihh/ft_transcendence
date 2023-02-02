@@ -32,7 +32,7 @@ export const multerOptions = {
 };
 
 @Controller('user')
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 export class UsersController {
   constructor(private usersService: UsersService) { }
 

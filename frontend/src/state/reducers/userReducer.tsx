@@ -1,14 +1,14 @@
 import { userActionType } from "../action-types";
 import { userAction } from "../actions";
 
-interface UserType {
+export interface User {
     user: {
         id: string,
         username: string
         login: string,
         profileImage: string,
         email: string,
-        nWinNumber: number,
+        WinNumber: number,
         LossNumber: number,
         Rank: number,
         twoFactorAuth: boolean,
@@ -17,11 +17,11 @@ interface UserType {
 }
 
 
-const initialState: UserType = {
+export const initialState: User = {
     user: null
 }
 
-export const userReducer = (state: UserType = initialState, action: userAction) => {
+export const userReducer = (state: User = initialState, action: userAction) => {
     switch (action.type) {
         case userActionType.SETUSER: {
             return {

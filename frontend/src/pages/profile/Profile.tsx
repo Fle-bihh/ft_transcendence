@@ -54,19 +54,6 @@ const Profile = () => {
     const { setUser } = bindActionCreators(actionCreators, dispatch);
     // const [image, setimage] = userState("")
 
-    const [userDisplay, setUserDisplay] = useState({
-        id: "",
-        username: '', //pseudo
-        login: '', // prenom  to --> login 
-        profileImage: '', // oui
-        email: '',
-        Rank: 0, // la XP de notre joueur 
-        WinNumber: 0, // nbr de gagne
-        LossNumber: 0,// nbr de perdu
-        twoFactorAuth: false,
-        getData: false,
-    });
-
     // const [userMatchHistory, setUserMatchHistory] = useState({
     //         player1id: "",
     //         score1: 0,
@@ -98,8 +85,9 @@ const Profile = () => {
         }
         if (change && inputValue != "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
-            userDisplay.username = inputValue;
-            userDisplay.getData = false;
+            const tmp = user.user!;
+            tmp.username = inputValue;
+            setUser(tmp);
 
         }
         setInputValue("")
@@ -143,80 +131,31 @@ const Profile = () => {
             });
     }
 
-    // useEffect(() => {
-    // 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-    // 	if (codePin && res2FA === 401) {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'block';
-    // 	} else {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'none';
-    // 	}
-    // }, [res2FA]);
-    //fin 2FA
-
-    const getUserData = () => {
-        const jwt = cookies.get('jwt');
-        const options = {
-            headers: {
-                'authorization': `Bearer ${jwt}`
-            }
-        }
-        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                setUserDisplay({
-                    id: response.data.id,
-                    username: response.data.username,
-                    login: response.data.login,
-                    profileImage: response.data.profileImage,
-                    email: response.data.email,
-                    WinNumber: response.data.WinNumber,
-                    LossNumber: response.data.LossNumber,
-                    Rank: response.data.Rank,
-                    twoFactorAuth: response.data.twoFactorAuth,
-                    getData: true,
-                })
-            }
-        }).catch(error => {
-            console.log(error);
-        });
-        axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                response.data.map((game: any) => {
-                    const obj = {
-
-                        id: game.id,
-                        player1: game.player1,
-                        score1: game.score_u1,
-                        player2: game.player2,
-                        score2: game.score_u2,
-                        winner: game.winner,
-
-
-                    }
-                    userMatchHistory.push(obj)
-                })
-                console.log(response.data)
-            }
-        }).catch(error => {
-            console.log(error);
-        });
-        setFirstOpen(false)
-
-    }
-
-
     useEffect(() => {
-        // console.log("effect : ", userDisplay)
-        // || !userMatchHistory?.getData
-        if (!userDisplay?.getData)
-            getUserData();
+        // axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
+        //     if (response.data != null) {
+        //         response.data.map((game: any) => {
+        //             const obj = {
 
-    }, [userDisplay?.getData])
+        //                 id: game.id,
+        //                 player1: game.player1,
+        //                 score1: game.score_u1,
+        //                 player2: game.player2,
+        //                 score2: game.score_u2,
+        //                 winner: game.winner,
+
+
+        //             }
+        //             userMatchHistory.push(obj)
+        //         })
+        //         console.log(response.data)
+        //     }
+        // }).catch(error => {
+        //     console.log(error);
+        // });
+    }, [])
 
     //----------------image pour téléchager--------------------------------------------
-
-    const [filebase64, setFileBase64] = useState<string>("")
 
     const convertFile = (e: any) => {
         const jwt = cookies.get('jwt');
@@ -233,18 +172,12 @@ const Profile = () => {
             method: 'POST',
             url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
             options,
-            // headers: {
-            // 	'Content-Type': 'multipart/form-data',
-            // },
             profileImage: formData,
             data: formData,
             withCredentials: true
         }
         axios(config).then((res) => {
             setUser(res.data);
-            console.log("resdata", res.data)
-            userDisplay.profileImage = res.data;
-
         }).catch((err) => {
         })
     }
@@ -272,7 +205,7 @@ const Profile = () => {
                             Login :
                         </h3>
                         <Typography className="userNamePrint">
-                            {userDisplay?.login}
+                            {user.user?.login}
                         </Typography>
 
                     </div>
@@ -282,7 +215,7 @@ const Profile = () => {
                             userName :
                         </h3>
                         <Typography className="userNamePrintChange">
-                            {userDisplay?.username}
+                            {user.user?.username}
                         </Typography>
 
                     </div>
@@ -321,12 +254,12 @@ const Profile = () => {
                                         <img src={qrCode2FA} />
                                         <PinInput length={6}
                                             focus
-                                            onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
+                                            onChange={(value: any) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
                                             type="numeric"
                                             inputFocusStyle={{ borderColor: '#f55951' }}
                                             inputMode="number"
                                             style={{ padding: '10px' }}
-                                            onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
+                                            onComplete={(value: any) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
                                             autoSelect={true} />
                                         <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
                                     </DialogContent>
@@ -338,7 +271,7 @@ const Profile = () => {
                         </div> :
                         <div>
                             <Button className="buttonChange2FA" type="submit" onClick={() => {
-                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then((res: { data: { id: string; username: string; login: string; profileImage: string; email: string; WinNumber: number; LossNumber: number; Rank: number; twoFactorAuth: boolean; friend: number; } | null; }) => {
                                     console.log('data', res.data)
                                     setUser(res.data)
                                 })
@@ -354,16 +287,16 @@ const Profile = () => {
                         <div className="rectangle">
                             <div className="textRectangle">
                                 <p>nbr Win</p>
-                                {userDisplay?.WinNumber}
+                                {user.user?.WinNumber}
                             </div>
                             <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
+                                <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
                                 {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay?.Rank}</h3>
+                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">
                                 <p>nbr Loose</p>
-                                {userDisplay?.LossNumber}
+                                {user.user?.LossNumber}
                             </div>
                         </div>
 
@@ -379,7 +312,7 @@ const Profile = () => {
 
                                     <div className="results" >
                                         <div className="name">{match.player1.username == user.user?.username ? match.player1.username : match.player2.username}</div>
-                                        <div className="score">-{match.player1id == user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="score">-{match.player1.username == user.user?.username ? match.score1 : match.score2}-</div>
 
                                     </div>
 
@@ -393,8 +326,8 @@ const Profile = () => {
                                         </div> */}
 
                                     <div className="results">
-                                        <div className="score">-{match.player2id != user.user?.username ? match.score1 : match.score2}-</div>
-                                        <div className="name">{match.player2id != user.user?.username ? match.player1id : match.player2id}</div>
+                                        <div className="score">-{match.player2.username != user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2.username != user.user?.username ? match.player1.username : match.player2.username}</div>
 
                                     </div>
 
