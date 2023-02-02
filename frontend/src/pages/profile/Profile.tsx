@@ -250,23 +250,24 @@ const Profile = () => {
     //     }
     // }
 
-    const convertFile = (e: any) => {
-		const img = e.target.files.item(0);
-        let url = URL.createObjectURL(e.target.files.item(0))
-        console.log("url", url)
-        setFileBase64(url)
-        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: url }, options)
-        userDisplay.profileImage = url;
+    // const convertFile = (e: any) => {
+	// 	const img = e.target.files.item(0);
+    //     let url = URL.createObjectURL(e.target.files.item(0))
+    //     console.log("url", url)
+    //     setFileBase64(url)
+    //     axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: url }, options)
+    //     userDisplay.profileImage = url;
 
 
 
-		// var formData = new FormData();
-		// formData.append("photo", img);
-        // // setFileBase64(formData)
-        // userDisplay.profileImage = filebase64;
+	// 	// var formData = new FormData();
+	// 	// formData.append("photo", img);
+    //     // // setFileBase64(formData)
+    //     // userDisplay.profileImage = filebase64;
         
-        // // console.log("image1", img.{name})
-        // console.log("image", img[0])
+    //     // // console.log("image1", img.{name})
+    //     // console.log("image", img[0])
+    // }
 
 
     function convertFile(files: FileList | null) {
@@ -308,8 +309,8 @@ const Profile = () => {
 
                     <Button component="label" className="avatarChange">
                         Change Profile Picture
-                        <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
-                        {/* <input type="file" hidden onChange={(e) => convertFile(e.target.files)} /> */}
+                        {/* <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} /> */}
+                        <input type="file" hidden onChange={(e) => convertFile(e.target.files)} />
                     </Button>
 
                     <div className="infoUser">
