@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { existsSync, mkdirSync, readFileSync, unlink } from 'fs';
 
+
 export const multerOptions = {
   limits: {
       fileSize: 1048576,
@@ -32,7 +33,8 @@ export const multerOptions = {
 };
 
 @Controller('user')
-// @UseGuards(AuthGuard('jwt'))
+ @UseGuards(AuthGuard('jwt'))
+
 export class UsersController {
   constructor(private usersService: UsersService) { }
 

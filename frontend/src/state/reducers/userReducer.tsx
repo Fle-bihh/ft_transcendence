@@ -8,7 +8,7 @@ interface UserType {
         login: string,
         profileImage: string,
         email: string,
-        nWinNumber: number,
+        WinNumber: number,
         LossNumber: number,
         Rank: number,
         twoFactorAuth: boolean,
