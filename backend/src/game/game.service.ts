@@ -6,6 +6,8 @@ import { User } from 'src/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { getRepository, Repository } from 'typeorm';
 import { GameResultsDto } from './dto/game-results.dto';
+import { Socket } from 'socket.io';
+import { parse } from 'cookie';
 
 @Injectable()
 export class GameService {
@@ -80,5 +82,13 @@ export class GameService {
     }
     return allGames;
     // return result;
+  }
+
+  async getUserFromSocket(socket: Socket): Promise<User> {
+    const cookies = socket.handshake.headers.cookie;
+    if (cookies) {
+      const { jwt } = parse(cookies);
+      return await this.authService.getUserFromToken(jwt);
+    }
   }
 }

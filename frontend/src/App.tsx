@@ -16,8 +16,7 @@ import { io } from "socket.io-client";
 import Connect from "./pages/signup/Connect";
 
 export const ip = window.location.hostname;
-export const gameSocket = io(`ws://${ip}:5002`, { transports: ['websocket'] });
-
+// export const gameSocket = io(`ws://${ip}:5002`, { transports: ['websocket'] });
 
 function App() {
   return (
