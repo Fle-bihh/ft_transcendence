@@ -19,7 +19,7 @@ socket : Socket
 }
 
 let allClients: Client[] = [];
-const waintingForGame = Array<{
+const waitingForGame = Array<{
 map: string, user: {
   login: string;
 }
@@ -109,6 +109,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (user != undefined && user.username != "" && user.username != undefined) {
       UserToReconnect.push({ username: user.username, date: new Date() })
     }
+    //enleve l'utilisateur de la salle d'attente
+    // console.table(waitingForGame);
+    // waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == user.username), 1);
     //enleve l'utilisateur du tableau de tous les clients
     allClients.splice(allClients.findIndex(item => item.id == client.id), 1);
     //cherche toutes les salles ou joue le client
@@ -156,6 +159,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async checkReconnexion( client: Socket, user: { username: string }) {
     allClients.find(item => item.id == client.id)!.username = user.username
     console.log(`Check reco ${client.id} : ${user.username}`);
+    // console.table(waitingForGame);
     const room = this.getRoomByClientLogin(user.username)
     if (room != null) {
       this.joinRoom(client, this.allGames[room[0]].roomID)
@@ -177,6 +181,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.io.to(client.id).emit('getClientStatus', { user: user.username, status: 'offline', emitFrom: 'clientStatusGame' })
         })
         this.logger.log(`[Pong-Gateway] Client \'${user.username}\' disconnect`)
+        waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == user.username), 1);
         UserToReconnect.splice(index, 1)
       }
     })
@@ -269,7 +274,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         login: string;
       }
     };
-    if ((oponnent = waintingForGame.find(item => item.map == info.gameMap)) != undefined) {
+    if ((oponnent = waitingForGame.find(item => item.map == info.gameMap)) != undefined) {
       this.allGames.push(new GameClass(info.gameMap, info.user.login, info.user.login + oponnent.user.login, client.id))
       const room = this.getRoomByID(info.user.login + oponnent.user.login);
       this.allGames[room[0]].players[0].inGame = true
@@ -279,13 +284,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       allClients.find(client => client.username == oponnent.user.login).socket.emit('joinRoom', room[1].roomID)
       allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
-      waintingForGame.splice(waintingForGame.findIndex(item => item.map == info.gameMap), 1)
-      console.table(waintingForGame);
+      waitingForGame.splice(waitingForGame.findIndex(item => item.map == info.gameMap), 1)
+      console.table(waitingForGame);
       console.table(this.allGames);
       console.table(allClients);
     }
     else {
-      waintingForGame.push({ map: info.gameMap, user: info.user })
+      waitingForGame.push({ map: info.gameMap, user: { login: info.user.login }})
+      console.table(waitingForGame)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }

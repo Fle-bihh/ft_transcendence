@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { gameSocket } from '../../App';
-import Navbar from '../../components/nav/Nav';
 import { RootState } from '../../state';
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
@@ -16,10 +14,10 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import { GameClass } from './gameClass';
 import WatchingListGame from './WatchingListGame';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 
 function MapSelector(props: any) {
+    const utils = useSelector((state: RootState) => state.utils);
     const [allRooms, setAllRooms] = useState(Array<GameClass>);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [listGame, setListGame] = useState("");
@@ -27,15 +25,15 @@ function MapSelector(props: any) {
 
     function startGame1() {
         console.log("start game front 1");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
+        utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
     }
     function startGame2() {
         console.log("start game front 2");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
+        utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
     }
     function startGame3() {
         console.log("start game front 3");
-        gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
+        utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
     }
 
     function inviteGame1() {
@@ -51,25 +49,25 @@ function MapSelector(props: any) {
         // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
     }
 
-    gameSocket.removeListener("start");
-    gameSocket.on('start', function (roomID: string) {
+    utils.gameSocket.removeListener("start");
+    utils.gameSocket.on('start', function (roomID: string) {
         console.log('start 2 front')
         props.setRoomID(roomID);
         props.setGameStart(true);
     });
 
-    gameSocket.removeListener("joinRoom");
-    gameSocket.on('joinRoom', function (roomID: string) {
-        gameSocket.emit('JOIN_ROOM', roomID)
+    utils.gameSocket.removeListener("joinRoom");
+    utils.gameSocket.on('joinRoom', function (roomID: string) {
+        utils.gameSocket.emit('JOIN_ROOM', roomID)
     });
 
-    gameSocket.removeListener("joined_waiting");
-    gameSocket.on('joined_waiting', function (user: { login: string }) {
+    utils.gameSocket.removeListener("joined_waiting");
+    utils.gameSocket.on('joined_waiting', function (user: { login: string }) {
         props.setWaitingOponnent(true)
     });
 
-    gameSocket.removeListener("set_list_game");
-    gameSocket.on('set_list_game', function (gameExist: string) {
+    utils.gameSocket.removeListener("set_list_game");
+    utils.gameSocket.on('set_list_game', function (gameExist: string) {
         console.log("see_list_game : ", gameExist);
         if (gameExist == 'yes')
             setListGame('yes');
@@ -77,8 +75,8 @@ function MapSelector(props: any) {
             setListGame('noGame');
     });
 
-    gameSocket.removeListener("add_room_playing");
-    gameSocket.on('add_room_playing', function (room: GameClass) {
+    utils.gameSocket.removeListener("add_room_playing");
+    utils.gameSocket.on('add_room_playing', function (room: GameClass) {
         console.log("Socket add room playing receved in watching");
         console.log("room : ", room);
         console.log("allRooms : ", allRooms);
@@ -92,7 +90,7 @@ function MapSelector(props: any) {
             <WatchingListGame all_rooms={allRooms} setRoomID={props.setRoomID} setSpectator={props.setSpectator} />
         )
         else return (
-            <ImageButton focusRipple key={images[5].title} style={{ width: images[5].width }} onClick={() => { gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username); }}>
+            <ImageButton focusRipple key={images[5].title} style={{ width: images[5].width }} onClick={() => { utils.gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username); }}>
                 <ImageSrc style={{ backgroundImage: `url(${images[5].url})`, backgroundSize: `contain` }} />
                 <ImageBackdrop className="MuiImageBackdrop-root" />
                 <Image>
@@ -214,7 +212,7 @@ function MapSelector(props: any) {
             </Box>
             <Box alignContent={"center"} sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 100, width: '100%', }}>
                 {listGame == "" ?
-                    <ImageButton focusRipple key={images[4].title} style={{ width: images[4].width }} onClick={() => { gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username); }}>
+                    <ImageButton focusRipple key={images[4].title} style={{ width: images[4].width }} onClick={() => { utils.gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username); }}>
                         <ImageSrc style={{ backgroundImage: `url(${images[4].url})`, backgroundSize: `contain` }} />
                         <ImageBackdrop className="MuiImageBackdrop-root" />
                         <Image>
@@ -237,7 +235,7 @@ function MapSelector(props: any) {
                     </ImageButton>
                     :
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%' }}>
-                        <ImageButton focusRipple key={images[0].title} style={{ width: images[0].width }} onClick={startGame1}>
+                        <ImageButton focusRipple key={images[0].title} style={{ width: images[0].width }} onClick={inviteGame1}>
                             <ImageSrc style={{ backgroundImage: `url(${images[0].url})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
@@ -246,7 +244,7 @@ function MapSelector(props: any) {
                                 </Typography>
                             </Image>
                         </ImageButton>
-                        <ImageButton focusRipple key={images[1].title} style={{ width: images[1].width }} onClick={startGame2}>
+                        <ImageButton focusRipple key={images[1].title} style={{ width: images[1].width }} onClick={inviteGame2}>
                             <ImageSrc style={{ backgroundImage: `url(${images[1].url})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
@@ -255,7 +253,7 @@ function MapSelector(props: any) {
                                 </Typography>
                             </Image>
                         </ImageButton>
-                        <ImageButton focusRipple key={images[2].title} style={{ width: images[2].width }} onClick={startGame3}>
+                        <ImageButton focusRipple key={images[2].title} style={{ width: images[2].width }} onClick={inviteGame3}>
                             <ImageSrc style={{ backgroundImage: `url(${images[2].url})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>

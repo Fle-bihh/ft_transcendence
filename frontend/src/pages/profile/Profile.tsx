@@ -84,6 +84,12 @@ const Profile = () => {
             }
         }
         if (change && inputValue != "") {
+            const jwt = cookies.get('jwt');
+            const options = {
+                headers: {
+                    'authorization': `Bearer ${jwt}`
+                }
+            }
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
             const tmp = user.user!;
             tmp.username = inputValue;
