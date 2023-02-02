@@ -416,7 +416,7 @@ export class EventsGateway {
     const allUsers = await this.userService.getAll();
 
     console.log('ouiouioui', allUsers);
-    const retArray = Array<{ username: string }>();
+    const retArray = Array<{ username: string, profileImage: string }>();
 
     allUsers.forEach((item) => {
       if (
@@ -425,7 +425,7 @@ export class EventsGateway {
         ) == undefined &&
         item.id != users.find((item) => item.socket.id == client.id).user.id
       ) {
-        retArray.push({ username: item.username });
+        retArray.push({ username: item.username, profileImage: item.profileImage });
       }
     });
     console.log('nononononon', retArray);
