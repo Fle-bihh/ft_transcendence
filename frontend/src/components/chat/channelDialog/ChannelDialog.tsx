@@ -425,6 +425,7 @@ const ChannelDialog = (props: {
                 }, 200);
               } else {
                 // setShowJoinChannelPasswordModal(false);
+                console.log(joinChannelPasswordInput)
                 utils.socket.emit('JOIN_CHANNEL', {
                   username: user.user?.username,
                   channelName: joinChannelSelect,

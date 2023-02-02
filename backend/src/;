@@ -7,8 +7,6 @@ import { User } from 'src/entities/user.entity';
 import { Game } from 'src/entities/game.entity';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import { Channel } from 'src/entities/channel.entity';
-import { Message } from 'src/entities/message.entity';
 
 @Injectable()
 export class UsersService {
@@ -90,7 +88,7 @@ export class UsersService {
     if (found == null) {
       throw new HttpException('User Not Found', 404);
     }
-    return found
+    return null;
   }
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
@@ -105,6 +103,7 @@ export class UsersService {
 
   async patchProfileImage(id: string, user: User, profileImage: string) {
     const found = await this.getUserById(id, user);
+    console.log(profileImage);
     if (found) {
       found.profileImage = profileImage;
       await this.usersRepository.save(found);
@@ -162,10 +161,9 @@ export class UsersService {
     });
 
     const blockList = allUser.find((u) => {
-      return u.username === user.username;
-    }).blockList;
+    return u.username === user.username;}).blockList;
 
-    return { blockList: blockList };
+    return {blockList: blockList};
   }
 
   async addBlockList(username: string, target: string): Promise<void> {
@@ -177,49 +175,4 @@ export class UsersService {
 
     this.usersRepository.save(user);
   }
-
-  async getChannelsCreator(user: User): Promise<{ channels: Channel[] }> {
-    const allCreator = await this.usersRepository.find({
-      relations: ['channels'],
-    });
-
-    const channels = allCreator.find((u) => u.username === user.username).channels;
-    return { channels };
-  }
-
-  async getChannelsAdmin(user: User): Promise<{ channelsAdmin: Channel[] }> {
-    const allAdmin = await this.usersRepository.find({
-      relations: ['channelsAdmin'],
-    });
-
-    const channelsAdmin = allAdmin.find((u) => u.username === user.username).channelsAdmin;
-    return { channelsAdmin };
-  }
-
-  async getChannelsConnected(user: User): Promise<{ channelsConnected: Channel[] }> {
-    const allConnected = await this.usersRepository.find({
-      relations: ['channelsConnected'],
-    });
-
-    const channelsConnected = allConnected.find((u) => u.username === user.username).channelsConnected;
-    return { channelsConnected };
-  }
-
-  async getMessages(id: string): Promise<{ messagesSent: Message[], messagesReceived: Message[] }> {
-    const found = await this.getUserById(id);
-    const allMessages = await this.usersRepository.find({
-      relations: ['messagesSent', 'messagesReceived'],
-    });
-
-    const messagesSent = allMessages.find((user) => {
-      return user.username === found.username
-    }).messagesSent;
-
-    const messagesReceived = allMessages.find((user) => {
-      return user.username === found.username
-    }).messagesReceived;
-
-    return { messagesSent, messagesReceived };
-  }
-
 }
