@@ -10,4 +10,4 @@ USER node
 COPY --chown=node:node . .
 # RUN npm rebuild bcrypt --build-form-source
 EXPOSE $BACKEND_PORT
-CMD ["npm", "start", "run"]
+CMD ["npm", "start", "run:debug"]
