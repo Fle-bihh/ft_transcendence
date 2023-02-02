@@ -45,7 +45,6 @@ export class AuthService {
       const authCredentialsDto: AuthCredentialsDto = {
         username: data.login,
         login: data.login,
-        password: 'Qwert_123',
         firstName: data.first_name,
         lastName: data.last_name,
         profileImage: data.image.link,

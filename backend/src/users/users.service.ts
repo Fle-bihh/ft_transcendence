@@ -75,20 +75,6 @@ export class UsersService {
     return null;
   }
 
-  async getFriends(login: string): Promise<{ friends: User[] }> {
-    const currentUser: User = await this.getUserByLogin(login);
-
-    const allUser: User[] = await this.usersRepository.find({
-      relations: ['friends'],
-    });
-
-    const friends: User[] = allUser.find((user) => {
-      return user.login === currentUser.login;
-    }).friends;
-
-    return { friends: friends };
-  }
-
   async getUserByLogin(login: string): Promise<User> {
     console.log(login);
     const found = await this.usersRepository.findOneBy({ login });
@@ -111,6 +97,17 @@ export class UsersService {
     const found = await this.getUserById(id, user);
     if (found) {
       found.username = username;
+      await this.usersRepository.save(found);
+      return found;
+    }
+    return null;
+  }
+
+  async patchProfileImage(id: string, user: User, profileImage: string) {
+    const found = await this.getUserById(id, user);
+    console.log(profileImage);
+    if (found) {
+      found.profileImage = profileImage;
       await this.usersRepository.save(found);
       return found;
     }
