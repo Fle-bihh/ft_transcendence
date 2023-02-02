@@ -275,7 +275,7 @@
                 // opacity: 100%;
 
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 text-align: center;
                 align-content: space-between;
                 vertical-align: middle;
@@ -576,7 +576,7 @@
                 // opacity: 100%;
 
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 text-align: center;
                 align-content: space-between;
                 vertical-align: middle;
@@ -602,7 +602,7 @@
     }
 }
 //------------GRAND ECRAN----------------------------------------------------------------------
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 928px) {
     .profilePageContainerOther {
         height: calc(100vh - 64px);
         width: 100vw;
@@ -869,7 +869,7 @@
                 // opacity: 100%;
 
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 flex-direction: row;
 
                 text-align: center;
@@ -903,3 +903,4 @@
         }
     }
 }
+

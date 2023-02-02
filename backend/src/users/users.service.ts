@@ -101,6 +101,17 @@ export class UsersService {
     return null;
   }
 
+  async patchProfileImage(id: string, user: User, profileImage: string) {
+    const found = await this.getUserById(id, user);
+    console.log(profileImage);
+    if (found) {
+      found.profileImage = profileImage;
+      await this.usersRepository.save(found);
+      return found;
+    }
+    return null;
+  }
+
   isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, user: User) {
     return authenticator.verify({
       token: twoFactorAuthenticationCode,

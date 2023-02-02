@@ -15,9 +15,6 @@ export class User {
     login: string;
 
     @Column({ nullable: true })
-    password?: string | null;
-
-    @Column({ nullable: true })
     profileImage?: string | null;
 
     @Column()
