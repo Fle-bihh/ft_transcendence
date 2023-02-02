@@ -10,6 +10,7 @@ import MapSelector from './MapSelector';
 import "./Pong.scss"
 import SpectatorPage from './Spectator';
 import WatchingListGame from './WatchingListGame';
+import waiting from "../../styles/asset/Loading.gif";
 
 const Pong = (props : any) => {
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
@@ -80,7 +81,10 @@ const Pong = (props : any) => {
     else if (waitingOponnent) return (
         <div>
             <Navbar/>
-            <p>Waiting for an oponnent</p>
+            <div className='waiting_div'>
+                <h1 className='waiting_txt'>Waiting for an oponnent</h1>
+                <img src={waiting} className='waiting_pict'></img>
+            </div>
         </div>
     )
     else return (
