@@ -1,7 +1,7 @@
 import { userActionType } from "../action-types";
 import { userAction } from "../actions";
 
-export interface User {
+interface UserType {
     user: {
         id: string,
         username: string
@@ -17,11 +17,11 @@ export interface User {
 }
 
 
-export const initialState: User = {
+const initialState: UserType = {
     user: null
 }
 
-export const userReducer = (state: User = initialState, action: userAction) => {
+export const userReducer = (state: UserType = initialState, action: userAction) => {
     switch (action.type) {
         case userActionType.SETUSER: {
             return {

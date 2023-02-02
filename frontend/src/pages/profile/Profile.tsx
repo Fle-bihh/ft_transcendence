@@ -17,6 +17,7 @@ import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
 import { Buffer } from 'buffer';
+import { User } from '../../state/type';
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
 const options = {
@@ -77,12 +78,11 @@ const Profile = () => {
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             id: string,
-            player1id: string,
+            player1: User,
             score1: number,
-            player2id: string,
+            player2: User,
             score2: number,
-            winnerid: string, // login de la personne qui a gagné
-
+            winner: User,
         }>()
     );
     const handleClickOpen = () => {
@@ -99,8 +99,8 @@ const Profile = () => {
         if (change && inputValue != "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
             userDisplay.username = inputValue;
-            userDisplay.getData= false;
-            
+            userDisplay.getData = false;
+
         }
         setInputValue("")
         setOpen(false);
@@ -176,7 +176,6 @@ const Profile = () => {
                     twoFactorAuth: response.data.twoFactorAuth,
                     getData: true,
                 })
-                // setFirstOpen(false)
             }
         }).catch(error => {
             console.log(error);
@@ -187,12 +186,11 @@ const Profile = () => {
                     const obj = {
 
                         id: game.id,
-
-                        player1id: game.player1.username,
+                        player1: game.player1,
                         score1: game.score_u1,
-                        player2id: game.player2.username,
+                        player2: game.player2,
                         score2: game.score_u2,
-                        winnerid: game.winner.username,
+                        winner: game.winner,
 
 
                     }
@@ -203,6 +201,8 @@ const Profile = () => {
         }).catch(error => {
             console.log(error);
         });
+        setFirstOpen(false)
+
     }
 
 
@@ -215,80 +215,41 @@ const Profile = () => {
     }, [userDisplay?.getData])
 
     //----------------image pour téléchager--------------------------------------------
+
     const [filebase64, setFileBase64] = useState<string>("")
 
-
-    // function convertFile(files: FileList | null) {
-    //     if (files) {
-    //         const fileRef = files[0] || ""
-    //         const fileType: string = fileRef.type || ""
-    //         // console.log("This file upload is of type:", fileType)
-    //         const reader = new FileReader()
-    //         reader.readAsBinaryString(fileRef)
-    //         reader.onload = (ev: any) => {
-
-    //             // Buffer.from(str, 'base64')  buf.toString('base64').
-    //             setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-
-    //             const buf = Buffer.from(`data:${fileType}`,'base64');
-    //             console.log("image0", buf.toString('base64'));
-
-    //             console.log("image1", `data:${fileType};base64,${btoa(ev.target.result)}`)
-             
-    //             // console.log(Buffer.from("SGVsbG8gV29ybGQ=", 'base64').toString('ascii'))
-    //             console.log("image2", filebase64)
-
-    //         }
-    //         axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-    //         userDisplay.profileImage = filebase64;
-    //     }
-    // }
-
     const convertFile = (e: any) => {
-		const img = e.target.files.item(0);
-        let url = URL.createObjectURL(e.target.files.item(0))
-        console.log("url", url)
-        setFileBase64(url)
-        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: url }, options)
-        userDisplay.profileImage = url;
-
-
-
-		// var formData = new FormData();
-		// formData.append("photo", img);
-        // // setFileBase64(formData)
-        // userDisplay.profileImage = filebase64;
-        
-        // // console.log("image1", img.{name})
-        // console.log("image", img[0])
-
-
-    function convertFile(files: FileList | null) {
         const jwt = cookies.get('jwt');
         const options = {
             headers: {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        if (files) {
-            console.log("files . ", files);
-            const fileRef = files[0] || ""
-            const fileType: string = fileRef.type || ""
-            // console.log("This file upload is of type:", fileType)
-            const reader = new FileReader()
-            reader.readAsBinaryString(fileRef)
-            reader.onload = (ev: any) => {
-                // convert it to base64
-                setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-            }
-            console.log(filebase64);
-        }
-        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-        userDisplay.profileImage = filebase64;
+        const img = e.target.files.item(0);
+        var formData = new FormData();
+        formData.append("photo", img);
 
+        var config = {
+            method: 'POST',
+            url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
+            options,
+            // headers: {
+            // 	'Content-Type': 'multipart/form-data',
+            // },
+            profileImage: formData,
+            data: formData,
+            withCredentials: true
+        }
+        axios(config).then((res) => {
+            setUser(res.data);
+            console.log("resdata", res.data)
+            userDisplay.profileImage = res.data;
+
+        }).catch((err) => {
+        })
     }
 
-    
+    //----------------image pour téléchager--------------------------------------------
     //_____________________________________------------------------------------
     return (
         <React.Fragment >
@@ -297,7 +258,7 @@ const Profile = () => {
                 <div className="profile" >
 
                     <Stack direction="row" spacing={2} className="avatarItem">
-                        <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
+                        <img alt="Cerise" src={user.user?.profileImage} className="avatar" />
                     </Stack>
 
                     <Button component="label" className="avatarChange">
@@ -407,24 +368,24 @@ const Profile = () => {
                         </div>
 
                         {userMatchHistory.map((match) => {
-                                // getUserData()
-                            // if (userDisplay.username != )
-                            //     return 
+                            // getUserData()
+                            // if (firstOpen == false)
+                            //     return
                             return (
                                 // "eba00bae-e127-4f03-95ee-1f1afaf63293"
 
-                                <div className={match.winnerid == userDisplay.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                <div className={match.winner.username == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
 
 
                                     <div className="results" >
-                                        <div className="name">{match.player1id == userDisplay.username ? match.player1id : match.player2id}</div>
-                                        <div className="score">-{match.player1id == userDisplay.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player1.username == user.user?.username ? match.player1.username : match.player2.username}</div>
+                                        <div className="score">-{match.player1id == user.user?.username ? match.score1 : match.score2}-</div>
 
                                     </div>
 
                                     {/* <div className="results" >
     
-                                            <Avatar alt="Cerise" src={userDisplay?.profileImage}
+                                            <Avatar alt="Cerise" src={user.user?.profileImage}
                                                 className="avatarStatuser" variant="square" />
     
                                             <Avatar alt="Laurine" src={Laurine}
@@ -432,8 +393,8 @@ const Profile = () => {
                                         </div> */}
 
                                     <div className="results">
-                                        <div className="score">-{match.player2id == userDisplay.username ? match.score1 : match.score2}-</div>
-                                        <div className="name">{match.player2id == userDisplay.username ? match.player1id : match.player2id}</div>
+                                        <div className="score">-{match.player2id != user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2id != user.user?.username ? match.player1id : match.player2id}</div>
 
                                     </div>
 
