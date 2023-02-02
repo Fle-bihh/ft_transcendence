@@ -163,7 +163,9 @@ const Profile = () => {
 
     //----------------image pour téléchager--------------------------------------------
 
+
     const convertFile = (e: any) => {
+
         const jwt = cookies.get('jwt');
         const options = {
             headers: {
@@ -202,8 +204,8 @@ const Profile = () => {
 
                     <Button component="label" className="avatarChange">
                         Change Profile Picture
-                        <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
-                        {/* <input type="file" hidden onChange={(e) => convertFile(e.target.files)} /> */}
+                        {/* <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} /> */}
+                        <input type="file" hidden onChange={(e) => convertFile(e.target.files)} />
                     </Button>
 
                     <div className="infoUser">
