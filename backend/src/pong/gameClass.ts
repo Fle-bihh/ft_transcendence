@@ -87,10 +87,14 @@ export class GameClass {
 					this.players[0].speed += 0.1
 					this.players[1].speed += 0.1
 				}
+				if(this.map.reducePlayer && this.players[i].height > (this.players[i].initialHeight / 4)){
+					this.players[i].height -= this.players[i].initialHeight / 12
+					this.players[i].posY += this.players[i].initialHeight / 12 /2
+				}
 			}
         }
 		for (let i = 0; i < 2; i++) {
-			if (this.checkCollisionObstacle(i)) {
+			if (this.checkCollisionObstacle(i) && this.map.useObstacle) {
 				this.ball.directionX *= -1
 			}
         }
@@ -141,6 +145,7 @@ export class Player {
     username : string
     width : number
     height : number
+	initialHeight: number
     goUp : boolean
     goDown : boolean
     posX : number
@@ -156,6 +161,7 @@ export class Player {
         this.id = id
         this.width = canvas.width / 40
         this.height = canvas.height / 5
+		this.initialHeight = this.height
         this.goUp = false
         this.goDown = false
         this.score = 0
@@ -184,27 +190,29 @@ export class Map {
 
 	mapColor: string
 	mapName: string
-	printObstacle: boolean
+	reducePlayer: boolean
+	useObstacle: boolean
 	mapObstacles: Array<Obstacle>
 
 	constructor(gameMap: string, canvas: Canvas) {
-		this.printObstacle = false
+		this.useObstacle = false
+		this.reducePlayer = false
 		this.mapObstacles = new Array()
 		this.mapColor = "black"
 		this.mapName = gameMap
-
+		this.mapObstacles.push(new Obstacle(canvas))
+		this.mapObstacles.push(new Obstacle(canvas))
+		
 		if (gameMap == "map1")
 			this.mapColor = "black"
 
 		else if (gameMap == "map2") {
 			this.mapColor = 'blue'
-			this.printObstacle = true
-			this.mapObstacles.push(new Obstacle(canvas))
-			this.mapObstacles.push(new Obstacle(canvas))
+			this.useObstacle = true
 		}
-
 		else if (gameMap == "map3") {
 			this.mapColor = 'green'
+			this.reducePlayer = true
 		}
 	}
 }

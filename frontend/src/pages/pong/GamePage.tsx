@@ -132,7 +132,7 @@ const GamePage = (props: any) => {
                     drawText(ctx, room)
                     return
                 }
-                if(room.map.printObstacle){
+                if(room.map.useObstacle){
                     drawObstacle(ctx, room)
                 }
                 drawBall(ctx, room)
