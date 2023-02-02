@@ -17,6 +17,7 @@ import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
 import { Buffer } from 'buffer';
+import { User } from '../../state/type';
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
 const options = {
@@ -53,19 +54,6 @@ const Profile = () => {
     const { setUser } = bindActionCreators(actionCreators, dispatch);
     // const [image, setimage] = userState("")
 
-    const [userDisplay, setUserDisplay] = useState({
-        id: "",
-        username: '', //pseudo
-        login: '', // prenom  to --> login 
-        profileImage: '', // oui
-        email: '',
-        Rank: 0, // la XP de notre joueur 
-        WinNumber: 0, // nbr de gagne
-        LossNumber: 0,// nbr de perdu
-        twoFactorAuth: false,
-        getData: false,
-    });
-
     // const [userMatchHistory, setUserMatchHistory] = useState({
     //         player1id: "",
     //         score1: 0,
@@ -77,12 +65,11 @@ const Profile = () => {
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             id: string,
-            player1id: string,
+            player1: User,
             score1: number,
-            player2id: string,
+            player2: User,
             score2: number,
-            winnerid: string, // login de la personne qui a gagné
-
+            winner: User,
         }>()
     );
     const handleClickOpen = () => {
@@ -104,9 +91,10 @@ const Profile = () => {
                 }
             }
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
-            userDisplay.username = inputValue;
-            userDisplay.getData= false;
-            
+            const tmp = user.user!;
+            tmp.username = inputValue;
+            setUser(tmp);
+
         }
         setInputValue("")
         setOpen(false);
@@ -149,153 +137,60 @@ const Profile = () => {
             });
     }
 
-    // useEffect(() => {
-    // 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-    // 	if (codePin && res2FA === 401) {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'block';
-    // 	} else {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'none';
-    // 	}
-    // }, [res2FA]);
-    //fin 2FA
-
-    const getUserData = () => {
-        const jwt = cookies.get('jwt');
-        const options = {
-            headers: {
-                'authorization': `Bearer ${jwt}`
-            }
-        }
-        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                setUserDisplay({
-                    id: response.data.id,
-                    username: response.data.username,
-                    login: response.data.login,
-                    profileImage: response.data.profileImage,
-                    email: response.data.email,
-                    WinNumber: response.data.WinNumber,
-                    LossNumber: response.data.LossNumber,
-                    Rank: response.data.Rank,
-                    twoFactorAuth: response.data.twoFactorAuth,
-                    getData: true,
-                })
-                // setFirstOpen(false)
-            }
-        }).catch(error => {
-            console.log(error);
-        });
-        axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                response.data.map((game: any) => {
-                    const obj = {
-
-                        id: game.id,
-
-                        player1id: game.player1.username,
-                        score1: game.score_u1,
-                        player2id: game.player2.username,
-                        score2: game.score_u2,
-                        winnerid: game.winner.username,
-
-
-                    }
-                    userMatchHistory.push(obj)
-                })
-                console.log(response.data)
-            }
-        }).catch(error => {
-            console.log(error);
-        });
-    }
-
-
     useEffect(() => {
-        // console.log("effect : ", userDisplay)
-        // || !userMatchHistory?.getData
-        if (!userDisplay?.getData)
-            getUserData();
+        // axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
+        //     if (response.data != null) {
+        //         response.data.map((game: any) => {
+        //             const obj = {
 
-    }, [userDisplay?.getData])
+        //                 id: game.id,
+        //                 player1: game.player1,
+        //                 score1: game.score_u1,
+        //                 player2: game.player2,
+        //                 score2: game.score_u2,
+        //                 winner: game.winner,
+
+
+        //             }
+        //             userMatchHistory.push(obj)
+        //         })
+        //         console.log(response.data)
+        //     }
+        // }).catch(error => {
+        //     console.log(error);
+        // });
+    }, [])
 
     //----------------image pour téléchager--------------------------------------------
-    const [filebase64, setFileBase64] = useState<string>("")
 
 
-    // function convertFile(files: FileList | null) {
-    //     if (files) {
-    //         const fileRef = files[0] || ""
-    //         const fileType: string = fileRef.type || ""
-    //         // console.log("This file upload is of type:", fileType)
-    //         const reader = new FileReader()
-    //         reader.readAsBinaryString(fileRef)
-    //         reader.onload = (ev: any) => {
+    const convertFile = (e: any) => {
 
-    //             // Buffer.from(str, 'base64')  buf.toString('base64').
-    //             setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-
-    //             const buf = Buffer.from(`data:${fileType}`,'base64');
-    //             console.log("image0", buf.toString('base64'));
-
-    //             console.log("image1", `data:${fileType};base64,${btoa(ev.target.result)}`)
-             
-    //             // console.log(Buffer.from("SGVsbG8gV29ybGQ=", 'base64').toString('ascii'))
-    //             console.log("image2", filebase64)
-
-    //         }
-    //         axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-    //         userDisplay.profileImage = filebase64;
-    //     }
-    // }
-
-    // const convertFile = (e: any) => {
-	// 	const img = e.target.files.item(0);
-    //     let url = URL.createObjectURL(e.target.files.item(0))
-    //     console.log("url", url)
-    //     setFileBase64(url)
-    //     axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: url }, options)
-    //     userDisplay.profileImage = url;
-
-
-
-	// 	// var formData = new FormData();
-	// 	// formData.append("photo", img);
-    //     // // setFileBase64(formData)
-    //     // userDisplay.profileImage = filebase64;
-        
-    //     // // console.log("image1", img.{name})
-    //     // console.log("image", img[0])
-    // }
-
-
-    function convertFile(files: FileList | null) {
         const jwt = cookies.get('jwt');
         const options = {
             headers: {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        if (files) {
-            console.log("files . ", files);
-            const fileRef = files[0] || ""
-            const fileType: string = fileRef.type || ""
-            // console.log("This file upload is of type:", fileType)
-            const reader = new FileReader()
-            reader.readAsBinaryString(fileRef)
-            reader.onload = (ev: any) => {
-                // convert it to base64
-                setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-            }
-            console.log(filebase64);
-        }
-        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-        userDisplay.profileImage = filebase64;
+        const img = e.target.files.item(0);
+        var formData = new FormData();
+        formData.append("photo", img);
 
+        var config = {
+            method: 'POST',
+            url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
+            options,
+            profileImage: formData,
+            data: formData,
+            withCredentials: true
+        }
+        axios(config).then((res) => {
+            setUser(res.data);
+        }).catch((err) => {
+        })
     }
 
-    
+    //----------------image pour téléchager--------------------------------------------
     //_____________________________________------------------------------------
     return (
         <React.Fragment >
@@ -304,7 +199,7 @@ const Profile = () => {
                 <div className="profile" >
 
                     <Stack direction="row" spacing={2} className="avatarItem">
-                        <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
+                        <img alt="Cerise" src={user.user?.profileImage} className="avatar" />
                     </Stack>
 
                     <Button component="label" className="avatarChange">
@@ -318,7 +213,7 @@ const Profile = () => {
                             Login :
                         </h3>
                         <Typography className="userNamePrint">
-                            {userDisplay?.login}
+                            {user.user?.login}
                         </Typography>
 
                     </div>
@@ -328,7 +223,7 @@ const Profile = () => {
                             userName :
                         </h3>
                         <Typography className="userNamePrintChange">
-                            {userDisplay?.username}
+                            {user.user?.username}
                         </Typography>
 
                     </div>
@@ -367,12 +262,12 @@ const Profile = () => {
                                         <img src={qrCode2FA} />
                                         <PinInput length={6}
                                             focus
-                                            onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
+                                            onChange={(value: any) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
                                             type="numeric"
                                             inputFocusStyle={{ borderColor: '#f55951' }}
                                             inputMode="number"
                                             style={{ padding: '10px' }}
-                                            onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
+                                            onComplete={(value: any) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
                                             autoSelect={true} />
                                         <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
                                     </DialogContent>
@@ -384,7 +279,7 @@ const Profile = () => {
                         </div> :
                         <div>
                             <Button className="buttonChange2FA" type="submit" onClick={() => {
-                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then((res: { data: { id: string; username: string; login: string; profileImage: string; email: string; WinNumber: number; LossNumber: number; Rank: number; twoFactorAuth: boolean; friend: number; } | null; }) => {
                                     console.log('data', res.data)
                                     setUser(res.data)
                                 })
@@ -400,38 +295,38 @@ const Profile = () => {
                         <div className="rectangle">
                             <div className="textRectangle">
                                 <p>nbr Win</p>
-                                {userDisplay?.WinNumber}
+                                {user.user?.WinNumber}
                             </div>
                             <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
+                                <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
                                 {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay?.Rank}</h3>
+                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">
                                 <p>nbr Loose</p>
-                                {userDisplay?.LossNumber}
+                                {user.user?.LossNumber}
                             </div>
                         </div>
 
                         {userMatchHistory.map((match) => {
-                                // getUserData()
-                            // if (userDisplay.username != )
-                            //     return 
+                            // getUserData()
+                            // if (firstOpen == false)
+                            //     return
                             return (
                                 // "eba00bae-e127-4f03-95ee-1f1afaf63293"
 
-                                <div className={match.winnerid == userDisplay.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                <div className={match.winner.username == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
 
 
                                     <div className="results" >
-                                        <div className="name">{match.player1id == userDisplay.username ? match.player1id : match.player2id}</div>
-                                        <div className="score">-{match.player1id == userDisplay.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player1.username == user.user?.username ? match.player1.username : match.player2.username}</div>
+                                        <div className="score">-{match.player1.username == user.user?.username ? match.score1 : match.score2}-</div>
 
                                     </div>
 
                                     {/* <div className="results" >
     
-                                            <Avatar alt="Cerise" src={userDisplay?.profileImage}
+                                            <Avatar alt="Cerise" src={user.user?.profileImage}
                                                 className="avatarStatuser" variant="square" />
     
                                             <Avatar alt="Laurine" src={Laurine}
@@ -439,8 +334,8 @@ const Profile = () => {
                                         </div> */}
 
                                     <div className="results">
-                                        <div className="score">-{match.player2id == userDisplay.username ? match.score1 : match.score2}-</div>
-                                        <div className="name">{match.player2id == userDisplay.username ? match.player1id : match.player2id}</div>
+                                        <div className="score">-{match.player2.username != user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2.username != user.user?.username ? match.player1.username : match.player2.username}</div>
 
                                     </div>
 
