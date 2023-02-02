@@ -8,7 +8,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { Auth42Dto } from './dto/auth-42.dto';
 import { HttpService } from '@nestjs/axios';
-// import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
 import { lastValueFrom } from 'rxjs';
 // import axios from 'axios';
 
@@ -28,7 +28,7 @@ export class AuthService {
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
     private http: HttpService,
-    // private userService: UsersService,
+    private userService: UsersService,
   ) { }
 
   async signIn42(auth42Dto: Auth42Dto): Promise<{ accessToken: string, user: User }> {
@@ -77,6 +77,18 @@ export class AuthService {
       return { accessToken: accessToken, user: user };
     } catch (error) {
       throw new HttpException(error.response.data, error.response.data);
+    }
+  }
+
+  async getUserFromToken(token: string): Promise<User> {
+    try {
+      const payload = this.jwtService.verify(token);
+      console.log("payload", payload)
+      if (payload.login) {
+        return this.userService.getUserByLogin(payload.login);
+      }
+    } catch (e) {
+      // console.log(e);
     }
   }
 }
