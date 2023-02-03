@@ -30,8 +30,9 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
       setIsConnected(false);
     }
   });
+  
   console.log("twoFAReducer = ", twoFAReducer)
-  if (isConnected && (twoFAReducer.twoFactorVerify || !userReducer.user?.twoFactorAuth)) {
+  if (isConnected) {
     return <>{props.children}</>;
   }
   return <Navigate to="/Signup"></Navigate>;

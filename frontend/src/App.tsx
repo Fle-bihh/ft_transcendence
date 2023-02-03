@@ -36,7 +36,7 @@ function App() {
   })
 
   useEffect(() => {
-    if (!verif)
+    if (!verif && persistantReducer.userReducer.user)
     {
         console.log("Check reco front", persistantReducer.userReducer.user?.username);
         utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');

@@ -35,26 +35,28 @@ const Connect = () => {
   }
 
   if (!userReducer.user)
-    axios.request({
-      url: "/auth/api42/Signin",
-      method: "post",
-      baseURL: `http://${ip}:5001`,
-      params: {
-        code: code,
-        nickName: null,
-      }
-    }).then((response: AxiosResponse<any, any>) => {
-      cookies.set('jwt', response.data.accessToken, { path: `/`});
-      setUser(response.data.user);
-      const jwt = cookies.get('jwt');
-      const options = {
-        headers: {
-          Authorization: `Bearer ${jwt}`
+  {
+      axios.request({
+        url: "/auth/api42/Signin",
+        method: "post",
+        baseURL: `http://${ip}:5001`,
+        params: {
+          code: code,
+          nickName: null,
         }
-      }
-      // window.location.replace(`http://${ip}:3000`);
-      console.log('Connect 2 cookie == ', options);
-  }).catch((err) => { });
+      }).then((response: AxiosResponse<any, any>) => {
+        cookies.set('jwt', response.data.accessToken, { path: `/`});
+        setUser(response.data.user);
+        const jwt = cookies.get('jwt');
+        const options = {
+          headers: {
+            Authorization: `Bearer ${jwt}`
+          }
+        }
+        // window.location.replace(`http://${ip}:3000`);
+        console.log('Connect 2 cookie == ', options);
+    }).catch((err) => { });
+  }
 
   function verify2FA(value: string) {
     const jwt = cookies.get('jwt');
