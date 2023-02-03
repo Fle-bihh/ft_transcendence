@@ -2,31 +2,20 @@ import Navbar from "../../components/nav/Nav";
 import queryString from "query-string";
 //import * as React from 'react';
 import "./profileOther.scss";
-import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Cerise from "../../styles/asset/cerise.jpg";
 import Laurine from "../../styles/asset/ananas.png";
 import * as React from "react";
 import LoadingButton from '@mui/lab/LoadingButton';
-
 import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
-import Badge from "@mui/material/Badge";
 import Stack from "@mui/material/Stack";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
 import Version2 from "../../styles/asset/Version2.gif";
-import Version3 from "../../styles/asset/Version3.gif";
-import Version4 from "../../styles/asset/Version4.gif";
-import Version5 from "../../styles/asset/Version5.gif";
 import ButtonBase from '@mui/material/ButtonBase';
-
-import Fab from "@mui/material/Fab";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-
 import {
     Button,
     Dialog,
@@ -34,19 +23,13 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    IconButton,
-    TextField,
     Typography,
 } from "@mui/material";
-import { userInfo } from "os";
 import { useEffect, useState } from "react";
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
-import { PasswordRounded } from "@mui/icons-material";
-import { Navigate, NavLink } from "react-router-dom";
+import { Navigate} from "react-router-dom";
 import { ip } from "../../App";
 import Cookies from "universal-cookie";
-import { utilsReducer } from "../../state/reducers/utilsReducer";
 
 const cookies = new Cookies();
 const jwt = cookies.get("jwt");
@@ -104,26 +87,26 @@ const ProfileOther = () => {
         "updateProfileOther",
         (data: { login: string; friendStatus: string }) => {
             
-            if (getComputedStyle(userInGame!).display == "flex") {
+            if (getComputedStyle(userInGame!).display === "flex") {
                 userConnect!.style.display = "none"
                 userInGame!.style.display = "none"
                 userConnectHorsLigne!.style.display = "none"
                 }
             console.log("oui");
-            if (data.login != userDisplay.login) return;
+            if (data.login !== userDisplay.login) return;
             console.log("updateProfileOther", data.login, data.friendStatus);
-            if (data.friendStatus == "request-send") {
+            if (data.friendStatus === "request-send") {
                 setFriend(FRIEND_REQUEST_SEND);
             }
-            else if (data.friendStatus == "request-waiting") {
+            else if (data.friendStatus === "request-waiting") {
                 setFriend(FRIEND_REQUEST_WAITING);
             }
-            else if (data.friendStatus == "not-friend") {
+            else if (data.friendStatus === "not-friend") {
                 setFriend(NOT_FRIEND)
             }
             else {
                 setFriend(FRIEND)
-                if (getComputedStyle(userInGame!).display == "none") {
+                if (getComputedStyle(userInGame!).display === "none") {
                     userInGame!.style.display = "flex"
                     userConnect!.style.display = "flex"
 
@@ -136,27 +119,26 @@ const ProfileOther = () => {
 
     const getUserData = () => {
         // useEffect(() => {
-        // if (userDisplay === null) {
+        // if (userDisplay ==== null) {
         const parsed = queryString.parse(window.location.search);
         console.log("userDisplau", userDisplay);
         console.log("username moi", user.user?.username);
         console.log("parsed", parsed);
 
-        // axios.get(`http://localhost:5001/user/login/${user.user?.parse.username}` Pas bon :)
         if (
-            parsed.username == "" ||
-            parsed.username == undefined ||
-            parsed.username == user.user?.login
+            parsed.username === "" ||
+            parsed.username === undefined ||
+            parsed.username === user.user?.login
         ) {
-            // axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: parsed.username }, options))
             console.log("COUCOU");
             window.location.replace(`http://${ip}:3000`);
+            // <Navigate to="http://127.0.0.1:3000" replace={true} />
         } else {
             //
             axios
                 .get(`http://localhost:5001/user/login/${parsed.username} `, options)
                 .then((response) => {
-                    if (response.data.username != null) {
+                    if (response.data.username !== null) {
                         console.log("on est dedans");
 
                         setUserDisplay({
@@ -194,16 +176,16 @@ const ProfileOther = () => {
         setOpen(true);
     };
     const handleClose = (change: boolean) => {
-        if (change == true) {
-            if (friend == NOT_FRIEND) {
+        if (change === true) {
+            if (friend === NOT_FRIEND) {
                 utils.socket.emit("SEND_FRIEND_REQUEST", {
                     loginToSend: userDisplay.login,
                 });
-            } else if (friend == FRIEND_REQUEST_SEND) {
+            } else if (friend === FRIEND_REQUEST_SEND) {
                 utils.socket.emit("DEL_FRIEND_REQUEST", {
                     loginToSend: userDisplay.login,
                 });
-            } else if (friend == FRIEND_REQUEST_WAITING) {
+            } else if (friend === FRIEND_REQUEST_WAITING) {
                 utils.socket.emit("ACCEPT_FRIEND_REQUEST", {
                     loginToSend: userDisplay.login,
                 });
@@ -393,22 +375,22 @@ const ProfileOther = () => {
                         type="submit"
                         onClick={handleClickOpen}
                     >
-                        {friend == NOT_FRIEND
+                        {friend === NOT_FRIEND
                             ? "ADD FRIEND"
-                            : friend == FRIEND_REQUEST_SEND
+                            : friend === FRIEND_REQUEST_SEND
                                 ? "FRIEND REQUEST SEND"
-                                : friend == FRIEND_REQUEST_WAITING
+                                : friend === FRIEND_REQUEST_WAITING
                                     ? "FRIEND REQUEST WAITING"
                                     : "FRIEND"}
 
                     </Button>
                     <Dialog open={open} onClose={() => handleClose(false)}>
                         <DialogTitle>
-                            {friend == NOT_FRIEND
+                            {friend === NOT_FRIEND
                                 ? `Send friend request to ${userDisplay.login} ?`
-                                : friend == FRIEND_REQUEST_SEND
+                                : friend === FRIEND_REQUEST_SEND
                                     ? `Cancel Request to ${userDisplay.login} ?`
-                                    : friend == FRIEND_REQUEST_WAITING
+                                    : friend === FRIEND_REQUEST_WAITING
                                         ? `Add ${userDisplay.login} to you friend list ?`
                                         : `Remove ${userDisplay.login} from your friends ?`}
                         </DialogTitle>
@@ -418,7 +400,7 @@ const ProfileOther = () => {
                         </DialogActions>
                     </Dialog>
 
-                    {friend == FRIEND ?
+                    {friend === FRIEND ?
                         <Button className="buttonChangeOther" onClick={handleGameOpen} >
                             Invite to game
                         </Button> :
@@ -523,7 +505,7 @@ const ProfileOther = () => {
                         return (
                             <div
                                 className={
-                                    match.winner_login == userDisplay?.username
+                                    match.winner_login === userDisplay?.username
                                         ? "itemWinnerOther"
                                         : "itemLoserOther"
                                 }

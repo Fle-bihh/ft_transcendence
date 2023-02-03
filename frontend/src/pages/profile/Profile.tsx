@@ -61,9 +61,9 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        if (change && inputValue != "") {
+        if (change && inputValue !== "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
-                if (response.data != null) {
+                if (response.data !== null) {
                     setUser(response.data)
                 }
             })
@@ -117,7 +117,7 @@ const Profile = () => {
                 }
             }
             axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
-                if (response.data != null) {
+                if (response.data !== null) {
                     response.data.map((game: any) => {
                         const obj = {
 
@@ -144,7 +144,7 @@ const Profile = () => {
             if (firstOpen)
                 getUserData();
 
-        }, [])
+        }, [firstOpen])
 
         //----------------image pour téléchager--------------------------------------------
 
@@ -241,7 +241,7 @@ const Profile = () => {
                                     <div>
                                         <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
                                         <DialogContent className='2FA'>
-                                            <img src={qrCode2FA} />
+                                            <img src={qrCode2FA} alt="Qrcode"/>
                                             <PinInput length={6}
                                                 focus
                                                 onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
@@ -293,12 +293,12 @@ const Profile = () => {
                         
                                 return (
 
-                                    <div className={match.winner.username == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                    <div className={match.winner.username === user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
 
 
                                         <div className="results" >
-                                            <div className="name">{match.player1.username == user.user?.username ? match.player1.username : match.player2.username}</div>
-                                            <div className="score">-{match.player1.username == user.user?.username ? match.score1 : match.score2}-</div>
+                                            <div className="name">{match.player1.username === user.user?.username ? match.player1.username : match.player2.username}</div>
+                                            <div className="score">-{match.player1.username === user.user?.username ? match.score1 : match.score2}-</div>
 
                                         </div>
 
@@ -312,8 +312,8 @@ const Profile = () => {
                                         </div> */}
 
                                         <div className="results">
-                                            <div className="score">-{match.player2.username == user.user?.username ? match.score1 : match.score2}-</div>
-                                            <div className="name">{match.player2.username == user.user?.username ? match.player1.username : match.player2.username}</div>
+                                            <div className="score">-{match.player2.username === user.user?.username ? match.score1 : match.score2}-</div>
+                                            <div className="name">{match.player2.username === user.user?.username ? match.player1.username : match.player2.username}</div>
 
                                         </div>
 
