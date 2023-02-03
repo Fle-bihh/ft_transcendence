@@ -14,12 +14,36 @@ import NotifInterceptor from "./components/NotifInterceptor/NotifInterceptor";
 import Notif from "./pages/notif/Notif";
 import { io } from "socket.io-client";
 import Connect from "./pages/signup/Connect";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators, RootState } from "./state";
+import { bindActionCreators } from "redux";
+import { NotifType } from "./state/type";
+import { useEffect, useState } from "react";
 
 export const ip = window.location.hostname;
-export const gameSocket = io(`ws://${ip}:5002`, { transports: ['websocket'] });
-
+// export const gameSocket = io(`ws://${ip}:5002`, { transports: ['websocket'] });
 
 function App() {
+  const utils = useSelector((state: RootState) => state.utils);
+  const { addNotif } = bindActionCreators(actionCreators, useDispatch());
+  const [verif, setVerif] = useState(false);
+  const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+
+  utils.gameSocket.removeListener("invite_game");
+  utils.gameSocket.on('invite_game', (data : { sender : string, gameMap : string, receiver : string}) => {
+    console.log("received invitation data : ", data);
+    addNotif({ type: NotifType.INVITEGAME, data: data})
+  })
+
+  useEffect(() => {
+    if (!verif && persistantReducer.userReducer.user)
+    {
+        console.log("Check reco front", persistantReducer.userReducer.user?.username);
+        utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
+        setVerif(true)
+    }
+  })
+
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>

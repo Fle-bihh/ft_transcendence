@@ -5,70 +5,14 @@
     background-image: url("../../styles/asset/pong2.gif");
     background-size: cover;
     background-color: black;
+    overflow: scroll;
+
    
-
-    .title {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        font-weight: normal;
-        margin: 0;
-        background-color: white;
-        color: black;
-    }
-
-    .letter {
-        font-size: 15vw;
-        display: inline-block;
-    }
-
-    // .zoneText {
-    //     // height: 50%;
-    //     // height: 30px;
-    //     width: 40%;
-    //     background-color: white;
-
-    //     // margin-top: 2%;
-    //     margin-left: 30%;
-    //     min-height: 50vh;
-    //     min-width: 40%;
-    //     align-items: center;
-    //     justify-items: center;
-    //     display: flex;
-    //     // align-items: center;
-    //     flex-direction: column;
-    //     // box-shadow: 1px 2px 20px rgb(99, 97, 97);
-    //     box-shadow: 1px 2px 20px rgb(99, 97, 97);
-    //     overflow: hidden;
-    //     word-wrap: break-word;
-
-    //     .rules {
-    //         margin-left: auto;
-    //         margin-right: auto;
-    //         text-align: center;
-    //         // width: 20em;
-    //         padding: 3%;
-    //         // min-block-size: 1%;
-    //     }
-    // }
-    // .btnPlay {
-    //     text-decoration: none;
-
-    //     .btn2 {
-    //         background-color: "black";
-    //         color: "white";
-    //         // align: "center";
-    //         margin-top: "6%";
-    //         size: "large";
-    //     }
-    // }
     @media screen and (max-width: 820px) {
         .zoneText {
             min-width: 10px;
             width: 40%;
             min-height: 50%;
-            // max-height: 50%;
             background-color: white;
             margin-left: 30%;
             align-items: center;
@@ -100,34 +44,24 @@
         .zoneText {
             min-height: 50%;
             max-height: 90%;
-            
             min-width: 40%;
             max-width: 60%;
-
             background-color: white;
             margin-left: 20%;
-
-
             align-items: center;
-            // justify-items: center;
             display: flex;
-           
             flex-direction: column;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
-            // overflow: hidden;
-            // word-wrap: break-word;
+    overflow: scroll;
             
             .rules {
                 font-size: small;
                 color: black;
-
                 margin-left: auto;
                 margin-right: auto;
                 text-align: center;
-                //         // width: 20em;
-                //         padding: 3%;
-                //         // min-block-size: 1%;
             }
+
             .btnPlay {
                 text-decoration: none;
                 size: large;
@@ -141,19 +75,4 @@
             }
         }
     }
-    // @media screen and (min-width: 900px) {
-    //     .rules {
-    //         font-size: large;
-    //         color: yellow;
-    //     }
-    //     .btnPlay {
-    //         text-decoration: none;
-    //         .btn2 {
-    //             background-color: black;
-    //             color: white;
-    //             margin-top: 6%;
-    //             size: large;
-    //         }
-    //     }
-    // }
 }

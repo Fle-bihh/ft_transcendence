@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { gameSocket } from '../../App';
 import { RootState } from '../../state';
 import { GameClass } from './gameClass';
 import { ip } from '../../App';
@@ -12,22 +11,22 @@ var canvas = {
 }
 
 const SpectatorPage = (props: any) => {
-    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+    const utils = useSelector((state: RootState) => state.utils);
     const [finishGame, setFinishGame] = useState(false);
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
     const [verif, setVerif] = useState(false)
     useEffect(() => {
         if (!verif)
         {
-            gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : false})
+            utils.gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : false})
             setVerif(true);
         }
     })
     if (verif)
-        setInterval(() => { gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : true} ) }, 16)
+        setInterval(() => { utils.gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : true} ) }, 16)
 
-    gameSocket.removeListener("start_spectate");
-    gameSocket.on("start_spectate", (room : GameClass) => { render(room); });
+    utils.gameSocket.removeListener("start_spectate");
+    utils.gameSocket.on("start_spectate", (room : GameClass) => { render(room); });
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
@@ -129,7 +128,7 @@ const SpectatorPage = (props: any) => {
         }
     }
 
-    gameSocket.on('finish', (room: GameClass) => {
+    utils.gameSocket.on('finish', (room: GameClass) => {
         console.log('finish front')
         setFinishGame(true)
         setFinishRoom(room)
@@ -162,7 +161,7 @@ const SpectatorPage = (props: any) => {
     }
 
     setInterval(() => {
-        gameSocket.emit('HANDLE_INTERVAL', props.roomID);
+        utils.gameSocket.emit('HANDLE_INTERVAL', props.roomID);
     }, 10)
 
     return (

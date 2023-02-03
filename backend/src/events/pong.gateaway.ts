@@ -19,11 +19,16 @@ socket : Socket
 }
 
 let allClients: Client[] = [];
-const waintingForGame = Array<{
+const waitingForGame = Array<{
 map: string, user: {
   login: string;
 }
 }>()
+const waitingForInvite = Array<{
+  map: string, user: {
+    login: string;
+  }
+  }>()
 
 const UserToReconnect = []
 
@@ -109,6 +114,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (user != undefined && user.username != "" && user.username != undefined) {
       UserToReconnect.push({ username: user.username, date: new Date() })
     }
+    //enleve l'utilisateur de la salle d'attente
+    // console.table(waitingForGame);
+    // waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == user.username), 1);
     //enleve l'utilisateur du tableau de tous les clients
     allClients.splice(allClients.findIndex(item => item.id == client.id), 1);
     //cherche toutes les salles ou joue le client
@@ -156,6 +164,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async checkReconnexion( client: Socket, user: { username: string }) {
     allClients.find(item => item.id == client.id)!.username = user.username
     console.log(`Check reco ${client.id} : ${user.username}`);
+    // console.table(waitingForGame);
     const room = this.getRoomByClientLogin(user.username)
     if (room != null) {
       this.joinRoom(client, this.allGames[room[0]].roomID)
@@ -177,6 +186,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.io.to(client.id).emit('getClientStatus', { user: user.username, status: 'offline', emitFrom: 'clientStatusGame' })
         })
         this.logger.log(`[Pong-Gateway] Client \'${user.username}\' disconnect`)
+        waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == user.username), 1);
         UserToReconnect.splice(index, 1)
       }
     })
@@ -269,23 +279,25 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         login: string;
       }
     };
-    if ((oponnent = waintingForGame.find(item => item.map == info.gameMap)) != undefined) {
+    if ((oponnent = waitingForGame.find(item => item.map == info.gameMap)) != undefined) {
       this.allGames.push(new GameClass(info.gameMap, info.user.login, info.user.login + oponnent.user.login, client.id))
       const room = this.getRoomByID(info.user.login + oponnent.user.login);
       this.allGames[room[0]].players[0].inGame = true
       this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
+      this.allGames[room[0]].setOponnentObstacle()
       this.allGames[room[0]].gameOn = true
       this.joinRoom(client, room[1].roomID)
       allClients.find(client => client.username == oponnent.user.login).socket.emit('joinRoom', room[1].roomID)
       allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
-      waintingForGame.splice(waintingForGame.findIndex(item => item.map == info.gameMap), 1)
-      console.table(waintingForGame);
+      waitingForGame.splice(waitingForGame.findIndex(item => item.map == info.gameMap), 1)
+      console.table(waitingForGame);
       console.table(this.allGames);
       console.table(allClients);
     }
     else {
-      waintingForGame.push({ map: info.gameMap, user: info.user })
+      waitingForGame.push({ map: info.gameMap, user: { login: info.user.login }})
+      console.table(waitingForGame)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }
@@ -315,5 +327,62 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     else
       this.io.to(client.id).emit('error_page')
+  }
+
+  @SubscribeMessage('INVITE_GAME')
+  inviteGame(client : Socket, data : { sender : string, gameMap : string, receiver : string}) {
+    console.log("invite game data : ", data)
+    const receiver = allClients.find(user => user.username == data.receiver);
+    if (receiver)
+    {
+      const room = this.getRoomByClientLogin(receiver.username)
+      if (!room)
+        this.io.to(receiver.id).emit('invite_game', data);
+    }
+    else
+      this.io.to(client.id).emit('cant_invite', data);
+  }
+
+  @SubscribeMessage('DECLINE_GAME')
+  declineGame(client : Socket, data : { sender : string, gameMap : string, receiver : string}) {
+    console.log("decline game data : ", data)
+    const sender = allClients.find(user => user.username == data.sender);
+    if (sender)
+      this.io.to(sender.id).emit('decline_game', data);
+  }
+
+  @SubscribeMessage('ACCEPT_GAME')
+  acceptGame(client : Socket, data : { sender : string, gameMap : string, receiver : string}) {
+    console.log("accept game data : ", data)
+    const sender = allClients.find(user => user.username == data.sender);
+    if (sender) {
+      this.io.to(sender.id).emit('accept_game', data);
+      this.io.to(client.id).emit('start_invite_game');
+    }
+  }
+  //same as start game but with the waiting Invite array
+  @SubscribeMessage('START_INVITE_GAME')
+  async startInviteGame(client: Socket, info: { user: { login: string}, gameMap: string }) {
+    let oponnent: { map: string; user: {login: string} };
+    if ((oponnent = waitingForInvite.find(item => item.map == info.gameMap)) != undefined) {
+      this.allGames.push(new GameClass(info.gameMap, info.user.login, info.user.login + oponnent.user.login, client.id))
+      const room = this.getRoomByID(info.user.login + oponnent.user.login);
+      this.allGames[room[0]].players[0].inGame = true
+      this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
+      this.allGames[room[0]].gameOn = true
+      this.joinRoom(client, room[1].roomID)
+      allClients.find(client => client.username == oponnent.user.login).socket.emit('joinRoom', room[1].roomID)
+      allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
+      this.io.to(client.id).emit('start', room[1].roomID)
+      waitingForGame.splice(waitingForGame.findIndex(item => item.map == info.gameMap), 1)
+      console.table(waitingForGame);
+      console.table(this.allGames);
+      console.table(allClients);
+    }
+    else {
+      waitingForInvite.push({ map: info.gameMap, user: { login: info.user.login }})
+      console.table(waitingForInvite)
+      this.io.to(client.id).emit('joined_waiting', info.user)
+    }
   }
 }

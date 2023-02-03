@@ -8,8 +8,6 @@
         background-color: olivedrab;
         overflow: scroll;
 
-        // line-Height: 19%;
-
         .profileOther {
             height: 96%;
             width: 96%;
@@ -23,9 +21,7 @@
 
             .avatarItemOther {
                 height: 50%;
-                // position: relative;
                 display: flex;
-                // justify-content: center;
                 align-items: center;
                 flex-direction: column;
                 position: relative;
@@ -34,111 +30,74 @@
                     margin-top: 2%;
                     height: auto;
                     width: 45%;
-                    // z-index: 0;
-                    // background-image: "../styles/asset/Cerise.jpg";
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
-            .userConnect {
+            #userConnect {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                margin-top: 7%;
-
-                // vertical-align: middle;
+                margin-top: 2%;
 
                 .circleConnectLigne {
                     width: 20px;
                     height: 20px;
                     border-radius: 20px;
                     background-color: green;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
                 .connect {
-                    // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
-            .userInGame {
+            #userInGame {
+
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                margin-top: 7%;
-
-                // vertical-align: middle;
+                margin-top: 2%;
 
                 .circleInGame {
                     width: 20px;
                     height: 20px;
                     border-radius: 20px;
                     background-color: orange;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
                 .connect {
-                    // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
-            .userConnectHorsLigne {
+            #userConnectHorsLigne {
+
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                margin-top: 7%;
+                margin-top: 2%;
 
                 .circleConnectHorsLigne {
+
                     width: 20px;
                     height: 20px;
                     border-radius: 20px;
                     background-color: red;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
+                
                 }
                 .connect {
-                // variant:"contained";
-
-                    // display: flex;
 
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
@@ -146,13 +105,11 @@
         .infoUserOther {
             color: black;
             justify-content: center;
-            // margin-top: 3%;
             display: flex;
             align-items: center;
 
             .userNameOther {
                 color: grey;
-                // border: 2px solid green;
                 font-family: "system-ui";
             }
             .userNamePrintOther {
@@ -162,40 +119,33 @@
 
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200; //le gras d'un texte
-                // font-style: oblique;
-                // text-overflow: ellipsis;
             }
         }
         .infoUsernameOther {
             color: black;
             justify-content: center;
-            // margin-top: 2%;
             display: flex;
             align-items: center;
-            // white-space:pre-line;
 
             .userNameChangeOther {
                 color: grey;
                 font-family: "system-ui";
-                // text-align: left;
             }
             .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200;
             }
         }
         .buttonChangeOther {
-            // variant:"contained";
             display: flex;
             color: white;
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
             text-transform: capitalize;
+            margin-bottom: 3%;
         }
 
         .buttonChangeOther:hover {
@@ -227,8 +177,8 @@
             }
             * {
                 box-sizing: border-box;
-                
             }
+
             .textRectangle {
 
                 display: inline-block;
@@ -239,70 +189,56 @@
 
             }
 
-            // * {
-            //     box-sizing: border-box;
-            // }
-
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
                 border: 5px solid red;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 background-color: rgb(255, 164, 164);
-
                 margin-bottom: 2%;
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-            //
+
             .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
                 border: 5px solid green;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 background-color: rgb(182, 255, 164);
                 margin-bottom: 2%;
-
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
+
             .resultsOther {
                 width: 20%;
                 padding: 10px;
                 background-color: none;
-                // opacity: 100%;
-
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 text-align: center;
                 align-content: space-between;
                 vertical-align: middle;
                 justify-content: space-between;
             }
+
             .scoreOther {
                 font-size: x-small;
                 padding: 2px;
                 font-weight: 900;
             }
+
             .avatarStatuserOther {
                 padding: 2px;
             }
+
             .nameOther {
                 padding: 2px;
-
                 font-size: x-small;
                 text-transform: capitalize;
-
-                // text-transform: uppercase;
             }
         }
     }
 }
-// .grid{
-//     align-items: center;
-// }
 //------------MOYEN ECRAN----------------------------------------------------------------------------
 
 @media screen and (min-width: 630px) {
@@ -313,9 +249,6 @@
         background-color: mediumblue;
         overflow: scroll;
 
-
-        // line-Height: 19%;
-
         .profileOther {
             height: 96%;
             width: 96%;
@@ -325,13 +258,11 @@
             min-height: 500px;
             min-width: 400px;
             overflow: scroll;
-
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
+
             .avatarItemOther {
                 height: 50%;
-                // position: relative;
                 display: flex;
-                // justify-content: center;
                 align-items: center;
                 flex-direction: column;
                 position: relative;
@@ -340,77 +271,54 @@
                     margin-top: 2%;
                     height: auto;
                     width: 30%;
-                    // z-index: 0;
-                    // background-image: "../styles/asset/Cerise.jpg";
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
-            .userConnect {
+
+            #userConnect {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                // vertical-align: middle;
 
                 .circleConnectLigne {
                     width: 20px;
                     height: 20px;
                     border-radius: 20px;
                     background-color: green;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
+
                 .connect {
-                    // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
-            .userInGame {
+
+            #userInGame {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                // vertical-align: middle;
+
                 .circleInGame {
                     width: 20px;
                     height: 20px;
                     border-radius: 20px;
                     background-color: orange;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
+
                 .connect {
-                   // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
-            .userConnectHorsLigne {
+            #userConnectHorsLigne {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
@@ -421,24 +329,13 @@
                     height: 20px;
                     border-radius: 20px;
                     background-color: red;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
+
                 .connect {
-                    // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
@@ -447,61 +344,51 @@
             color: black;
             justify-content: center;
             margin-top: 1%;
-
             display: flex;
             align-items: center;
 
             .userNameOther {
                 color: grey;
-                // border: 2px solid green;
                 font-family: "system-ui";
-                // margin-top: 3%;
             }
             .userNamePrintOther {
-                // white-space: pre-line;
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200; //le gras d'un texte
-                // font-style: oblique;
-                // text-overflow: ellipsis;
             }
         }
+
         .infoUsernameOther {
             color: black;
             justify-content: center;
             margin-top: 2%;
             display: flex;
             align-items: center;
-            // white-space:pre-line;
 
             .userNameChangeOther {
                 color: grey;
                 font-family: "system-ui";
-                // text-align: left;
             }
+
             .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200;
             }
         }
+
         .buttonChangeOther {
-            // variant:"contained";
             display: flex;
             color: white;
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
 
-            // align-items: center;
+            margin-bottom: 3%;
+
             text-transform: capitalize;
-            //  white-space:normal;
         }
 
         .buttonChangeOther:hover {
@@ -528,14 +415,13 @@
                 background-color: rgb(122, 122, 122);
                 top: 0;
                 z-index: 999;
-                // vertical-align: middle;
-                // display: inline-block;
-                // display:flow-root;
                 text-align: center;
             }
+
             * {
                 box-sizing: border-box;
             }
+
             .textRectangle {
                 display: inline-block;
                 vertical-align: middle;
@@ -547,70 +433,61 @@
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
                 border: 5px solid red;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 background-color: rgb(255, 164, 164);
-
                 margin-bottom: 2%;
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-            //
+
             .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
                 border: 5px solid green;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 background-color: rgb(182, 255, 164);
                 margin-bottom: 2%;
-
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
+            
             .resultsOther {
                 width: 20%;
                 padding: 10px;
                 background-color: none;
-                // opacity: 100%;
-
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 text-align: center;
                 align-content: space-between;
                 vertical-align: middle;
                 justify-content: space-between;
             }
+
             .scoreOther {
                 font-size: x-small;
                 padding: 2px;
                 font-weight: 900;
             }
+
             .avatarStatuserOther {
                 padding: 2px;
             }
+
             .nameOther {
                 padding: 2px;
-
                 font-size: x-small;
                 text-transform: capitalize;
-
-                // text-transform: uppercase;
             }
         }
     }
 }
 //------------GRAND ECRAN----------------------------------------------------------------------
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 928px) {
     .profilePageContainerOther {
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
         display: flex;
         background-color: magenta;
-
-        // line-Height: 19%;
 
         .profileOther {
             margin-top: 3%;
@@ -621,66 +498,50 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
-
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
+
             .avatarItemOther {
                 height: 50%;
-                // position: relative;
                 display: flex;
                 justify-content: center;
-
-                // align-items: center;
-                // flex-direction: column;
                 position: relative;
 
                 .avatarOther {
                     margin-top: 2%;
                     height: 50%;
                     width: auto;
-                    // z-index: 0;
-                    // background-image: "../styles/asset/Cerise.jpg";
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
-            .userConnect {
+            #userConnect {
+                
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                // vertical-align: middle;
 
                 .circleConnectLigne {
                     width: 20px;
                     height: 20px;
                     border-radius: 20px;
                     background-color: green;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
+
                 .connect {
-                    // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
-            .userInGame {
+
+            #userInGame {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
                 display: flex;
-                // vertical-align: middle;
+
                 .circleInGame {
                     width: 20px;
                     height: 20px;
@@ -688,23 +549,15 @@
                     background-color: orange;
                 }
                 .connect {
-                   // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
-            .userConnectHorsLigne {
+
+            #userConnectHorsLigne {
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
@@ -715,24 +568,13 @@
                     height: 20px;
                     border-radius: 20px;
                     background-color: red;
-                    // margin-top: 1%;
-                    // margin-left: 12%;
-                    // text-align: center;
                 }
+
                 .connect {
-                    // variant:"contained";
-
-                    // display: flex;
-
                     color: black;
                     font-family: "system-ui";
                     margin-left: 2%;
-
-                    // background-color: black;
-                    // margin-inline: auto;
-                    // margin-top: 3%;
                     text-align: center;
-                    //  align-items: center;
                     text-transform: capitalize;
                 }
             }
@@ -746,19 +588,15 @@
 
             .userNameOther {
                 color: grey;
-                // border: 2px solid green;
                 font-family: "system-ui";
             }
+
             .userNamePrintOther {
                 white-space: pre-line;
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200; //le gras d'un texte
-                // font-style: oblique;
-                // text-overflow: ellipsis;
             }
         }
         .infoUsernameOther {
@@ -767,33 +605,27 @@
             margin-top: 5%;
             display: flex;
             align-items: center;
-            // white-space:pre-line;
 
             .userNameChangeOther {
                 color: grey;
                 font-family: "system-ui";
-                // text-align: left;
             }
+
             .userNamePrintChangeOther {
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200;
             }
         }
         .buttonChangeOther {
-            // variant:"contained";
             display: flex;
             color: white;
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
-
-            // align-items: center;
+            margin-bottom: 3%;
             text-transform: capitalize;
-            //  white-space:normal;
         }
 
         .buttonChangeOther:hover {
@@ -809,10 +641,6 @@
             margin-left: 2%;
             margin-right: 2%;
             margin-bottom: 2%;
-
-            // justify-content: space-between;
-            // align-content: space-between;
-
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
@@ -827,9 +655,11 @@
                 top: 0;
                 z-index: 999;
             }
+
             * {
                 box-sizing: border-box;
             }
+
             .textRectangle {
                 display: inline-block;
                 vertical-align: middle;
@@ -837,69 +667,55 @@
                 justify-content: space-between;
                 padding: 6%;
             }
+
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
                 border: 5px solid red;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 background-color: rgb(255, 164, 164);
-
                 margin-bottom: 2%;
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
-            //
+
             .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
                 border: 5px solid green;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 background-color: rgb(182, 255, 164);
                 margin-bottom: 2%;
-
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
+
             .resultsOther {
                 width: 20%;
-                // padding: 60px;
                 background-color: none;
-                // opacity: 100%;
-
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 flex-direction: row;
-
                 text-align: center;
                 align-content: space-between;
                 justify-content: space-between;
                 vertical-align: middle;
-                // display: flex;
             }
+
             .scoreOther {
                 font-size: x-large;
-                // padding: 12px;
-
                 font-weight: 900;
-                // z-index: 999;
             }
+
             .avatarStatuserOther {
-                // padding: 10px;
                 margin-left: 12px;
                 align-items: center;
             }
+
             .nameOther {
                 font-size: x-small;
-                // padding: 2px;
-
                 margin-top: 9%;
-
                 text-transform: capitalize;
-
-                // text-transform: uppercase;
             }
         }
     }
 }
+
