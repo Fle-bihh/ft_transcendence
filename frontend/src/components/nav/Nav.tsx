@@ -136,7 +136,6 @@ const Navbar = (props: any) => {
               );
             } else
               return (
-                /* <a href={item.Link} className='link'> */
                 <NavLink key={item.Link} to={`${item.Link}`} className="link">
                   <Typography
                     sx={{
@@ -149,7 +148,6 @@ const Navbar = (props: any) => {
                   </Typography>
                 </NavLink>
               );
-            /* </a> */
           })}
         </ItemsNav>
         <MenuIcon
@@ -178,7 +176,6 @@ const Navbar = (props: any) => {
       >
         <Box sx={{ width: 150, height: "21vh" }}>
           {ItemsInNav.map((item) => (
-            // <a href={item.Link} className='little-link'>
             <NavLink key={item.Link} to={`${item.Link}`} className="little-link">
               <MenuItem
                 sx={{ cursor: "pointer", frontSize: "14px", color: "balck" }}
