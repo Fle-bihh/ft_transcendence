@@ -1,10 +1,7 @@
 import Navbar from '../../components/nav/Nav';
 import * as React from 'react';
 import "./profil.scss"
-import Cerise from '../../styles/asset/cerise.jpg'
-import Laurine from '../../styles/asset/ananas.png'
 
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../state';
@@ -15,9 +12,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
-import { Buffer } from 'buffer';
 import { User } from '../../state/type';
-
 
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
@@ -31,16 +26,7 @@ const options = {
 
 const Profile = () => {
 
-    // const [matchHistory, setMatchHistory] = React.useState(Array<{
-    //     id: number,
-    //     user1_login: string,
-    //     user2_login: string, // class user
-    //     user1_score: number,
-    //     user2_score: number,
-    //     winner_login: string,
-    // }>())
-
-    const [firstOpen, setFirstOpen] = useState(false)
+    const [firstOpen, setFirstOpen] = useState(true)
     const utils = useSelector((state: RootState) => state.utils);
     const user = useSelector((state: RootState) => state.persistantReducer.userReducer);
     const [inputValue, setInputValue] = useState("")
@@ -53,28 +39,6 @@ const Profile = () => {
     const [codePin, setCodePin] = useState(0);
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
-    // const [image, setimage] = userState("")
-
-    // const [userDisplay, setUserDisplay] = useState({
-    //     id: "",
-    //     username: '', //pseudo
-    //     login: '', // prenom  to --> login 
-    //     profileImage: '', // oui
-    //     email: '',
-    //     Rank: 0, // la XP de notre joueur 
-    //     WinNumber: 0, // nbr de gagne
-    //     LossNumber: 0,// nbr de perdu
-    //     twoFactorAuth: false,
-    //     getData: false,
-    // });
-
-    // const [userMatchHistory, setUserMatchHistory] = useState({
-    //         player1id: "",
-    //         score1: 0,
-    //         player2id: "",
-    //         score2: 0,
-    //         winnerid: "", // login de la personne qui a gagné
-    // });
 
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
@@ -100,10 +64,7 @@ const Profile = () => {
         if (change && inputValue != "") {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
                 if (response.data != null) {
-                    // const tmp = user!.user,
-                    // tmp.username = inputValue;
                     setUser(response.data)
-                    // userDisplay.getData = false;
                 }
             })
             setInputValue("")
@@ -148,18 +109,6 @@ const Profile = () => {
                 });
         }
 
-        // useEffect(() => {
-        // 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-        // 	if (codePin && res2FA === 401) {
-        // 		if (wrongCode)
-        // 			wrongCode.style.display = 'block';
-        // 	} else {
-        // 		if (wrongCode)
-        // 			wrongCode.style.display = 'none';
-        // 	}
-        // }, [res2FA]);
-        //fin 2FA
-
         const getUserData = () => {
             const jwt = cookies.get('jwt');
             const options = {
@@ -167,24 +116,6 @@ const Profile = () => {
                     'authorization': `Bearer ${jwt}`
                 }
             }
-            // axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
-            //     if (response.data != null) {
-            //         setUserDisplay({
-            //             id: response.data.id,
-            //             username: response.data.username,
-            //             login: response.data.login,
-            //             profileImage: response.data.profileImage,
-            //             email: response.data.email,
-            //             WinNumber: response.data.WinNumber,
-            //             LossNumber: response.data.LossNumber,
-            //             Rank: response.data.Rank,
-            //             twoFactorAuth: response.data.twoFactorAuth,
-            //             getData: true,
-            //         })
-            //     }
-            // }).catch(error => {
-            //     console.log(error);
-            // });
             axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
                 if (response.data != null) {
                     response.data.map((game: any) => {
@@ -197,31 +128,25 @@ const Profile = () => {
                             score2: game.score_u2,
                             winner: game.winner,
 
-
                         }
                         userMatchHistory.push(obj)
                     })
-                    console.log(response.data)
+                    console.log("ici", response.data)
                 }
             }).catch(error => {
                 console.log(error);
             });
-            setFirstOpen(true)
-
         }
 
 
         useEffect(() => {
-            // console.log("effect : ", userDisplay)
-            // || !userMatchHistory?.getData
+            console.log("fisrtOpen1", firstOpen)
             if (firstOpen)
                 getUserData();
 
         }, [])
 
         //----------------image pour téléchager--------------------------------------------
-
-        const [filebase64, setFileBase64] = useState<string>("")
 
         const convertFile = (e: any) => {
             const jwt = cookies.get('jwt');
@@ -238,9 +163,6 @@ const Profile = () => {
                 method: 'POST',
                 url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
                  options,
-                // // headers: {
-                // // 	'Content-Type': 'multipart/form-data',
-                // // },
                 profileImage: formData,
                 data: formData,
                 withCredentials: true
@@ -249,14 +171,11 @@ const Profile = () => {
                 
                 setUser(res.data);
                 console.log("resdata", res.data)
-                // userDisplay.profileImage = res.data;
 
             }).catch((err) => {
             })
         }
-
-        //----------------image pour téléchager--------------------------------------------
-        //_____________________________________------------------------------------
+        //----------------------------------------------------------------------------------------------------------------
         return (
             <React.Fragment >
                 <Navbar />
@@ -270,7 +189,6 @@ const Profile = () => {
                         <Button component="label" className="avatarChange">
                             Change Profile Picture
                         <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
-                            {/* <input type="file" hidden onChange={(e) => convertFile(e.target.files)} /> */}
                         </Button>
 
                         <div className="infoUser">
@@ -292,7 +210,6 @@ const Profile = () => {
                             </Typography>
 
                         </div>
-                        {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
                         <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
                         <Dialog open={open} onClose={() => handleClose(false)} >
                             <DialogTitle>Write your new username</DialogTitle>
@@ -364,7 +281,6 @@ const Profile = () => {
                                 </div>
                                 <div className="textRectangle">
                                     <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
-                                    {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
                                     <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                                 </div>
                                 <div className="textRectangle">
@@ -374,11 +290,8 @@ const Profile = () => {
                             </div>
 
                             {userMatchHistory.map((match) => {
-                                // getUserData()
-                                // if (firstOpen == false)
-                                //     return
+                        
                                 return (
-                                    // "eba00bae-e127-4f03-95ee-1f1afaf63293"
 
                                     <div className={match.winner.username == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
 
@@ -399,8 +312,8 @@ const Profile = () => {
                                         </div> */}
 
                                         <div className="results">
-                                            <div className="score">-{match.player2.username != user.user?.username ? match.score1 : match.score2}-</div>
-                                            <div className="name">{match.player2.username != user.user?.username ? match.player1.username : match.player2.username}</div>
+                                            <div className="score">-{match.player2.username == user.user?.username ? match.score1 : match.score2}-</div>
+                                            <div className="name">{match.player2.username == user.user?.username ? match.player1.username : match.player2.username}</div>
 
                                         </div>
 
@@ -409,7 +322,6 @@ const Profile = () => {
                                 )
                             })}
                         </>
-                        {/* spacing={5} */}
                     </div>
                 </div>
 

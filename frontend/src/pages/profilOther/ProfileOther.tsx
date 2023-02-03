@@ -95,18 +95,42 @@ const ProfileOther = () => {
     });
 
     utils.socket.removeListener("updateProfileOther");
+
+    let userConnect = document.getElementById("userConnect");
+    let userInGame = document.getElementById("userInGame");
+    let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
+    
     utils.socket.on(
         "updateProfileOther",
         (data: { login: string; friendStatus: string }) => {
+            
+            if (getComputedStyle(userInGame!).display == "flex") {
+                userConnect!.style.display = "none"
+                userInGame!.style.display = "none"
+                userConnectHorsLigne!.style.display = "none"
+                }
             console.log("oui");
             if (data.login != userDisplay.login) return;
             console.log("updateProfileOther", data.login, data.friendStatus);
-
-            if (data.friendStatus == "request-send") setFriend(FRIEND_REQUEST_SEND);
-            else if (data.friendStatus == "request-waiting")
+            if (data.friendStatus == "request-send") {
+                setFriend(FRIEND_REQUEST_SEND);
+            }
+            else if (data.friendStatus == "request-waiting") {
                 setFriend(FRIEND_REQUEST_WAITING);
-            else if (data.friendStatus == "not-friend") setFriend(NOT_FRIEND);
-            else setFriend(FRIEND);
+            }
+            else if (data.friendStatus == "not-friend") {
+                setFriend(NOT_FRIEND)
+            }
+            else {
+                setFriend(FRIEND)
+                if (getComputedStyle(userInGame!).display == "none") {
+                    userInGame!.style.display = "flex"
+                    userConnect!.style.display = "flex"
+
+                    userConnectHorsLigne!.style.display = "flex"
+
+                }
+            };
         }
     );
 
@@ -169,7 +193,6 @@ const ProfileOther = () => {
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = (change: boolean) => {
         if (change == true) {
             if (friend == NOT_FRIEND) {
@@ -188,6 +211,7 @@ const ProfileOther = () => {
                 utils.socket.emit("REMOVE_FRIEND_SHIP", {
                     loginToSend: userDisplay.login,
                 });
+
             }
         }
         setOpen(false);
@@ -316,48 +340,7 @@ const ProfileOther = () => {
         }
     }, [userDisplay?.getData]);
 
-    //-----------------------------------------------------------------------
-    function userConnect() {
-        console.log("SALUT2");
-        return (
-            <div className="userConnect">
-                <div className="circleConnectLigne"></div>
 
-                <div className="connect">Online</div>
-            </div>
-        );
-    }
-
-    function userInGame() {
-        return (
-            <div className="userInGame">
-                <div className="circleInGame"></div>
-
-                <div className="connect">In game</div>
-            </div>
-        );
-    }
-
-    function userConnectHorsLigne() {
-        return (
-            <div className="userConnectHorsLigne">
-                <div className="circleConnectHorsLigne"></div>
-                <div className="connect">Not Connected</div>
-            </div>
-        );
-    }
-
-    function connect() {
-        // const isLoggedIn = props.isLoggedIn;
-        if (userDisplay.Friend == 1) {
-            console.log("SALUT1");
-            return userConnect();
-        } else if (userDisplay.Friend == 0) {
-            return userInGame();
-        } else if (userDisplay.Friend == 0) {
-            return userConnectHorsLigne();
-        }
-    }
 
     //----------------------------------------------------------------------------------------
     return (
@@ -373,6 +356,25 @@ const ProfileOther = () => {
                             className="avatarOther"
                         />
                     </Stack>
+
+          
+                    <div id="userConnect" >
+                        <div className="circleConnectLigne" id="userConnect"></div>
+
+                        <div className="connect" id="userConnect">Online</div>
+                    </div>
+
+                    <div id="userInGame">
+                        <div className="circleInGame" id="userInGame"></div>
+
+                        <div className="connect" id="userInGame">In game</div>
+                    </div>
+
+                    <div id="userConnectHorsLigne">
+                        <div className="circleConnectHorsLigne" id="userConnectHorsLigne"></div>
+                        <div className="connect" id="userConnectHorsLigne">Not Connected</div>
+                    </div>  
+
                     <div className="infoUserOther">
                         <h3 className="userNameOther">Login :</h3>
                         <Typography className="userNamePrintOther">
@@ -385,6 +387,7 @@ const ProfileOther = () => {
                             {userDisplay?.username}
                         </Typography>
                     </div>
+
                     <Button
                         className="buttonChangeOther"
                         type="submit"
@@ -397,6 +400,7 @@ const ProfileOther = () => {
                                 : friend == FRIEND_REQUEST_WAITING
                                     ? "FRIEND REQUEST WAITING"
                                     : "FRIEND"}
+
                     </Button>
                     <Dialog open={open} onClose={() => handleClose(false)}>
                         <DialogTitle>
@@ -413,6 +417,7 @@ const ProfileOther = () => {
                             <Button onClick={() => handleClose(false)}>Cancel</Button>
                         </DialogActions>
                     </Dialog>
+
                     {friend == FRIEND ?
                         <Button className="buttonChangeOther" onClick={handleGameOpen} >
                             Invite to game
@@ -486,6 +491,7 @@ const ProfileOther = () => {
                             </DialogContent></> 
                         }
                     </Dialog>
+
                 </div>
 
                 <div className="statOther">
