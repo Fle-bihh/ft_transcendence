@@ -1,11 +1,7 @@
-
 import Navbar from '../../components/nav/Nav';
 import * as React from 'react';
 import "./profil.scss"
-import Cerise from '../../styles/asset/cerise.jpg'
-import Laurine from '../../styles/asset/ananas.png'
 
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../state';
@@ -16,7 +12,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
-import { Buffer } from 'buffer';
+import { User } from '../../state/type';
+
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
 const options = {
@@ -28,15 +25,6 @@ const options = {
 // rajouter bouton activer A2FA ou non 
 
 const Profile = () => {
-
-    // const [matchHistory, setMatchHistory] = React.useState(Array<{
-    //     id: number,
-    //     user1_login: string,
-    //     user2_login: string, // class user
-    //     user1_score: number,
-    //     user2_score: number,
-    //     winner_login: string,
-    // }>())
 
     const [firstOpen, setFirstOpen] = useState(true)
     const utils = useSelector((state: RootState) => state.utils);
@@ -51,38 +39,15 @@ const Profile = () => {
     const [codePin, setCodePin] = useState(0);
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
-    // const [image, setimage] = userState("")
-
-    const [userDisplay, setUserDisplay] = useState({
-        id: "",
-        username: '', //pseudo
-        login: '', // prenom  to --> login 
-        profileImage: '', // oui
-        email: '',
-        Rank: 0, // la XP de notre joueur 
-        WinNumber: 0, // nbr de gagne
-        LossNumber: 0,// nbr de perdu
-        twoFactorAuth: false,
-        getData: false,
-    });
-
-    // const [userMatchHistory, setUserMatchHistory] = useState({
-    //         player1id: "",
-    //         score1: 0,
-    //         player2id: "",
-    //         score2: 0,
-    //         winnerid: "", // login de la personne qui a gagné
-    // });
 
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             id: string,
-            player1id: string,
+            player1: User,
             score1: number,
-            player2id: string,
+            player2: User,
             score2: number,
-            winnerid: string, // login de la personne qui a gagné
-
+            winner: User,
         }>()
     );
     const handleClickOpen = () => {
@@ -97,364 +62,271 @@ const Profile = () => {
             }
         }
         if (change && inputValue != "") {
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
+                if (response.data != null) {
+                    setUser(response.data)
+                }
+            })
+            setInputValue("")
+            setOpen(false);
+        };
+    }
+
+        //2FA
+        const handleClickOpen2FA = () => {
+            setOpen2FA(true);
             const jwt = cookies.get('jwt');
             const options = {
                 headers: {
                     'authorization': `Bearer ${jwt}`
                 }
             }
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
-            userDisplay.username = inputValue;
-            userDisplay.getData= false;
-            
-        }
-        setInputValue("")
-        setOpen(false);
-    };
+            axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
+        };
 
-    //2FA
-    const handleClickOpen2FA = () => {
-        setOpen2FA(true);
-        const jwt = cookies.get('jwt');
-        const options = {
-            headers: {
-                'authorization': `Bearer ${jwt}`
+        const handleClose2FA = () => {
+            setOpen2FA(false);
+            setQrCode2FA("")
+            setCode2FA("")
+            setRes2FA(0)
+        };
+
+        const send2FARequest = (value: string) => {
+            const jwt = cookies.get('jwt');
+            const options = {
+                headers: {
+                    'authorization': `Bearer ${jwt}`
+                }
             }
+            axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
+                .then(res => {
+                    setUser(res.data);
+                    setCode2FA('');
+                    setRes2FA(res.status);
+                })
+                .catch(err => {
+                    setRes2FA(err.response.status);
+                });
         }
-        axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
-    };
 
-    const handleClose2FA = () => {
-        setOpen2FA(false);
-        setQrCode2FA("")
-        setCode2FA("")
-        setRes2FA(0)
-    };
-
-    const send2FARequest = (value: string) => {
-        const jwt = cookies.get('jwt');
-        const options = {
-            headers: {
-                'authorization': `Bearer ${jwt}`
+        const getUserData = () => {
+            const jwt = cookies.get('jwt');
+            const options = {
+                headers: {
+                    'authorization': `Bearer ${jwt}`
+                }
             }
-        }
-        axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
-            .then(res => {
-                setUser(res.data);
-                setCode2FA('');
-                setRes2FA(res.status);
-            })
-            .catch(err => {
-                setRes2FA(err.response.status);
+            axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
+                if (response.data != null) {
+                    response.data.map((game: any) => {
+                        const obj = {
+
+                            id: game.id,
+                            player1: game.player1,
+                            score1: game.score_u1,
+                            player2: game.player2,
+                            score2: game.score_u2,
+                            winner: game.winner,
+
+                        }
+                        userMatchHistory.push(obj)
+                    })
+                    console.log("ici", response.data)
+                }
+            }).catch(error => {
+                console.log(error);
             });
-    }
-
-    // useEffect(() => {
-    // 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-    // 	if (codePin && res2FA === 401) {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'block';
-    // 	} else {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'none';
-    // 	}
-    // }, [res2FA]);
-    //fin 2FA
-
-    const getUserData = () => {
-        const jwt = cookies.get('jwt');
-        const options = {
-            headers: {
-                'authorization': `Bearer ${jwt}`
-            }
         }
-        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                setUserDisplay({
-                    id: response.data.id,
-                    username: response.data.username,
-                    login: response.data.login,
-                    profileImage: response.data.profileImage,
-                    email: response.data.email,
-                    WinNumber: response.data.WinNumber,
-                    LossNumber: response.data.LossNumber,
-                    Rank: response.data.Rank,
-                    twoFactorAuth: response.data.twoFactorAuth,
-                    getData: true,
-                })
-                // setFirstOpen(false)
+
+
+        useEffect(() => {
+            console.log("fisrtOpen1", firstOpen)
+            if (firstOpen)
+                getUserData();
+
+        }, [])
+
+        //----------------image pour téléchager--------------------------------------------
+
+        const convertFile = (e: any) => {
+            const jwt = cookies.get('jwt');
+            const options = {
+                headers: {
+                    'Authorization': `Bearer ${jwt}`
+                }
             }
-        }).catch(error => {
-            console.log(error);
-        });
-        axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                response.data.map((game: any) => {
-                    const obj = {
+            const img = e.target.files.item(0);
+            var formData = new FormData();
+            formData.append("photo", img);
 
-                        id: game.id,
-
-                        player1id: game.player1.username,
-                        score1: game.score_u1,
-                        player2id: game.player2.username,
-                        score2: game.score_u2,
-                        winnerid: game.winner.username,
-
-
-                    }
-                    userMatchHistory.push(obj)
-                })
-                console.log(response.data)
+            var config = {
+                method: 'POST',
+                url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
+                 options,
+                profileImage: formData,
+                data: formData,
+                withCredentials: true
             }
-        }).catch(error => {
-            console.log(error);
-        });
-    }
+            axios(config).then((res) => {
+                
+                setUser(res.data);
+                console.log("resdata", res.data)
 
+            }).catch((err) => {
+            })
+        }
+        //----------------------------------------------------------------------------------------------------------------
+        return (
+            <React.Fragment >
+                <Navbar />
+                <div className="profilePageContainer">
+                    <div className="profile" >
 
-    useEffect(() => {
-        // console.log("effect : ", userDisplay)
-        // || !userMatchHistory?.getData
-        if (!userDisplay?.getData)
-            getUserData();
+                        <Stack direction="row" spacing={2} className="avatarItem">
+                            <img alt="Cerise" src={user.user?.profileImage} className="avatar" />
+                        </Stack>
 
-    }, [userDisplay?.getData])
-
-    //----------------image pour téléchager--------------------------------------------
-    const [filebase64, setFileBase64] = useState<string>("")
-
-
-    // function convertFile(files: FileList | null) {
-    //     if (files) {
-    //         const fileRef = files[0] || ""
-    //         const fileType: string = fileRef.type || ""
-    //         // console.log("This file upload is of type:", fileType)
-    //         const reader = new FileReader()
-    //         reader.readAsBinaryString(fileRef)
-    //         reader.onload = (ev: any) => {
-
-    //             // Buffer.from(str, 'base64')  buf.toString('base64').
-    //             setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-
-    //             const buf = Buffer.from(`data:${fileType}`,'base64');
-    //             console.log("image0", buf.toString('base64'));
-
-    //             console.log("image1", `data:${fileType};base64,${btoa(ev.target.result)}`)
-             
-    //             // console.log(Buffer.from("SGVsbG8gV29ybGQ=", 'base64').toString('ascii'))
-    //             console.log("image2", filebase64)
-
-    //         }
-    //         axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-    //         userDisplay.profileImage = filebase64;
-    //     }
-    // }
-
-    const convertFile = (e: any) => {
-		const img = e.target.files.item(0);
-        let url = URL.createObjectURL(e.target.files.item(0))
-        console.log("url", url)
-        setFileBase64(url)
-        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: url }, options)
-        userDisplay.profileImage = url;
-
-
-    }
-		// var formData = new FormData();
-		// formData.append("photo", img);
-        // // setFileBase64(formData)
-        // userDisplay.profileImage = filebase64;
-        
-        // // console.log("image1", img.{name})
-        // console.log("image", img[0])
-
-
-    // function convertFile(files: FileList | null) {
-    //     const jwt = cookies.get('jwt');
-    //     const options = {
-    //         headers: {
-    //             'authorization': `Bearer ${jwt}`
-    //         }
-    //     }
-    //     if (files) {
-    //         console.log("files . ", files);
-    //         const fileRef = files[0] || ""
-    //         const fileType: string = fileRef.type || ""
-    //         // console.log("This file upload is of type:", fileType)
-    //         const reader = new FileReader()
-    //         reader.readAsBinaryString(fileRef)
-    //         reader.onload = (ev: any) => {
-    //             // convert it to base64
-    //             setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
-    //         }
-    //         console.log(filebase64);
-    //     }
-    //     axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-    //     userDisplay.profileImage = filebase64;
-
-    // }
-
-    
-    //_____________________________________------------------------------------
-    return (
-        <React.Fragment >
-            <Navbar />
-            <div className="profilePageContainer">
-                <div className="profile" >
-
-                    <Stack direction="row" spacing={2} className="avatarItem">
-                        <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
-                    </Stack>
-
-                    <Button component="label" className="avatarChange">
-                        Change Profile Picture
+                        <Button component="label" className="avatarChange">
+                            Change Profile Picture
                         <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
-                        {/* <input type="file" hidden onChange={(e) => convertFile(e.target.files)} /> */}
-                    </Button>
+                        </Button>
 
-                    <div className="infoUser">
-                        <h3 className="userName">
-                            Login :
-                        </h3>
-                        <Typography className="userNamePrint">
-                            {userDisplay?.login}
-                        </Typography>
+                        <div className="infoUser">
+                            <h3 className="userName">
+                                Login :
+                             </h3>
+                            <Typography className="userNamePrint">
+                                {user.user?.login}
+                            </Typography>
 
-                    </div>
-                    <div className="infoUsername">
-
-                        <h3 className="userNameChange">
-                            userName :
-                        </h3>
-                        <Typography className="userNamePrintChange">
-                            {userDisplay?.username}
-                        </Typography>
-
-                    </div>
-                    {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
-                    <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
-                    <Dialog open={open} onClose={() => handleClose(false)} >
-                        <DialogTitle>Write your new username</DialogTitle>
-                        <DialogContent>
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                id="name"
-                                label="New Username"
-                                type="text"
-                                fullWidth
-                                variant="standard"
-                                value={inputValue}
-                                onChange={(event) => setInputValue(event.currentTarget.value)}
-                                onKeyUp={(e) => { if (e.key === 'Enter') { handleClose(true) } }}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => handleClose(true)}>Confirm</Button>
-                            <Button onClick={() => handleClose(false)}>Cancel</Button>
-                        </DialogActions>
-                    </Dialog>
-                    {!user.user?.twoFactorAuth ?
-                        <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
-                                Activate 2FA
-                            </Button>
-                            <Dialog open={open2FA} onClose={handleClose2FA} >
-                                <div>
-                                    <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
-                                    <DialogContent className='2FA'>
-                                        <img src={qrCode2FA} />
-                                        <PinInput length={6}
-                                            focus
-                                            onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
-                                            type="numeric"
-                                            inputFocusStyle={{ borderColor: '#f55951' }}
-                                            inputMode="number"
-                                            style={{ padding: '10px' }}
-                                            onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
-                                            autoSelect={true} />
-                                        <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleClose2FA}>Cancel</Button>
-                                    </DialogActions>
-                                </div>
-                            </Dialog>
-                        </div> :
-                        <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={() => {
-                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
-                                    console.log('data', res.data)
-                                    setUser(res.data)
-                                })
-                            }}>
-                                Deactivate 2FA
-                            </Button>
                         </div>
-                    }
-                </div>
+                        <div className="infoUsername">
 
-                <div className="stat">
-                    <>
-                        <div className="rectangle">
-                            <div className="textRectangle">
-                                <p>nbr Win</p>
-                                {userDisplay?.WinNumber}
-                            </div>
-                            <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
-                                {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay?.Rank}</h3>
-                            </div>
-                            <div className="textRectangle">
-                                <p>nbr Loose</p>
-                                {userDisplay?.LossNumber}
-                            </div>
+                            <h3 className="userNameChange">
+                                userName :
+                            </h3>
+                            <Typography className="userNamePrintChange">
+                                {user.user?.username}
+                            </Typography>
+
                         </div>
-
-                        {userMatchHistory.map((match) => {
-                                // getUserData()
-                            // if (userDisplay.username != )
-                            //     return 
-                            return (
-                                // "eba00bae-e127-4f03-95ee-1f1afaf63293"
-
-                                <div className={match.winnerid == userDisplay.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
-
-
-                                    <div className="results" >
-                                        <div className="name">{match.player1id == userDisplay.username ? match.player1id : match.player2id}</div>
-                                        <div className="score">-{match.player1id == userDisplay.username ? match.score1 : match.score2}-</div>
-
+                        <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
+                        <Dialog open={open} onClose={() => handleClose(false)} >
+                            <DialogTitle>Write your new username</DialogTitle>
+                            <DialogContent>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="name"
+                                    label="New Username"
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    value={inputValue}
+                                    onChange={(event) => setInputValue(event.currentTarget.value)}
+                                    onKeyUp={(e) => { if (e.key === 'Enter') { handleClose(true) } }}
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => handleClose(true)}>Confirm</Button>
+                                <Button onClick={() => handleClose(false)}>Cancel</Button>
+                            </DialogActions>
+                        </Dialog>
+                        {!user.user?.twoFactorAuth ?
+                            <div>
+                                <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
+                                    Activate 2FA
+                                </Button>
+                                <Dialog open={open2FA} onClose={handleClose2FA} >
+                                    <div>
+                                        <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
+                                        <DialogContent className='2FA'>
+                                            <img src={qrCode2FA} />
+                                            <PinInput length={6}
+                                                focus
+                                                onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
+                                                type="numeric"
+                                                inputFocusStyle={{ borderColor: '#f55951' }}
+                                                inputMode="number"
+                                                style={{ padding: '10px' }}
+                                                onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
+                                                autoSelect={true} />
+                                            <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClose2FA}>Cancel</Button>
+                                        </DialogActions>
                                     </div>
+                                </Dialog>
+                            </div> :
+                            <div>
+                                <Button className="buttonChange2FA" type="submit" onClick={() => {
+                                    axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                                        console.log('data', res.data)
+                                        setUser(res.data)
+                                    })
+                                }}>
+                                    Deactivate 2FA
+                            </Button>
+                            </div>
+                        }
+                    </div>
 
-                                    {/* <div className="results" >
+                    <div className="stat">
+                        <>
+                            <div className="rectangle">
+                                <div className="textRectangle">
+                                    <p>nbr Win</p>
+                                    {user.user?.WinNumber}
+                                </div>
+                                <div className="textRectangle">
+                                    <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
+                                    <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
+                                </div>
+                                <div className="textRectangle">
+                                    <p>nbr Loose</p>
+                                    {user.user?.LossNumber}
+                                </div>
+                            </div>
+
+                            {userMatchHistory.map((match) => {
+                        
+                                return (
+
+                                    <div className={match.winner.username == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+
+
+                                        <div className="results" >
+                                            <div className="name">{match.player1.username == user.user?.username ? match.player1.username : match.player2.username}</div>
+                                            <div className="score">-{match.player1.username == user.user?.username ? match.score1 : match.score2}-</div>
+
+                                        </div>
+
+                                        {/* <div className="results" >
     
-                                            <Avatar alt="Cerise" src={userDisplay?.profileImage}
+                                            <Avatar alt="Cerise" src={user.user?.profileImage}
                                                 className="avatarStatuser" variant="square" />
     
                                             <Avatar alt="Laurine" src={Laurine}
                                                 className="avatarStatuser" variant="square" />
                                         </div> */}
 
-                                    <div className="results">
-                                        <div className="score">-{match.player2id == userDisplay.username ? match.score1 : match.score2}-</div>
-                                        <div className="name">{match.player2id == userDisplay.username ? match.player1id : match.player2id}</div>
+                                        <div className="results">
+                                            <div className="score">-{match.player2.username == user.user?.username ? match.score1 : match.score2}-</div>
+                                            <div className="name">{match.player2.username == user.user?.username ? match.player1.username : match.player2.username}</div>
+
+                                        </div>
+
 
                                     </div>
-
-
-                                </div>
-                            )
-                        })
-                        }
-                    </>
-                    {/* spacing={5} */}
+                                )
+                            })}
+                        </>
+                    </div>
                 </div>
-            </div>
 
-        </React.Fragment >
+            </React.Fragment >
 
-    )
-};
-export default Profile;
+        )
+    };
+    export default Profile;

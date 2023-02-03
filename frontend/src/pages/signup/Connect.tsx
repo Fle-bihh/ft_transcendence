@@ -34,6 +34,7 @@ const Connect = () => {
     );
   }
 
+  if (!userReducer.user)
     axios.request({
       url: "/auth/api42/Signin",
       method: "post",

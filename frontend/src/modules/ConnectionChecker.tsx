@@ -6,15 +6,16 @@ import axios from "axios";
 import { ip } from "../App";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
+import { setUser } from "../state/action-creators";
 
 function ConnectionChecker(props: { children: any }): JSX.Element {
   const userReducer = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
   const [isConnected, setIsConnected] = useState(true);
-  const utils = useSelector((state: RootState) => state.utils);
+  const twoFAReducer = useSelector((state: RootState) => state.persistantReducer.twoFAReducer);
   const dispatch = useDispatch();
-  const { setUser } = bindActionCreators(actionCreators, dispatch);
+  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     const cookies = new Cookies();
@@ -37,7 +38,8 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
         });
     }
   });
-  if (isConnected) {
+  console.log("twoFAReducer = ", twoFAReducer)
+  if (isConnected && (twoFAReducer.twoFactorVerify || !userReducer.user?.twoFactorAuth)) {
     return <>{props.children}</>;
   }
   return <Navigate to="/Signup"></Navigate>;
