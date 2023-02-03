@@ -51,11 +51,16 @@ export class AuthService {
       const authCredentialsDto: AuthCredentialsDto = {
         username: data.login,
         login: data.login,
-        firstName: data.first_name,
-        lastName: data.last_name,
         profileImage: data.image.link,
         email: data.email,
         admin: auth42Dto.admin,
+        games: [],
+        messagesSent: [],
+        messagesReceived: [],
+        channels: [],
+        channelsAdmin: [],
+        channelsConnected: [],
+        blockList: [],
       };
       const { login } = authCredentialsDto;
       let user: User = await this.usersRepository.findOne({

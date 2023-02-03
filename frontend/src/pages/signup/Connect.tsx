@@ -33,7 +33,6 @@ const Connect = () => {
       { replace: true }
     );
   }
-
   if (!userReducer.user)
   {
       axios.request({

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import { Channel } from 'src/entities/channel.entity';
+import { ChannelService } from 'src/channel/channel.service';
 import {Message} from 'src/entities/message.entity';
 import { FriendRequestModule } from 'src/friends/friendRequest.module';
 import { FriendRequestService } from 'src/friends/friendRequest.service';
@@ -12,6 +14,7 @@ import {UsersModule} from 'src/users/users.module';
 import { ChatGateway } from './chat.gateway';
 import { EventsGateway } from './events.gateway';
 import { PongGateway } from './pong.gateaway';
+import { ChannelModule } from 'src/channel/channel.module';
 
 @Module({
   imports: [
@@ -20,8 +23,8 @@ import { PongGateway } from './pong.gateaway';
     FriendRequestModule,
     MessagesModule,
     FriendShipModule,
+    ChannelModule,
     TypeOrmModule.forFeature(),
-    // MessagesService,
   ],
   providers: [EventsGateway, ChatGateway, PongGateway, MessagesService, FriendRequestService, FriendShipService],
   exports: [TypeOrmModule],

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { Game } from 'src/entities/game.entity';
+import { Message } from 'src/entities/message.entity';
 import { User } from 'src/entities/user.entity';
 import { GameModule } from 'src/game/game.module';
 import { UsersController } from './users.controller';
@@ -15,7 +16,7 @@ import { UsersService } from './users.service';
   imports: [
     forwardRef(() => AuthModule),
     ConfigModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Message]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

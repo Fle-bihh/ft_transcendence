@@ -1,46 +1,35 @@
-import {User} from "src/entities/user.entity";
-import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {Message} from "./message.entity";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Message } from "./message.entity";
+import { User } from "./user.entity";
 
 @Entity()
 export class Channel {
-//   @PrimaryGeneratedColumn('uuid')
-//   id: string;
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
-//   @Column({ unique: true })
-//   name: string;
+	@Column()
+	privacy: string;
 
-//   @Column()
-//   password: string;
+	@Column({ unique: true })
+	name: string;
 
-//   @ManyToOne(type => User, user => user.channels, { nullable: true })
-//   creator: User | null;
+	@Column()
+	password: string;
 
-//   @OneToMany(type => Message, message => message.channel)
-//   messages: Message[];
+	@Column()
+	description: string;
 
-//   @ManyToMany(type => User, user => user.channelsAdmin)
-//   @JoinTable()
-//   admin: User[];
+	@ManyToOne(type => User, user => user.channels, { nullable: true })
+	creator: User | null;
 
-//   @ManyToMany(type => User, user => user.channelsConnected, { cascade: false })
-//   @JoinTable()
-//   userConnected: User[];
-    @PrimaryGeneratedColumn()
-    id: number;
+	@ManyToMany(type => User, user => user.channelsAdmin)
+	@JoinTable()
+	admin: User[];
 
-    @Column()
-    privacy: string;
+	@OneToMany(type => Message, message => message.channel)
+	messages: Message[];
 
-    @Column()
-    name: string;
-
-    @Column()
-    password: string;
-
-    @Column()
-    description: string;
-
-    @Column()
-    owner: string;
+	@ManyToMany(type => User, user => user.channelsConnected, { cascade: false })
+	@JoinTable()
+	userConnected: User[];
 }
