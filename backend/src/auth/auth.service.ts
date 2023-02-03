@@ -79,6 +79,7 @@ export class AuthService {
       throw new HttpException(error.response.data, error.response.data);
     }
   }
+
   async getUserFromToken(token: string): Promise<User> {
     try {
       const payload = this.jwtService.verify(token);

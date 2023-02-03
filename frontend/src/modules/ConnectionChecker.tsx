@@ -13,9 +13,9 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
     (state: RootState) => state.persistantReducer.userReducer
   );
   const [isConnected, setIsConnected] = useState(true);
-  const utils = useSelector((state: RootState) => state.utils);
+  const twoFAReducer = useSelector((state: RootState) => state.persistantReducer.twoFAReducer);
   const dispatch = useDispatch();
-  const { setUser } = bindActionCreators(actionCreators, dispatch);
+  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     const cookies = new Cookies();
@@ -28,16 +28,10 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
     console.log(userReducer.user)
     if (userReducer.user === null) {
       setIsConnected(false);
-    } else {
-      // axios
-      //   .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options)
-      //   .then(response => { })
-      //   .catch((error) => {
-      //     setIsConnected(false)
-      //   });
     }
   });
-  if (isConnected) {
+  console.log("twoFAReducer = ", twoFAReducer)
+  if (isConnected && (twoFAReducer.twoFactorVerify || !userReducer.user?.twoFactorAuth)) {
     return <>{props.children}</>;
   }
   return <Navigate to="/Signup"></Navigate>;
