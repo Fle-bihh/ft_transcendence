@@ -44,7 +44,7 @@ const Connect = () => {
         nickName: null,
       }
     }).then((response: AxiosResponse<any, any>) => {
-      cookies.set('jwt', response.data.accessToken, { path: `/`});
+      cookies.set('jwt', response.data.accessToken, { path: `/` });
       setUser(response.data.user);
       const jwt = cookies.get('jwt');
       const options = {
@@ -54,7 +54,7 @@ const Connect = () => {
       }
       // window.location.replace(`http://${ip}:3000`);
       console.log('Connect 2 cookie == ', options);
-  }).catch((err) => { });
+    }).catch((err) => { });
 
   function verify2FA(value: string) {
     const jwt = cookies.get('jwt');

@@ -33,7 +33,7 @@ export class ChannelService {
     return channels;
   }
 
-  async createChannel(user: User, name: string, password: string, description: string, privacy: string): Promise<void> {
+  async createChannel(user: User, name: string, password: string, description: string, privacy: string): Promise<Channel> {
 
     let hashedPassword: string = "";
 
@@ -70,6 +70,7 @@ export class ChannelService {
     } catch (e) {
       console.log(e.code);
     }
+    return channel;
   }
 
   async getChannel(): Promise<Channel[]> {
@@ -88,6 +89,7 @@ export class ChannelService {
     let found: Channel = (await this.getChannel()).find((channel) => channel.name === id);
     if (!found)
       throw new NotFoundException(`Channel ${id} not found`);
+    console.log("FOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUND ==", found)
     return found;
   }
 
@@ -111,21 +113,8 @@ export class ChannelService {
     }
   }
 
-  // async joinChannel(user: User, channel: Channel) {
-  //   channel.userConnected.push(user);
-  //
-  //   user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
-  //   user.channelsConnected.push(channel);
-  //
-  //   try {
-  //     await this.channelsRepository.save(channel);
-  //   } catch (e) {
-  //     console.log(e.code);
-  //   }
-  // }
-
   async promoteAdmin(user: User, channel: Channel) {
-    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
+    channel.admin.push(user);
 
     try {
       await this.channelsRepository.save(channel)
@@ -209,22 +198,45 @@ export class ChannelService {
     return { messages };
   }
 
-  async createMessage(sender: User, message: MessagesDto) {
-    const msg: Message = this.messagesRepository.create(message);
+async getConvByChannel(name: string) {
+    const allMessages = await this.getMessages();
 
+    let messages = new Array<{sender: string, receiver: string, content: string, time: Date}>();
+    for (let message of allMessages) {
+      if (message.channel && message.channel.name === name) {
+        messages.push({sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date});
+      }
+    }
+    return messages;
+  }
+
+  async createMessage(sender: User, message: MessagesDto) {
+    console.log('0');
+    const msg: Message = this.messagesRepository.create({
+    body: message.body,
+    date: message.date,
+    sender: sender,
+    receiver: message.receiver,
+    channel: message.channel});
+
+    console.log('1');
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
     sender.messagesSent.push(msg);
 
+    console.log('2');
     if (message.receiver) {
       message.receiver.messagesReceived = (await this.userService.getMessages(message.receiver.id)).messagesReceived;
       message.receiver.messagesReceived.push(msg);
     }
 
+    console.log('3');
     if (message.channel) {
       message.channel.messages = (await this.getMessageByChannel(message.channel.name)).messages;
       message.channel.messages.push(msg);
     }
 
+    console.log('4');
+    console.log("create message == ", message);
     try {
       await this.messagesRepository.save(msg);
       await this.usersRepository.save(sender);

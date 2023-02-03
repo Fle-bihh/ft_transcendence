@@ -15,6 +15,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
   ) { }
 
   async signUp(userCredentialsDto: UserCredentialsDto): Promise<void> {
@@ -218,8 +220,26 @@ export class UsersService {
     const messagesReceived = allMessages.find((user) => {
       return user.username === found.username
     }).messagesReceived;
-
     return { messagesSent, messagesReceived };
   }
 
+
+  async getMessage() {
+    const messages = this.messageRepository.createQueryBuilder("message")
+      .leftJoinAndSelect("message.sender", "sender")
+      .leftJoinAndSelect("message.receiver", "receiver")
+    return await messages.getMany();
+  }
+
+  async getConv(user: User, receiver: User) {
+    let conv = new Array<{ sender: string, receiver: string, content: string, time: Date }>();
+
+    const messages = await this.getMessage();
+
+    for (const message of messages) {
+      if ((user.username === message.receiver.username && receiver.username === message.sender.username) || (user.username === message.sender.username && receiver.username === message.receiver.username))
+        conv.push({ sender: message.sender.username, receiver: message.receiver.username, content: message.body, time: message.date });
+    }
+    return conv;
+  }
 }
