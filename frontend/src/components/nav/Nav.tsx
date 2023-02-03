@@ -24,10 +24,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../../state";
 import { bindActionCreators } from "redux";
+import Cookies from "universal-cookie"
 
 const Navbar = (props: any) => {
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
+  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const persistantReducer = useSelector(
     (state: RootState) => state.persistantReducer
   );
@@ -115,7 +117,10 @@ const Navbar = (props: any) => {
                   to={`/`}
                   className="link"
                   onClick={() => {
+                    const cookies = new Cookies();
+                    cookies.remove('jwt');
                     setUser(null);
+                    setTwoFA(false);
                   }}
                 >
                   <Typography
@@ -131,7 +136,6 @@ const Navbar = (props: any) => {
               );
             } else
               return (
-                /* <a href={item.Link} className='link'> */
                 <NavLink key={item.Link} to={`${item.Link}`} className="link">
                   <Typography
                     sx={{
@@ -144,7 +148,6 @@ const Navbar = (props: any) => {
                   </Typography>
                 </NavLink>
               );
-            /* </a> */
           })}
         </ItemsNav>
         <MenuIcon
@@ -173,7 +176,6 @@ const Navbar = (props: any) => {
       >
         <Box sx={{ width: 150, height: "21vh" }}>
           {ItemsInNav.map((item) => (
-            // <a href={item.Link} className='little-link'>
             <NavLink key={item.Link} to={`${item.Link}`} className="little-link">
               <MenuItem
                 sx={{ cursor: "pointer", frontSize: "14px", color: "balck" }}

@@ -9,29 +9,14 @@
     padding: 0 20px;
 }
 
-.home-container{
-    /* margin-left: 80px; */
-}
-
 .home-container span{
-    /* font-weight: 10; */
     cursor: pointer;
 }
 
 .link-container{
-    /* margin: 40px; */
-    /* display: flex; */
-    /* position: relative; */
-    /* padding-right: 10px; */
-    /* width: 300px; */
     cursor: pointer;
-    /* justify-content: space-between; */
-    /* padding-left: 40px; */
 
 }
-
-   /* // justify-content:space-between; */
-
 
 .link  {
     text-decoration: none;
@@ -53,19 +38,12 @@
 
 .nav-active {
     position: relative;
-// un after c'est une barre qui souligne l'élément
     &::after {
       content: "";
       height: 1px;
       width: 0;
       background: yellow;
       position: absolute;
-    //   border-radius: 10px;
-    //   bottom: 0px;
-    //   left: 10%;
-    //   transform: translateX(-10%);
-    //   -webkit-animation: anim 0.3s ease forwards;
-    //   animation: anim 0.6s ease forwards;
 
       @-webkit-keyframes anim {
         to {

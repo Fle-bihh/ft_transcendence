@@ -25,9 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user: User = await this.usersRepository.findOneBy({
         login: login,
     });
-    console.log('login == ', login);
-    console.log('payload == ', payload);
-    console.log(user);
     if (!user) {
       throw new UnauthorizedException('t es cringe');
     }

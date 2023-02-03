@@ -3,21 +3,16 @@ import { userActionType } from "../action-types";
 type SetUserAction = {
     type: userActionType.SETUSER
     payload: {
-    id: string,
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    nickName: string,
-    profileImage: string,
-    email: string,
-    GoalTaken: number,
-    GoalSet: number,
-    NormalGameNumber: number,
-    NormalWinNumber: number,
-    NormalLossNumber: number,
-    twoFactorAuth: boolean,
-    Friend: number,
+        id: string,
+        username: string
+        login: string,
+        profileImage: string,
+        email: string,
+        WinNumber: number,
+        LossNumber: number,
+        Rank: number,
+        twoFactorAuth: boolean,
+        friend: number,
     } | null
 }
 
@@ -44,3 +39,12 @@ type SeenAllNotifAction = {
 }
 
 export type notifAction = AddNotifAction | DelNotifAction | SeenAllNotifAction
+
+import { twoFAActionType } from "../action-types";
+
+type setTwoFA = {
+    type: twoFAActionType.SETTWOFA
+    twoFactorVerify: boolean,
+}
+
+export type twoFAAction = setTwoFA

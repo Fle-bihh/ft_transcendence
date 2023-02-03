@@ -1,31 +1,37 @@
 import { Dispatch } from "redux";
-import { notifActionType, userActionType } from "../action-types/index";
-import { notifAction, userAction } from "../actions/index";
+import { notifActionType, twoFAActionType, userActionType } from "../action-types/index";
+import { notifAction, twoFAAction, userAction } from "../actions/index";
 import { NotifType } from "../type";
 
 export const setUser = (
   item: {
     id: string,
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    nickName: string,
-    profileImage: string
-    email: string,
-    GoalTaken: number,
-    GoalSet: number,
-    NormalGameNumber: number,
-    NormalWinNumber: number,
-    NormalLossNumber: number,
-    twoFactorAuth: boolean,
-    Friend: number,
+        username: string
+        login: string,
+        profileImage: string,
+        email: string,
+        WinNumber: number,
+        LossNumber: number,
+        Rank: number,
+        twoFactorAuth: boolean,
+        friend: number,
   } | null
 ) => {
   return (dispatch: Dispatch<userAction>) => {
     dispatch({
       type: userActionType.SETUSER,
       payload: item,
+    });
+  };
+};
+
+export const setTwoFA = (
+  twoFactorVerify: boolean
+) => {
+  return (dispatch: Dispatch<twoFAAction>) => {
+    dispatch({
+      type: twoFAActionType.SETTWOFA,
+      twoFactorVerify: twoFactorVerify,
     });
   };
 };

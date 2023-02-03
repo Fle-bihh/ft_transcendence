@@ -1,14 +1,20 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
+import {
+  Column,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class FriendRequest {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn()
+  public id: number;
 
-    @ManyToOne(() => User, user => user.requestFrom)
-    from: User;
+  @Column()
+  @Index()
+  public sender_id: string;
 
-    @ManyToOne(() => User, user => user.requestTo)
-    to: User;
+  @Column()
+  @Index()
+  public receiver_id: string;
 }
