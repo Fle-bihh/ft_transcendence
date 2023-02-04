@@ -17,31 +17,10 @@ import { User } from 'src/entities/user.entity';
 import { Channel } from 'src/entities/channel.entity';
 import { Message } from 'src/entities/message.entity';
 
-const db_messages = Array<{
-  index: number;
-  sender: string;
-  receiver: string;
-  content: string;
-  time: Date;
-}>();
 const db_blockList = Array<{
   index: number;
   loginBlock: string;
   loginEmitter: string;
-}>();
-const db_participants = Array<{
-  index: number;
-  login: string;
-  channel: string;
-  admin: boolean;
-}>();
-const db_channels = Array<{
-  index: number;
-  privacy: string;
-  name: string;
-  password: string;
-  description: string;
-  owner: string;
 }>();
 const users = Array<{ index: number; user: any; socket: Socket }>();
 
@@ -94,7 +73,7 @@ export class ChatGateway {
     // CHECK EMIT ET LOGGER
     //   this.logger.log('send newMessage to', sender.user.login);
     //   if (sender != undefined) {
-    //     sender.socket.emit('new_message');
+        // sender.socket.emit('new_message');
     //   }
     //   this.logger.log('send newMessage to', receiver.user.login);
     //   if (receiver != undefined) {
@@ -122,6 +101,7 @@ export class ChatGateway {
 
   @SubscribeMessage('JOIN_CHANNEL')
   async join_channel(client: Socket, data: { login: string, channelName: string, channelPassword: string }) {
+    console.log("join channel password == ", data.channelPassword);
     await this.channelsService.joinChannel(data.login, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
     client.emit('channel_joined', { channelName: data.channelName });
     this.get_all_conv_info(client, { sender: data.login });
@@ -201,8 +181,6 @@ export class ChatGateway {
       last_message_text: string,
       new_conv: boolean,
     }>();
-    // FIRST STEP CHANNEL
-    //
     const user: User = await this.usersService.getUserByUsername(data.sender);
     const allMessages = await this.channelsService.getMessages();
     const tmp = allMessages.reverse();
@@ -219,116 +197,6 @@ export class ChatGateway {
     }
     client.emit('get_all_conv_info', retArray);
     this.logger.log('send get_all_conv_info to front', retArray);
-    // const messages = await this.messagesService.findAll();
-    // const senderLogin = (await this.usersService.getUserByUsername(data.sender)).login;
-    // // const channel = await this.channelsService.findChannel(data.receiver);
-    // this.logger.log('GET_ALL_CONV_INFO recu ChatGateway', data);
-    // const retArray = Array<{
-    //   receiver: string;
-    //   last_message_time: Date;
-    //   last_message_text: string;
-    //   new_conv: boolean;
-    // }>();
-    //
-    // // WE'RE GONNA PUSH IN RETARRAY ALL THE CONV WHERE data.sender IS REGISTERED,
-    // // WITH THOSE INFO : RECEIVER, TIME OF LAST MESSAGE, CONTENT OF LAST MESSAGE AND NEW_CONV AS FALSE
-    // // (NEW_CONV IS USEFUL IN THE FRONT, DONT PAY ATTENTION TO IT)
-    //
-    // db_participants
-    //   .filter((participant) => participant.login == senderLogin) // FIND ALL PARTICIPATIONS TO A CHANNEL OF THE USER IN ARGS
-    //   .map((room) => {
-    //     // FOR EACH OF THOSE PARTICIPATIONS
-    //     const tmp = db_messages // FIND THE LAST MESSAGE SENT IN THIS CHANNEL
-    //       .sort((a, b) => b.index - a.index)
-    //       .find((message) => message.receiver == room.channel);
-    //
-    //     if (tmp != undefined) {
-    //       // PUSH ALL INFO IN RETARRAY
-    //       retArray.push({
-    //         receiver: room.channel,
-    //         last_message_time: tmp.time,
-    //         last_message_text: tmp.content,
-    //         new_conv: false,
-    //       });
-    //     }
-    //   });
-    //
-    // messages
-    //   .filter(
-    //     (message) =>
-    //       message.receiver == data.sender || message.sender == data.sender,
-    //   ) // FIND ALL MESSAGES WHERE USER IN ARGS IS CONCERNED
-    //   .map((messageItem) => {
-    //     if (messageItem.sender == data.sender) {
-    //       // IF USER IS SENDER ()
-    //       if (
-    //         retArray.find((item) => item.receiver == messageItem.receiver) ==
-    //         undefined // IF THE CONV WITH THIS RECEIVER(messageItem.receiver) IS NOT IN RETARRAY YET
-    //       ) {
-    //         let tmp = messages.sort(
-    //           (a, b) => a.date.getDate() - b.date.getDate(),
-    //         ); // PUT IN TMP ALL MESSAGES SORTED (IN ORDER TO FIND THE LAST ONE)
-    //         retArray.push({
-    //           // PUSH INFO INTO RETARRAY WITH :
-    //           receiver: messageItem.receiver,
-    //           last_message_text: tmp // FIND THE LAST MESSAGE OF THIS CONV
-    //             // (USER IS SENDER OR RECEIVER !AND! messageItem.receiver IS SENDER OR RECEIVER)
-    //             .reverse()
-    //             .find(
-    //               (message) =>
-    //                 (message.sender == data.sender &&
-    //                   message.receiver == messageItem.receiver) ||
-    //                 (message.receiver == data.sender &&
-    //                   message.sender == messageItem.receiver),
-    //             ).content, // TAKE THE CONTENT
-    //           new_conv: false,
-    //           last_message_time: tmp // SAME HERE BUT :
-    //             .reverse()
-    //             .find(
-    //               (message) =>
-    //                 (message.sender == data.sender &&
-    //                   message.receiver == messageItem.receiver) ||
-    //                 (message.receiver == data.sender &&
-    //                   message.sender == messageItem.receiver),
-    //             ).date, // TAKE THE TIME
-    //         });
-    //       }
-    //     } else if (
-    //       retArray.find((item) => item.receiver == messageItem.sender) == // IF USER IS THE RECEIVER
-    //       undefined
-    //     ) {
-    //       let tmp = [
-    //         ...messages.sort((a, b) => a.date.getDate() - b.date.getDate()),
-    //       ];
-    //       console.log('tmp time', tmp[0].date); // SAME THING HERE
-    //       retArray.push({
-    //         receiver: messageItem.sender,
-    //         last_message_text: tmp
-    //           .reverse()
-    //           .find(
-    //             (message) =>
-    //               (message.sender == data.sender &&
-    //                 message.receiver == messageItem.sender) ||
-    //               (message.receiver == data.sender &&
-    //                 message.sender == messageItem.sender),
-    //           ).content,
-    //         new_conv: false,
-    //         last_message_time: tmp
-    //           .reverse()
-    //           .find(
-    //             (message) =>
-    //               (message.sender == data.sender &&
-    //                 message.receiver == messageItem.sender) ||
-    //               (message.receiver == data.sender &&
-    //                 message.sender == messageItem.sender),
-    //           ).date,
-    //       });
-    //     } else {
-    //       console.log(messageItem);
-    //     }
-    //   });
-    // console.log(retArray);
-    //
   }
 
   @SubscribeMessage('BLOCK_USER')

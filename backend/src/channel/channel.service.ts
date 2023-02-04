@@ -96,6 +96,7 @@ export class ChannelService {
   async joinChannel(username: string, channelName: string, password: string) {
     let channel: Channel = await this.getOneChannel(channelName);
 
+    console.log("password == ", password);
     if (channel && (channel.password === "" || await bcrypt.compare(password, channel.password))) {
       let user: User = await this.userService.getUserByUsername(username);
       channel.userConnected.push(user);

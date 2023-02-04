@@ -261,6 +261,7 @@ const ChannelDialog = (props: {
               ) {
                 setShowJoinChannelPasswordModal(true);
                 window.addEventListener("keydown", handleKeyDown);
+              console.log("joinChannelpw == ", joinChannelPasswordInput);
               }
               utils.socket.emit('JOIN_CHANNEL', {
                 username: user.user?.username,
@@ -423,7 +424,7 @@ const ChannelDialog = (props: {
                     .classList.remove("error");
                   clearTimeout(timeOut)
                 }, 200);
-              } else {
+              }
                 // setShowJoinChannelPasswordModal(false);
                 console.log(joinChannelPasswordInput)
                 utils.socket.emit('JOIN_CHANNEL', {
@@ -431,7 +432,6 @@ const ChannelDialog = (props: {
                   channelName: joinChannelSelect,
                   channelPassword: joinChannelPasswordInput,
                 })
-              }
             }
           }}
         />
