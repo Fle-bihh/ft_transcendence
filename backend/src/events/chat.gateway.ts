@@ -58,7 +58,6 @@ export class ChatGateway {
     } catch (e) { console.log(e.code); }
 
       const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
-      console.log("receiverChannel == ", receiverChannel);
       const actualTime: Date = new Date();
       const messageDto: MessagesDto = {
         date: actualTime,
@@ -101,7 +100,6 @@ export class ChatGateway {
 
   @SubscribeMessage('JOIN_CHANNEL')
   async join_channel(client: Socket, data: { login: string, channelName: string, channelPassword: string }) {
-    console.log("join channel password == ", data.channelPassword);
     await this.channelsService.joinChannel(data.login, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
     client.emit('channel_joined', { channelName: data.channelName });
     this.get_all_conv_info(client, { sender: data.login });
@@ -184,7 +182,6 @@ export class ChatGateway {
     const user: User = await this.usersService.getUserByUsername(data.sender);
     const allMessages = await this.channelsService.getMessages();
     const tmp = allMessages.reverse();
-    console.log(allMessages);
     for (let message of tmp) {
       let receiver = (message.channel ? message.channel.name : message.receiver.username);
       if (message.sender && message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver)) {
