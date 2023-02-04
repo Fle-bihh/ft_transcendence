@@ -43,10 +43,11 @@ import { useEffect, useState } from "react";
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { PasswordRounded } from "@mui/icons-material";
-import { Navigate, NavLink } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ip } from "../../App";
 import Cookies from "universal-cookie";
 import { utilsReducer } from "../../state/reducers/utilsReducer";
+import Pong from "../pong/Pong";
 
 const cookies = new Cookies();
 const jwt = cookies.get("jwt");
@@ -67,6 +68,8 @@ const ProfileOther = () => {
     const [friend, setFriend] = useState(NOT_FRIEND);
     const [inviteSend, setInviteSend] = useState(false);
     const [declineGame, setDeclineGame] = useState(false);
+    const [roomId, setRoomId] = useState("");
+    const [openGame, setOpenGame] = useState(false);
     const [matchHistory, setMatchHistory] = useState(
         Array<{
             id: number;
@@ -93,13 +96,12 @@ const ProfileOther = () => {
         getData: false,
         // http://localhost:3000/Profileother?username=ldauga
     });
-
-    utils.socket.removeListener("updateProfileOther");
-
     let userConnect = document.getElementById("userConnect");
     let userInGame = document.getElementById("userInGame");
     let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
+    const navigate = useNavigate();
     
+    utils.socket.removeListener("updateProfileOther");
     utils.socket.on(
         "updateProfileOther",
         (data: { login: string; friendStatus: string }) => {
@@ -193,6 +195,7 @@ const ProfileOther = () => {
     const handleClickOpen = () => {
         setOpen(true);
     };
+
     const handleClose = (change: boolean) => {
         if (change == true) {
             if (friend == NOT_FRIEND) {
@@ -250,10 +253,13 @@ const ProfileOther = () => {
 
     utils.gameSocket.removeListener("accept_game");
     utils.gameSocket.on('accept_game', (data: { sender: string, gameMap: string, receiver: string }) => {
-        return (<Navigate to={"/pong"}/>) //???
-        // Make the redirection to the game page with the good props !
-        //maybe but l'ecoute de la socket sur la page du pong directement ? 
-        //ou alors s'envoyer 2 sockets ? bref on verra
+        console.log("accept received");
+        utils.gameSocket.emit('JOIN_ROOM', data.sender + data.receiver)
+        utils.gameSocket.emit('START_INVITE_GAME', { user: { login: user.user?.username }, gameMap: data.gameMap });
+        setRoomId(data.sender + data.receiver);
+        setOpenGame(true);
+        if (openGame && roomId != "")
+            navigate('/Pong', { state:{ invite: true, roomId : roomId }})
     })
 
     utils.gameSocket.removeListener("decline_game");
@@ -340,9 +346,11 @@ const ProfileOther = () => {
         }
     }, [userDisplay?.getData]);
 
-
-
     //----------------------------------------------------------------------------------------
+    if (openGame && roomId != "") return (
+        <Navigate to="/Pong" replace={true} state={{ invite:true, roomId:roomId }}/>
+        // navigate('/Pong', { state:{ invite: true, roomId : roomId }})
+    )
     return (
         <React.Fragment>
             <Navbar />
@@ -356,25 +364,20 @@ const ProfileOther = () => {
                             className="avatarOther"
                         />
                     </Stack>
-
-          
                     <div id="userConnect" >
                         <div className="circleConnectLigne" id="userConnect"></div>
 
                         <div className="connect" id="userConnect">Online</div>
                     </div>
-
                     <div id="userInGame">
                         <div className="circleInGame" id="userInGame"></div>
 
                         <div className="connect" id="userInGame">In game</div>
                     </div>
-
                     <div id="userConnectHorsLigne">
                         <div className="circleConnectHorsLigne" id="userConnectHorsLigne"></div>
                         <div className="connect" id="userConnectHorsLigne">Not Connected</div>
                     </div>  
-
                     <div className="infoUserOther">
                         <h3 className="userNameOther">Login :</h3>
                         <Typography className="userNamePrintOther">
@@ -387,7 +390,6 @@ const ProfileOther = () => {
                             {userDisplay?.username}
                         </Typography>
                     </div>
-
                     <Button
                         className="buttonChangeOther"
                         type="submit"
@@ -417,7 +419,6 @@ const ProfileOther = () => {
                             <Button onClick={() => handleClose(false)}>Cancel</Button>
                         </DialogActions>
                     </Dialog>
-
                     {friend == FRIEND ?
                         <Button className="buttonChangeOther" onClick={handleGameOpen} >
                             Invite to game
@@ -459,7 +460,6 @@ const ProfileOther = () => {
                                         </Image>
                                     </ImageButton>
                                 </Box>
-                                
                             </DialogContentText>
                             <DialogActions>
                                 <Button onClick={() => handleGameClose(false)}>Cancel</Button>
@@ -479,7 +479,7 @@ const ProfileOther = () => {
                                     <Button onClick={() => handleGameClose(false)}>Close</Button>
                                 </DialogActions></> 
                             : <><DialogTitle>
-                                Send invitation to game
+                                Decline
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
