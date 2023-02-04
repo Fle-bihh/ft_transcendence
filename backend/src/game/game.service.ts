@@ -72,7 +72,6 @@ export class GameService {
   async getGamesByUser(user: User){
     const allGames = await this.getGames();
 
-    console.log('all games ==', allGames);
     const result: { game: Game, player1: string, player2: string, winner: string }[] = []
     for (let game of allGames) {
       if (game.player1.username === user.username || game.player2.username === user.username) {
@@ -80,8 +79,8 @@ export class GameService {
         result.push(r);
       }
     }
-    return allGames;
-    // return result;
+    console.log(result);
+    return result;
   }
 
   async getUserFromSocket(socket: Socket): Promise<User> {

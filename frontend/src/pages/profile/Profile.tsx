@@ -43,11 +43,11 @@ const Profile = () => {
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             id: string,
-            player1: User,
+            player1: string,
             score1: number,
-            player2: User,
+            player2: string,
             score2: number,
-            winner: User,
+            winner: string,
         }>()
     );
     const handleClickOpen = () => {
@@ -118,20 +118,23 @@ const Profile = () => {
             }
             axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
                 if (response.data != null) {
-                    response.data.map((game: any) => {
+                console.log("response.data == ", response.data);
+                    response.data.map((data: any) => {
                         const obj = {
 
-                            id: game.id,
-                            player1: game.player1,
-                            score1: game.score_u1,
-                            player2: game.player2,
-                            score2: game.score_u2,
-                            winner: game.winner,
+                            id: data.game.id,
+                            player1: data.game.player1.username,
+                            score1: data.game.score_u1,
+                            player2: data.game.player2.username,
+                            score2: data.game.score_u2,
+                            winner: data.game.winner.username,
 
                         }
+                        console.log("obj == ", obj);
                         userMatchHistory.push(obj)
                     })
                     console.log("ici", response.data)
+                    setFirstOpen(false);
                 }
             }).catch(error => {
                 console.log(error);
@@ -300,27 +303,19 @@ const Profile = () => {
                         
                                 return (
 
-                                    <div className={match.winner.username == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                    <div className={match.winner == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
 
 
                                         <div className="results" >
-                                            <div className="name">{match.player1.username == user.user?.username ? match.player1.username : match.player2.username}</div>
-                                            <div className="score">-{match.player1.username == user.user?.username ? match.score1 : match.score2}-</div>
+                                            <div className="name">{match.player1 == user.user?.username ? match.player1 : match.player2}</div>
+                                            <div className="score">-{match.player1 == user.user?.username ? match.score1 : match.score2}-</div>
 
                                         </div>
 
-                                        {/* <div className="results" >
-    
-                                            <Avatar alt="Cerise" src={user.user?.profileImage}
-                                                className="avatarStatuser" variant="square" />
-    
-                                            <Avatar alt="Laurine" src={Laurine}
-                                                className="avatarStatuser" variant="square" />
-                                        </div> */}
 
                                         <div className="results">
-                                            <div className="score">-{match.player2.username == user.user?.username ? match.score1 : match.score2}-</div>
-                                            <div className="name">{match.player2.username == user.user?.username ? match.player1.username : match.player2.username}</div>
+                                            <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
+                                            <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
 
                                         </div>
 
