@@ -22,7 +22,7 @@ const options = {
     }
 }
 
-// rajouter bouton activer A2FA ou non 
+// rajouter bouton activer A2FA ou non
 
 const Profile = () => {
 
@@ -115,31 +115,26 @@ const Profile = () => {
             headers: {
                 'authorization': `Bearer ${jwt}`
             }
-            axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
-                if (response.data != null) {
-                console.log("response.data == ", response.data);
-                    response.data.map((data: any) => {
-                        const obj = {
-
-                            id: data.game.id,
-                            player1: data.game.player1.username,
-                            score1: data.game.score_u1,
-                            player2: data.game.player2.username,
-                            score2: data.game.score_u2,
-                            winner: data.game.winner.username,
-
-                        }
-                        console.log("obj == ", obj);
-                        userMatchHistory.push(obj)
-                    })
-                    console.log("ici", response.data)
-                    setFirstOpen(false);
-                }
-            }).catch(error => {
-                console.log(error);
-            });
+        }
+        axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
+            if (response.data != null) {
+                response.data.map((data: any) => {
+                    const obj = {
+                        id: data.game.id,
+                        player1: data.game.player1.username,
+                        score1: data.game.score_u1,
+                        player2: data.game.player2.username,
+                        score2: data.game.score_u2,
+                        winner: data.game.winner.username,
+                    }
+                    userMatchHistory.push(obj)
+                })
+                setFirstOpen(false);
+            }
+        }).catch(error => {
+            console.log(error);
+        });
     }
-
 
     useEffect(() => {
         console.log("fisrtOpen1", firstOpen)
@@ -156,19 +151,10 @@ const Profile = () => {
             headers: {
                 'Authorization': `Bearer ${jwt}`
             }
-            axios(config).then((res) => {
-                
-
-                setUser(res.data);
-                console.log("resdata", res.data)
-
-            }).catch((err) => {
-            })
         }
         const img = e.target.files.item(0);
         var formData = new FormData();
         formData.append("photo", img);
-
         var config = {
             method: 'POST',
             url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
@@ -178,10 +164,7 @@ const Profile = () => {
             withCredentials: true
         }
         axios(config).then((res) => {
-
             setUser(res.data);
-            console.log("resdata", res.data)
-
         }).catch((err) => {
         })
     }
@@ -191,16 +174,13 @@ const Profile = () => {
             <Navbar />
             <div className="profilePageContainer">
                 <div className="profile" >
-
                     <Stack direction="row" spacing={2} className="avatarItem">
                         <img alt="Cerise" src={user.user?.profileImage} className="avatar" />
                     </Stack>
-
                     <Button component="label" className="avatarChange">
                         Change Profile Picture
                         <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
                     </Button>
-
                     <div className="infoUser">
                         <h3 className="userName">
                             Login :
@@ -208,17 +188,14 @@ const Profile = () => {
                         <Typography className="userNamePrint">
                             {user.user?.login}
                         </Typography>
-
                     </div>
                     <div className="infoUsername">
-
                         <h3 className="userNameChange">
                             userName :
                         </h3>
                         <Typography className="userNamePrintChange">
                             {user.user?.username}
                         </Typography>
-
                     </div>
                     <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
                     <Dialog open={open} onClose={() => handleClose(false)} >
@@ -303,25 +280,16 @@ const Profile = () => {
                                 {user.user?.LossNumber}
                             </div>
                         </div>
-                            {userMatchHistory.map((match) => {
-                        
-                                return (
-
-                                    <div className={match.winner == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
-
-
-                                        <div className="results" >
-                                            <div className="name">{match.player1 == user.user?.username ? match.player1 : match.player2}</div>
-                                            <div className="score">-{match.player1 == user.user?.username ? match.score1 : match.score2}-</div>
-
-                                        </div>
-
-
-                                        <div className="results">
-                                            <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
-                                            <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
-
-                                        </div>
+                        {userMatchHistory.map((match) => {
+                            return (
+                                <div className={match.winner == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                    <div className="results" >
+                                        <div className="name">{match.player1 == user.user?.username ? match.player1 : match.player2}</div>
+                                        <div className="score">-{match.player1 == user.user?.username ? match.score1 : match.score2}-</div>
+                                    </div>
+                                    <div className="results">
+                                        <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
 
                                     </div>
                                 </div>
@@ -330,9 +298,7 @@ const Profile = () => {
                     </>
                 </div>
             </div>
-
         </React.Fragment >
-
     )
 };
 export default Profile;
