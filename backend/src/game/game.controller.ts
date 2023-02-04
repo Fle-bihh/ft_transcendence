@@ -21,7 +21,6 @@ export class GameController {
   @Get('/:id')
   async getGamesById(@Param('id') id: string, @GetUser() user: User) {
     const found = await this.userService.getUserById(id);
-    console.log('cassé');
-    return this.gameService.getGamesByUser(found);
+    return await this.gameService.getGamesByUser(found);
   }
 }

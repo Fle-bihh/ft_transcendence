@@ -67,9 +67,7 @@ export class ChannelService {
 
     try {
       await this.channelsRepository.save(channel);
-    } catch (e) {
-      console.log(e.code);
-    }
+    } catch (e) { console.log(e.code) }
     return channel;
   }
 
@@ -103,9 +101,7 @@ export class ChannelService {
       user.channelsConnected.push(channel);
       try {
         await this.channelsRepository.save(channel);
-      } catch (e) {
-        console.log(e.code);
-      }
+      } catch (e) { console.log(e.code) }
       //join the channel}
     } else {
       throw new UnauthorizedException('Wrong password');
@@ -117,9 +113,7 @@ export class ChannelService {
 
     try {
       await this.channelsRepository.save(channel)
-    } catch (e) {
-      console.log(e.code);
-    }
+    } catch (e) { console.log(e.code) }
   }
 
   async demoteAdmin(user: User, channel: Channel) {
@@ -127,9 +121,7 @@ export class ChannelService {
 
     try {
       await this.channelsRepository.save(channel)
-    } catch (e) {
-      console.log(e.code);
-    }
+    } catch (e) { console.log(e.code) }
   }
 
   async changeName(currentName: string, newName: string) {
@@ -197,13 +189,13 @@ export class ChannelService {
     return { messages };
   }
 
-async getConvByChannel(name: string) {
+  async getConvByChannel(name: string) {
     const allMessages = await this.getMessages();
 
-    let messages = new Array<{sender: string, receiver: string, content: string, time: Date}>();
+    let messages = new Array<{ sender: string, receiver: string, content: string, time: Date }>();
     for (let message of allMessages) {
       if (message.channel && message.channel.name === name) {
-        messages.push({sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date});
+        messages.push({ sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date });
       }
     }
     return messages;
@@ -211,11 +203,12 @@ async getConvByChannel(name: string) {
 
   async createMessage(sender: User, message: MessagesDto) {
     const msg: Message = this.messagesRepository.create({
-    body: message.body,
-    date: message.date,
-    sender: sender,
-    receiver: message.receiver,
-    channel: message.channel});
+      body: message.body,
+      date: message.date,
+      sender: sender,
+      receiver: message.receiver,
+      channel: message.channel
+    });
 
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
     sender.messagesSent.push(msg);
