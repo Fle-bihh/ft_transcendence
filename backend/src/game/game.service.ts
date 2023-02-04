@@ -30,9 +30,9 @@ export class GameService {
       winner_id,
     } = gameResultsDto;
 
-    const player1 = await this.userService.getUserByLogin(id_user1);
-    const player2 = await this.userService.getUserByLogin(id_user2);
-    const winner = await this.userService.getUserByLogin(winner_id);
+    const player1 = await this.userService.getUserByUsername(id_user1);
+    const player2 = await this.userService.getUserByUsername(id_user2);
+    const winner = await this.userService.getUserByUsername(winner_id);
     const game: Game = this.gameRepository.create({
       player1,
       player2,

@@ -51,17 +51,11 @@ export class UsersService {
   }
 
   async getMatchHistory(id: string, user: User) {
-    // const matchhistory = await this.gameRepository
-    // .createQueryBuilder('game')
-    // .leftJoinAndSelect('game.player1', 'player1')
-    // .leftJoinAndSelect('game.player2', 'player2')
-    // .leftJoinAndSelect('game.winner', 'winner')
-    // .where(`(game.plater1Id = :id OR game.player2ID = :id)`, {id})
-    // .getMany();
-    // return matchhistory;
     const found = await this.usersRepository.findOneBy({ id });
-    if (found)
-      return this.getGames(found);
+    if (found) {
+      console.log("les games oh lala ==", await this.getGames(found));
+      return await this.getGames(found);
+    }
     return null;
   }
 
@@ -135,15 +129,12 @@ export class UsersService {
   }
 
   async generateTwoFactorAuthenticationSecret(user: User) {
-    const secret = await authenticator.generateSecret();
+    const secret = authenticator.generateSecret();
 
     const otpAuthUrl = authenticator.keyuri(user.login, 'ft_transcendence', secret);
     await this.setTwoFactorAuthenticationSecret(secret, user.id);
 
-    return {
-      secret,
-      otpAuthUrl
-    }
+    return { secret, otpAuthUrl };
   }
 
   async deactivate2FA(user: User): Promise<User> {
@@ -245,31 +236,31 @@ export class UsersService {
     return conv;
   }
   async checkMagicNumber(type: string, buffer: Buffer) {
-		if (type == 'image/jpg' || type == 'image/jpeg') {
-			if (buffer.toString('hex').length < "ffd8ff".length) {
-				return false;
-			}
-			if (buffer.toString('hex').substring(0, 6) == "ffd8ff")
-				return true;
-		}
-		else if (type == 'image/png') {
-			if (buffer.toString('hex').length < "89504e47".length) {
-				return false;
-			}
-			if (buffer.toString('hex').substring(0, 8) == "89504e47")
-				return true;
-		}
-		return false;
-	}
+    if (type == 'image/jpg' || type == 'image/jpeg') {
+      if (buffer.toString('hex').length < "ffd8ff".length) {
+        return false;
+      }
+      if (buffer.toString('hex').substring(0, 6) == "ffd8ff")
+        return true;
+    }
+    else if (type == 'image/png') {
+      if (buffer.toString('hex').length < "89504e47".length) {
+        return false;
+      }
+      if (buffer.toString('hex').substring(0, 8) == "89504e47")
+        return true;
+    }
+    return false;
+  }
 
-	async updateProfilePic(id, filename: string): Promise<User> {
-		const user = await this.getUserById(id);
-		if (!user)
-			return null;
+  async updateProfilePic(id, filename: string): Promise<User> {
+    const user = await this.getUserById(id);
+    if (!user)
+      return null;
 
-		user.profileImage = `http://localhost:5001/user/profilePic/:${filename}`;
-		this.usersRepository.save(user);
+    user.profileImage = `http://localhost:5001/user/profilePic/:${filename}`;
+    this.usersRepository.save(user);
 
-		return user;
-	}
+    return user;
+  }
 }

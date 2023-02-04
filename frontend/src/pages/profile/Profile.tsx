@@ -169,6 +169,7 @@ const Profile = () => {
             }
             axios(config).then((res) => {
                 
+
                 setUser(res.data);
                 console.log("resdata", res.data)
 
