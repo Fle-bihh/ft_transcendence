@@ -82,7 +82,6 @@ export class AuthService {
       console.log(user);
       return { accessToken: accessToken, user: user };
     } catch (error) {
-      throw new HttpException(error.response.data, error.response.data);
     }
   }
 
