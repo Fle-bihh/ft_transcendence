@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../state";
 import { bindActionCreators } from "redux";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
 import { ip } from "../App";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
@@ -19,13 +18,13 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
 
   useEffect(() => {
     const cookies = new Cookies();
-    const jwt = cookies.get('jwt');
+    const jwt = cookies.get("jwt");
     const options = {
       headers: {
-        'authorization': `Bearer ${jwt}`
-      }
-    }
-    console.log(userReducer.user)
+        authorization: `Bearer ${jwt}`,
+      },
+    };
+    console.log(userReducer.user);
     if (userReducer.user === null) {
       setIsConnected(false);
     }
