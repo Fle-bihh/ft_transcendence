@@ -32,22 +32,16 @@ export class AuthService {
   ) { }
 
   async signIn42(auth42Dto: Auth42Dto): Promise<{ accessToken: string, user: User }> {
-    console.log('mdr 2');
     try {
       const token = this.http.post(
         `${this.authorizationURI}?grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${auth42Dto.code}&redirect_uri=http://127.0.0.1:3000/home`,
       );
-      console.log('mdr 3 token : ', token);
       this.accessToken = (await lastValueFrom(token)).data.access_token;
-      console.log('mdr 4');
       this.headers = { Authorization: `Bearer ${this.accessToken}` };
-      console.log('mdr 5');
       const response$ = this.http.get(`${this.endpoint}/me`, {
         headers: this.headers,
       });
-      console.log('mdr 6');
       const { data } = await lastValueFrom(response$);
-      console.log('mdr 7');
       const authCredentialsDto: AuthCredentialsDto = {
         username: data.login,
         login: data.login,
@@ -94,7 +88,6 @@ export class AuthService {
   async getUserFromToken(token: string): Promise<User> {
     try {
       const payload = this.jwtService.verify(token);
-      console.log("payload", payload)
       if (payload.login) {
         return this.userService.getUserByLogin(payload.login);
       }
