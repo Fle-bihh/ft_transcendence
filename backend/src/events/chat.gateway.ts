@@ -57,22 +57,22 @@ export class ChatGateway {
       await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
 
-      const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
-      const actualTime: Date = new Date();
-      const messageDto: MessagesDto = {
-        date: actualTime,
-        sender: sender,
-        receiver: receiverUser,
-        body: data.content,
-        channel: receiverChannel,
-      };
+    const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
+    const actualTime: Date = new Date();
+    const messageDto: MessagesDto = {
+      date: actualTime,
+      sender: sender,
+      receiver: receiverUser,
+      body: data.content,
+      channel: receiverChannel,
+    };
 
-      this.channelsService.createMessage(sender, messageDto);
-      this.logger.log('ADD_MESSAGE recu ChatGateway');
+    this.channelsService.createMessage(sender, messageDto);
+    this.logger.log('ADD_MESSAGE recu ChatGateway');
     // CHECK EMIT ET LOGGER
     //   this.logger.log('send newMessage to', sender.user.login);
     //   if (sender != undefined) {
-        // sender.socket.emit('new_message');
+    // sender.socket.emit('new_message');
     //   }
     //   this.logger.log('send newMessage to', receiver.user.login);
     //   if (receiver != undefined) {
@@ -86,7 +86,7 @@ export class ChatGateway {
     this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
     const user = await this.usersService.getUserByUsername(data.owner);
     const channel: Channel = await this.channelsService.createChannel(user, data.name, data.password, data.description, data.privacy); // ADD MSG CHANNEL CREATED
-    this.add_message(client, {sender: data.owner, receiver: data.name, content: "I joined"});
+    this.add_message(client, { sender: data.owner, receiver: data.name, content: "I joined" });
     this.get_all_conv_info(client, { sender: data.owner });
   }
 
