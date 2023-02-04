@@ -261,6 +261,12 @@ const Profile = () => {
                             </div> :
                             <div>
                                 <Button className="buttonChange2FA" type="submit" onClick={() => {
+                                    const jwt = cookies.get('jwt');
+                                    const options = {
+                                        headers: {
+                                            'authorization': `Bearer ${jwt}`
+                                        }
+                                    }
                                     axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
                                         console.log('data', res.data)
                                         setUser(res.data)

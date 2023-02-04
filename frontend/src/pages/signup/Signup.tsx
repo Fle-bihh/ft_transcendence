@@ -57,6 +57,7 @@ const Signup = () => {
 
 
   useEffect(() => {
+    console.log("SignUp", userReducer.user);
     if (userReducer.user != null) {
     console.log(options);
       axios

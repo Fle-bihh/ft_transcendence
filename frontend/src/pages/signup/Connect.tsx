@@ -21,20 +21,10 @@ const Connect = () => {
   const twoFAReducer = useSelector((state: RootState) => state.persistantReducer.twoFAReducer);
   const navigate = useNavigate();
 
-  if (err) {
-    alert(
-      `Error: ${err} !\nIf you want to connect with 42 you must authorize !`
-    );
-    navigate(
-      {
-        pathname: "/",
-        state: { reason: `${err}` },
-      } as any,
-      { replace: true }
-    );
-  }
-  if (!userReducer.user)
-  {
+  console.log('Connect 2 cookie == ', userReducer.user);
+  // if (!userReducer.user)
+  // {
+      console.log('Coucou ');
       axios.request({
         url: "/auth/api42/Signin",
         method: "post",
@@ -44,18 +34,19 @@ const Connect = () => {
           nickName: null,
         }
       }).then((response: AxiosResponse<any, any>) => {
-        cookies.set('jwt', response.data.accessToken, { path: `/`});
-        setUser(response.data.user);
+        if (response.data.user?.username) {
+          cookies.set('jwt', response.data.accessToken, { path: `/`});
+          setUser(response.data.user);
+        }
         const jwt = cookies.get('jwt');
         const options = {
           headers: {
             Authorization: `Bearer ${jwt}`
           }
         }
-        // window.location.replace(`http://${ip}:3000`);
         console.log('Connect 2 cookie == ', options);
     }).catch((err) => { });
-  }
+  // }
 
   function verify2FA(value: string) {
     const jwt = cookies.get('jwt');
