@@ -6,6 +6,8 @@ import { GameClass } from './gameClass';
 import { ip } from '../../App';
 import "./Pong.scss"
 import { io } from 'socket.io-client';
+import { NavLink } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 var canvas = {
     "width": 800,
@@ -106,8 +108,6 @@ const GamePage = (props: any) => {
         }
     }
 
-    
-
     function resetCanvas() {
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
@@ -172,9 +172,6 @@ const GamePage = (props: any) => {
 
     function affFinishScreen() {
         let U, H;
-        setTimeout(function () {
-            window.location.replace(`http://${ip}:3000`);
-        }, 10000);
 
         if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.username) {
             U = finishRoom?.players[0]
@@ -191,6 +188,11 @@ const GamePage = (props: any) => {
                     <p><b>YOU :</b> {U?.score}</p> 
                     <p><b>HIM :</b> {H?.score}</p>
                 </div>
+                <NavLink to='/' className="btnPlay">
+                    <Button className="btn2">
+                    Home
+                    </Button>
+                </NavLink>
             </div>
         )
 
