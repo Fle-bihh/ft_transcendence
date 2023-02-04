@@ -89,7 +89,6 @@ export class ChannelService {
     let found: Channel = (await this.getChannel()).find((channel) => channel.name === id);
     if (!found)
       throw new NotFoundException(`Channel ${id} not found`);
-    console.log("FOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUND ==", found)
     return found;
   }
 
@@ -211,7 +210,6 @@ async getConvByChannel(name: string) {
   }
 
   async createMessage(sender: User, message: MessagesDto) {
-    console.log('0');
     const msg: Message = this.messagesRepository.create({
     body: message.body,
     date: message.date,
@@ -219,24 +217,19 @@ async getConvByChannel(name: string) {
     receiver: message.receiver,
     channel: message.channel});
 
-    console.log('1');
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
     sender.messagesSent.push(msg);
 
-    console.log('2');
     if (message.receiver) {
       message.receiver.messagesReceived = (await this.userService.getMessages(message.receiver.id)).messagesReceived;
       message.receiver.messagesReceived.push(msg);
     }
 
-    console.log('3');
     if (message.channel) {
       message.channel.messages = (await this.getMessageByChannel(message.channel.name)).messages;
       message.channel.messages.push(msg);
     }
 
-    console.log('4');
-    console.log("create message == ", message);
     try {
       await this.messagesRepository.save(msg);
       await this.usersRepository.save(sender);

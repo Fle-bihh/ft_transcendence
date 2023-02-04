@@ -417,21 +417,19 @@ const ChannelDialog = (props: {
                 document
                   .getElementById("joinChannelInput")!
                   .classList.add("error");
-               const timeOut = setTimeout(() => {
+                const timeOut = setTimeout(() => {
                   document
                     .getElementById("joinChannelInput")!
                     .classList.remove("error");
                   clearTimeout(timeOut)
                 }, 200);
-              } else {
-                // setShowJoinChannelPasswordModal(false);
-                console.log(joinChannelPasswordInput)
-                utils.socket.emit('JOIN_CHANNEL', {
-                  username: user.user?.username,
-                  channelName: joinChannelSelect,
-                  channelPassword: joinChannelPasswordInput,
-                })
               }
+              // setShowJoinChannelPasswordModal(false);
+              utils.socket.emit('JOIN_CHANNEL', {
+                username: user.user?.username,
+                channelName: joinChannelSelect,
+                channelPassword: joinChannelPasswordInput,
+              })
             }
           }}
         />
