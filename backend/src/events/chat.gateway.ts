@@ -197,7 +197,7 @@ export class ChatGateway {
     const channel = await this.channelsService.getOneChannel(data.channel);
     let role: string;
 
-    if (user.username === channel.creator.username)
+    if (user.username === channel.creator?.username)
       role = 'owner';
     else if (user.channelsAdmin.find((channel) => channel.name === data.channel))
       role = 'admin';

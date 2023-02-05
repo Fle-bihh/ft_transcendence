@@ -1,4 +1,4 @@
-import { BadRequestException, UseInterceptors, Body, Controller, Get, Param, Patch, Post, Put, Req, Response, UnauthorizedException, UseGuards, UploadedFile, Res } from '@nestjs/common';
+import { BadRequestException, UseInterceptors, Body, Controller, Get, Param, Patch, Post, Put, Req, Response, UnauthorizedException, UseGuards, UploadedFile, Res, Headers } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { Game } from 'src/entities/game.entity';
@@ -11,7 +11,6 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { existsSync, mkdirSync, readFileSync, unlink } from 'fs';
-
 
 export const multerOptions = {
   limits: {
@@ -33,22 +32,24 @@ export const multerOptions = {
 };
 
 @Controller('user')
-@UseGuards(AuthGuard('jwt'))
 
 export class UsersController {
   constructor(private usersService: UsersService) { }
 
   @Get()
+@UseGuards(AuthGuard('jwt'))
   async getAll(): Promise<User[]> {
     return await this.usersService.getAll()
   }
 
   @Post('/signup')
+@UseGuards(AuthGuard('jwt'))
   async signUp(@Body() usersCredentialsDto: UserCredentialsDto): Promise<void> {
     return this.usersService.signUp(usersCredentialsDto);
   }
 
   @Patch('/:id/username')
+@UseGuards(AuthGuard('jwt'))
   async patchUsername(@Param('id') id: string, @GetUser() user: User, @Body('username') username: string): Promise<User> {
     console.log('bonjour');
     return await this.usersService.patchUsername(id, user, username);
@@ -74,8 +75,10 @@ export class UsersController {
   }
 
   @Post('/:id/profileImage')
+@UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', multerOptions))
-  public async uploadFile(@UploadedFile() image: any, @Param('id') id: string) {
+  public async uploadFile(@Headers() headers, @UploadedFile() image: any, @Param('id') id: string) {
+    console.log("headers == ", headers);
     if (image.filename) {
       let buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
       const res = await this.usersService.checkMagicNumber(image.mimetype, buffer);
@@ -86,13 +89,14 @@ export class UsersController {
 	});
 	throw new BadRequestException('Unable to update your avatar.')
       }
-      const ret = this.usersService.updateProfilePic(id, image.filename)
+      const ret = this.usersService.updateProfilePic(id, image.filename, headers);
       return ret;
     } else
     throw new BadRequestException('Unable to update your avatar, file too big.');
   }
 
   @Get('/:id/2fa/generate')
+@UseGuards(AuthGuard('jwt'))
   async register(@Response() response: any, @Param('id') id: string) {
     const user: User = await this.usersService.getUserById(id);
     const { otpAuthUrl } =
@@ -102,37 +106,44 @@ export class UsersController {
   }
 
   @Get('/id/:id')
+@UseGuards(AuthGuard('jwt'))
   async getUserById(@Param('id') id: string, @GetUser() user: User): Promise<User> {
     return await this.usersService.getUserById(id, user);
   }
 
   @Get('/login/:login')
+@UseGuards(AuthGuard('jwt'))
   async getUserByLogin(@Param('login') login: string): Promise<User> {
     return await this.usersService.getUserByLogin(login);
   }
 
   @Get('/username/:username')
+@UseGuards(AuthGuard('jwt'))
   async getUserByUsername(@Param('username') username: string): Promise<User> {
     return await this.usersService.getUserByUsername(username);
   }
 
   @Get('/:id/match_history')
+@UseGuards(AuthGuard('jwt'))
   async getMatchHistory(@Param('id') id: string, @GetUser() user: User) {
     return await this.usersService.getMatchHistory(id, user);
   }
 
   @Get('2FA/active')
+@UseGuards(AuthGuard('jwt'))
   async get2FA(@GetUser() user: User): Promise<{ twoFactorAuth: boolean }> {
     return await this.usersService.get2FA(user);
   }
 
   @Get('/:id/2fa/deactivate')
+@UseGuards(AuthGuard('jwt'))
   async deactivate2FA(@Param('id') id: string) {
     const user = await this.usersService.getUserById(id);
     return await this.usersService.deactivate2FA(user);
   }
 
   @Get('/:id/2FA/activate/:secret')
+@UseGuards(AuthGuard('jwt'))
   async activate2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<User> {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
@@ -142,6 +153,7 @@ export class UsersController {
   }
 
   @Get('/:id/2fa/verify/:secret')
+@UseGuards(AuthGuard('jwt'))
   async verify2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<boolean> {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);

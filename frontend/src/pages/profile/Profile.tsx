@@ -141,6 +141,11 @@ const Profile = () => {
         if (firstOpen)
             getUserData();
 
+    useEffect(() => {
+        console.log("fisrtOpen1", firstOpen)
+        if (firstOpen)
+            getUserData();
+
     }, [])
 
     //----------------image pour téléchager--------------------------------------------
@@ -155,10 +160,11 @@ const Profile = () => {
         const img = e.target.files.item(0);
         var formData = new FormData();
         formData.append("photo", img);
+
         var config = {
             method: 'POST',
             url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
-            options,
+            headers: options.headers,
             profileImage: formData,
             data: formData,
             withCredentials: true
@@ -270,6 +276,12 @@ const Profile = () => {
                             <div className="textRectangle">
                                 <p>nbr Win</p>
                                 {user.user?.WinNumber}
+                            </div>
+                            <div className="textRectangle">
+                                <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
+                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
+                            </div>
+                            <div className="textRectangle">
                             </div>
                             <div className="textRectangle">
                                 <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>

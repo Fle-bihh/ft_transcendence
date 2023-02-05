@@ -62,11 +62,10 @@ const Chat = () => {
       let tmp = [...data];
 
       setAllConv(
-        tmp.sort((a, b) => {
-          return new Date(b.last_message_time).getTime() - new Date(a.last_message_time).getTime();
-        })
+        tmp
       );
       console.log("get_all_conv_info recu front with", data);
+      console.log("get_all_conv_info recu front with", allConv);
     }
   );
 
