@@ -242,4 +242,19 @@ export class ChannelService {
         this.promoteAdmin(user, channel);
     }
   }
+
+  async removeAdmin(user: User, channel: Channel): Promise<void> {
+    if (channel.creator.username === user.username) {
+      return
+    }
+    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username));
+    await this.channelsRepository.save(channel);
+  }
+
+  async kickUser(user: User, channel: Channel): Promise<void> {
+    channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username));
+    await this.channelsRepository.save(channel);
+  }
+
+
 }
