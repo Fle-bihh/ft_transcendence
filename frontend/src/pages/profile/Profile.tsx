@@ -22,8 +22,6 @@ const options = {
     }
 }
 
-// rajouter bouton activer A2FA ou non
-
 const Profile = () => {
 
     const [firstOpen, setFirstOpen] = useState(true)

@@ -47,52 +47,52 @@ export class ChatGateway {
   }
 
   // -------------------------- USERS ---------------------------
-  
-    @SubscribeMessage('BLOCK_USER')
-    block_user(client: Socket, data: { login: string, target: string; }) {
-      console.log('BLOCK_USER recu ChatGateway', data);
-      this.usersService.addBlockList(data.login, data.target);
-      this.logger.log('db_block = ', db_blockList);
-    }
-  
-    @SubscribeMessage('UPDATE_USER_SOCKET')
-    update_user_socket(client: Socket, data: { login: string }) {
-      // if (users.findIndex((user) => user.login === data.login) >= 0) {
-      //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
-      //     client;
-      // }
-      // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
-    }
-  
-    @SubscribeMessage('STORE_CLIENT_INFO')
-    store_client_info(client: Socket, data: { user: any }) {
-      // users[users.findIndex((item) => item.socket.id == client.id)].user =
-      //   data.user;
-      //
-      // client.emit('store_client_done');
-      // if (users.findIndex((user) => user.login === data.login) >= 0) {
-      //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
-      //     client;
-      // }
-      // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
-    }
-  
-    handleConnection(client: Socket) {
-      // this.logger.log(`new client connected ${client.id}`);
-      //
-      // users.push({ index: users.length, user: {}, socket: client });
-    }
-  
-    handleDisconnect(client: Socket) {
-      //   this.logger.log(`client ${client.id} disconnected`);
-      //   users.splice(
-      //     users.findIndex((item) => item.socket.id == client.id),
-      //     1,
-      //   );
-    }
+
+  @SubscribeMessage('BLOCK_USER')
+  block_user(client: Socket, data: { login: string, target: string; }) {
+    console.log('BLOCK_USER recu ChatGateway', data);
+    this.usersService.addBlockList(data.login, data.target);
+    this.logger.log('db_block = ', db_blockList);
+  }
+
+  @SubscribeMessage('UPDATE_USER_SOCKET')
+  update_user_socket(client: Socket, data: { login: string }) {
+    // if (users.findIndex((user) => user.login === data.login) >= 0) {
+    //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
+    //     client;
+    // }
+    // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
+  }
+
+  @SubscribeMessage('STORE_CLIENT_INFO')
+  store_client_info(client: Socket, data: { user: any }) {
+    // users[users.findIndex((item) => item.socket.id == client.id)].user =
+    //   data.user;
+    //
+    // client.emit('store_client_done');
+    // if (users.findIndex((user) => user.login === data.login) >= 0) {
+    //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
+    //     client;
+    // }
+    // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
+  }
+
+  handleConnection(client: Socket) {
+    // this.logger.log(`new client connected ${client.id}`);
+    //
+    // users.push({ index: users.length, user: {}, socket: client });
+  }
+
+  handleDisconnect(client: Socket) {
+    //   this.logger.log(`client ${client.id} disconnected`);
+    //   users.splice(
+    //     users.findIndex((item) => item.socket.id == client.id),
+    //     1,
+    //   );
+  }
 
   // -------------------------- MESSAGES ---------------------------
-  
+
   @SubscribeMessage('GET_CONV')
   async get_conv(client: Socket, data: { sender: string, receiver: string; }) {
     const senderUser = await this.usersService.getUserByUsername(data.sender);
@@ -105,7 +105,6 @@ export class ChatGateway {
       receiverChannel = await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
     let convers;
-
     if (receiverUser)
       convers = await this.usersService.getConv(senderUser, receiverUser);
     else if (receiverChannel)
@@ -187,22 +186,28 @@ export class ChatGateway {
 
   @SubscribeMessage('GET_PARTICIPANTS')
   async get_participants(client: Socket, data: { login: string, channel: string }) {
-    client.emit('get_participants', (await this.channelsService.getOneChannel(data.channel)).userConnected);
+    let userConnected;
+    try {
+      userConnected = (await this.channelsService.getOneChannel(data.channel)).userConnected
+    } catch (e) { userConnected = [] }
+    client.emit('get_participants', userConnected);
     this.logger.log('send get_participants to', data.login);
   }
 
   @SubscribeMessage('GET_PARTICIPANT_ROLE')
   async get_participant_role(client: Socket, data: { login: string, channel: string }) {
     const user = await this.usersService.getUserByUsername(data.login);
-    const channel = await this.channelsService.getOneChannel(data.channel);
     let role: string;
+    try {
+      const channel = await this.channelsService.getOneChannel(data.channel);
 
-    if (user.username === channel.creator?.username)
-      role = 'owner';
-    else if (user.channelsAdmin.find((channel) => channel.name === data.channel))
-      role = 'admin';
-    else
-      role = 'participant';
+      if (user.username === channel.creator?.username)
+        role = 'owner';
+      else if (user.channelsAdmin.find((channel) => channel.name === data.channel))
+        role = 'admin';
+      else
+        role = 'participant';
+    } catch (e) { role = 'participant' }
     console.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
     client.emit('get_participant_role', { role: role });
   }
@@ -257,16 +262,16 @@ export class ChatGateway {
     console.log('MUTE_USER recu ChatGateway', data);
     // ADD USER TO MUTE_LIST
   }
-  
+
   // -------------- PATCH -------------
-  
+
   @SubscribeMessage('LEAVE_CHANNEL')
   async leave_channel(client: Socket, data: { login: string, channelName: string }) {
     await this.channelsService.leaveChannel(data.login, data.channelName);
     client.emit('channel_left', { channelName: data.channelName });
     this.get_all_conv_info(client, { sender: data.login });
   }
-  
+
   @SubscribeMessage('CHANGE_CHANNEL_NAME')
   async change_channel_name(client: Socket, data: { login: string, currentName: string, newName: string }) {
     await this.channelsService.changeName(data.currentName, data.newName);
@@ -274,7 +279,7 @@ export class ChatGateway {
     // this.get_all_conv_info(client, { sender: data.login });
     this.get_all_channels(client, data.login);
   }
-  
+
   @SubscribeMessage('CHANGE_CHANNEL_PASSWORD')
   async change_channel_password(client: Socket, data: { login: string, channelName: string, newPassword: string }) {
     this.logger.log('CHANGE_CHANNEL_PASSWORD recu ChatGateway', data);
@@ -285,19 +290,19 @@ export class ChatGateway {
 
   @SubscribeMessage('CHANGE_CHANNEL_PRIVACY')
   async change_channel_privacy(client: Socket, data: { login: string, channel: string }) { /////////////////////////////////////
-    this.logger.log('CHANGE_CHANNEL_PRIVACY recu ChatGateway', data); 
+    this.logger.log('CHANGE_CHANNEL_PRIVACY recu ChatGateway', data);
   }
 
-  @SubscribeMessage('REMOVE_ADMIN') 
+  @SubscribeMessage('REMOVE_ADMIN')
   async remove_admin(client: Socket, data: { admin: string, channel: string }) {  /////////////////////////////////////
     console.log('REMOVE_ADMIN recu ChatGateway', data);
     // REMOVE ADMIN IN DB OF channel
   }
-  
-    @SubscribeMessage('KICK_USER')
-    async kick_user(client: Socket, data: { user: string, channel: string }) {  /////////////////////////////////////
-      console.log('KICK_USER recu ChatGateway', data);
-      // REMOVE USER FROM channel 
-    }
+
+  @SubscribeMessage('KICK_USER')
+  async kick_user(client: Socket, data: { user: string, channel: string }) {  /////////////////////////////////////
+    console.log('KICK_USER recu ChatGateway', data);
+    // REMOVE USER FROM channel 
+  }
 
 }

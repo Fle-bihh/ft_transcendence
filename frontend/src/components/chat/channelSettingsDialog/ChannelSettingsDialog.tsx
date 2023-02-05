@@ -77,7 +77,7 @@ const ChannelSettingsDialog = (props: {
       login: user.user?.username,
       channel: props.openConvName,
     });
-    console.log("send GET_PARTICIPANT_ROLE to back from", user.user?.username);
+    console.log("ici ?? send GET_PARTICIPANT_ROLE to back from", user.user?.username);
     utils.socket.emit("GET_PARTICIPANTS", {
       login: user.user?.username,
       channel: props.openConvName,
