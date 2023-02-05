@@ -7,11 +7,13 @@ import UserProfileDialog from "../../components/userProfileDialog/UserProfileDia
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/nav/Nav";
 import { useSelector } from "react-redux";
-import { Avatar, Dialog } from "@mui/material";
+import { Avatar, Button, Dialog, IconButton } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import CloseIcon from "@mui/icons-material/Close";
 import MessageIcon from "@mui/icons-material/Message";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { NavLink } from "react-router-dom";
 
 const Friends = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -48,12 +50,6 @@ const Friends = () => {
     utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", { username: user.user?.username });
     console.log(user.user?.username, "send GET_ALL_USERS to backend");
   }, []);
-
-  // utils.socket.removeListener("get_username");
-  // utils.socket.on("get_username", (username: string) => {
-  //   console.log(user.user?.username, "received get_username with", username);
-  //   setMyUsername(username);
-  // });
 
   utils.socket.removeListener("get_all_users_not_friend");
   utils.socket.on(
@@ -110,24 +106,17 @@ const Friends = () => {
             onKeyDown={(event) => { }}
           />
           <div className="friendsListContainer">
+            <div className="friendsListTitle">
+              Friends List
+            </div>
             {friendsList.map((friend) => {
               return (
-                <div
-                  className="friendsListItem"
-                  onClick={() => {
-                    window.location.replace(
-                      `http://127.0.0.1:3000/profileother?username=${friend.username}`
-                    );
-                  }}
-                >
-                  <div className="friendsListAvatar">
-                    <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                      {friend.username[0]}
-                    </Avatar>
-                  </div>
-                  <div className="friendsListName">{friend.username}</div>
-                  <div className="friendsListStatus">friendsListStatus</div>
-                </div>
+                <NavLink to={`/profileother?username=${friend.username}`}>
+                  <IconButton>
+                    <Avatar />
+                  </IconButton>
+                  <div className="friendsName">{friend.username}</div>
+                </NavLink>
               );
             })}
           </div>
@@ -161,23 +150,16 @@ const Friends = () => {
             onKeyDown={(event) => { }}
           />
           <div className="usersListContainer">
+          <div className="friendsListTitle">
+              Users List
+            </div>
             {usersList.map((user) => (
-              <div
-                key={user.username}
-                className="usersListItem"
-                onClick={() => {
-                  window.location.replace(
-                    `http://127.0.0.1:3000/profileother?username=${user.username}`
-                  );
-                }}
-              >
-                <div className="usersListAvatar">
-                  <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                    {user.username[0]}
-                  </Avatar>
-                </div>
-                <div className="usersListName">{user.username}</div>
-              </div>
+              <NavLink to={`/profileother?username=${user.username}`}>
+                <IconButton>
+                  <Avatar />
+                </IconButton>
+                <div className="UserName">{user.username}</div>
+              </NavLink>
             ))}
           </div>
         </div>
