@@ -6,6 +6,7 @@ import axios from "axios";
 import { ip } from "../App";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
+import { setUser } from "../state/action-creators";
 
 function ConnectionChecker(props: { children: any }): JSX.Element {
   const userReducer = useSelector(
@@ -27,6 +28,14 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
     console.log(userReducer.user);
     if (userReducer.user === null) {
       setIsConnected(false);
+    } else {
+      axios
+        .get(`http://${ip}:5001/user/login/${userReducer.user.login}`, options)
+        .then((response) => {})
+        .catch((error) => {
+          setIsConnected(false);
+          setUser(null);
+        });
     }
   });
   console.log("twoFAReducer = ", twoFAReducer)
