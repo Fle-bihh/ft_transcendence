@@ -186,11 +186,17 @@ export class ChatGateway {
 
   @SubscribeMessage('GET_PARTICIPANTS')
   async get_participants(client: Socket, data: { login: string, channel: string }) {
-    let userConnected;
+    let userConnected: User[];
+    let retArray: Array<{ login: string, admin: boolean }> = new Array<{ login: string, admin: boolean }>;
+    let channel = await this.channelsService.getOneChannel(data.channel);
     try {
       userConnected = (await this.channelsService.getOneChannel(data.channel)).userConnected
     } catch (e) { userConnected = [] }
-    client.emit('get_participants', userConnected);
+    for (let user of userConnected) {
+      let admin = await this.channelsService.isAdmin(user, channel);
+      retArray.push({ login: user.username, admin: admin })
+    }
+    client.emit('get_participants', retArray);
     this.logger.log('send get_participants to', data.login);
   }
 
