@@ -19,7 +19,8 @@ export class GameClass {
     constructor(gameMap : string, username : string, roomID : string, playerId : string){
         this.gameOn = false
         this.roomID = roomID
-		this.canvas = new Canvas(document.body.clientHeight, document.body.clientWidth)
+		// this.canvas = new Canvas(document.body.clientHeight, document.body.clientWidth)
+		this.canvas = new Canvas(800, 600)
         this.map = new Map(gameMap, this.canvas)
         this.ball = new Ball(this.canvas)
         this.players = new Array()

@@ -107,8 +107,8 @@ const SpectatorPage = (props: any) => {
     }
 
     function render(room: GameClass) {
-        room.canvas.width = document.body.clientWidth
-        room.canvas.height = document.body.clientHeight
+        // room.canvas.width = document.body.clientWidth
+        // room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
