@@ -199,6 +199,14 @@ export class ChannelService {
     return messages;
   }
 
+  async getChannelAdmins(channel: Channel): Promise<Array<string>> {
+    let retArray: Array<string>;
+
+    for (let admin of channel.admin)
+      retArray.push(admin.username);
+    return retArray;
+  }
+
   async createMessage(sender: User, message: MessagesDto) {
     const msg: Message = this.messagesRepository.create({
       body: message.body,

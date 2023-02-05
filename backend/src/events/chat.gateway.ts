@@ -222,8 +222,16 @@ export class ChatGateway {
 
   @SubscribeMessage('GET_CHANNEL_ADMINS')
   async get_channel_admins(client: Socket, data: { channel: string }) { /////////////////////////////////////
+    let channel: Channel;
+    let retArray: Array<string>;
+    try {
+      channel = await this.channelsService.getOneChannel(data.channel)
+      retArray = await this.channelsService.getChannelAdmins(channel);
+    } catch (e) {
+      console.log('Not a channel');
+      retArray = [];
+    }
     console.log('GET_CHANNEL_ADMINS recu ChatGateway', data);
-    const retArray = Array<string>() // FILL RETARRAY WITH USERNAMES OF ADMINS OF channel
     client.emit('get_channel_admins', { admins: retArray });
   }
 
