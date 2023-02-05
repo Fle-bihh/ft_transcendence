@@ -8,8 +8,8 @@ import "./Pong.scss"
 import { io } from 'socket.io-client';
 
 var canvas = {
-    "width": 800,
-    "height": 600
+    "width": document.body.clientWidth,
+    "height": document.body.clientHeight
 }
 
 const GamePage = (props: any) => {
@@ -19,6 +19,7 @@ const GamePage = (props: any) => {
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
+        console.log(room.canvas.width, room.canvas.height)
         if (ctx !== null) {
             ctx.fillStyle = room.map.mapColor;
             ctx.fillRect(0, 0, room.canvas.width, room.canvas.height);
@@ -119,6 +120,8 @@ const GamePage = (props: any) => {
     }
 
     function render(room: GameClass) {
+        room.canvas.width = document.body.clientWidth
+        room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
@@ -213,8 +216,9 @@ const GamePage = (props: any) => {
                             <canvas
                                 id='pongCanvas'
                                 className='pongCanvas'
-                                height={canvas.height}
-                                width={canvas.width}
+                                // Control de la taille de canva côté front, ici 100% de la page
+                                height={document.body.clientHeight}
+                                width={document.body.clientWidth}
                             />
                         </div>
                     </div>
