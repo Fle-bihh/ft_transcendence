@@ -78,33 +78,6 @@ const Friends = () => {
       <Navbar />
       <div className="friendsPageContainer">
         <div className="friendsPageSide">
-          <input
-            className="searchBar"
-            type="text"
-            id="outlined-basic"
-            placeholder="Research"
-            value={inputValue}
-            autoComplete={"off"}
-            onChange={(event) => {
-              // let list = document.getElementById("listFriends");
-
-              // if (list != null) {
-              //   for (let i = 0; i < list.children.length; i++) {
-              //     if (
-              //       !event.currentTarget.value.length ||
-              //       list.children[i].children[1].children[0].textContent
-              //         ?.toUpperCase()
-              //         .indexOf(event.currentTarget.value.toUpperCase())! > -1
-              //     )
-              //       list.children[i].classList.remove("hidden");
-              //     else list.children[i].classList.add("hidden");
-              //   }
-              // }
-              setInputValue(event.currentTarget.value);
-            }}
-            autoFocus
-            onKeyDown={(event) => { }}
-          />
           <div className="friendsListContainer">
             <div className="friendsListTitle">
               Friends List
@@ -122,33 +95,6 @@ const Friends = () => {
           </div>
         </div>
         <div className="friendPageMain">
-          <input
-            className="userSearchBar"
-            type="text"
-            id="outlined-basic"
-            placeholder="Research"
-            value={rightInputValue}
-            autoComplete={"off"}
-            onChange={(event) => {
-              // let list = document.getElementById("listFriends");
-
-              // if (list != null) {
-              //   for (let i = 0; i < list.children.length; i++) {
-              //     if (
-              //       !event.currentTarget.value.length ||
-              //       list.children[i].children[1].children[0].textContent
-              //         ?.toUpperCase()
-              //         .indexOf(event.currentTarget.value.toUpperCase())! > -1
-              //     )
-              //       list.children[i].classList.remove("hidden");
-              //     else list.children[i].classList.add("hidden");
-              //   }
-              // }
-              setRightInputValue(event.currentTarget.value);
-            }}
-            autoFocus
-            onKeyDown={(event) => { }}
-          />
           <div className="usersListContainer">
           <div className="friendsListTitle">
               Users List
