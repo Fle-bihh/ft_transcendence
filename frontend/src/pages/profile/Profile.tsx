@@ -136,12 +136,7 @@ const Profile = () => {
         });
     }
 
-    useEffect(() => {
-        console.log("fisrtOpen1", firstOpen)
-        if (firstOpen)
-            getUserData();
-
-    useEffect(() => {
+       useEffect(() => {
         console.log("fisrtOpen1", firstOpen)
         if (firstOpen)
             getUserData();
