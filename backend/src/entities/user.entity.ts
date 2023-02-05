@@ -27,7 +27,7 @@ export class User {
 	@Column({ default: 0 })
 	LossNumber: number;
 
-	@Column({ default: 0 })
+	@Column({ default: 800 })
 	Rank: number;
 
 	@Column({ default: false })

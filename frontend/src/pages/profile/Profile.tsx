@@ -275,12 +275,6 @@ const Profile = () => {
                                 <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">
-                            </div>
-                            <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
-                            </div>
-                            <div className="textRectangle">
                                 <p>nbr Loose</p>
                                 {user.user?.LossNumber}
                             </div>
