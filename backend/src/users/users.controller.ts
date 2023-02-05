@@ -51,7 +51,6 @@ export class UsersController {
   @Patch('/:id/username')
 @UseGuards(AuthGuard('jwt'))
   async patchUsername(@Param('id') id: string, @GetUser() user: User, @Body('username') username: string): Promise<User> {
-    console.log('bonjour');
     return await this.usersService.patchUsername(id, user, username);
   }
 
@@ -78,7 +77,6 @@ export class UsersController {
 @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', multerOptions))
   public async uploadFile(@Headers() headers, @UploadedFile() image: any, @Param('id') id: string) {
-    console.log("headers == ", headers);
     if (image.filename) {
       let buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
       const res = await this.usersService.checkMagicNumber(image.mimetype, buffer);

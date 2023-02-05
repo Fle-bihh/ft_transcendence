@@ -255,6 +255,8 @@ export class ChatGateway {
 
   @SubscribeMessage('ADD_ADMIN')
   async add_admin(client: Socket, data: { new_admin: string, channel: string }) { /////////////////////////////////////
+    let channel = await this.channelsService.getOneChannel(data.channel);
+    await this.channelsService.addAdmin(data.new_admin, channel);
     console.log('ADD_ADMIN recu ChatGateway', data);
     // ADD NEW ADMIN IN DB OF channel
   }

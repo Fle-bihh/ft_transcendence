@@ -65,6 +65,9 @@ const Profile = () => {
                     setUser(response.data)
                 }
             })
+            .catch(err => {
+            console.log("data == ", err.response.data.message);
+            });
             setInputValue("")
             setOpen(false);
         };

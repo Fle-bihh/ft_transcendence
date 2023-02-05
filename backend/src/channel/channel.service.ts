@@ -234,4 +234,12 @@ export class ChannelService {
       await this.usersRepository.save(sender);
     } catch (e) { console.log(e.code); }
   }
+
+  async addAdmin(newAdmin: string, channel: Channel): Promise<void> {
+    const user: User = await this.userService.getUserByUsername(newAdmin);
+    for (let u of channel.userConnected) {
+      if (u.username === user.username)
+        this.promoteAdmin(user, channel);
+    }
+  }
 }
