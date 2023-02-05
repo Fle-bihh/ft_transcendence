@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'src/auth/auth.service';
 import { Channel } from 'src/entities/channel.entity';
 import { Message } from 'src/entities/message.entity';
 import { UsersService } from 'src/users/users.service';
@@ -12,7 +11,6 @@ import { MessagesDto } from './dto/messages.dto';
 @Injectable()
 export class ChannelService {
   constructor(
-    private readonly authService: AuthService,
     private readonly userService: UsersService,
     @InjectRepository(Channel)
     private channelsRepository: Repository<Channel>,
@@ -256,5 +254,7 @@ export class ChannelService {
     await this.channelsRepository.save(channel);
   }
 
-
+  async isAdmin(user: User, channel: Channel): Promise<boolean> {
+    return (channel.admin.find((u) => u.username === user.username) ? true : false);
+  }
 }
