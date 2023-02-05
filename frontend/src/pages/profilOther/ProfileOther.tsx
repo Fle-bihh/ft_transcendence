@@ -144,7 +144,7 @@ const ProfileOther = () => {
         if ( parsed.username == "" || parsed.username == undefined || parsed.username == user.user?.login ) {
             window.location.replace(`http://${ip}:3000`);
         } else {
-            axios.get(`http://localhost:5001/user/login/${parsed.username} `, options)
+            axios.get(`http://localhost:5001/user/username/${parsed.username} `, options)
                 .then((response) => {
                     if (response.data.username != null) {
                         setUserDisplay({
