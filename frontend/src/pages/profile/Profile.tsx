@@ -275,12 +275,6 @@ const Profile = () => {
                                 <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">
-                            </div>
-                            <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
-                            </div>
-                            <div className="textRectangle">
                                 <p>nbr Loose</p>
                                 {user.user?.LossNumber}
                             </div>
@@ -295,7 +289,6 @@ const Profile = () => {
                                     <div className="results">
                                         <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
                                         <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
-
                                     </div>
                                 </div>
                             )
