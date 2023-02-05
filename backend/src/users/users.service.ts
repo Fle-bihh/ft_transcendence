@@ -253,7 +253,7 @@ export class UsersService {
     return false;
   }
 
-  async updateProfilePic(id, filename: string): Promise<User> {
+  async updateProfilePic(id, filename: string, headers): Promise<User> {
     const user = await this.getUserById(id);
     if (!user)
       return null;

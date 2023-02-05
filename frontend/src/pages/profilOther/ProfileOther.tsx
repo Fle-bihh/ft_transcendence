@@ -156,7 +156,7 @@ const ProfileOther = () => {
         } else {
             //
             axios
-                .get(`http://localhost:5001/user/login/${parsed.username} `, options)
+                .get(`http://localhost:5001/user/username/${parsed.username} `, options)
                 .then((response) => {
                     if (response.data.username != null) {
                         console.log("on est dedans");

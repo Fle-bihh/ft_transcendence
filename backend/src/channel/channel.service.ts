@@ -85,8 +85,6 @@ export class ChannelService {
 
   async getOneChannel(id: string): Promise<Channel> {
     let found: Channel = (await this.getChannel()).find((channel) => channel.name === id);
-    if (!found)
-      throw new NotFoundException(`Channel ${id} not found`);
     return found;
   }
 
