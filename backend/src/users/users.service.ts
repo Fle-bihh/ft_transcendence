@@ -53,7 +53,6 @@ export class UsersService {
   async getMatchHistory(id: string, user: User) {
     const found = await this.usersRepository.findOneBy({ id });
     if (found) {
-      console.log("les games oh lala ==", await this.getGames(found));
       return await this.getGames(found);
     }
     return null;
@@ -74,10 +73,8 @@ export class UsersService {
   }
 
   async getUserByLogin(login: string): Promise<User> {
-    console.log(login);
     const found = await this.usersRepository.findOneBy({ login });
-    console.log(found);
-    if (found == null) {
+    if (found === null) {
       throw new HttpException('User Not Found', 404);
     }
     return found;
@@ -85,7 +82,7 @@ export class UsersService {
 
   async getUserByUsername(username: string): Promise<User> {
     const found = await this.usersRepository.findOneBy({ username });
-    if (found == null) {
+    if (found === null) {
       throw new HttpException('User Not Found', 404);
     }
     return found
@@ -230,7 +227,7 @@ export class UsersService {
     const messages = await this.getMessage();
 
     for (const message of messages) {
-      if ((user.username === message.receiver.username && receiver.username === message.sender.username) || (user.username === message.sender.username && receiver.username === message.receiver.username))
+      if ((user.username === message.receiver?.username && receiver.username === message.sender?.username) || (user.username === message.sender?.username && receiver.username === message.receiver?.username))
         conv.push({ sender: message.sender.username, receiver: message.receiver.username, content: message.body, time: message.date });
     }
     return conv;
