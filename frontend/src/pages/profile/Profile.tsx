@@ -13,6 +13,8 @@ import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
 import { User } from '../../state/type';
+import FlashMessage from '../../components/alert-message/Alert'
+
 
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
@@ -51,7 +53,11 @@ const Profile = () => {
     const handleClickOpen = () => {
         setOpen(true);
     };
-
+    const [succes, setsucces] = useState(false);
+    const [error, seterror] = useState(false);
+    const [message, setmessage] = useState("");
+    const [message2, setmessage2] = useState("");
+  
     const handleClose = (change: boolean) => {
         const jwt = cookies.get('jwt');
         const options = {
@@ -63,14 +69,29 @@ const Profile = () => {
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
+                    setmessage("change name on " + inputValue);
+                    setsucces(true);
+                }
+            }).catch(err => {
+                if (err.response!.status === 500) {
+                    setmessage2( "username deja existant");
+                    // setmessage2(error.request);
+                    seterror(true);
+                    // console.log("reponse profile quand nom", err.response.data.message);
+                    // console.log("setm messa", message2);
+
+
                 }
             })
             .catch(err => {
             console.log("data == ", err.response.data.message);
             });
             setInputValue("")
-            setOpen(false);
+            
+            setsucces(false);
+            seterror(false);
         };
+        setOpen(false);
     }
 
     //2FA
@@ -211,6 +232,7 @@ const Profile = () => {
                                 type="text"
                                 fullWidth
                                 variant="standard"
+                                inputProps={{ maxLength: 12 }}
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
                                 onKeyUp={(e) => { if (e.key === 'Enter') { handleClose(true) } }}
@@ -299,6 +321,13 @@ const Profile = () => {
                         })}
                     </>
                 </div>
+                {
+                succes ?  <FlashMessage 
+                message={message} /> : ''
+            }
+            {
+                error ? <FlashMessage message2={message2} /> : ''
+            }
             </div>
         </React.Fragment >
     )
