@@ -4,13 +4,24 @@ import GamePage from './GamePage';
 import MapSelector from './MapSelector';
 import "./Pong.scss"
 import SpectatorPage from './Spectator';
+import WatchingListGame from './WatchingListGame';
+import waiting from "../../styles/asset/Loading.gif";
+import { useLocation } from 'react-router-dom';
+
 
 const Pong = () => {
+    const location = useLocation();
     const [gameStart, setGameStart] = useState(false);
     const [waitingOponnent, setWaitingOponnent] = useState(false);
     const [spectator, setSpectator] = useState(false);
     const [roomID, setRoomID] = useState("");
 
+    if (location.state && location.state.invite == true) return (
+        <div>
+            <Navbar />
+            <GamePage roomID={location.state.roomId}/>
+        </div>
+    )
     if (gameStart) return (
         <div>
             <Navbar />
@@ -26,7 +37,10 @@ const Pong = () => {
     else if (waitingOponnent) return (
         <div>
             <Navbar/>
-            <p>Waiting for an oponnent</p>
+            <div className='waiting_div'>
+                <h1 className='waiting_txt'>Waiting for an oponnent</h1>
+                <img src={waiting} className='waiting_pict'></img>
+            </div>
         </div>
     )
     else return (

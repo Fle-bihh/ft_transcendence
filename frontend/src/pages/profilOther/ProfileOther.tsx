@@ -43,10 +43,11 @@ import { useEffect, useState } from "react";
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { PasswordRounded } from "@mui/icons-material";
-import { Navigate, NavLink } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ip } from "../../App";
 import Cookies from "universal-cookie";
 import { utilsReducer } from "../../state/reducers/utilsReducer";
+import Pong from "../pong/Pong";
 
 const cookies = new Cookies();
 const jwt = cookies.get("jwt");
@@ -67,6 +68,8 @@ const ProfileOther = () => {
     const [friend, setFriend] = useState(NOT_FRIEND);
     const [inviteSend, setInviteSend] = useState(false);
     const [declineGame, setDeclineGame] = useState(false);
+    const [roomId, setRoomId] = useState("");
+    const [openGame, setOpenGame] = useState(false);
     const [matchHistory, setMatchHistory] = useState(
         Array<{
             id: number;
@@ -93,13 +96,12 @@ const ProfileOther = () => {
         getData: false,
         // http://localhost:3000/Profileother?username=ldauga
     });
-
-    utils.socket.removeListener("updateProfileOther");
-
     let userConnect = document.getElementById("userConnect");
     let userInGame = document.getElementById("userInGame");
     let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
+    const navigate = useNavigate();
     
+    utils.socket.removeListener("updateProfileOther");
     utils.socket.on(
         "updateProfileOther",
         (data: { login: string; friendStatus: string }) => {
@@ -135,30 +137,16 @@ const ProfileOther = () => {
     );
 
     const getUserData = () => {
-        // useEffect(() => {
-        // if (userDisplay === null) {
         const parsed = queryString.parse(window.location.search);
         console.log("userDisplau", userDisplay);
         console.log("username moi", user.user?.username);
         console.log("parsed", parsed);
-
-        // axios.get(`http://localhost:5001/user/login/${user.user?.parse.username}` Pas bon :)
-        if (
-            parsed.username == "" ||
-            parsed.username == undefined ||
-            parsed.username == user.user?.login
-        ) {
-            // axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: parsed.username }, options))
-            console.log("COUCOU");
+        if ( parsed.username == "" || parsed.username == undefined || parsed.username == user.user?.login ) {
             window.location.replace(`http://${ip}:3000`);
         } else {
-            //
-            axios
-                .get(`http://localhost:5001/user/login/${parsed.username} `, options)
+            axios.get(`http://localhost:5001/user/login/${parsed.username} `, options)
                 .then((response) => {
                     if (response.data.username != null) {
-                        console.log("on est dedans");
-
                         setUserDisplay({
                             id: response.data.id,
                             username: response.data.username,
@@ -172,59 +160,42 @@ const ProfileOther = () => {
                             Friend: response.data.Friend,
                             getData: true,
                         });
-                        console.log("le display du gars :", userDisplay);
-                        utils.socket.emit("GET_FRIEND_STATUS", {
-                            login: response.data.login,
-                        });
+                        utils.socket.emit("GET_FRIEND_STATUS", { login: response.data.login, });
                     } else {
-                        console.log("pas dans le if ");
                         window.location.replace(`http://${ip}:3000`);
                     }
-                    // console.log(response);
                 })
                 .catch((error) => {
                     console.log(error);
-                });
-            // }
+                })
         }
-        // })
     };
 
     const handleClickOpen = () => {
         setOpen(true);
     };
+
     const handleClose = (change: boolean) => {
         if (change == true) {
             if (friend == NOT_FRIEND) {
-                utils.socket.emit("SEND_FRIEND_REQUEST", {
-                    loginToSend: userDisplay.login,
-                });
+                utils.socket.emit("SEND_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else if (friend == FRIEND_REQUEST_SEND) {
-                utils.socket.emit("DEL_FRIEND_REQUEST", {
-                    loginToSend: userDisplay.login,
-                });
+                utils.socket.emit("DEL_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else if (friend == FRIEND_REQUEST_WAITING) {
-                utils.socket.emit("ACCEPT_FRIEND_REQUEST", {
-                    loginToSend: userDisplay.login,
-                });
+                utils.socket.emit("ACCEPT_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else {
-                utils.socket.emit("REMOVE_FRIEND_SHIP", {
-                    loginToSend: userDisplay.login,
-                });
-
+                utils.socket.emit("REMOVE_FRIEND_SHIP", { loginToSend: userDisplay.login });
             }
         }
         setOpen(false);
     };
 
-    //invitation to game
     const handleGameOpen = () => {
         setGameOpen(true);
     };
 
     const handleGameClose = (change: boolean) => {
         setGameOpen(false);
-        // setInviteSend(false);
     };
 
     function inviteGame1() {
@@ -243,17 +214,15 @@ const ProfileOther = () => {
         setInviteSend(true);
     }
 
-    utils.gameSocket.removeListener("cant_invite");
-    utils.gameSocket.on('cant_invite', (data: { sender: string, gameMap: string, receiver: string }) => {
-        //cant invite this playeeeeeer
-    })
-
     utils.gameSocket.removeListener("accept_game");
     utils.gameSocket.on('accept_game', (data: { sender: string, gameMap: string, receiver: string }) => {
-        return (<Navigate to={"/pong"}/>) //???
-        // Make the redirection to the game page with the good props !
-        //maybe but l'ecoute de la socket sur la page du pong directement ? 
-        //ou alors s'envoyer 2 sockets ? bref on verra
+        console.log("accept received");
+        utils.gameSocket.emit('JOIN_ROOM', data.sender + data.receiver)
+        utils.gameSocket.emit('START_INVITE_GAME', { user: { login: user.user?.username }, gameMap: data.gameMap });
+        setRoomId(data.sender + data.receiver);
+        setOpenGame(true);
+        if (openGame && roomId != "")
+            navigate('/Pong', { state:{ invite: true, roomId : roomId }})
     })
 
     utils.gameSocket.removeListener("decline_game");
@@ -330,7 +299,6 @@ const ProfileOther = () => {
         left: 'calc(50% - 9px)',
         transition: theme.transitions.create('opacity'),
     }));
-
     //end Invitation to game
 
     useEffect(() => {
@@ -340,9 +308,9 @@ const ProfileOther = () => {
         }
     }, [userDisplay?.getData]);
 
-
-
-    //----------------------------------------------------------------------------------------
+    if (openGame && roomId != "") return (
+        <Navigate to="/Pong" replace={true} state={{ invite:true, roomId:roomId }}/>
+    )
     return (
         <React.Fragment>
             <Navbar />
@@ -356,25 +324,20 @@ const ProfileOther = () => {
                             className="avatarOther"
                         />
                     </Stack>
-
-          
                     <div id="userConnect" >
                         <div className="circleConnectLigne" id="userConnect"></div>
 
                         <div className="connect" id="userConnect">Online</div>
                     </div>
-
                     <div id="userInGame">
                         <div className="circleInGame" id="userInGame"></div>
 
                         <div className="connect" id="userInGame">In game</div>
                     </div>
-
                     <div id="userConnectHorsLigne">
                         <div className="circleConnectHorsLigne" id="userConnectHorsLigne"></div>
                         <div className="connect" id="userConnectHorsLigne">Not Connected</div>
                     </div>  
-
                     <div className="infoUserOther">
                         <h3 className="userNameOther">Login :</h3>
                         <Typography className="userNamePrintOther">
@@ -387,7 +350,6 @@ const ProfileOther = () => {
                             {userDisplay?.username}
                         </Typography>
                     </div>
-
                     <Button
                         className="buttonChangeOther"
                         type="submit"
@@ -417,7 +379,6 @@ const ProfileOther = () => {
                             <Button onClick={() => handleClose(false)}>Cancel</Button>
                         </DialogActions>
                     </Dialog>
-
                     {friend == FRIEND ?
                         <Button className="buttonChangeOther" onClick={handleGameOpen} >
                             Invite to game
@@ -459,7 +420,6 @@ const ProfileOther = () => {
                                         </Image>
                                     </ImageButton>
                                 </Box>
-                                
                             </DialogContentText>
                             <DialogActions>
                                 <Button onClick={() => handleGameClose(false)}>Cancel</Button>
@@ -479,7 +439,7 @@ const ProfileOther = () => {
                                     <Button onClick={() => handleGameClose(false)}>Close</Button>
                                 </DialogActions></> 
                             : <><DialogTitle>
-                                Send invitation to game
+                                Decline
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText>

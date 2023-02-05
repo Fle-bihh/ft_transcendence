@@ -15,25 +15,25 @@ import { existsSync, mkdirSync, readFileSync, unlink } from 'fs';
 
 export const multerOptions = {
   limits: {
-      fileSize: 1048576,
+    fileSize: 1048576,
   },
   fileFilter: (req: any, file: any, cb: any) => {
-      if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
-          cb(null, true);
-      } else {
-          cb(new BadRequestException(`Unsupported file type ${extname(file.originalname)}`));
-      }
+    if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+      cb(null, true);
+    } else {
+      cb(new BadRequestException(`Unsupported file type ${extname(file.originalname)}`));
+    }
   },
   storage: diskStorage({
-      destination: './uploads/profileImages',
-      filename: (req: any, file: any, cb: any) => {
-          cb(null, `${uuidv4()}${extname(file.originalname)}`);
-      },
+    destination: './uploads/profileImages',
+    filename: (req: any, file: any, cb: any) => {
+      cb(null, `${uuidv4()}${extname(file.originalname)}`);
+    },
   }),
 };
 
 @Controller('user')
- @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 
 export class UsersController {
   constructor(private usersService: UsersService) { }
@@ -62,44 +62,38 @@ export class UsersController {
       root: (process.cwd() + '/uploads/profileImages/')
     };
 
-	//const user = await this.usersService.getUserById(data.id);
-	//if (user.profileImage.substring(8, 11) == "cdn") {
-		//return res.sendFile(fileName, options, function (err) {
-		//	if (err) {
-		//		throw new BadRequestException('Unable to find user\'s avatar');
-		//	}
-		//});
-	//}
-	return res.sendFile(fileName, options);
+    //const user = await this.usersService.getUserById(data.id);
+    //if (user.profileImage.substring(8, 11) == "cdn") {
+    //return res.sendFile(fileName, options, function (err) {
+    //	if (err) {
+    //		throw new BadRequestException('Unable to find user\'s avatar');
+    //	}
+    //});
+    //}
+    return res.sendFile(fileName, options);
   }
 
   @Post('/:id/profileImage')
   @UseInterceptors(FileInterceptor('photo', multerOptions))
   public async uploadFile(@UploadedFile() image: any, @Param('id') id: string) {
-	if (image.filename) {
-		let buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
-		const res = await this.usersService.checkMagicNumber(image.mimetype, buffer);
-		if (!res) {
-			unlink(process.cwd() + '/uploads/profileImages/'+ image.filename, (err) => {
-				if(err)
-				return err;
-			});
-			throw new BadRequestException('Unable to update your avatar.')
-		}
-		const ret = this.usersService.updateProfilePic(id, image.filename)
-		return ret;
-	} else
-		throw new BadRequestException('Unable to update your avatar, file too big.');
+    if (image.filename) {
+      let buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
+      const res = await this.usersService.checkMagicNumber(image.mimetype, buffer);
+      if (!res) {
+	unlink(process.cwd() + '/uploads/profileImages/'+ image.filename, (err) => {
+	  if(err)
+	  return err;
+	});
+	throw new BadRequestException('Unable to update your avatar.')
+      }
+      const ret = this.usersService.updateProfilePic(id, image.filename)
+      return ret;
+    } else
+    throw new BadRequestException('Unable to update your avatar, file too big.');
   }
 
-  // @Patch('/:id/profileImage')
-  // async patchProfileImage(@Param('id') id: string, @GetUser() user: User, @Body('profileImage') profileImage: string) {
-  //   console.log('ohhhhhhhhhhh', profileImage);
-  //   return await this.usersService.patchProfileImage(id, user, profileImage);
-  // }
-
   @Get('/:id/2fa/generate')
-  async register(@Response() response, @Param('id') id: string) {
+  async register(@Response() response: any, @Param('id') id: string) {
     const user: User = await this.usersService.getUserById(id);
     const { otpAuthUrl } =
       await this.usersService.generateTwoFactorAuthenticationSecret(user);
@@ -143,7 +137,7 @@ export class UsersController {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
     if (!isCodeValid)
-      throw new UnauthorizedException('Wrong authentication code');
+    throw new UnauthorizedException('Wrong authentication code');
     return await this.usersService.activate2FA(user);
   }
 
@@ -152,7 +146,7 @@ export class UsersController {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
     if (!isCodeValid)
-      throw new UnauthorizedException('Wrong authentication code');
+    throw new UnauthorizedException('Wrong authentication code');
     return isCodeValid;
   }
 }

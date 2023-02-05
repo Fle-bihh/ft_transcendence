@@ -284,6 +284,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = this.getRoomByID(info.user.login + oponnent.user.login);
       this.allGames[room[0]].players[0].inGame = true
       this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
+      this.allGames[room[0]].setOponnentObstacle()
       this.allGames[room[0]].gameOn = true
       this.joinRoom(client, room[1].roomID)
       allClients.find(client => client.username == oponnent.user.login).socket.emit('joinRoom', room[1].roomID)
@@ -356,27 +357,26 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const sender = allClients.find(user => user.username == data.sender);
     if (sender) {
       this.io.to(sender.id).emit('accept_game', data);
-      this.io.to(client.id).emit('start_invite_game');
+      this.io.to(client.id).emit('redirect_to_game', data);
     }
   }
-  //same as start game but with the waiting Invite array
+
   @SubscribeMessage('START_INVITE_GAME')
-  async startInviteGame(client: Socket, info: { user: { login: string}, gameMap: string }) {
+  async startInviteGame(client: Socket, info: { user: { login: string}, gameMap: string, roomId: string }) {
     let oponnent: { map: string; user: {login: string} };
     if ((oponnent = waitingForInvite.find(item => item.map == info.gameMap)) != undefined) {
-      this.allGames.push(new GameClass(info.gameMap, info.user.login, info.user.login + oponnent.user.login, client.id))
-      const room = this.getRoomByID(info.user.login + oponnent.user.login);
+      this.allGames.push(new GameClass(info.gameMap, info.user.login, info.roomId, client.id))
+      const room = this.getRoomByID(info.roomId)
       this.allGames[room[0]].players[0].inGame = true
       this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
       this.allGames[room[0]].gameOn = true
-      this.joinRoom(client, room[1].roomID)
-      allClients.find(client => client.username == oponnent.user.login).socket.emit('joinRoom', room[1].roomID)
       allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
-      waitingForGame.splice(waitingForGame.findIndex(item => item.map == info.gameMap), 1)
-      console.table(waitingForGame);
-      console.table(this.allGames);
-      console.table(allClients);
+      waitingForInvite.splice(waitingForInvite.findIndex(item => item.map == info.gameMap), 1)
+      console.table(waitingForInvite)
+      console.table(this.allGames)
+      console.log(room[1].players)
+      console.table(allClients)
     }
     else {
       waitingForInvite.push({ map: info.gameMap, user: { login: info.user.login }})

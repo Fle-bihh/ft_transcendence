@@ -35,14 +35,22 @@ function App() {
     addNotif({ type: NotifType.INVITEGAME, data: data})
   })
 
-  useEffect(() => {
-    if (!verif)
+  // useEffect(() => {
+  //   console.log("Check user", persistantReducer.userReducer.user);
+  //   if (!verif && persistantReducer.userReducer.user)
+  //   {
+  //       console.log("Check reco front", persistantReducer.userReducer.user?.username);
+  //       utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
+  //       setVerif(true)
+  //   }
+  // })
+
+  if (!verif && persistantReducer.userReducer.user)
     {
         console.log("Check reco front", persistantReducer.userReducer.user?.username);
         utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
         setVerif(true)
     }
-  })
 
   return (
     <div className="app">

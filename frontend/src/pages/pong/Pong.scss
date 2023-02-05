@@ -12,3 +12,28 @@
 .blocksContainerCenter {
     margin-top: 10%;
 }
+
+.waiting_div, .game-finished{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10vh;
+}
+
+.defeat{
+    color: red;
+}
+
+.victory{
+    color: green;
+}
+
+.btnPlay {
+    text-decoration: none;
+    .btn2 {
+        background-color: black;
+        color: white;
+        margin-top: 6%;
+    }
+}
