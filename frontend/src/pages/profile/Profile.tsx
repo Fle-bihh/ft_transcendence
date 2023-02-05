@@ -314,7 +314,6 @@ const Profile = () => {
                                     <div className="results">
                                         <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
                                         <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
-
                                     </div>
                                 </div>
                             )
