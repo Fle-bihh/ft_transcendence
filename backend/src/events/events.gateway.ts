@@ -408,7 +408,7 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('GET_ALL_USERS_NOT_FRIEND')
-  async get_all_users_not_friend(client: Socket) {
+  async get_all_users_not_friend(client: Socket, data: {username: string}) {
     // console.log('oui', users.find((item) => item.socket.id == client.id).user)
     const userFriendList = await this.friendShipService.getUserFriendList(
       users.find((item) => item.socket.id == client.id).user.id,
@@ -425,6 +425,7 @@ export class EventsGateway {
         ) == undefined &&
         item.id != users.find((item) => item.socket.id == client.id).user.id
       ) {
+        if (item.username !== data.username)
         retArray.push({ username: item.username });
       }
     });

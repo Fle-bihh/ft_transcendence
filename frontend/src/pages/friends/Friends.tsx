@@ -45,7 +45,7 @@ const Friends = () => {
   useEffect(() => {
     utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
     console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
-    utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", user.user?.username);
+    utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", { username: user.user?.username });
     console.log(user.user?.username, "send GET_ALL_USERS to backend");
   }, []);
 
@@ -107,7 +107,7 @@ const Friends = () => {
               setInputValue(event.currentTarget.value);
             }}
             autoFocus
-            onKeyDown={(event) => {}}
+            onKeyDown={(event) => { }}
           />
           <div className="friendsListContainer">
             {friendsList.map((friend) => {
@@ -158,7 +158,7 @@ const Friends = () => {
               setRightInputValue(event.currentTarget.value);
             }}
             autoFocus
-            onKeyDown={(event) => {}}
+            onKeyDown={(event) => { }}
           />
           <div className="usersListContainer">
             {usersList.map((user) => (

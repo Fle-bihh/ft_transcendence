@@ -1,3 +1,4 @@
+import { MaxLength } from "class-validator";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Channel } from "./channel.entity";
 import { FriendRequest } from "./friend-request.entity";
@@ -10,6 +11,7 @@ export class User {
 	id: string;
 
 	@Column({ unique: true })
+	@MaxLength(12)
 	username: string;
 
 	@Column({ unique: true })
