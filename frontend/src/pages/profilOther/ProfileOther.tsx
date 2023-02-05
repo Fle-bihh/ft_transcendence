@@ -137,30 +137,16 @@ const ProfileOther = () => {
     );
 
     const getUserData = () => {
-        // useEffect(() => {
-        // if (userDisplay === null) {
         const parsed = queryString.parse(window.location.search);
         console.log("userDisplau", userDisplay);
         console.log("username moi", user.user?.username);
         console.log("parsed", parsed);
-
-        // axios.get(`http://localhost:5001/user/login/${user.user?.parse.username}` Pas bon :)
-        if (
-            parsed.username == "" ||
-            parsed.username == undefined ||
-            parsed.username == user.user?.login
-        ) {
-            // axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: parsed.username }, options))
-            console.log("COUCOU");
+        if ( parsed.username == "" || parsed.username == undefined || parsed.username == user.user?.login ) {
             window.location.replace(`http://${ip}:3000`);
         } else {
-            //
-            axios
-                .get(`http://localhost:5001/user/username/${parsed.username} `, options)
+            axios.get(`http://localhost:5001/user/login/${parsed.username} `, options)
                 .then((response) => {
                     if (response.data.username != null) {
-                        console.log("on est dedans");
-
                         setUserDisplay({
                             id: response.data.id,
                             username: response.data.username,
@@ -174,22 +160,15 @@ const ProfileOther = () => {
                             Friend: response.data.Friend,
                             getData: true,
                         });
-                        console.log("le display du gars :", userDisplay);
-                        utils.socket.emit("GET_FRIEND_STATUS", {
-                            login: response.data.login,
-                        });
+                        utils.socket.emit("GET_FRIEND_STATUS", { login: response.data.login, });
                     } else {
-                        console.log("pas dans le if ");
                         window.location.replace(`http://${ip}:3000`);
                     }
-                    // console.log(response);
                 })
                 .catch((error) => {
                     console.log(error);
-                });
-            // }
+                })
         }
-        // })
     };
 
     const handleClickOpen = () => {
@@ -199,35 +178,24 @@ const ProfileOther = () => {
     const handleClose = (change: boolean) => {
         if (change == true) {
             if (friend == NOT_FRIEND) {
-                utils.socket.emit("SEND_FRIEND_REQUEST", {
-                    loginToSend: userDisplay.login,
-                });
+                utils.socket.emit("SEND_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else if (friend == FRIEND_REQUEST_SEND) {
-                utils.socket.emit("DEL_FRIEND_REQUEST", {
-                    loginToSend: userDisplay.login,
-                });
+                utils.socket.emit("DEL_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else if (friend == FRIEND_REQUEST_WAITING) {
-                utils.socket.emit("ACCEPT_FRIEND_REQUEST", {
-                    loginToSend: userDisplay.login,
-                });
+                utils.socket.emit("ACCEPT_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else {
-                utils.socket.emit("REMOVE_FRIEND_SHIP", {
-                    loginToSend: userDisplay.login,
-                });
-
+                utils.socket.emit("REMOVE_FRIEND_SHIP", { loginToSend: userDisplay.login });
             }
         }
         setOpen(false);
     };
 
-    //invitation to game
     const handleGameOpen = () => {
         setGameOpen(true);
     };
 
     const handleGameClose = (change: boolean) => {
         setGameOpen(false);
-        // setInviteSend(false);
     };
 
     function inviteGame1() {
@@ -245,11 +213,6 @@ const ProfileOther = () => {
         utils.gameSocket.emit('INVITE_GAME', { sender: user.user?.username, gameMap: "map3", receiver: userDisplay.username });
         setInviteSend(true);
     }
-
-    utils.gameSocket.removeListener("cant_invite");
-    utils.gameSocket.on('cant_invite', (data: { sender: string, gameMap: string, receiver: string }) => {
-        //cant invite this playeeeeeer
-    })
 
     utils.gameSocket.removeListener("accept_game");
     utils.gameSocket.on('accept_game', (data: { sender: string, gameMap: string, receiver: string }) => {
@@ -336,7 +299,6 @@ const ProfileOther = () => {
         left: 'calc(50% - 9px)',
         transition: theme.transitions.create('opacity'),
     }));
-
     //end Invitation to game
 
     useEffect(() => {
@@ -346,10 +308,8 @@ const ProfileOther = () => {
         }
     }, [userDisplay?.getData]);
 
-    //----------------------------------------------------------------------------------------
     if (openGame && roomId != "") return (
         <Navigate to="/Pong" replace={true} state={{ invite:true, roomId:roomId }}/>
-        // navigate('/Pong', { state:{ invite: true, roomId : roomId }})
     )
     return (
         <React.Fragment>
