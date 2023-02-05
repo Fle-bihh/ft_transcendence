@@ -306,12 +306,18 @@ export class ChatGateway {
   @SubscribeMessage('REMOVE_ADMIN')
   async remove_admin(client: Socket, data: { admin: string, channel: string }) {  /////////////////////////////////////
     console.log('REMOVE_ADMIN recu ChatGateway', data);
+    let channel = await this.channelsService.getOneChannel(data.channel);
+    let user = await this.usersService.getUserByUsername(data.admin);
+    this.channelsService.removeAdmin(user, channel);
     // REMOVE ADMIN IN DB OF channel
   }
 
   @SubscribeMessage('KICK_USER')
   async kick_user(client: Socket, data: { user: string, channel: string }) {  /////////////////////////////////////
     console.log('KICK_USER recu ChatGateway', data);
+    let channel = await this.channelsService.getOneChannel(data.channel);
+    let user = await this.usersService.getUserByUsername(data.user);
+    this.channelsService.kickUser(user, channel);
     // REMOVE USER FROM channel 
   }
 
