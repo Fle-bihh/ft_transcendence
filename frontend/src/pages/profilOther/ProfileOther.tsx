@@ -161,12 +161,11 @@ const ProfileOther = () => {
                             getData: true,
                         });
                         utils.socket.emit("GET_FRIEND_STATUS", { login: response.data.login, });
-                    } else {
-                        window.location.replace(`http://${ip}:3000`);
-                    }
+                    } 
                 })
                 .catch((error) => {
                     console.log(error);
+                    window.location.replace(`http://${ip}:3000/*`);
                 })
         }
     };

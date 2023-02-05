@@ -425,7 +425,7 @@
 }
 
 //------------GRAND ECRAN----------------------------------------------------------------------
-@media screen and (min-width: 928px) {
+@media screen and (min-width: 920px) {
     .profilePageContainer {
         height: calc(100vh - 64px);
         width: 100vw;
@@ -568,6 +568,8 @@
                 background-color: rgb(122, 122, 122);
                 top: 0;
                 z-index: 999;
+            word-wrap: break-word;
+
                 text-align: center;
             }
             * {
