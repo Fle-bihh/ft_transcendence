@@ -27,7 +27,6 @@ export const ip = window.location.hostname;
 function App() {
   const utils = useSelector((state: RootState) => state.utils);
   const { addNotif } = bindActionCreators(actionCreators, useDispatch());
-  const [verif, setVerif] = useState(false);
   const persistantReducer = useSelector(
     (state: RootState) => state.persistantReducer
   );
@@ -40,20 +39,6 @@ function App() {
       addNotif({ type: NotifType.INVITEGAME, data: data });
     }
   );
-
-  if (!verif && persistantReducer.userReducer.user) {
-    console.log(
-      "Check reco front 2",
-      persistantReducer.userReducer.user?.username
-    );
-    utils.gameSocket.emit(
-      "CHECK_RECONNEXION",
-      persistantReducer.userReducer.user
-        ? persistantReducer.userReducer.user
-        : ""
-    );
-    setVerif(true);
-  }
 
   return (
     <div className="app">

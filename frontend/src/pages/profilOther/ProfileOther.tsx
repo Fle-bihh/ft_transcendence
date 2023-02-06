@@ -65,10 +65,15 @@ const FRIEND_REQUEST_WAITING = 3;
 const FRIEND = 4;
 const BLOCKED = 5;
 
+const ONLINE = 6;
+const OFFLINE = 7;
+const IN_GAME = 8;
+
 const ProfileOther = () => {
   const [open, setOpen] = React.useState(false);
   const [gameopen, setGameOpen] = React.useState(false);
   const [friend, setFriend] = useState(NOT_FRIEND);
+  const [clientStatus, setClientStatus] = useState(OFFLINE);
   const [inviteSend, setInviteSend] = useState(false);
   const [declineGame, setDeclineGame] = useState(false);
   const [roomId, setRoomId] = useState("");
@@ -146,6 +151,34 @@ const ProfileOther = () => {
     }
   );
 
+  utils.gameSocket.removeListener("getClientStatus");
+  utils.gameSocket.on(
+    "getClientStatus",
+    (data: { user: string; status: string }) => {
+      // if (getComputedStyle(userInGame!).display == "flex") {
+      //   userConnect!.style.display = "none";
+      //   userInGame!.style.display = "none";
+      //   userConnectHorsLigne!.style.display = "none";
+      // }
+      console.log("getClientStatus", data);
+      if (data.user != userDisplay.login) return;
+
+
+      if (data.status == 'online')
+        setClientStatus(ONLINE)
+        else if (data.status == 'offline')
+        setClientStatus(OFFLINE)
+        else if (data.status == 'in-game')
+        setClientStatus(IN_GAME)
+      // if (getComputedStyle(userInGame!).display == "none") {
+      //   userInGame!.style.display = "flex";
+      //   userConnect!.style.display = "flex";
+
+      //   userConnectHorsLigne!.style.display = "flex";
+      // }
+    }
+  );
+
   const getUserData = () => {
     const parsed = queryString.parse(window.location.search);
     console.log("userDisplau", userDisplay);
@@ -182,6 +215,9 @@ const ProfileOther = () => {
             });
             utils.socket.emit("GET_FRIEND_STATUS", {
               login: response.data.login,
+            });
+            utils.gameSocket.emit("GET_CLIENT_STATUS", {
+              nickname: response.data.username,
             });
             axios
               .get(`http://localhost:5001/game/${user.user?.id}`, options)
@@ -420,29 +456,35 @@ const ProfileOther = () => {
           </Stack>
           {friend == FRIEND ? (
             <>
-              <div id="userConnect">
-                <div className="circleConnectLigne" id="userConnect"></div>
+              {clientStatus == ONLINE ? (
+                <div id="userConnect">
+                  <div className="circleConnectLigne" id="userConnect"></div>
 
-                <div className="connect" id="userConnect">
-                  Online
+                  <div className="connect" id="userConnect">
+                    Online
+                  </div>
                 </div>
-              </div>
-              <div id="userInGame">
-                <div className="circleInGame" id="userInGame"></div>
+              ) : clientStatus == IN_GAME ? (
+                <div id="userInGame">
+                  <div className="circleInGame" id="userInGame"></div>
 
-                <div className="connect" id="userInGame">
-                  In game
+                  <div className="connect" id="userInGame">
+                    In game
+                  </div>
                 </div>
-              </div>
-              <div id="userConnectHorsLigne">
-                <div
-                  className="circleConnectHorsLigne"
-                  id="userConnectHorsLigne"
-                ></div>
-                <div className="connect" id="userConnectHorsLigne">
-                  Not Connected
+              ) : clientStatus == OFFLINE ? (
+                <div id="userConnectHorsLigne">
+                  <div
+                    className="circleConnectHorsLigne"
+                    id="userConnectHorsLigne"
+                  ></div>
+                  <div className="connect" id="userConnectHorsLigne">
+                    Not Connected
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <></>
+              )}
             </>
           ) : (
             <></>

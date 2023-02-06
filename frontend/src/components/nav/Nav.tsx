@@ -24,7 +24,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "../../state";
 import { bindActionCreators } from "redux";
-import Cookies from "universal-cookie"
+import Cookies from "universal-cookie";
 
 const Navbar = (props: any) => {
   const dispatch = useDispatch();
@@ -112,15 +112,16 @@ const Navbar = (props: any) => {
               );
             else if (item.Link == "/Signup") {
               return (
-                <NavLink
-                key={item.Link}
-                  to={`/`}
+                <div
+                  key={item.Link}
                   className="link"
                   onClick={() => {
                     const cookies = new Cookies();
-                    cookies.remove('jwt');
+                    cookies.remove("jwt");
                     setUser(null);
                     setTwoFA(false);
+                    window.history.pushState({}, window.location.toString());
+                    window.location.replace("/");
                   }}
                 >
                   <Typography
@@ -132,7 +133,7 @@ const Navbar = (props: any) => {
                   >
                     {item.Name}
                   </Typography>
-                </NavLink>
+                </div>
               );
             } else
               return (
@@ -175,16 +176,47 @@ const Navbar = (props: any) => {
         }}
       >
         <Box sx={{ width: 150, height: "21vh" }}>
-          {ItemsInNav.map((item) => (
-            <NavLink key={item.Link} to={`${item.Link}`} className="little-link">
-              <MenuItem
-                sx={{ cursor: "pointer", frontSize: "14px", color: "balck" }}
+          {ItemsInNav.map((item) => {
+            if (item.Link == "/Signup") {
+              return (
+                <div
+                  key={item.Link}
+                  className="link"
+                  onClick={() => {
+                    const cookies = new Cookies();
+                    cookies.remove("jwt");
+                    setUser(null);
+                    setTwoFA(false);
+                    window.history.pushState({}, window.location.toString());
+                    window.location.replace("/");
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      cursor: "pointer",
+                      frontSize: "14px",
+                      color: "black",
+                    }}
+                  >
+                    {item.Name}
+                  </Typography>
+                </div>
+              );
+            } else
+            return (
+              <NavLink
+                key={item.Link}
+                to={`${item.Link}`}
+                className="little-link"
               >
-                {item.Name}
-              </MenuItem>
-            </NavLink>
-            // </a>
-          ))}
+                <MenuItem
+                  sx={{ cursor: "pointer", frontSize: "14px", color: "black" }}
+                >
+                  {item.Name}
+                </MenuItem>
+              </NavLink>
+            );
+          })}
         </Box>
       </Menu>
 
@@ -205,7 +237,11 @@ const Navbar = (props: any) => {
       >
         <Box sx={{ width: 150, height: "10vh" }}>
           {HomeItems.map((item) => (
-            <NavLink key={item.Link} to={`${item.Link}`} className="little-link">
+            <NavLink
+              key={item.Link}
+              to={`${item.Link}`}
+              className="little-link"
+            >
               <MenuItem
                 sx={{ cursor: "pointer", frontSize: "14px", color: "balck" }}
               >
