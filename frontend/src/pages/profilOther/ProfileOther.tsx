@@ -102,15 +102,12 @@ const ProfileOther = () => {
     const navigate = useNavigate();
     
     utils.socket.removeListener("updateProfileOther");
-    utils.socket.on(
-        "updateProfileOther",
-        (data: { login: string; friendStatus: string }) => {
-            
+    utils.socket.on( "updateProfileOther", (data: { login: string; friendStatus: string }) => {
             if (getComputedStyle(userInGame!).display == "flex") {
                 userConnect!.style.display = "none"
                 userInGame!.style.display = "none"
                 userConnectHorsLigne!.style.display = "none"
-                }
+            }
             console.log("oui");
             if (data.login != userDisplay.login) return;
             console.log("updateProfileOther", data.login, data.friendStatus);
@@ -176,6 +173,7 @@ const ProfileOther = () => {
 
     const handleClose = (change: boolean) => {
         if (change == true) {
+            console.log("send to : ", userDisplay.login)
             if (friend == NOT_FRIEND) {
                 utils.socket.emit("SEND_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else if (friend == FRIEND_REQUEST_SEND) {
