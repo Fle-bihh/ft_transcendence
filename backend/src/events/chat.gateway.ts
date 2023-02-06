@@ -53,7 +53,6 @@ export class ChatGateway {
     console.log('BLOCK_USER recu ChatGateway', data);
 
     this.usersService.addBlockList(data.username, data.target);
-
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
