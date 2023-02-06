@@ -112,7 +112,6 @@ const ProfileOther = () => {
                 userInGame!.style.display = "none"
                 userConnectHorsLigne!.style.display = "none"
             }
-            console.log("oui");
             if (data.login != userDisplay.login) return;
             console.log("updateProfileOther", data.login, data.friendStatus);
             if (data.friendStatus == "blocked")
