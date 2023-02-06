@@ -216,9 +216,13 @@ const GamePage = (props: any) => {
         if (draw === true) {
             return (
                 <div className='game-finished'>
-                    <h1 className={'draw'}>The game got canceled</h1>
+                    <h1 className={U?.score === 3 ? 'victory' : 'defeat'}>{U?.score === 3 ? 'You Win !' : 'You Lose !'}</h1>
                     <div className='result'>
                         <p><b>Due to inactivity</b></p>
+                    </div>
+                    <div className='result'>
+                        <p><b>YOU :</b> {U?.score}</p>
+                        <p><b>HIM :</b> {H?.score}</p>
                     </div>
                     <NavLink to='/' className="btnPlay">
                         <Button className="btn2">

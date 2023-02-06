@@ -125,7 +125,7 @@ export class ChatGateway {
     const allMessages = await this.channelsService.getMessages();
     const tmp = allMessages.reverse();
     for (let message of tmp) {
-      let receiver = (message.channel ? message.channel.name : message.receiver.username);
+      let receiver = (message.channel ? message.channel.name : message.receiver.username); // verif qu'il est dans le channel avant de le push
       if (message.sender && message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver)) {
         retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
@@ -148,6 +148,8 @@ export class ChatGateway {
       await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
 
+    // verif que sender is not blocked
+
     const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
     const actualTime: Date = new Date();
     const messageDto: MessagesDto = {
@@ -156,6 +158,7 @@ export class ChatGateway {
       receiver: receiverUser,
       body: data.content,
       channel: receiverChannel,
+      // serverMsg: false,
     };
 
     this.channelsService.createMessage(sender, messageDto);
@@ -197,7 +200,7 @@ export class ChatGateway {
       retArray.push({ login: user.username, admin: admin })
     }
     client.emit('get_participants', retArray);
-    this.logger.log('send get_participants to', data.login);
+    this.logger.log('send get_participants with', retArray);
   }
 
   @SubscribeMessage('GET_PARTICIPANT_ROLE')
@@ -248,15 +251,19 @@ export class ChatGateway {
     this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
     const user = await this.usersService.getUserByUsername(data.owner);
     const channel: Channel = await this.channelsService.createChannel(user, data.name, data.password, data.description, data.privacy); // ADD MSG CHANNEL CREATED
-    this.add_message(client, { sender: data.owner, receiver: data.name, content: "I joined" });
+    const retMsg = user.username + " created this channel"
+    this.add_message(client, { sender: data.owner, receiver: data.name, content: retMsg });
     this.get_all_conv_info(client, { sender: data.owner });
   }
 
   @SubscribeMessage('JOIN_CHANNEL')
-  async join_channel(client: Socket, data: { login: string, channelName: string, channelPassword: string }) {
-    await this.channelsService.joinChannel(data.login, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
+  async join_channel(client: Socket, data: { username: string, channelName: string, channelPassword: string }) {
+    console.log('JOIN_CHANNEL recu ChatGateway', data);
+    await this.channelsService.joinChannel(data.username, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
+    const retMsg = data.username + " joined this channel"
+    this.add_message(client, { sender: data.username, receiver: data.channelName, content: retMsg });
     client.emit('channel_joined', { channelName: data.channelName });
-    this.get_all_conv_info(client, { sender: data.login });
+    this.get_all_conv_info(client, { sender: data.username });
   }
 
   @SubscribeMessage('ADD_ADMIN')
@@ -285,6 +292,8 @@ export class ChatGateway {
   async leave_channel(client: Socket, data: { login: string, channelName: string }) {
     await this.channelsService.leaveChannel(data.login, data.channelName);
     client.emit('channel_left', { channelName: data.channelName });
+    const retMsg = data.login + " left this channel"
+    this.add_message(client, { sender: data.login, receiver: data.channelName, content: retMsg });
     this.get_all_conv_info(client, { sender: data.login });
   }
 
@@ -293,6 +302,8 @@ export class ChatGateway {
     await this.channelsService.changeName(data.currentName, data.newName);
     this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
     // this.get_all_conv_info(client, { sender: data.login });
+    const retMsg = data.login + " changed the channel name to " + data.newName;
+    this.add_message(client, { sender: data.login, receiver: data.newName, content: retMsg });
     this.get_all_channels(client, data.login);
   }
 
@@ -300,6 +311,8 @@ export class ChatGateway {
   async change_channel_password(client: Socket, data: { login: string, channelName: string, newPassword: string }) {
     this.logger.log('CHANGE_CHANNEL_PASSWORD recu ChatGateway', data);
     await this.channelsService.changePassword(data.channelName, data.newPassword); // ADD MSG PW CHANGED
+    const retMsg = data.login + " changed the channel password"
+    this.add_message(client, { sender: data.login, receiver: data.channelName, content: retMsg });
     this.get_all_conv_info(client, { sender: data.login });
     this.get_all_channels(client, data.login);
   }
