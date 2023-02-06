@@ -116,20 +116,31 @@ const ProfileOther = () => {
             console.log("updateProfileOther", data.login, data.friendStatus);
             if (data.friendStatus == "blocked")
             {
+                console.log("je suis ici1")
                 setFriend(BLOCKED);
             }
             else if (data.friendStatus == "request-send") {
+                console.log("je suis ici2")
+
                 setFriend(FRIEND_REQUEST_SEND);
             }
             else if (data.friendStatus == "request-waiting") {
+                console.log("je suis ici3")
+
                 setFriend(FRIEND_REQUEST_WAITING);
             }
             else if (data.friendStatus == "not-friend") {
+                console.log("je suis ici4")
+
                 setFriend(NOT_FRIEND)
             }
             else {
+                console.log("je suis ici5")
+
                 setFriend(FRIEND)
+
                 if (getComputedStyle(userInGame!).display == "none") {
+
                     userInGame!.style.display = "flex"
                     userConnect!.style.display = "flex"
 
