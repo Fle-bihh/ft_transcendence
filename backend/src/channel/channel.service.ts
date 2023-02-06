@@ -87,6 +87,7 @@ export class ChannelService {
       user.channelsConnected.push(channel);
       try {
         await this.channelsRepository.save(channel);
+        await this.usersRepository.save(user);
       } catch (e) { console.log(e.code) }
       //join the channel}
     } else {
@@ -236,12 +237,16 @@ export class ChannelService {
     if (channel.creator.username === user.username) {
       return
     }
-    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username));
+    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
+    user.channelsAdmin.splice(user.channelsAdmin.findIndex((u) => u.name === channel.name), 1);
     await this.channelsRepository.save(channel);
+    await this.usersRepository.save(user);
+    console.log(channel.admin);
+    console.log("ohhhhhhhhhhhhhhh == ", user.channelsAdmin);
   }
 
   async kickUser(user: User, channel: Channel): Promise<void> {
-    channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username));
+    channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
     await this.channelsRepository.save(channel);
   }
 

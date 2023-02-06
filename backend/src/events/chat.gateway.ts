@@ -51,19 +51,9 @@ export class ChatGateway {
   @SubscribeMessage('BLOCK_USER')
   block_user(client: Socket, data: { username: string, target: string; }) {
     console.log('BLOCK_USER recu ChatGateway', data);
-<<<<<<< HEAD
-<<<<<<< HEAD
-    this.usersService.addBlockList(data.login, data.target);
+    this.usersService.addBlockList(data.username, data.target);
     //client.emit('updateProfileOther', {login: data.target,friendStatus: 'blocked'});
     this.logger.log('db_block = ', db_blockList);
-=======
-    this.usersService.addBlockList(data.username, data.target);
->>>>>>> 60b789899991513af6aedf7ca5bbad9e80afb845
-=======
-
-    this.usersService.addBlockList(data.username, data.target);
-
->>>>>>> 012620f8fa113024180a7c343ae82785424b7506
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
@@ -158,11 +148,6 @@ export class ChatGateway {
     try {
       await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
-    let serverMsg: boolean;
-    if (data.server === undefined)
-      serverMsg = data.server;
-    else
-      serverMsg = false;
     const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
     const actualTime: Date = new Date();
     const messageDto: MessagesDto = {
@@ -171,7 +156,7 @@ export class ChatGateway {
       receiver: receiverUser,
       body: data.content,
       channel: receiverChannel,
-      serverMsg: serverMsg,
+      serverMsg: data.server,
     };
 
     this.channelsService.createMessage(sender, messageDto);
@@ -285,6 +270,7 @@ export class ChatGateway {
     let channel = await this.channelsService.getOneChannel(data.channel);
     await this.channelsService.addAdmin(data.new_admin, channel);
     console.log('ADD_ADMIN recu ChatGateway', data);
+    this.get_participant_role(client, {login: data.new_admin, channel: channel.name});
     // ADD NEW ADMIN IN DB OF channel
   }
 
@@ -342,6 +328,7 @@ export class ChatGateway {
     let channel = await this.channelsService.getOneChannel(data.channel);
     let user = await this.usersService.getUserByUsername(data.admin);
     this.channelsService.removeAdmin(user, channel);
+    console.log("channel admin in remove admin == ", channel.admin);
     // REMOVE ADMIN IN DB OF channel
   }
 
