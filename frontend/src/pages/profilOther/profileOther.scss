@@ -5,7 +5,7 @@
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color: olivedrab;
+        background-color: #f3dbee;
         overflow: scroll;
 
         .profileOther {
@@ -169,7 +169,7 @@
             .rectangleOther {
                 height: 29%;
                 width: 100%;
-                background-color: rgb(122, 122, 122);
+                background-color: white;
                 position: sticky;
                 top: 0;
                 z-index: 999;
@@ -192,9 +192,9 @@
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
-                border: 5px solid red;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(255, 164, 164);
+                background-color: rgb(247 108 108);
                 margin-bottom: 2%;
                 padding: 10px;
             }
@@ -202,9 +202,9 @@
             .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
-                border: 5px solid green;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(182, 255, 164);
+                background-color: rgb(129 234 103);
                 margin-bottom: 2%;
                 padding: 10px;
             }
@@ -246,7 +246,7 @@
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color: mediumblue;
+        background-color: #f3dbee;
         overflow: scroll;
 
         .profileOther {
@@ -412,7 +412,7 @@
             .rectangleOther {
                 height: 29%;
                 width: 100%;
-                background-color: rgb(122, 122, 122);
+                background-color: white;
                 top: 0;
                 z-index: 999;
                 text-align: center;
@@ -433,9 +433,9 @@
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
-                border: 5px solid red;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(255, 164, 164);
+                background-color: rgb(247 108 108);
                 margin-bottom: 2%;
                 padding: 10px;
             }
@@ -443,9 +443,9 @@
             .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
-                border: 5px solid green;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(182, 255, 164);
+                background-color: rgb(129 234 103);
                 margin-bottom: 2%;
                 padding: 10px;
             }
@@ -487,7 +487,7 @@
         width: 100vw;
         margin-top: 64px;
         display: flex;
-        background-color: magenta;
+        background-color: #f3dbee;
 
         .profileOther {
             margin-top: 3%;
@@ -650,7 +650,7 @@
             .rectangleOther {
                 height: 29%;
                 width: 100%;
-                background-color: rgb(122, 122, 122);
+                background-color: white;
                 position: sticky;
                 top: 0;
                 z-index: 999;
@@ -671,9 +671,9 @@
             .itemLoserOther {
                 align-content: space-between;
                 justify-content: space-between;
-                border: 5px solid red;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(255, 164, 164);
+                background-color: rgb(247 108 108);
                 margin-bottom: 2%;
                 padding: 10px;
             }
@@ -681,9 +681,9 @@
             .itemWinnerOther {
                 align-content: space-between;
                 justify-content: space-between;
-                border: 5px solid green;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(182, 255, 164);
+                background-color: rgb(129 234 103);
                 margin-bottom: 2%;
                 padding: 10px;
             }

@@ -634,67 +634,43 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
             )}
           </Dialog>
         </div>
-
-        <div className="statOther">
-          <div className="rectangleOther">
-            <div className="textRectangle">
-              <p>nbr Win</p>
-              {userDisplay?.WinNumber}
-            </div>
-            <div className="textRectangle">
-              <h2 style={{ color: "white" }}>Rank</h2>
-              <h3
-                style={{
-                  textAlign: "center",
-                  fontWeight: "900",
-                  marginBottom: "3px",
-                }}
-              >
-                {userDisplay?.Rank}
-              </h3>
-            </div>
-            <div className="textRectangle">
-              <p>nbr Loose</p>
-              {userDisplay?.LossNumber}
-            </div>
-          </div>
-          {matchHistory.map((match) => {
-            return (
-              <div
-                className={
-                  match.winner == userDisplay?.username
-                    ? "itemWinner"
-                    : "itemLoser"
-                }
-                key={match.id.toString()}
-              >
-                <div className="results">
-                  <div className="name">
-                    {match.player1 == userDisplay?.username
-                      ? match.player1
-                      : match.player2}
-                  </div>
-                  <div className="score">
-                    -
-                    {match.player1 == userDisplay?.username
-                      ? match.score1
-                      : match.score2}
-                    -
-                  </div>
-                </div>
-                <div className="results">
-                  <div className="score">
-                    -
-                    {match.player2 == userDisplay?.username
-                      ? match.score1
-                      : match.score2}
-                    -
-                  </div>
-                  <div className="name">
-                    {match.player2 == userDisplay?.username
-                      ? match.player1
-                      : match.player2}
-                  </div>
+                <div className="statOther">
+                    <div className="rectangleOther">
+                        <div className="textRectangle">
+                            <p>nbr Win</p>
+                            {userDisplay?.WinNumber}
+                        </div>
+                        <div className="textRectangle">
+                            <h2 style={{ color: "black" }}>Rank</h2>
+                            <h3
+                                style={{
+                                    textAlign: "center",
+                                    fontWeight: "900",
+                                    marginBottom: "3px",
+                                }}
+                            >
+                                {userDisplay?.Rank}
+                            </h3>
+                        </div>
+                        <div className="textRectangle">
+                            <p>nbr Loose</p>
+                            {userDisplay?.LossNumber}
+                        </div>
+                    </div>
+                    {matchHistory.map((match) => {
+                            return (
+                                <div className={match.winner == userDisplay?.username ? 'itemWinnerOther' : 'itemLoserOther'} key={match.id.toString()}>
+                                    <div className="resultsOther" >
+                                        <div className="nameOther">{match.player1 == userDisplay?.username ? match.player1 : match.player2}</div>
+                                        <div className="scoreOther">-{match.player1 == userDisplay?.username ? match.score1 : match.score2}-</div>
+                                    </div>
+                                    <div className="resultsOther">
+                                        <div className="scoreOther">-{match.player2 == userDisplay?.username ? match.score1 : match.score2}-</div>
+                                        <div className="nameOther">{match.player2 == userDisplay?.username ? match.player1 : match.player2}</div>
+                                    </div>
+                                </div>
+                            )
+                        })}
                 </div>
               </div>
             );

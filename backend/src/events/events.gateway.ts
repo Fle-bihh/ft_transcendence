@@ -10,11 +10,8 @@ import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/entities/user.entity';
 import { FriendRequestService } from 'src/friends/friendRequest.service';
-import { FriendRequest } from 'src/entities/friend-request.entity';
 import { FriendShipService } from 'src/friends/friendShip.service';
-import { use } from 'passport';
 
 const users = Array<{ index: number; user: any; socket: Socket }>();
 

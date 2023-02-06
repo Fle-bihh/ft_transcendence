@@ -266,6 +266,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         login: string;
       }
     };
+    const oldGame = this.getRoomByClientLogin(info.user.login);
+    if (oldGame != null)
+      this.finishGameDeco({ roomId: oldGame[1].roomID, playerwin: oldGame[1].players[0].username == info.user.login ? 1 : 0, playerdeco: oldGame[1].players[0].username == info.user.login ? 0 : 1 })
     if (waitingForGame.findIndex(item => item.user.login == info.user.login) != -1)
       waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == info.user.login), 1)
     if ((oponnent = waitingForGame.find(item => item.map == info.gameMap)) != undefined && oponnent.user.login != info.user.login) {
@@ -294,14 +297,18 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('SEE_LIST_GAME')
   async seeListGame(client: Socket, username: string) {
     console.log("length de all games : ", this.allGames.length)
+    let game : string = "noGame"
     if (this.allGames.length != 0) {
       this.allGames.map((room) => {
-        this.io.to(client.id).emit('add_room_playing', room);
+        if (room.players[0].username != username && room.players[1].username != username) {
+          game = "yes"
+          this.io.to(client.id).emit('add_room_playing', room);
+        }
       })
-      this.io.to(client.id).emit('set_list_game', "yes");
+      this.io.to(client.id).emit('set_list_game', game);
     }
     else {
-      this.io.to(client.id).emit('set_list_game', "noGame");
+      this.io.to(client.id).emit('set_list_game', game);
     }
   }
 
