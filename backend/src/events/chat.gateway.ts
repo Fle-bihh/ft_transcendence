@@ -125,7 +125,7 @@ export class ChatGateway {
     const allMessages = await this.channelsService.getMessages();
     const tmp = allMessages.reverse();
     for (let message of tmp) {
-      let receiver = (message.channel ? message.channel.name : message.receiver.username);
+      let receiver = (message.channel ? message.channel.name : message.receiver.username); // verif qu'il est dans le channel avant de le push
       if (message.sender && message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver)) {
         retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
@@ -197,7 +197,7 @@ export class ChatGateway {
       retArray.push({ login: user.username, admin: admin })
     }
     client.emit('get_participants', retArray);
-    this.logger.log('send get_participants to', data.login);
+    this.logger.log('send get_participants with', retArray);
   }
 
   @SubscribeMessage('GET_PARTICIPANT_ROLE')
@@ -254,6 +254,7 @@ export class ChatGateway {
 
   @SubscribeMessage('JOIN_CHANNEL')
   async join_channel(client: Socket, data: { login: string, channelName: string, channelPassword: string }) {
+    console.log('JOIN_CHANNEL recu ChatGateway', data);
     await this.channelsService.joinChannel(data.login, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
     client.emit('channel_joined', { channelName: data.channelName });
     this.get_all_conv_info(client, { sender: data.login });
