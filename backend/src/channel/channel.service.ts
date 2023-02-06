@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from 'src/auth/auth.service';
 import { Channel } from 'src/entities/channel.entity';
 import { Message } from 'src/entities/message.entity';
 import { UsersService } from 'src/users/users.service';
@@ -12,7 +11,6 @@ import { MessagesDto } from './dto/messages.dto';
 @Injectable()
 export class ChannelService {
   constructor(
-    private readonly authService: AuthService,
     private readonly userService: UsersService,
     @InjectRepository(Channel)
     private channelsRepository: Repository<Channel>,
@@ -233,5 +231,30 @@ export class ChannelService {
       await this.messagesRepository.save(msg);
       await this.usersRepository.save(sender);
     } catch (e) { console.log(e.code); }
+  }
+
+  async addAdmin(newAdmin: string, channel: Channel): Promise<void> {
+    const user: User = await this.userService.getUserByUsername(newAdmin);
+    for (let u of channel.userConnected) {
+      if (u.username === user.username)
+        this.promoteAdmin(user, channel);
+    }
+  }
+
+  async removeAdmin(user: User, channel: Channel): Promise<void> {
+    if (channel.creator.username === user.username) {
+      return
+    }
+    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username));
+    await this.channelsRepository.save(channel);
+  }
+
+  async kickUser(user: User, channel: Channel): Promise<void> {
+    channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username));
+    await this.channelsRepository.save(channel);
+  }
+
+  async isAdmin(user: User, channel: Channel): Promise<boolean> {
+    return (channel.admin.find((u) => u.username === user.username) ? true : false);
   }
 }

@@ -9,6 +9,7 @@ import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { Channel } from 'src/entities/channel.entity';
 import { Message } from 'src/entities/message.entity';
+import { validate, Validate } from 'class-validator';
 
 @Injectable()
 export class UsersService {
@@ -90,9 +91,18 @@ export class UsersService {
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     const found = await this.getUserById(id, user);
+    if (username.length > 12)
+      throw new InternalServerErrorException('Username must be shorter or equal to 12 characters');
     if (found) {
       found.username = username;
-      await this.usersRepository.save(found);
+      try {
+        await this.usersRepository.save(found);
+      } catch (e) {
+        console.log(e.code);
+        if (e.code === '23505') {
+          throw new InternalServerErrorException('Username already exists');
+        }
+      }
       return found;
     }
     return null;

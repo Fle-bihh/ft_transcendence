@@ -186,11 +186,17 @@ export class ChatGateway {
 
   @SubscribeMessage('GET_PARTICIPANTS')
   async get_participants(client: Socket, data: { login: string, channel: string }) {
-    let userConnected;
+    let userConnected: User[];
+    let retArray: Array<{ login: string, admin: boolean }> = new Array<{ login: string, admin: boolean }>;
+    let channel = await this.channelsService.getOneChannel(data.channel);
     try {
       userConnected = (await this.channelsService.getOneChannel(data.channel)).userConnected
     } catch (e) { userConnected = [] }
-    client.emit('get_participants', userConnected);
+    for (let user of userConnected) {
+      let admin = await this.channelsService.isAdmin(user, channel);
+      retArray.push({ login: user.username, admin: admin })
+    }
+    client.emit('get_participants', retArray);
     this.logger.log('send get_participants to', data.login);
   }
 
@@ -255,6 +261,8 @@ export class ChatGateway {
 
   @SubscribeMessage('ADD_ADMIN')
   async add_admin(client: Socket, data: { new_admin: string, channel: string }) { /////////////////////////////////////
+    let channel = await this.channelsService.getOneChannel(data.channel);
+    await this.channelsService.addAdmin(data.new_admin, channel);
     console.log('ADD_ADMIN recu ChatGateway', data);
     // ADD NEW ADMIN IN DB OF channel
   }
@@ -304,12 +312,18 @@ export class ChatGateway {
   @SubscribeMessage('REMOVE_ADMIN')
   async remove_admin(client: Socket, data: { admin: string, channel: string }) {  /////////////////////////////////////
     console.log('REMOVE_ADMIN recu ChatGateway', data);
+    let channel = await this.channelsService.getOneChannel(data.channel);
+    let user = await this.usersService.getUserByUsername(data.admin);
+    this.channelsService.removeAdmin(user, channel);
     // REMOVE ADMIN IN DB OF channel
   }
 
   @SubscribeMessage('KICK_USER')
   async kick_user(client: Socket, data: { user: string, channel: string }) {  /////////////////////////////////////
     console.log('KICK_USER recu ChatGateway', data);
+    let channel = await this.channelsService.getOneChannel(data.channel);
+    let user = await this.usersService.getUserByUsername(data.user);
+    this.channelsService.kickUser(user, channel);
     // REMOVE USER FROM channel 
   }
 
