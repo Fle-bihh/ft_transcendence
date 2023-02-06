@@ -126,7 +126,7 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
       } else if (data.friendStatus == "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
       } else if (data.friendStatus == "request-waiting") {
-        console.log('')
+        console.log('ADDNOTIF FRIEND  -------------------------------------');
         addNotif({
             type: NotifType.FRIENDREQUEST,
             data: {

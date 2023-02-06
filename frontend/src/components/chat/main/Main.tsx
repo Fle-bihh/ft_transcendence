@@ -17,6 +17,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Person2Icon from "@mui/icons-material/Person2";
 import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 
 const Main = (props: {
   openConvName: string;
@@ -176,19 +177,21 @@ const Main = (props: {
               </IconButton>
             ) : (
               <div className="messageButtons">
-                <IconButton
-                  className="profileButton"
-                  color="secondary"
-                  style={{ color: "white", marginRight: "2%" }}
-                  aria-label="upload picture"
-                  component="label"
-                  onClick={() => {
-                    setProfileDialogOpen(true);
-                  }}
-                >
-                  {/* <input hidden accept="image/*" type="file" /> */}
-                  <Person2Icon />
-                </IconButton>
+                <NavLink to={`/profileother?username=${props.openConvName}`}>
+                  <IconButton
+                    className="profileButton"
+                    color="secondary"
+                    style={{ color: "white", marginRight: "2%" }}
+                    aria-label="upload picture"
+                    component="label"
+                    onClick={() => {
+                      setProfileDialogOpen(true);
+                    }}
+                  >
+                    {/* <input hidden accept="image/*" type="file" /> */}
+                    <Person2Icon />
+                  </IconButton>
+                </NavLink>
                 <IconButton
                   className="startGameButton"
                   color="secondary"
@@ -228,21 +231,21 @@ const Main = (props: {
         {!props.newConvMessageBool ? (
           <div className="messagesDisplay" id="messagesDisplay">
             {convMessages.map((message, index) => {
-              if (message.sender == user.user?.username)
+              if (message.serverMsg)
+              return (
+                <div
+                  key={index.toString()}
+                  className="serverMessagesContainer"
+                >
+                  <div className="diviser" />
+                  {message.content}
+                  <div className="diviser" />
+                </div>
+              );
+              else if (message.sender == user.user?.username)
                 return (
                   <div key={index.toString()} className="rightMessages">
                     {message.content}
-                  </div>
-                );
-              else if (message.serverMsg)
-                return (
-                  <div
-                    key={index.toString()}
-                    className="serverMessagesContainer"
-                  >
-                    <div className="diviser" />
-                    {message.content}
-                    <div className="diviser" />
                   </div>
                 );
               else
