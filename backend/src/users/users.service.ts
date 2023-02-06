@@ -158,7 +158,6 @@ export class UsersService {
     return { twoFactorAuth: user.twoFactorAuth };
   }
 
-
   async getBlockList(user: User): Promise<{ blockList: User[] }> {
     const allUser = await this.usersRepository.find({
       relations: ['blockList'],

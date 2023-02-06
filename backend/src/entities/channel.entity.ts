@@ -8,7 +8,7 @@ export class Channel {
 	id: string;
 
 	@Column()
-	privacy: string;
+	privacy: boolean;
 
 	@Column({ unique: true })
 	name: string;

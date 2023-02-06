@@ -20,7 +20,7 @@ export class ChannelService {
     private usersRepository: Repository<User>,
   ) { }
 
-  async createChannel(user: User, name: string, password: string, description: string, privacy: string): Promise<Channel> {
+  async createChannel(user: User, name: string, password: string, description: string, privacy: boolean): Promise<Channel> {
 
     let hashedPassword: string = "";
 
@@ -131,14 +131,13 @@ export class ChannelService {
     let user = await this.userService.getUserByUsername(username);
     let channel = await this.getOneChannel(channelName);
 
-    user.channels.splice(user.channels.findIndex((c) => c.name === channel.name), 1);
-    user.channelsConnected.splice(user.channelsConnected.findIndex((c) => c.name === channel.name), 1);
-    user.channelsAdmin.splice(user.channelsAdmin.findIndex((c) => c.name === channel.name), 1);
+    // user.channelsConnected.splice(user.channelsConnected.findIndex((c) => c.name === channel.name), 1);
+    // user.channelsAdmin.splice(user.channelsAdmin.findIndex((c) => c.name === channel.name), 1);
     channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
     channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
     if (channel.creator.username === user.username)
       channel.creator = null;
-    this.usersRepository.save(user);
+    // this.usersRepository.save(user);
     this.channelsRepository.save(channel);
   }
 
@@ -211,7 +210,7 @@ export class ChannelService {
     try {
       await this.messagesRepository.save(msg);
       await this.usersRepository.save(sender);
-    } catch (e) { console.log(e.code); }
+    } catch (e) { console.log("wtf? == ", e.code); }
   }
 
   async addAdmin(newAdmin: string, channel: Channel): Promise<void> {
@@ -222,12 +221,6 @@ export class ChannelService {
     }
   }
 
-  // const question = dataSource.getRepository(Question)
-  // question.categories = question.categories.filter((category) => {
-  //     return category.id !== categoryToRemove.id
-  // })
-  // await dataSource.manager.save(question)
-  // const room = await this.chatRepo.findOne(roomid, { relations: ['users'] });
   async removeAdmin(user: User, channel: Channel): Promise<void> {
     if (channel.creator.username === user.username) {
       return
