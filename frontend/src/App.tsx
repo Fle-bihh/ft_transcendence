@@ -28,38 +28,39 @@ function App() {
   const utils = useSelector((state: RootState) => state.utils);
   const { addNotif } = bindActionCreators(actionCreators, useDispatch());
   const [verif, setVerif] = useState(false);
-  const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+  const persistantReducer = useSelector(
+    (state: RootState) => state.persistantReducer
+  );
 
   utils.gameSocket.removeListener("invite_game");
-  utils.gameSocket.on('invite_game', (data : { sender : string, gameMap : string, receiver : string}) => {
-    console.log("received invitation data : ", data);
-    addNotif({ type: NotifType.INVITEGAME, data: data})
-  })
-
-  if (!verif && persistantReducer.userReducer.user)
-    {
-        console.log("Check reco front 2", persistantReducer.userReducer.user?.username);
-        utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
-        setVerif(true)
+  utils.gameSocket.on(
+    "invite_game",
+    (data: { sender: string; gameMap: string; receiver: string }) => {
+      console.log("received invitation data : ", data);
+      addNotif({ type: NotifType.INVITEGAME, data: data });
     }
+  );
+
+  if (!verif && persistantReducer.userReducer.user) {
+    console.log(
+      "Check reco front 2",
+      persistantReducer.userReducer.user?.username
+    );
+    utils.gameSocket.emit(
+      "CHECK_RECONNEXION",
+      persistantReducer.userReducer.user
+        ? persistantReducer.userReducer.user
+        : ""
+    );
+    setVerif(true);
+  }
 
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>
         <Routes>
-          <Route
-            path="/home"
-            element={
-              <Connect />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <Signup />
-            }
-          />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/home" element={<Connect />} />
+          <Route path="/signup" element={<Signup />} />
           <Route
             path="/"
             element={
@@ -70,6 +71,7 @@ function App() {
               </ConnectionChecker>
             }
           />
+        <Route path="*" element={<NotFoundPage />} />
           <Route
             path="/pong"
             element={
@@ -101,7 +103,7 @@ function App() {
             }
           />
           <Route
-            path="/profileother"
+            path="/profileother/*"
             element={
               <ConnectionChecker>
                 <NotifInterceptor>
