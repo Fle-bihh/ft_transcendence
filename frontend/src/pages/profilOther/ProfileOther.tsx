@@ -76,12 +76,12 @@ const ProfileOther = () => {
 
     const [matchHistory, setMatchHistory] = useState(
         Array<{
-            id: number;
-            user1_login: string;
-            user2_login: string;
-            user1_score: number;
-            user2_score: number;
-            winner_login: string;
+            id: string,
+            player1: string,
+            score1: number,
+            player2: string,
+            score2: number,
+            winner: string,
         }>()
     );
     const utils = useSelector((state: RootState) => state.utils);
@@ -106,15 +106,13 @@ const ProfileOther = () => {
     const navigate = useNavigate();
     
     utils.socket.removeListener("updateProfileOther");
-    utils.socket.on(
-        "updateProfileOther",
-        (data: { login: string; friendStatus: string }) => {
-            
+    utils.socket.on( "updateProfileOther", (data: { login: string; friendStatus: string }) => {
             if (getComputedStyle(userInGame!).display == "flex") {
                 userConnect!.style.display = "none"
                 userInGame!.style.display = "none"
                 userConnectHorsLigne!.style.display = "none"
-                }
+            }
+            console.log("oui");
             if (data.login != userDisplay.login) return;
             console.log("updateProfileOther", data.login, data.friendStatus);
             if (data.friendStatus == "blocked")
@@ -176,7 +174,24 @@ const ProfileOther = () => {
                             getData: true,
                         });
                         utils.socket.emit("GET_FRIEND_STATUS", { login: response.data.login, });
-                    } 
+                        axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
+                            if (response.data != null) {
+                                response.data.map((data: any) => {
+                                    const obj = {
+                                        id: data.game.id,
+                                        player1: data.game.player1.username,
+                                        score1: data.game.score_u1,
+                                        player2: data.game.player2.username,
+                                        score2: data.game.score_u2,
+                                        winner: data.game.winner.username,
+                                    }
+                                    matchHistory.push(obj)
+                                })
+                            }
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    }
                 })
                 .catch((error) => {
             console.log("je suis dans le get")
@@ -206,6 +221,7 @@ const ProfileOther = () => {
 
     const handleClose = (change: boolean) => {
         if (change == true) {
+            console.log("send to : ", userDisplay.login)
             if (friend == NOT_FRIEND) {
                 utils.socket.emit("SEND_FRIEND_REQUEST", { loginToSend: userDisplay.login });
             } else if (friend == FRIEND_REQUEST_SEND) {
@@ -497,7 +513,6 @@ const ProfileOther = () => {
                         </div>
                         <div className="textRectangle">
                             <h2 style={{ color: "white" }}>Rank</h2>
-                            {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
                             <h3
                                 style={{
                                     textAlign: "center",
@@ -513,48 +528,20 @@ const ProfileOther = () => {
                             {userDisplay?.LossNumber}
                         </div>
                     </div>
-
                     {matchHistory.map((match) => {
-                        return (
-                            <div
-                                className={
-                                    match.winner_login == userDisplay?.username
-                                        ? "itemWinnerOther"
-                                        : "itemLoserOther"
-                                }
-                                key={match.id.toString()}
-                            >
-                                <div className="resultsOther">
-                                    <div className="nameOther">{match.user1_login}</div>
-                                    <div className="scoreOther">
-                                        -{match.user1_score.toString()}-
+                            return (
+                                <div className={match.winner == userDisplay?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                    <div className="results" >
+                                        <div className="name">{match.player1 == userDisplay?.username ? match.player1 : match.player2}</div>
+                                        <div className="score">-{match.player1 == userDisplay?.username ? match.score1 : match.score2}-</div>
+                                    </div>
+                                    <div className="results">
+                                        <div className="score">-{match.player2 == userDisplay?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2 == userDisplay?.username ? match.player1 : match.player2}</div>
                                     </div>
                                 </div>
-
-                                <div className="resultsOther">
-                                    <Avatar
-                                        alt="Cerise"
-                                        src={Cerise}
-                                        className="avatarStatuserOther"
-                                        variant="square"
-                                    />
-
-                                    <Avatar
-                                        alt="Laurine"
-                                        src={Laurine}
-                                        className="avatarStatuserOther"
-                                        variant="square"
-                                    />
-                                </div>
-                                <div className="resultsOther">
-                                    <div className="scoreOther">
-                                        -{match.user2_score.toString()}-
-                                    </div>
-                                    <div className="nameOther">{match.user2_login}</div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            )
+                        })}
                 </div>
             </div>
         </React.Fragment>

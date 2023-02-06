@@ -7,4 +7,5 @@ export class MessagesDto {
   sender: User;
   receiver: User | null;
   channel: Channel | null;
+  // serverMsg: boolean;
 }

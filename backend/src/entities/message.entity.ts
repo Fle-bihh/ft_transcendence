@@ -21,4 +21,7 @@ export class Message {
 
 	@ManyToOne(type => Channel, channel => channel.messages, { nullable: true })
 	channel: Channel | null;
+
+	// @Column()
+	// serverMsg: boolean;
 }
