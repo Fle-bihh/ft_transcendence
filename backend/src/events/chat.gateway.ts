@@ -52,12 +52,18 @@ export class ChatGateway {
   block_user(client: Socket, data: { username: string, target: string; }) {
     console.log('BLOCK_USER recu ChatGateway', data);
 <<<<<<< HEAD
+<<<<<<< HEAD
     this.usersService.addBlockList(data.login, data.target);
     //client.emit('updateProfileOther', {login: data.target,friendStatus: 'blocked'});
     this.logger.log('db_block = ', db_blockList);
 =======
     this.usersService.addBlockList(data.username, data.target);
 >>>>>>> 60b789899991513af6aedf7ca5bbad9e80afb845
+=======
+
+    this.usersService.addBlockList(data.username, data.target);
+
+>>>>>>> 012620f8fa113024180a7c343ae82785424b7506
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')

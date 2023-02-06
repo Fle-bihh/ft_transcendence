@@ -10,7 +10,9 @@
 }
 
 .blocksContainerCenter {
-    margin-top: 10%;
+    margin-top: 64px;
+    display: flex;
+    justify-content: center;
 }
 
 .waiting_div, .game-finished{
@@ -27,6 +29,10 @@
 
 .victory{
     color: green;
+}
+
+#pongCanvas {
+    width: 60%;
 }
 
 .draw{
