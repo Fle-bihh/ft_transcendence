@@ -24,10 +24,12 @@ export class FriendRequestService {
 			{ receiver_id: id_2, sender_id: id_1 }
 		]})
 		console.log(id_1, id_2)
+		console.log("rest = ", ret)
 		return ret;
 	}
 
 	async addFriendRequest(sender_id: string, receiver_id: string): Promise<FriendRequest> {
+		console.log("sender : ", sender_id, "receiver : ", receiver_id)
 		return await this.friendRequestRepository.save({sender_id: sender_id, receiver_id: receiver_id})
 	}
 

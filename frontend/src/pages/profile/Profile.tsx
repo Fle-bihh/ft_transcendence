@@ -1,11 +1,7 @@
-
 import Navbar from '../../components/nav/Nav';
 import * as React from 'react';
 import "./profil.scss"
-import Cerise from '../../styles/asset/cerise.jpg'
-import Laurine from '../../styles/asset/ananas.png'
 
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionCreators, RootState } from '../../state';
@@ -16,6 +12,9 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
+import { User } from '../../state/type';
+import FlashMessage from '../../components/alert-message/Alert'
+
 
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
@@ -25,18 +24,7 @@ const options = {
     }
 }
 
-// rajouter bouton activer A2FA ou non 
-
 const Profile = () => {
-
-    // const [matchHistory, setMatchHistory] = React.useState(Array<{
-    //     id: number,
-    //     user1_login: string,
-    //     user2_login: string, // class user
-    //     user1_score: number,
-    //     user2_score: number,
-    //     winner_login: string,
-    // }>())
 
     const [firstOpen, setFirstOpen] = useState(true)
     const utils = useSelector((state: RootState) => state.utils);
@@ -51,50 +39,55 @@ const Profile = () => {
     const [codePin, setCodePin] = useState(0);
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
-    // const [image, setimage] = userState("")
-
-    const [userDisplay, setUserDisplay] = useState({
-        id: "",
-        username: '', //pseudo
-        login: '', // prenom  to --> login 
-        profileImage: '', // oui
-        email: '',
-        Rank: 0, // la XP de notre joueur 
-        WinNumber: 0, // nbr de gagne
-        LossNumber: 0,// nbr de perdu
-        twoFactorAuth: false,
-        getData: false,
-    });
-
-    // const [userMatchHistory, setUserMatchHistory] = useState({
-    //         player1id: "",
-    //         score1: 0,
-    //         player2id: "",
-    //         score2: 0,
-    //         winnerid: "", // login de la personne qui a gagné
-    // });
 
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
-            player1id: string,
+            id: string,
+            player1: string,
             score1: number,
-            player2id: string,
+            player2: string,
             score2: number,
-            winnerid: string, // login de la personne qui a gagné
+            winner: string,
         }>()
     );
     const handleClickOpen = () => {
         setOpen(true);
     };
+    const [succes, setsucces] = useState(false);
+    const [error, seterror] = useState(false);
+    const [message, setmessage] = useState("");
+    const [message2, setmessage2] = useState("");
 
     const handleClose = (change: boolean) => {
-        if (change && inputValue != "") {
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options)
-            userDisplay.username = inputValue;
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
         }
-        setInputValue("")
+        if (change && inputValue != "") {
+        //   user.suer?.id /blocked/, {username : },  option 
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
+                if (response.data != null) {
+                    setUser(response.data)
+                    setmessage("change name on " + inputValue);
+                    setUserMatchHistory([])
+                    setFirstOpen(true);
+                    setsucces(true);
+                }
+            }).catch(err => {
+                if (err.response!.status === 500) {
+                    setmessage2( "username deja existant");
+                    seterror(true);
+                }
+            })
+            setInputValue("")
+            setsucces(false);
+            seterror(false);
+            // getUserData();
+        };
         setOpen(false);
-    };
+    }
 
     //2FA
     const handleClickOpen2FA = () => {
@@ -133,18 +126,6 @@ const Profile = () => {
             });
     }
 
-    // useEffect(() => {
-    // 	const wrongCode = document.querySelector<HTMLElement>('.wrong-code')!;
-    // 	if (codePin && res2FA === 401) {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'block';
-    // 	} else {
-    // 		if (wrongCode)
-    // 			wrongCode.style.display = 'none';
-    // 	}
-    // }, [res2FA]);
-    //fin 2FA
-   
     const getUserData = () => {
         const jwt = cookies.get('jwt');
         const options = {
@@ -152,118 +133,88 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
-            if (response.data != null) {
-                setUserDisplay({
-                    id: response.data.id,
-                    username: response.data.username,
-                    login: response.data.login,
-                    profileImage: response.data.profileImage,
-                    email: response.data.email,
-                    WinNumber: response.data.WinNumber,
-                    LossNumber: response.data.LossNumber,
-                    Rank: response.data.Rank,
-                    twoFactorAuth: response.data.twoFactorAuth,
-                    getData: true,
-                })
-                setFirstOpen(false)
-            }
-        }).catch(error => {
-            console.log(error);
-        });
+        console.log("userMatchHistory : ", userMatchHistory)
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
-
-                {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */ }
-                response.data.map((game: any) => {
-                const obj = {
-                player1id: game.player1.username,
-                score1: game.score_u1,
-                player2id: game.player2.username,
-                score2: game.score_u2,
-                winnerid: game.winner.username,
-                }
+                response.data.map((data: any) => {
+                    const obj = {
+                        id: data.game.id,
+                        player1: data.game.player1.username,
+                        score1: data.game.score_u1,
+                        player2: data.game.player2.username,
+                        score2: data.game.score_u2,
+                        winner: data.game.winner.username,
+                    }
                     userMatchHistory.push(obj)
                 })
-                console.log(response.data)
-                // setUserMatchHistory([...userMatchHistory, {
-                //     player1id: response.data.player1.username,
-                //     score1: response.data.score_u1,
-                //     player2id: response.data.player2.username,
-                //     score2: response.data.score_u2,
-                //     winnerid: response.data.winner.username,
-                // }
-                // ])
-                // })
+                setFirstOpen(false);
             }
         }).catch(error => {
             console.log(error);
         });
     }
 
-
     useEffect(() => {
-        // console.log("effect : ", userDisplay)
-        if (!userDisplay?.getData)
+        console.log("fisrtOpen1", firstOpen)
+        if (firstOpen)
             getUserData();
-            
-    }, [userDisplay?.getData])
+    }, [firstOpen])
 
     //----------------image pour téléchager--------------------------------------------
-    const [filebase64, setFileBase64] = useState<string>("")
 
-    function convertFile(files: FileList | null) {
-        if (files) {
-            const fileRef = files[0] || ""
-            const fileType: string = fileRef.type || ""
-            // console.log("This file upload is of type:", fileType)
-            const reader = new FileReader()
-            reader.readAsBinaryString(fileRef)
-            reader.onload = (ev: any) => {
-                // convert it to base64
-                setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
+    const convertFile = (e: any) => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'Authorization': `Bearer ${jwt}`
             }
-
         }
-        axios.patch(`http://localhost:5001/user/${user.user?.id}/profileImage`, { profileImage: filebase64 }, options)
-        userDisplay.profileImage = filebase64;
+        const img = e.target.files.item(0);
+        var formData = new FormData();
+        formData.append("photo", img);
+
+        var config = {
+            method: 'POST',
+            url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
+            headers: options.headers,
+            profileImage: formData,
+            data: formData,
+            withCredentials: true
+        }
+        axios(config).then((res) => {
+            setUser(res.data);
+        }).catch((err) => {
+        })
     }
-    //_____________________________________------------------------------------
+    //----------------------------------------------------------------------------------------------------------------
     return (
         <React.Fragment >
             <Navbar />
             <div className="profilePageContainer">
                 <div className="profile" >
-
                     <Stack direction="row" spacing={2} className="avatarItem">
-                        <img alt="Cerise" src={userDisplay?.profileImage} className="avatar" />
+                        <img alt="Cerise" src={user.user?.profileImage} className="avatar" />
                     </Stack>
-
                     <Button component="label" className="avatarChange">
                         Change Profile Picture
-                        <input type="file" hidden onChange={(e) => convertFile(e.target.files)} />
+                        <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
                     </Button>
-
                     <div className="infoUser">
                         <h3 className="userName">
                             Login :
                         </h3>
                         <Typography className="userNamePrint">
-                            {userDisplay?.login}
+                            {user.user?.login}
                         </Typography>
-
                     </div>
                     <div className="infoUsername">
-
                         <h3 className="userNameChange">
                             userName :
                         </h3>
                         <Typography className="userNamePrintChange">
-                            {userDisplay?.username}
+                            {user.user?.username}
                         </Typography>
-
                     </div>
-                    {/* setMatchHistory([...matchHistory, { id: matchHistory.length, user1_login: user.user!.username, user2_login: 'wWWWWWWWW', user1_score: 1, user2_score: 3, winner_login: 'Cerise' }]) */}
                     <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>
                     <Dialog open={open} onClose={() => handleClose(false)} >
                         <DialogTitle>Write your new username</DialogTitle>
@@ -276,6 +227,7 @@ const Profile = () => {
                                 type="text"
                                 fullWidth
                                 variant="standard"
+                                inputProps={{ maxLength: 12 }}
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
                                 onKeyUp={(e) => { if (e.key === 'Enter') { handleClose(true) } }}
@@ -314,72 +266,64 @@ const Profile = () => {
                             </Dialog>
                         </div> :
                         <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={() => { axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => { console.log('data', res.data)
-                            setUser(res.data) }) }}>
+                            <Button className="buttonChange2FA" type="submit" onClick={() => {
+                                const jwt = cookies.get('jwt');
+                                const options = {
+                                    headers: {
+                                        'authorization': `Bearer ${jwt}`
+                                    }
+                                }
+                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                                    console.log('data', res.data)
+                                    setUser(res.data)
+                                })
+                            }}>
                                 Deactivate 2FA
                             </Button>
                         </div>
                     }
                 </div>
-
                 <div className="stat">
                     <>
                         <div className="rectangle">
                             <div className="textRectangle">
                                 <p>nbr Win</p>
-                                {userDisplay?.WinNumber}
+                                {user.user?.WinNumber}
                             </div>
                             <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {userDisplay?.username}</h2>
-                                {/* <h3 style={{ textAlign: 'center' }}>Number of parts</h3> */}
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay?.Rank}</h3>
+                                <h2 style={{ color: 'black' }}>Rank </h2>
+                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">
                                 <p>nbr Loose</p>
-                                {userDisplay?.LossNumber}
+                                {user.user?.LossNumber}
                             </div>
                         </div>
-
                         {userMatchHistory.map((match) => {
-                            {/* return ( */ }
-
-                            <div className={match.winnerid == userDisplay.username ? 'itemWinner' : 'itemLoser'} key={match.winnerid.toString()}   >
-                                {/* key={match.id.toString()}  */}
-
-                                <div className="results" >
-                                    <div className="name">{match.player1id}</div>
-                                    <div className="score">-{match.score1}-</div>
-
+                            return (
+                                <div className={match.winner == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                    <div className="results" >
+                                        <div className="name">{match.player1 == user.user?.username ? match.player1 : match.player2}</div>
+                                        <div className="score">-{match.player1 == user.user?.username ? match.score1 : match.score2}-</div>
+                                    </div>
+                                    <div className="results">
+                                        <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
+                                    </div>
                                 </div>
-
-                                <div className="results" >
-
-                                    <Avatar alt="Cerise" src={userDisplay?.profileImage}
-                                        className="avatarStatuser" variant="square" />
-
-                                    <Avatar alt="Laurine" src={Laurine}
-                                        className="avatarStatuser" variant="square" />
-                                </div>
-                                <div className="results">
-                                    <div className="score">-{match.player2id}-</div>
-                                    <div className="name">{match.score2}</div>
-                                </div>
-
-
-                            </div>
-                            {/* ) */ }
-                            {/* }) */ }
-                            {/* } */ }
-                            // )
-                        })
-                        }
+                            )
+                        })}
                     </>
-                    {/* spacing={5} */}
                 </div>
+                {
+                    succes ? <FlashMessage
+                        message={message} /> : ''
+                }
+                {
+                    error ? <FlashMessage message2={message2} /> : ''
+                }
             </div>
-
         </React.Fragment >
-
     )
 };
 export default Profile;

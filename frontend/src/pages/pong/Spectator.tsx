@@ -1,33 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { gameSocket } from '../../App';
 import { RootState } from '../../state';
 import { GameClass } from './gameClass';
 import { ip } from '../../App';
 import "./Pong.scss"
+import { NavLink } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 var canvas = {
-    "width": 800,
-    "height": 600
+    "width": document.body.clientWidth,
+    "height": document.body.clientHeight
 }
 
 const SpectatorPage = (props: any) => {
-    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
+    const utils = useSelector((state: RootState) => state.utils);
     const [finishGame, setFinishGame] = useState(false);
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
+    const [draw, setDraw] = useState(false);
     const [verif, setVerif] = useState(false)
     useEffect(() => {
-        if (!verif)
-        {
-            gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : false})
+        if (!verif) {
+            utils.gameSocket.emit('START_SPECTATE', { roomID: props.roomID, start: false })
             setVerif(true);
         }
     })
     if (verif)
-        setInterval(() => { gameSocket.emit('START_SPECTATE', {roomID : props.roomID, start : true} ) }, 16)
+        setInterval(() => { utils.gameSocket.emit('START_SPECTATE', { roomID: props.roomID, start: true }) }, 16)
 
-    gameSocket.removeListener("start_spectate");
-    gameSocket.on("start_spectate", (room : GameClass) => { render(room); });
+    utils.gameSocket.removeListener("start_spectate");
+    utils.gameSocket.on("start_spectate", (room: GameClass) => { render(room); });
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
@@ -108,6 +109,8 @@ const SpectatorPage = (props: any) => {
     }
 
     function render(room: GameClass) {
+        // room.canvas.width = document.body.clientWidth
+        // room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
@@ -129,41 +132,53 @@ const SpectatorPage = (props: any) => {
         }
     }
 
-    gameSocket.on('finish', (room: GameClass) => {
+    utils.gameSocket.on('finish', (data: { room: GameClass, draw: boolean }) => {
         console.log('finish front')
+        setDraw(data.draw);
         setFinishGame(true)
-        setFinishRoom(room)
+        setFinishRoom(data.room)
     });
 
     function affFinishScreen() {
         let player0, player1;
-        setTimeout(function () {
-            window.location.replace(`http://${ip}:3000`);
-        }, 10000);
+
         player0 = finishRoom?.players[0]
         player1 = finishRoom?.players[1]
+        if (draw === true) {
+            return (
+                <div className='game-finished'>
+                    <h1 className='draw'>Winner is {player0?.score === 3 ? player0.username : player1?.username}</h1>
+                    <div className='result'>
+                        <p><b>Due to inactivity</b></p>
+                    </div>
+                    <div className='result'>
+                        <p><b>{player0?.username} : </b> {player0?.score}</p>
+                        <p><b>{player1?.username} : </b> {player1?.score}</p>
+                    </div>
+                    <NavLink to='/' className="btnPlay">
+                        <Button className="btn2">
+                            Home
+                        </Button>
+                    </NavLink>
+                </div>
+            )
+        }
         return (
             <div className='game-finished'>
                 <h1>Winner is {player0?.score === 3 ? player0.username : player1?.username}</h1>
                 <div className='result'>
-                    <span>
-                        <p>{player0?.username}</p>
-                    </span>
-                    <span>
-                        {player0?.score} - {player1?.score}
-                    </span>
-                    <span>
-                        <p>{player1?.username}</p>
-                    </span>
+                    <p><b>{player0?.username} : </b> {player0?.score}</p>
+                    <p><b>{player1?.username} : </b> {player1?.score}</p>
                 </div>
+                <NavLink to='/' className="btnPlay">
+                    <Button className="btn2">
+                        Home
+                    </Button>
+                </NavLink>
             </div>
         )
 
     }
-
-    setInterval(() => {
-        gameSocket.emit('HANDLE_INTERVAL', props.roomID);
-    }, 10)
 
     return (
         <div className="mainDiv">

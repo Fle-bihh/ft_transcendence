@@ -267,20 +267,6 @@ const ChannelDialog = (props: {
                 channelName: joinChannelSelect,
                 channelPassword: joinChannelPasswordInput,
               })
-              //   utils.socket.emit("ADD_PARTICIPANT", {
-              //     username: user.user?.username,
-              //     channel: channel.name,
-              //     admin: false,
-              //   });
-              //   console.log(
-              //     "send ADD_PARTICIPANT to back from ",
-              //     user.user?.username
-              //   );
-              //   console.log("channel: ", channel.name);
-              //   props.setOpenConvName(channel.name);
-              //   const newParticipantMsg =
-              //     user.user?.username + " joined this Channel";
-              //   handleClose();
             }}
           >
             Join this channel
@@ -417,20 +403,19 @@ const ChannelDialog = (props: {
                 document
                   .getElementById("joinChannelInput")!
                   .classList.add("error");
-               const timeOut = setTimeout(() => {
+                const timeOut = setTimeout(() => {
                   document
                     .getElementById("joinChannelInput")!
                     .classList.remove("error");
                   clearTimeout(timeOut)
                 }, 200);
-              } else {
-                // setShowJoinChannelPasswordModal(false);
-                utils.socket.emit('JOIN_CHANNEL', {
-                  username: user.user?.username,
-                  channelName: joinChannelSelect,
-                  channelPassword: joinChannelPasswordInput,
-                })
               }
+              // setShowJoinChannelPasswordModal(false);
+              utils.socket.emit('JOIN_CHANNEL', {
+                username: user.user?.username,
+                channelName: joinChannelSelect,
+                channelPassword: joinChannelPasswordInput,
+              })
             }
           }}
         />

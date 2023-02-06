@@ -5,13 +5,9 @@
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color: yellow;
+        background-color: #8c98af;
         overflow: scroll;
-        // scroll-snap-type: x mandatory;
-        // overflow-x: scroll;
-
-        // line-Height: 19%;
-
+        overflow-anchor: none;
         .profile {
             height: 96%;
             width: 96%;
@@ -25,9 +21,7 @@
 
             .avatarItem {
                 height: 50%;
-                // position: relative;
                 display: flex;
-                // justify-content: center;
                 align-items: center;
                 flex-direction: column;
                 position: relative;
@@ -36,25 +30,18 @@
                     margin-top: 2%;
                     height: auto;
                     width: 45%;
-                    // z-index: 0;
-                    // background-image: "../styles/asset/Cerise.jpg";
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
 
             .avatarChange {
-                // variant:"contained";
-
                 display: flex;
-
                 color: white;
                 font-family: "system-ui";
                 background-color: black;
                 margin-inline: auto;
                 margin-top: 7%;
                 width: 50%;
-
-                // align-items: center;
                 text-transform: capitalize;
 
                 &:hover {
@@ -67,13 +54,11 @@
         .infoUser {
             color: black;
             justify-content: center;
-            // margin-top: 2%;
             display: flex;
             align-items: center;
 
             .userName {
                 color: grey;
-                // border: 2px solid green;
                 font-family: "system-ui";
             }
 
@@ -84,24 +69,18 @@
 
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200; //le gras d'un texte
-                // font-style: oblique;
-                // text-overflow: ellipsis;
             }
         }
 
         .infoUsername {
             color: black;
             justify-content: center;
-            // margin-top: 2%;
             display: flex;
             align-items: center;
-            // white-space:pre-line;
 
             .userNameChange {
                 color: grey;
                 font-family: "system-ui";
-                // text-align: left;
             }
 
             .userNamePrintChange {
@@ -109,7 +88,6 @@
                 text-transform: capitalize;
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200;
             }
         }
 
@@ -158,13 +136,10 @@
             .rectangle {
                 height: 29%;
                 width: 100%;
-                background-color: rgb(122, 122, 122);
+                background-color: white;
                 top: 0;
                 z-index: 999;
                 text-align: center;
-                // vertical-align: middle;
-                // display: inline-block;
-                // display:flow-root;
             }
             * {
                 box-sizing: border-box;
@@ -178,34 +153,23 @@
                 padding: 2%;
             }
 
-            // * {
-            //     box-sizing: border-box;
-            // }
-
             .itemLoser {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
-                border: 5px solid red;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(255, 164, 164);
-
+                background-color: rgb(247 108 108);
                 margin-bottom: 2%;
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
 
-            //
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
-                border: 5px solid green;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(182, 255, 164);
+                background-color: rgb(129 234 103);
                 margin-bottom: 2%;
-
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
 
@@ -213,10 +177,8 @@
                 width: 20%;
                 padding: 10px;
                 background-color: none;
-                // opacity: 100%;
-
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 text-align: center;
                 align-content: space-between;
                 vertical-align: middle;
@@ -238,16 +200,11 @@
 
                 font-size: x-small;
                 text-transform: capitalize;
-
-                // text-transform: uppercase;
             }
         }
     }
 }
 
-// .grid{
-//     align-items: center;
-// }
 //------------MOYEN ECRAN----------------------------------------------------------------------------
 
 @media screen and (min-width: 630px) {
@@ -255,10 +212,9 @@
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
-        background-color: lightblue;
+        background-color: #8c98af;
         overflow: scroll;
-        // line-Height: 19%;
-
+        overflow-anchor: none;
         .profile {
             height: 96%;
             width: 96%;
@@ -273,9 +229,7 @@
 
             .avatarItem {
                 height: 50%;
-                // position: relative;
                 display: flex;
-                // justify-content: center;
                 align-items: center;
                 flex-direction: column;
                 position: relative;
@@ -284,27 +238,17 @@
                     margin-top: 2%;
                     height: auto;
                     width: 30%;
-                    // z-index: 0;
-                    // background-image: "../styles/asset/Cerise.jpg";
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
 
             .avatarChange {
-                // variant:"contained";
-
                 display: flex;
-
                 color: white;
                 font-family: "system-ui";
                 background-color: black;
                 margin-inline: auto;
-
                 width: 30%;
-                // margin-top: 3%;
-                // z-index: 999;
-
-                // align-items: center;
                 text-transform: capitalize;
 
                 &:hover {
@@ -333,27 +277,19 @@
             color: black;
             justify-content: center;
             margin-top: 1%;
-
             display: flex;
             align-items: center;
 
             .userName {
                 color: grey;
-                // border: 2px solid green;
                 font-family: "system-ui";
-                // margin-top: 3%;
             }
 
             .userNamePrint {
-                // white-space: pre-line;
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200; //le gras d'un texte
-                // font-style: oblique;
-                // text-overflow: ellipsis;
             }
         }
 
@@ -363,35 +299,27 @@
             margin-top: 2%;
             display: flex;
             align-items: center;
-            // white-space:pre-line;
 
             .userNameChange {
                 color: grey;
                 font-family: "system-ui";
-                // text-align: left;
             }
 
             .userNamePrintChange {
                 margin-left: 1.66%;
                 text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200;
             }
         }
 
         .buttonChange {
-            // variant:"contained";
             display: flex;
             color: white;
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
-
-            // align-items: center;
             text-transform: capitalize;
-            //  white-space:normal;
         }
 
         .buttonChange:hover {
@@ -412,19 +340,12 @@
             overflow: scroll;
             overflow-x: scroll;
 
-            // * {
-            //     box-sizing: border-box;
-            // }
-
             .rectangle {
                 height: 29%;
                 width: 100%;
-                background-color: rgb(122, 122, 122);
+                background-color: white;
                 top: 0;
                 z-index: 999;
-                // vertical-align: middle;
-                // display: inline-block;
-                // display:flow-root;
                 text-align: center;
             }
 
@@ -440,34 +361,23 @@
                 padding: 6%;
             }
 
-            // * {
-            //     box-sizing: border-box;
-            // }
-
             .itemLoser {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
-                border: 5px solid red;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(255, 164, 164);
-
+                background-color: rgb(247 108 108);
                 margin-bottom: 2%;
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
 
-            //
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
-                border: 5px solid green;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(182, 255, 164);
+                background-color: rgb(129 234 103);
                 margin-bottom: 2%;
-
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
 
@@ -475,10 +385,8 @@
                 width: 20%;
                 padding: 10px;
                 background-color: none;
-                // opacity: 100%;
-
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 text-align: center;
                 align-content: space-between;
                 vertical-align: middle;
@@ -497,27 +405,23 @@
 
             .name {
                 padding: 2px;
-
                 font-size: x-small;
                 text-transform: capitalize;
-
-                // text-transform: uppercase;
             }
         }
     }
 }
 
 //------------GRAND ECRAN----------------------------------------------------------------------
-@media screen and (min-width: 928px) {
+@media screen and (min-width: 920px) {
     .profilePageContainer {
         height: calc(100vh - 64px);
         width: 100vw;
         margin-top: 64px;
         display: flex;
-        background-color: hotpink;
+        background-color: #8c98af;
         overflow: scroll;
-        // line-Height: 19%;
-
+        overflow-anchor: none;
         .profile {
             margin-top: 3%;
             height: 90%;
@@ -527,41 +431,30 @@
             margin-left: 2%;
             min-height: 500px;
             min-width: 400px;
-
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
 
             .avatarItem {
                 height: 50%;
-                // position: relative;
                 display: flex;
                 justify-content: center;
-
-                // align-items: center;
-                // flex-direction: column;
                 position: relative;
 
                 .avatar {
                     margin-top: 2%;
                     height: 50%;
                     width: auto;
-                    // z-index: 0;
-                    // background-image: "../styles/asset/Cerise.jpg";
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                 }
             }
 
             .avatarChange {
-                // variant:"contained";
-
                 display: flex;
-
                 color: white;
                 font-family: "system-ui";
                 background-color: black;
                 margin-inline: auto;
                 margin-top: 2%;
                 width: 50%;
-                // align-items: center;
                 text-transform: capitalize;
 
                 &:hover {
@@ -595,7 +488,6 @@
 
             .userName {
                 color: grey;
-                // border: 2px solid green;
                 font-family: "system-ui";
             }
 
@@ -606,9 +498,6 @@
 
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200; //le gras d'un texte
-                // font-style: oblique;
-                // text-overflow: ellipsis;
             }
         }
 
@@ -618,12 +507,10 @@
             margin-top: 5%;
             display: flex;
             align-items: center;
-            // white-space:pre-line;
 
             .userNameChange {
                 color: grey;
                 font-family: "system-ui";
-                // text-align: left;
             }
 
             .userNamePrintChange {
@@ -632,21 +519,16 @@
 
                 font-family: "system-ui";
                 font-size: 200%;
-                // font-weight: 200;
             }
         }
 
         .buttonChange {
-            // variant:"contained";
             display: flex;
             color: white;
             font-family: "system-ui";
             background-color: black;
             margin-inline: auto;
-
-            // align-items: center;
             text-transform: capitalize;
-            //  white-space:normal;
         }
 
         .buttonChange:hover {
@@ -662,28 +544,19 @@
             margin-left: 2%;
             margin-right: 2%;
             margin-bottom: 2%;
-            // justify-content: space-between;
-            // align-content: space-between;
-
             min-height: 500px;
             min-width: 400px;
             box-shadow: 1px 2px 20px rgb(99, 97, 97);
             overflow: scroll;
             overflow-x: scroll;
 
-            // * {
-            //     box-sizing: border-box;
-            // }
-
             .rectangle {
                 height: 29%;
                 width: 100%;
-                background-color: rgb(122, 122, 122);
+                background-color: white;
                 top: 0;
-                 z-index: 999;
-                // vertical-align: middle;
-                // display: inline-block;
-                // display:flow-root;
+                z-index: 999;
+
                 text-align: center;
             }
             * {
@@ -695,80 +568,56 @@
                 vertical-align: middle;
                 align-content: space-between;
                 justify-content: space-between;
+                align-items: center;
                 padding: 6%;
             }
-
-            // * {
-            //     box-sizing: border-box;
-            // }
 
             .itemLoser {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
-                border: 5px solid red;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(255, 164, 164);
-
+                background-color: rgb(247 108 108);
                 margin-bottom: 2%;
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
 
-            //
             .itemWinner {
                 align-content: space-between;
                 justify-content: space-between;
-                // width: 100%;
-                border: 5px solid green;
+                border-width: 5px;
                 box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                background-color: rgb(182, 255, 164);
+                background-color: rgb(129 234 103);
                 margin-bottom: 2%;
-
-                // border-radius: .5em;  pour arrondire les angles du carré
                 padding: 10px;
             }
 
             .results {
                 width: 20%;
-                // padding: 60px;
                 background-color: none;
-                // opacity: 100%;
-
                 display: inline-flex;
-                margin-left: 10%;
+                margin-left: 20%;
                 flex-direction: row;
-
                 text-align: center;
                 align-content: space-between;
                 justify-content: space-between;
                 vertical-align: middle;
-                // display: flex;
             }
 
             .score {
                 font-size: x-large;
-                // padding: 12px;
-
                 font-weight: 900;
-                // z-index: 999;
             }
 
             .avatarStatuser {
-                // padding: 10px;
                 margin-left: 12px;
                 align-items: center;
             }
 
             .name {
                 font-size: x-small;
-                // padding: 2px;
-
                 margin-top: 9%;
-
                 text-transform: capitalize;
-
-                // text-transform: uppercase;
             }
         }
     }

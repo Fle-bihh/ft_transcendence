@@ -5,23 +5,27 @@
 	margin: auto;
 	margin-top: 15vh;
 
-	// background-color: red;
+	//  background-color: red;
 	overflow-x: scroll;
 
 
 	.notifElement {
 		margin-inline: auto;
 		margin-block: 5%;
-		width: 80%;
-		height: 50%;
+		width: 50%;
+		height: 35%;
 		border-radius: 15px;
-		background-color: rgb(0, 0, 0, 0.5);
+		align-items: center;
+		background-color: white;
+		box-shadow: 1px 2px 20px rgb(99, 97, 97);
 		display: flex;
 		flex-direction: column;
+	overflow-x: scroll;
+
 		
 		.notifTitle {
 			margin-inline: auto;
-			font-size: xx-large;
+			font-size: x-large;
 		}
 
 		.notifCross {
@@ -31,10 +35,24 @@
 				color: white;
 			}
 		}
+		.notifAccept{
+			color: black;
 
+			&:hover {
+				background-color: rgb(59, 116, 59);
+			}
+		}
+		.notifDecline{
+			color: black;
+
+			&:hover {
+				background-color: rgb(136, 63, 63);
+			}
+		}
 		.notifText {
-			margin-top: 2%;
-			margin-left: 5%;
+			// margin-top: 2%;
+			 margin-left: 5%;
+
 		}
 	}
 

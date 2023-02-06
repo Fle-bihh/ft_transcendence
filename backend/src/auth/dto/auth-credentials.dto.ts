@@ -1,4 +1,8 @@
 import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { Channel } from 'src/entities/channel.entity';
+import { Game } from 'src/entities/game.entity';
+import { Message } from 'src/entities/message.entity';
+import { User } from 'src/entities/user.entity';
 
 export class AuthCredentialsDto {
   @IsNotEmpty()
@@ -10,19 +14,6 @@ export class AuthCredentialsDto {
   @IsNotEmpty()
   login: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  @MaxLength(32)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'Password is too weak' })
-  password: string;
-
-  @IsString()
-  firstName: string;
-
-  @IsString()
-  lastName: string;
-
   @IsString()
   profileImage?: string | null;
 
@@ -30,4 +21,18 @@ export class AuthCredentialsDto {
   email: string;
 
   admin: boolean = false;
+
+  games: Game[];
+
+  messagesSent: Message[];
+
+  messagesReceived: Message[];
+
+  channels: Channel[];
+
+  channelsAdmin: Channel[];
+
+  channelsConnected: Channel[];
+
+  blockList: User[];
 }

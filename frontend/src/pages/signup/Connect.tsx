@@ -19,40 +19,22 @@ const Connect = () => {
   const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const userReducer = useSelector((state: RootState) => state.persistantReducer.userReducer);
   const twoFAReducer = useSelector((state: RootState) => state.persistantReducer.twoFAReducer);
-  const navigate = useNavigate();
+  const utils = useSelector((state: RootState) => state.utils);
 
-  if (err) {
-    alert(
-      `Error: ${err} !\nIf you want to connect with 42 you must authorize !`
-    );
-    navigate(
-      {
-        pathname: "/",
-        state: { reason: `${err}` },
-      } as any,
-      { replace: true }
-    );
-  }
-  if (!userReducer.user)
-    axios.request({
-      url: "/auth/api42/Signin",
-      method: "post",
-      baseURL: `http://${ip}:5001`,
-      params: {
-        code: code,
-        nickName: null,
-      }
-    }).then((response: AxiosResponse<any, any>) => {
-      cookies.set('jwt', response.data.accessToken, { path: `/`});
+  axios.request({
+    url: "/auth/api42/Signin",
+    method: "post",
+    baseURL: `http://${ip}:5001`,
+    params: {
+      code: code,
+      nickName: null,
+    }
+  }).then((response: AxiosResponse<any, any>) => {
+    if (response.data.user?.username) {
+      cookies.set('jwt', response.data.accessToken, { path: `/` });
       setUser(response.data.user);
-      const jwt = cookies.get('jwt');
-      const options = {
-        headers: {
-          Authorization: `Bearer ${jwt}`
-        }
-      }
-      // window.location.replace(`http://${ip}:3000`);
-      console.log('Connect 2 cookie == ', options);
+      utils.socket.emit('STORE_CLIENT_INFO', { user: response.data.user })
+    }
   }).catch((err) => { });
 
   function verify2FA(value: string) {
