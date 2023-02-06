@@ -31,7 +31,7 @@ export class GameClass {
     setOponnent(id: string, username: string) {
 		this.players[1].id = id
 		this.players[1].username = username
-		this.players[1].inGame = true
+		this.players[1].connect = true
 		this.players[1].posX = this.canvas.width / 10 * 9 - this.players[1].width / 2
 	}
 
@@ -155,7 +155,7 @@ export class Player {
     ready : boolean
     speed : number
 	reco : number
-	inGame : boolean
+	connect : boolean
 
     constructor (canvas : Canvas, username : string = "", id : string = ""){
         this.username = username
@@ -171,7 +171,7 @@ export class Player {
         this.posX = canvas.width / 10 - this.width / 2
         this.posY = canvas.height / 2 - this.height / 2
 		this.reco = 0
-		this.inGame = false
+		this.connect = false
     }
 
     reset(canvas: Canvas) {

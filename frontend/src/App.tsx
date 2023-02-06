@@ -3,6 +3,7 @@ import Profile from "./pages/profile/Profile";
 import ProfileOther from "./pages/profilOther/ProfileOther";
 import Pong from "./pages/pong/Pong";
 import Home from "./pages/home/Home";
+import NotFoundPage from "./pages/error_404/NotFoundPage";
 import Signin from "./pages/signin/Signin";
 import Signup from "./pages/signup/Signup";
 import Friends from "./pages/friends/Friends";
@@ -35,31 +36,42 @@ function App() {
     addNotif({ type: NotifType.INVITEGAME, data: data})
   })
 
-  useEffect(() => {
-    if (!verif && persistantReducer.userReducer.user)
+  // useEffect(() => {
+  //   console.log("Check user", persistantReducer.userReducer.user);
+  //   if (!verif && persistantReducer.userReducer.user)
+  //   {
+  //       console.log("Check reco front", persistantReducer.userReducer.user?.username);
+  //       utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
+  //       setVerif(true)
+  //   }
+  // })
+
+  if (!verif && persistantReducer.userReducer.user)
     {
         console.log("Check reco front", persistantReducer.userReducer.user?.username);
         utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
         setVerif(true)
     }
-  })
 
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>
+        
+        
         <Routes>
           <Route
             path="/home"
             element={
-                  <Connect />
+              <Connect />
             }
           />
           <Route
             path="/signup"
             element={
-                  <Signup />
+              <Signup />
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
           <Route
             path="/"
             element={

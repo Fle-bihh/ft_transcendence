@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // import { gameSocket } from './Pong';
-import { RootState } from '../../state';
+import { actionCreators, RootState } from '../../state';
 import { GameClass } from './gameClass';
 import { ip } from '../../App';
 import "./Pong.scss"
 import { io } from 'socket.io-client';
+import { NavLink } from 'react-router-dom';
+import { Button } from '@mui/material';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
+import { bindActionCreators } from 'redux';
 
 // var room.canvas = {
 //     "width": document.body.clientWidth,
 //     "height": document.body.clientHeight
 // }
 
+const cookies = new Cookies();
+
+
 const GamePage = (props: any) => {
     const utils = useSelector((state: RootState) => state.utils);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [finishGame, setFinishGame] = useState(false);
+    //draw == egalité en anglais
+    const [draw, setDraw] = useState(false);
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
+    const { setUser } = bindActionCreators(actionCreators, useDispatch());
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         // console.log(room.canvas.width, room.canvas.height)
@@ -38,7 +49,6 @@ const GamePage = (props: any) => {
 
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            console.log(room)
             const currentPlayer = room.players.find(item => item.username == persistantReducer.userReducer.user?.username)
             ctx.font = 'bold 20px Arial';
             ctx.fillStyle = 'white';
@@ -53,12 +63,12 @@ const GamePage = (props: any) => {
         }
     }
 
-    function drawObstacle(ctx: CanvasRenderingContext2D | null, room: GameClass){
+    function drawObstacle(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
             ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(room.map.mapObstacles[0].posX,room.map.mapObstacles[0].posY, room.map.mapObstacles[0].width, room.map.mapObstacles[0].height);
+            ctx.fillRect(room.map.mapObstacles[0].posX, room.map.mapObstacles[0].posY, room.map.mapObstacles[0].width, room.map.mapObstacles[0].height);
             ctx.fillStyle = 'rgb(255, 255, 255)';
-            ctx.fillRect(room.map.mapObstacles[1].posX,room.map.mapObstacles[1].posY, room.map.mapObstacles[1].width, room.map.mapObstacles[1].height);
+            ctx.fillRect(room.map.mapObstacles[1].posX, room.map.mapObstacles[1].posY, room.map.mapObstacles[1].width, room.map.mapObstacles[1].height);
             ctx.shadowBlur = 0;
         }
     }
@@ -84,7 +94,7 @@ const GamePage = (props: any) => {
             ctx.lineTo(room.canvas.width / 2, room.canvas.height);
             ctx.stroke();
             ctx.setLineDash([]);
-        }
+        } 
     }
 
     function drawText(ctx: CanvasRenderingContext2D | null, room: GameClass) {
@@ -95,6 +105,10 @@ const GamePage = (props: any) => {
                 ctx.fillStyle = 'white';
                 ctx.textAlign = "center";
                 ctx.fillText("Press ENTER to play !", room.canvas.width / 2, room.canvas.height / 2);
+                if (room.players[index_p].reco != 0) {
+                    let millis: number = Date.now() - room.players[index_p].reco;
+                    ctx.fillText((10 - Math.floor(millis / 1000)).toString(), room.canvas.width / 2, room.canvas.height / 4 * 3);
+                }
             }
             else {
                 if (!room.players[index_p * -1 + 1].ready) {
@@ -102,12 +116,17 @@ const GamePage = (props: any) => {
                     ctx.fillStyle = 'white';
                     ctx.textAlign = "center";
                     ctx.fillText("Waiting for the opponent !", room.canvas.width / 2, room.canvas.height / 2);
+                    ctx.font = 'bold 50px Arial';
+                    ctx.fillStyle = 'white';
+                    ctx.textAlign = "center";
+                    if (room.players[index_p * -1 + 1].reco != 0) {
+                        let millis: number = Date.now() - room.players[index_p * -1 + 1].reco;
+                        ctx.fillText((10 - Math.floor(millis / 1000)).toString(), room.canvas.width / 2, room.canvas.height / 4 * 3);
+                    }
                 }
             }
         }
     }
-
-    
 
     function resetCanvas() {
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
@@ -137,7 +156,7 @@ const GamePage = (props: any) => {
                     drawText(ctx, room)
                     return
                 }
-                if(room.map.useObstacle){
+                if (room.map.useObstacle) {
                     drawObstacle(ctx, room)
                 }
                 drawBall(ctx, room)
@@ -150,12 +169,27 @@ const GamePage = (props: any) => {
         render(room)
     });
 
-    utils.gameSocket.on('finish', (room: GameClass) => {
+    utils.socket.removeListener("finish");
+    utils.gameSocket.on('finish', (data : {room: GameClass, draw : boolean}) => {
         console.log('finish front')
+        setDraw(data.draw);
         setFinishGame(true)
-        setFinishRoom(room)
+        setFinishRoom(data.room)
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        axios.get(`http://localhost:5001/user/username/${persistantReducer.userReducer.user?.username}`, options)
+            .then(res => {
+                setUser(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     });
-   
+
     function onKeyDown(e: any) {
         if (e.key === 'ArrowUp')
             utils.gameSocket.emit('ARROW_UP', [props.roomID, true]);
@@ -175,10 +209,6 @@ const GamePage = (props: any) => {
 
     function affFinishScreen() {
         let U, H;
-        setTimeout(function () {
-            window.location.replace(`http://${ip}:3000`);
-        }, 10000);
-
         if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.username) {
             U = finishRoom?.players[0]
             H = finishRoom?.players[1]
@@ -186,14 +216,37 @@ const GamePage = (props: any) => {
             U = finishRoom?.players[1]
             H = finishRoom?.players[0]
         }
-
+        if (draw === true) {
+            return (
+                <div className='game-finished'>
+                    <h1 className={U?.score === 3 ? 'victory' : 'defeat'}>{U?.score === 3 ? 'You Win !' : 'You Lose !'}</h1>
+                    <div className='result'>
+                        <p><b>Due to inactivity</b></p>
+                    </div>
+                    <div className='result'>
+                        <p><b>YOU :</b> {U?.score}</p>
+                        <p><b>HIM :</b> {H?.score}</p>
+                    </div>
+                    <NavLink to='/' className="btnPlay">
+                        <Button className="btn2">
+                            Home
+                        </Button>
+                    </NavLink>
+                </div>
+            )
+        }
         return (
             <div className='game-finished'>
                 <h1 className={U?.score === 3 ? 'victory' : 'defeat'}>{U?.score === 3 ? 'You Win !' : 'You Lose !'}</h1>
-                <div className='result'>      
-                    <p><b>YOU :</b> {U?.score}</p> 
+                <div className='result'>
+                    <p><b>YOU :</b> {U?.score}</p>
                     <p><b>HIM :</b> {H?.score}</p>
                 </div>
+                <NavLink to='/' className="btnPlay">
+                    <Button className="btn2">
+                        Home
+                    </Button>
+                </NavLink>
             </div>
         )
 

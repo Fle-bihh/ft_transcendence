@@ -21,7 +21,6 @@ export class GameService {
   ) { };
 
   async createGame(gameResultsDto: GameResultsDto): Promise<void> {
-    console.log(gameResultsDto);
     const {
       id_user1,
       id_user2,
@@ -30,9 +29,9 @@ export class GameService {
       winner_id,
     } = gameResultsDto;
 
-    const player1 = await this.userService.getUserByLogin(id_user1);
-    const player2 = await this.userService.getUserByLogin(id_user2);
-    const winner = await this.userService.getUserByLogin(winner_id);
+    const player1 = await this.userService.getUserByUsername(id_user1);
+    const player2 = await this.userService.getUserByUsername(id_user2);
+    const winner = await this.userService.getUserByUsername(winner_id);
     const game: Game = this.gameRepository.create({
       player1,
       player2,
@@ -41,16 +40,18 @@ export class GameService {
       winner,
     })
 
-    console.log(player1);
-    console.log(id_user1);
-
-    let games = await this.userService.getGames(player1);
-    // if (games)
-    //   player1.games.push(game);
-
-    games = await this.userService.getGames(player2);
-    // if (games)
-    //   player2.games.push(game);
+    if (winner.id === player1.id) {
+      player1.WinNumber++;
+      player2.LossNumber++;
+      player1.Rank += 20;
+      player2.Rank -= player2.Rank > 20 ? 20 : player2.Rank;
+    }
+    else {
+      player2.WinNumber++;
+      player1.LossNumber++;
+      player2.Rank += 20;
+      player1.Rank -= player1.Rank > 20 ? 20 : player1.Rank;
+    }
 
     try {
       await this.usersRepository.save(player1);
@@ -69,10 +70,9 @@ export class GameService {
     return await games.getMany();
   }
 
-  async getGamesByUser(user: User){
+  async getGamesByUser(user: User) {
     const allGames = await this.getGames();
 
-    console.log('all games ==', allGames);
     const result: { game: Game, player1: string, player2: string, winner: string }[] = []
     for (let game of allGames) {
       if (game.player1.username === user.username || game.player2.username === user.username) {
@@ -80,8 +80,7 @@ export class GameService {
         result.push(r);
       }
     }
-    return allGames;
-    // return result;
+    return result;
   }
 
   async getUserFromSocket(socket: Socket): Promise<User> {

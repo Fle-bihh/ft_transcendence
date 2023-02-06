@@ -7,12 +7,17 @@ import { User } from 'src/entities/user.entity';
 import { Game } from 'src/entities/game.entity';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
+import { Channel } from 'src/entities/channel.entity';
+import { Message } from 'src/entities/message.entity';
+import { validate, Validate } from 'class-validator';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
   ) { }
 
   async signUp(userCredentialsDto: UserCredentialsDto): Promise<void> {
@@ -47,17 +52,10 @@ export class UsersService {
   }
 
   async getMatchHistory(id: string, user: User) {
-    // const matchhistory = await this.gameRepository
-    // .createQueryBuilder('game')
-    // .leftJoinAndSelect('game.player1', 'player1')
-    // .leftJoinAndSelect('game.player2', 'player2')
-    // .leftJoinAndSelect('game.winner', 'winner')
-    // .where(`(game.plater1Id = :id OR game.player2ID = :id)`, {id})
-    // .getMany();
-    // return matchhistory;
     const found = await this.usersRepository.findOneBy({ id });
-    if (found)
-      return this.getGames(found);
+    if (found) {
+      return await this.getGames(found);
+    }
     return null;
   }
 
@@ -76,10 +74,8 @@ export class UsersService {
   }
 
   async getUserByLogin(login: string): Promise<User> {
-    console.log(login);
     const found = await this.usersRepository.findOneBy({ login });
-    console.log(found);
-    if (found == null) {
+    if (found === null) {
       throw new HttpException('User Not Found', 404);
     }
     return found;
@@ -87,17 +83,26 @@ export class UsersService {
 
   async getUserByUsername(username: string): Promise<User> {
     const found = await this.usersRepository.findOneBy({ username });
-    if (found == null) {
+    if (found === null) {
       throw new HttpException('User Not Found', 404);
     }
-    return null;
+    return found
   }
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     const found = await this.getUserById(id, user);
+    if (username.length > 12)
+      throw new InternalServerErrorException('Username must be shorter or equal to 12 characters');
     if (found) {
       found.username = username;
-      await this.usersRepository.save(found);
+      try {
+        await this.usersRepository.save(found);
+      } catch (e) {
+        console.log(e.code);
+        if (e.code === '23505') {
+          throw new InternalServerErrorException('Username already exists');
+        }
+      }
       return found;
     }
     return null;
@@ -105,7 +110,6 @@ export class UsersService {
 
   async patchProfileImage(id: string, user: User, profileImage: string) {
     const found = await this.getUserById(id, user);
-    console.log(profileImage);
     if (found) {
       found.profileImage = profileImage;
       await this.usersRepository.save(found);
@@ -132,15 +136,12 @@ export class UsersService {
   }
 
   async generateTwoFactorAuthenticationSecret(user: User) {
-    const secret = await authenticator.generateSecret();
+    const secret = authenticator.generateSecret();
 
     const otpAuthUrl = authenticator.keyuri(user.login, 'ft_transcendence', secret);
     await this.setTwoFactorAuthenticationSecret(secret, user.id);
 
-    return {
-      secret,
-      otpAuthUrl
-    }
+    return { secret, otpAuthUrl };
   }
 
   async deactivate2FA(user: User): Promise<User> {
@@ -157,32 +158,116 @@ export class UsersService {
     return { twoFactorAuth: user.twoFactorAuth };
   }
 
+
+  async getBlockList(user: User): Promise<{ blockList: User[] }> {
+    const allUser = await this.usersRepository.find({
+      relations: ['blockList'],
+    });
+
+    const blockList = allUser.find((u) => {
+      return u.username === user.username;
+    }).blockList;
+
+    return { blockList: blockList };
+  }
+
+  async addBlockList(username: string, target: string): Promise<void> {
+    const targetUser: User = await this.getUserByUsername(target);
+    const user: User = await this.getUserByUsername(username);
+
+    user.blockList = (await this.getBlockList(user)).blockList;
+    user.blockList.push(targetUser);
+
+    this.usersRepository.save(user);
+  }
+
+  async getChannelsCreator(user: User): Promise<{ channels: Channel[] }> {
+    const allCreator = await this.usersRepository.find({
+      relations: ['channels'],
+    });
+
+    const channels = allCreator.find((u) => u.username === user.username).channels;
+    return { channels };
+  }
+
+  async getChannelsAdmin(user: User): Promise<{ channelsAdmin: Channel[] }> {
+    const allAdmin = await this.usersRepository.find({
+      relations: ['channelsAdmin'],
+    });
+
+    const channelsAdmin = allAdmin.find((u) => u.username === user.username).channelsAdmin;
+    return { channelsAdmin };
+  }
+
+  async getChannelsConnected(user: User): Promise<{ channelsConnected: Channel[] }> {
+    const allConnected = await this.usersRepository.find({
+      relations: ['channelsConnected'],
+    });
+
+    const channelsConnected = allConnected.find((u) => u.username === user.username).channelsConnected;
+    return { channelsConnected };
+  }
+
+  async getMessages(id: string): Promise<{ messagesSent: Message[], messagesReceived: Message[] }> {
+    const found = await this.getUserById(id);
+    const allMessages = await this.usersRepository.find({
+      relations: ['messagesSent', 'messagesReceived'],
+    });
+
+    const messagesSent = allMessages.find((user) => {
+      return user.username === found.username
+    }).messagesSent;
+
+    const messagesReceived = allMessages.find((user) => {
+      return user.username === found.username
+    }).messagesReceived;
+    return { messagesSent, messagesReceived };
+  }
+
+  async getMessage() {
+    const messages = this.messageRepository.createQueryBuilder("message")
+      .leftJoinAndSelect("message.sender", "sender")
+      .leftJoinAndSelect("message.receiver", "receiver")
+    return await messages.getMany();
+  }
+
+  async getConv(user: User, receiver: User) {
+    let conv = new Array<{ sender: string, receiver: string, content: string, time: Date }>();
+
+    const messages = await this.getMessage();
+
+    for (const message of messages) {
+      if ((user.username === message.receiver?.username && receiver.username === message.sender?.username) || (user.username === message.sender?.username && receiver.username === message.receiver?.username))
+        conv.push({ sender: message.sender.username, receiver: message.receiver.username, content: message.body, time: message.date });
+    }
+    return conv;
+  }
   async checkMagicNumber(type: string, buffer: Buffer) {
-		if (type == 'image/jpg' || type == 'image/jpeg') {
-			if (buffer.toString('hex').length < "ffd8ff".length) {
-				return false;
-			}
-			if (buffer.toString('hex').substring(0, 6) == "ffd8ff")
-				return true;
-		}
-		else if (type == 'image/png') {
-			if (buffer.toString('hex').length < "89504e47".length) {
-				return false;
-			}
-			if (buffer.toString('hex').substring(0, 8) == "89504e47")
-				return true;
-		}
-		return false;
-	}
+    if (type == 'image/jpg' || type == 'image/jpeg') {
+      if (buffer.toString('hex').length < "ffd8ff".length) {
+        return false;
+      }
+      if (buffer.toString('hex').substring(0, 6) == "ffd8ff")
+        return true;
+    }
+    else if (type == 'image/png') {
+      if (buffer.toString('hex').length < "89504e47".length) {
+        return false;
+      }
+      if (buffer.toString('hex').substring(0, 8) == "89504e47")
+        return true;
+    }
+    return false;
+  }
 
-	async updateProfilePic(id, filename: string): Promise<User> {
-		const user = await this.getUserById(id);
-		if (!user)
-			return null;
+  async updateProfilePic(id, filename: string, headers): Promise<User> {
+    const user = await this.getUserById(id);
+    if (!user)
+      return null;
 
-		user.profileImage = `http://localhost:5001/user/profilePic/:${filename}`;
-		this.usersRepository.save(user);
+    user.profileImage = `http://localhost:5001/user/profilePic/:${filename}`;
+    this.usersRepository.save(user);
 
-		return user;
-	}
+    return user;
+  }
 }
