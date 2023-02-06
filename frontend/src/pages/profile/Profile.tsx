@@ -57,7 +57,7 @@ const Profile = () => {
     const [error, seterror] = useState(false);
     const [message, setmessage] = useState("");
     const [message2, setmessage2] = useState("");
-  
+
     const handleClose = (change: boolean) => {
         const jwt = cookies.get('jwt');
         const options = {
@@ -70,11 +70,14 @@ const Profile = () => {
                 if (response.data != null) {
                     setUser(response.data)
                     setmessage("change name on " + inputValue);
+                    setUserMatchHistory([])
+                    // getUserData();
+                    // setFirstOpen(false);
                     setsucces(true);
                 }
             }).catch(err => {
                 if (err.response!.status === 500) {
-                    setmessage2( "username deja existant");
+                    setmessage2("username deja existant");
                     // setmessage2(error.request);
                     seterror(true);
                     // console.log("reponse profile quand nom", err.response.data.message);
@@ -83,13 +86,10 @@ const Profile = () => {
 
                 }
             })
-            .catch(err => {
-            console.log("data == ", err.response.data.message);
-            });
             setInputValue("")
-            
             setsucces(false);
             seterror(false);
+        getUserData();
         };
         setOpen(false);
     }
@@ -158,7 +158,7 @@ const Profile = () => {
         });
     }
 
-       useEffect(() => {
+    useEffect(() => {
         console.log("fisrtOpen1", firstOpen)
         if (firstOpen)
             getUserData();
@@ -322,12 +322,12 @@ const Profile = () => {
                     </>
                 </div>
                 {
-                succes ?  <FlashMessage 
-                message={message} /> : ''
-            }
-            {
-                error ? <FlashMessage message2={message2} /> : ''
-            }
+                    succes ? <FlashMessage
+                        message={message} /> : ''
+                }
+                {
+                    error ? <FlashMessage message2={message2} /> : ''
+                }
             </div>
         </React.Fragment >
     )
