@@ -18,6 +18,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Person2Icon from "@mui/icons-material/Person2";
 import { useSelector } from "react-redux";
 import FlashMessage from '../../alert-message/Alert'
+import { NavLink } from "react-router-dom";
 
 const Main = (props: {
   openConvName: string;
@@ -48,6 +49,7 @@ const Main = (props: {
       receiver: string;
       content: string;
       time: Date;
+      serverMsg: boolean;
     }>()
   );
   const [inputValue, setInputValue] = useState("");
@@ -86,6 +88,7 @@ const Main = (props: {
         receiver: string;
         content: string;
         time: Date;
+        serverMsg: boolean;
       }>
     ) => {
       console.log("get_conv recu front", openConv);
@@ -128,7 +131,7 @@ const Main = (props: {
         owner: string;
       }>
     ) => {
-      console.log("get_all_channels recu", user.user?.username, "with", data);
+      console.log("get_all_channels recu", user.user?.username);
       props.setAllChannels([...data]);
     }
   );
@@ -177,19 +180,21 @@ const Main = (props: {
               </IconButton>
             ) : (
               <div className="messageButtons">
-                <IconButton
-                  className="profileButton"
-                  color="secondary"
-                  style={{ color: "white", marginRight: "2%" }}
-                  aria-label="upload picture"
-                  component="label"
-                  onClick={() => {
-                    setProfileDialogOpen(true);
-                  }}
-                >
-                  {/* <input hidden accept="image/*" type="file" /> */}
-                  <Person2Icon />
-                </IconButton>
+                <NavLink to={`/profileother?username=${props.openConvName}`}>
+                  <IconButton
+                    className="profileButton"
+                    color="secondary"
+                    style={{ color: "white", marginRight: "2%" }}
+                    aria-label="upload picture"
+                    component="label"
+                    onClick={() => {
+                      setProfileDialogOpen(true);
+                    }}
+                  >
+                    {/* <input hidden accept="image/*" type="file" /> */}
+                    <Person2Icon />
+                  </IconButton>
+                </NavLink>
                 <IconButton
                   className="startGameButton"
                   color="secondary"
@@ -210,7 +215,7 @@ const Main = (props: {
                     setmessage("You blocked this user")
                     setsucces(true)
                     utils.socket.emit("BLOCK_USER", {
-                      login: user.user?.username,
+                      username: user.user?.username,
                       target: props.openConvName,
                     });
                     console.log(
@@ -231,21 +236,21 @@ const Main = (props: {
         {!props.newConvMessageBool ? (
           <div className="messagesDisplay" id="messagesDisplay">
             {convMessages.map((message, index) => {
-              if (message.sender == user.user?.username)
+              if (message.serverMsg)
+              return (
+                <div
+                  key={index.toString()}
+                  className="serverMessagesContainer"
+                >
+                  <div className="diviser" />
+                  {message.content}
+                  <div className="diviser" />
+                </div>
+              );
+              else if (message.sender == user.user?.username)
                 return (
                   <div key={index.toString()} className="rightMessages">
                     {message.content}
-                  </div>
-                );
-              else if (message.sender == "___server___")
-                return (
-                  <div
-                    key={index.toString()}
-                    className="serverMessagesContainer"
-                  >
-                    <div className="diviser" />
-                    {message.content}
-                    <div className="diviser" />
                   </div>
                 );
               else

@@ -2,9 +2,9 @@ export class Canvas {
 	width: number
 	height: number
 
-	constructor() {
-		this.width = 800
-		this.height = 600
+	constructor(width, height) {
+		this.width = width
+		this.height = height
 	}
 }
 
@@ -19,7 +19,7 @@ export class GameClass {
     constructor(gameMap : string, username : string, roomID : string, playerId : string){
         this.gameOn = false
         this.roomID = roomID
-		this.canvas = new Canvas()
+		this.canvas = new Canvas(800,600)
         this.map = new Map(gameMap, this.canvas)
         this.ball = new Ball(this.canvas)
         this.players = new Array()
