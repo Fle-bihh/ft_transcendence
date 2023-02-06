@@ -88,81 +88,96 @@ export default function Notif() {
                   >
                     <CloseIcon />
                   </div>
-                  <NavLink to={`/profileother?username=${notif.data.sender}`}>
-                    <div className="notifTitle">Friend Request</div>
-                    <div className="notifText">{`${notif.data.sender} send you a friend's request.`}</div>
-                  </NavLink>
+                  <DialogTitle className="notifTitle">
+                    Friend request
+                  </DialogTitle>
+                  <div className="notifText">
+                     send you a friend's request
+                  </div>
+                  <DialogActions>
+ 
+                    <Button
+                      className="notifAccept"
+                    >
+                    <NavLink to={`/profileother?username=${notif.data.sender}`} className="notifFriend">Look my send friend's request</NavLink>
+                
+                    </Button>
+                    {/* <NavLink to={`/profileother?username=${notif.data.sender}`}>
+                      <div className="notifTitle">Friend Request</div>
+                      <div className="notifText">{`${notif.data.sender} send you a friend's request.`}</div>
+                    </NavLink> */}
+                 </DialogActions>
                 </div>
               );
             }
             case NotifType.INVITEGAME: {
               return (
                 // <div className="notifContainer">
-                <div className="notifElement">
-                  <div
-                    className="notifCross"
-                    onClick={() => {
-                      declineInvitation(notif.data);
-                      delNotif(index);
-                    }}
-                  >
-                    <CloseIcon />
-                  </div>
-                  {/* <div className="notifTitle">Invitation to play</div> */}
-                  <DialogTitle className="notifTitle">
-                    Invitation to play
+                    <div className="notifElement">
+                      <div
+                        className="notifCross"
+                        onClick={() => {
+                          declineInvitation(notif.data);
+                          delNotif(index);
+                        }}
+                      >
+                        <CloseIcon />
+                      </div>
+                      {/* <div className="notifTitle">Invitation to play</div> */}
+                      <DialogTitle className="notifTitle">
+                        Invitation to play
                   </DialogTitle>
-                  <div className="notifText">{`${notif.data.sender} send you a invitation to play to the pong on the ${notif.data.gameMap}.`}</div>
+                      <div className="notifText">{`${notif.data.sender} send you a invitation to play to the pong on the ${notif.data.gameMap}.`}</div>
 
-                  <DialogActions>
-                    <Button
-                      className="notifAccept"
-                      onClick={() => {
-                        acceptInvitation(notif.data);
-                        delNotif(index);
-                      }}
-                    >
-                      Confirm
+                      <DialogActions>
+                        <Button
+                          className="notifAccept"
+                          onClick={() => {
+                            acceptInvitation(notif.data);
+                            delNotif(index);
+                          }}
+                        >
+                          Confirm
                     </Button>
 
-                    {/* <div className="notifAccept" onClick={() => { acceptInvitation(notif.data); delNotif(index); }} > */}
-                    {/* <DoneIcon />*/}
-                    {/* </div> */}
-                    <Button
-                      className="notifDecline"
-                      onClick={() => {
-                        declineInvitation(notif.data);
-                        delNotif(index);
-                      }}
-                    >
-                      Cancel
+                        {/* <div className="notifAccept" onClick={() => { acceptInvitation(notif.data); delNotif(index); }} > */}
+                        {/* <DoneIcon />*/}
+                        {/* </div> */}
+                        <Button
+                          className="notifDecline"
+                          onClick={() => {
+                            declineInvitation(notif.data);
+                            delNotif(index);
+                          }}
+                        >
+                          Cancel
                     </Button>
-                  </DialogActions>
+                      </DialogActions>
 
-                  {/* <div className="notifDecline" onClick={() => { declineInvitation(notif.data); delNotif(index); }} > */}
-                  {/* <CloseIcon /> */}
-                  {/* </div> */}
+                      {/* <div className="notifDecline" onClick={() => { declineInvitation(notif.data); delNotif(index); }} > */}
+                      {/* <CloseIcon /> */}
+                      {/* </div> */}
 
-                  {/* </div> */}
-                </div>
+                      {/* </div> */}
+                    </div>
               );
             }
           }
         })}
       </div>
 
-      <button
-        onClick={() => {
-          addNotif({
-            type: NotifType.FRIENDREQUEST,
-            data: {
-              sender: "Felix",
-            },
-          });
-        }}
-      >
-        Oui
+                  <button
+                    onClick={() => {
+                      addNotif({
+                        type: NotifType.FRIENDREQUEST,
+                        data: {
+                          sender: "Felix",
+                        },
+                      });
+                    }}
+                  >
+                    Oui
       </button>
     </>
-  );
-}
+              );
+            }
