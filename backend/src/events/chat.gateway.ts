@@ -49,11 +49,11 @@ export class ChatGateway {
   // -------------------------- USERS ---------------------------
 
   @SubscribeMessage('BLOCK_USER')
-  block_user(client: Socket, data: { login: string, target: string; }) {
+  block_user(client: Socket, data: { username: string, target: string; }) {
     console.log('BLOCK_USER recu ChatGateway', data);
-    this.usersService.addBlockList(data.login, data.target);
-    //client.emit('updateProfileOther', {login: data.target,friendStatus: 'blocked'});
-    this.logger.log('db_block = ', db_blockList);
+
+    this.usersService.addBlockList(data.username, data.target);
+
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
@@ -185,7 +185,7 @@ export class ChatGateway {
     this.logger.log('GET_ALL_CHANNELS recu ChatGateway with');
     const channels = await this.channelsService.getChannel();
     client.emit('get_all_channels', channels);
-    this.logger.log('send get_all_channels to ', login, 'with', channels);
+    this.logger.log('send get_all_channels to ', login, 'with');
   }
 
   @SubscribeMessage('GET_PARTICIPANTS')

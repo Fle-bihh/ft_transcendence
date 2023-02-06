@@ -47,6 +47,7 @@ const Main = (props: {
       receiver: string;
       content: string;
       time: Date;
+      serverMsg: boolean;
     }>()
   );
   const [inputValue, setInputValue] = useState("");
@@ -83,6 +84,7 @@ const Main = (props: {
         receiver: string;
         content: string;
         time: Date;
+        serverMsg: boolean;
       }>
     ) => {
       console.log("get_conv recu front", openConv);
@@ -125,7 +127,7 @@ const Main = (props: {
         owner: string;
       }>
     ) => {
-      console.log("get_all_channels recu", user.user?.username, "with", data);
+      console.log("get_all_channels recu", user.user?.username);
       props.setAllChannels([...data]);
     }
   );
@@ -205,7 +207,7 @@ const Main = (props: {
                   component="label"
                   onClick={() => {
                     utils.socket.emit("BLOCK_USER", {
-                      login: user.user?.username,
+                      username: user.user?.username,
                       target: props.openConvName,
                     });
                     console.log(
@@ -232,7 +234,7 @@ const Main = (props: {
                     {message.content}
                   </div>
                 );
-              else if (message.sender == "___server___")
+              else if (message.serverMsg)
                 return (
                   <div
                     key={index.toString()}
