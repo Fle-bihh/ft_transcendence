@@ -90,7 +90,6 @@ export class ChannelService {
     let channel: Channel = await this.getOneChannel(channelName);
 
     if (channel && (channel.password === "" || await bcrypt.compare(password, channel.password))) {
-      console.log('TEEEEEST')
       let user: User = await this.userService.getUserByUsername(username);
       channel.userConnected.push(user);
 
@@ -212,7 +211,8 @@ export class ChannelService {
       date: message.date,
       sender: sender,
       receiver: message.receiver,
-      channel: message.channel
+      channel: message.channel,
+      // serverMsg: message.serverMsg
     });
 
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
