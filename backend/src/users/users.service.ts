@@ -158,7 +158,6 @@ export class UsersService {
     return { twoFactorAuth: user.twoFactorAuth };
   }
 
-
   async getBlockList(user: User): Promise<{ blockList: User[] }> {
     const allUser = await this.usersRepository.find({
       relations: ['blockList'],
@@ -232,13 +231,13 @@ export class UsersService {
   }
 
   async getConv(user: User, receiver: User) {
-    let conv = new Array<{ sender: string, receiver: string, content: string, time: Date }>();
+    let conv = new Array<{ sender: string, receiver: string, content: string, time: Date, serverMsg: boolean }>();
 
     const messages = await this.getMessage();
 
     for (const message of messages) {
       if ((user.username === message.receiver?.username && receiver.username === message.sender?.username) || (user.username === message.sender?.username && receiver.username === message.receiver?.username))
-        conv.push({ sender: message.sender.username, receiver: message.receiver.username, content: message.body, time: message.date });
+        conv.push({ sender: message.sender.username, receiver: message.receiver.username, content: message.body, time: message.date, serverMsg: message.serverMsg });
     }
     return conv;
   }

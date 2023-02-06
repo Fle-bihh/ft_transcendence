@@ -20,18 +20,7 @@ export class ChannelService {
     private usersRepository: Repository<User>,
   ) { }
 
-  async getGames() {
-    const query = this.channelsRepository.createQueryBuilder('channel')
-      .leftJoinAndSelect('channel.creator', 'creator')
-      .leftJoinAndSelect('channel.admin', 'admin')
-      .leftJoinAndSelect('channel.userConnected', 'userConnected')
-      .leftJoinAndSelect('channel.messages', 'messages')
-
-    const channels = await query.getMany();
-    return channels;
-  }
-
-  async createChannel(user: User, name: string, password: string, description: string, privacy: string): Promise<Channel> {
+  async createChannel(user: User, name: string, password: string, description: string, privacy: boolean): Promise<Channel> {
 
     let hashedPassword: string = "";
 
@@ -46,25 +35,22 @@ export class ChannelService {
       password: hashedPassword,
       description: description,
       creator: user,
-      admin: [],
+      admin: [user],
       messages: [],
-      userConnected: [],
+      userConnected: [user],
     })
 
-    channel.admin.push(user);
-    channel.userConnected.push(user);
+    this.channelsRepository.save(channel)
 
     user.channels = (await this.userService.getChannelsCreator(user)).channels;
     user.channels.push(channel);
-
-    user.channelsAdmin = (await this.userService.getChannelsAdmin(user)).channelsAdmin;
-    user.channelsAdmin.push(channel);
 
     user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
     user.channelsConnected.push(channel);
 
     try {
       await this.channelsRepository.save(channel);
+      await this.usersRepository.save(user);
     } catch (e) { console.log(e.code) }
     return channel;
   }
@@ -93,10 +79,12 @@ export class ChannelService {
       let user: User = await this.userService.getUserByUsername(username);
       channel.userConnected.push(user);
 
-      user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
-      user.channelsConnected.push(channel);
+      // channel.userConnected.push()
+      // user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
+      // user.channelsConnected.push(channel);
       try {
         await this.channelsRepository.save(channel);
+        // await this.usersRepository.save(user);
       } catch (e) { console.log(e.code) }
       //join the channel}
     } else {
@@ -106,14 +94,6 @@ export class ChannelService {
 
   async promoteAdmin(user: User, channel: Channel) {
     channel.admin.push(user);
-
-    try {
-      await this.channelsRepository.save(channel)
-    } catch (e) { console.log(e.code) }
-  }
-
-  async demoteAdmin(user: User, channel: Channel) {
-    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
 
     try {
       await this.channelsRepository.save(channel)
@@ -151,14 +131,13 @@ export class ChannelService {
     let user = await this.userService.getUserByUsername(username);
     let channel = await this.getOneChannel(channelName);
 
-    user.channels.splice(user.channels.findIndex((c) => c.name === channel.name), 1);
-    user.channelsConnected.splice(user.channelsConnected.findIndex((c) => c.name === channel.name), 1);
-    user.channelsAdmin.splice(user.channelsAdmin.findIndex((c) => c.name === channel.name), 1);
+    // user.channelsConnected.splice(user.channelsConnected.findIndex((c) => c.name === channel.name), 1);
+    // user.channelsAdmin.splice(user.channelsAdmin.findIndex((c) => c.name === channel.name), 1);
     channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
     channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
     if (channel.creator.username === user.username)
       channel.creator = null;
-    this.usersRepository.save(user);
+    // this.usersRepository.save(user);
     this.channelsRepository.save(channel);
   }
 
@@ -188,10 +167,10 @@ export class ChannelService {
   async getConvByChannel(name: string) {
     const allMessages = await this.getMessages();
 
-    let messages = new Array<{ sender: string, receiver: string, content: string, time: Date }>();
+    let messages = new Array<{ sender: string, receiver: string, content: string, time: Date, serverMsg: boolean }>();
     for (let message of allMessages) {
       if (message.channel && message.channel.name === name) {
-        messages.push({ sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date });
+        messages.push({ sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date, serverMsg: message.serverMsg });
       }
     }
     return messages;
@@ -212,7 +191,7 @@ export class ChannelService {
       sender: sender,
       receiver: message.receiver,
       channel: message.channel,
-      // serverMsg: message.serverMsg
+      serverMsg: message.serverMsg
     });
 
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
@@ -231,7 +210,7 @@ export class ChannelService {
     try {
       await this.messagesRepository.save(msg);
       await this.usersRepository.save(sender);
-    } catch (e) { console.log(e.code); }
+    } catch (e) { console.log("wtf? == ", e.code); }
   }
 
   async addAdmin(newAdmin: string, channel: Channel): Promise<void> {
@@ -246,12 +225,16 @@ export class ChannelService {
     if (channel.creator.username === user.username) {
       return
     }
-    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username));
-    await this.channelsRepository.save(channel);
+    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
+    try {
+      await this.channelsRepository.save(channel)
+    } catch (e) { console.log(e.code) }
   }
 
   async kickUser(user: User, channel: Channel): Promise<void> {
-    channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username));
+    if (channel.creator.username === user.username)
+      return
+    channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
     await this.channelsRepository.save(channel);
   }
 
