@@ -20,17 +20,6 @@ export class ChannelService {
     private usersRepository: Repository<User>,
   ) { }
 
-  async getGames() {
-    const query = this.channelsRepository.createQueryBuilder('channel')
-      .leftJoinAndSelect('channel.creator', 'creator')
-      .leftJoinAndSelect('channel.admin', 'admin')
-      .leftJoinAndSelect('channel.userConnected', 'userConnected')
-      .leftJoinAndSelect('channel.messages', 'messages')
-
-    const channels = await query.getMany();
-    return channels;
-  }
-
   async createChannel(user: User, name: string, password: string, description: string, privacy: string): Promise<Channel> {
 
     let hashedPassword: string = "";
@@ -65,6 +54,7 @@ export class ChannelService {
 
     try {
       await this.channelsRepository.save(channel);
+      await this.usersRepository.save(user);
     } catch (e) { console.log(e.code) }
     return channel;
   }
@@ -188,10 +178,10 @@ export class ChannelService {
   async getConvByChannel(name: string) {
     const allMessages = await this.getMessages();
 
-    let messages = new Array<{ sender: string, receiver: string, content: string, time: Date }>();
+    let messages = new Array<{ sender: string, receiver: string, content: string, time: Date, serverMsg: boolean }>();
     for (let message of allMessages) {
       if (message.channel && message.channel.name === name) {
-        messages.push({ sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date });
+        messages.push({ sender: message.sender.username, receiver: message.channel.name, content: message.body, time: message.date, serverMsg: message.serverMsg });
       }
     }
     return messages;
@@ -212,7 +202,7 @@ export class ChannelService {
       sender: sender,
       receiver: message.receiver,
       channel: message.channel,
-      // serverMsg: message.serverMsg
+      serverMsg: message.serverMsg
     });
 
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
