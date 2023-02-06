@@ -79,6 +79,7 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
+ 
   store_client_info(client: Socket, data: {user: any;}) {
     console.log("STORE_CLIENT_INFO : ", data.user)
     users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
@@ -252,16 +253,21 @@ export class EventsGateway {
     if (!userToCheck) return;
     const check = await this.friendRequestService.getRelation(userToCheck.id, users.find((item) => item.socket.id == client.id).user.id);
     console.log("relation : ", check);
-    if (check && check.receiver_id == userToCheck.id) {
-      client.emit('updateProfileOther', { login: data.login, friendStatus: 'request-send'});
-    } else if (check) {
-      client.emit('updateProfileOther', { login: data.login, friendStatus: 'request-waiting'});
-    } else {
-      const userFriendList = await this.friendShipService.getUserFriendList( users.find((item) => item.socket.id == client.id).user.id);
-      if (userFriendList.find((item) => item.id_1 == userToCheck.id || item.id_2 == userToCheck.id) != undefined )
-        client.emit('updateProfileOther', {login: data.login,friendStatus: 'friend'});
-      else
-        client.emit('updateProfileOther', {login: data.login,friendStatus: 'not-friend'});
+    const blocked = await this.userService.getBlockList(users.find((item) => item.socket.id == client.id).user)
+    if (blocked.blockList.findIndex((item) => item.id == userToCheck.id) != -1)
+      client.emit('updateProfileOther', { login: data.login, friendStatus: 'blocked'});
+    else {
+      if (check && check.receiver_id == userToCheck.id) {
+        client.emit('updateProfileOther', { login: data.login, friendStatus: 'request-send'});
+      } else if (check) {
+        client.emit('updateProfileOther', { login: data.login, friendStatus: 'request-waiting'});
+      } else {
+        const userFriendList = await this.friendShipService.getUserFriendList( users.find((item) => item.socket.id == client.id).user.id);
+        if (userFriendList.find((item) => item.id_1 == userToCheck.id || item.id_2 == userToCheck.id) != undefined )
+          client.emit('updateProfileOther', {login: data.login,friendStatus: 'friend'});
+        else
+          client.emit('updateProfileOther', {login: data.login,friendStatus: 'not-friend'});
+      }
     }
   }
 
