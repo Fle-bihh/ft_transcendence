@@ -101,7 +101,7 @@ function App() {
             }
           />
           <Route
-            path="/profileother"
+            path="/profileother/*"
             element={
               <ConnectionChecker>
                 <NotifInterceptor>

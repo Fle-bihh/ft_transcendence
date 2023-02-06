@@ -673,10 +673,10 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
                         })}
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
+            {/* ); */}
+          {/* })} */}
+        {/* </div> */}
+      {/* </div> */}
     </React.Fragment>
   );
 };
