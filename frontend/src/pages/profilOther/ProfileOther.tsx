@@ -130,7 +130,7 @@ const ProfileOther = () => {
                 setFriend(FRIEND_REQUEST_WAITING);
             }
             else if (data.friendStatus == "not-friend") {
-                console.log("je suis ici4")
+                console.log("je suis ici4 ")
 
                 setFriend(NOT_FRIEND)
             }
