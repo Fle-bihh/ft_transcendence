@@ -17,6 +17,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Person2Icon from "@mui/icons-material/Person2";
 import { useSelector } from "react-redux";
+import FlashMessage from '../../alert-message/Alert'
 
 const Main = (props: {
   openConvName: string;
@@ -57,6 +58,8 @@ const Main = (props: {
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
+  const [message, setmessage] = useState("");
+  const [succes, setsucces] = useState(false);
 
   useEffect(() => {
     utils.socket.emit("GET_CONV", {
@@ -204,6 +207,8 @@ const Main = (props: {
                   aria-label="upload picture"
                   component="label"
                   onClick={() => {
+                    setmessage("You blocked this user")
+                    setsucces(true)
                     utils.socket.emit("BLOCK_USER", {
                       login: user.user?.username,
                       target: props.openConvName,
@@ -304,6 +309,10 @@ const Main = (props: {
         profileDialogOpen={profileDialogOpen}
         setProfileDialogOpen={setProfileDialogOpen}
       />
+      {
+        succes ? <FlashMessage
+          message={message} /> : ''
+      }
     </div>
   );
 };
