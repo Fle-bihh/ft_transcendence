@@ -42,7 +42,7 @@ const UserDisconnected = [];
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('PongGateway');
   private allGames: Array<GameClass> = new Array();
-  constructor(private gameService: GameService) {}
+  constructor(private gameService: GameService) { }
 
   @WebSocketServer() io: Server;
 
@@ -78,8 +78,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('JOIN_ROOM')
   async joinRoom(client: Socket, roomId: string) {
     this.logger.log(
-      `[Pong-Gateway] { joinRoom } Client \'${
-        allClients.find((item) => item.id == client.id).username
+      `[Pong-Gateway] { joinRoom } Client \'${allClients.find((item) => item.id == client.id).username
       }\' join room \'${roomId}\'`,
     );
     client.join(roomId);
@@ -259,17 +258,17 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         UserDisconnected.findIndex((item) => item.username == user.username),
         1,
       );
-      else {
-        console.log('oui testestsstststts')
-        allClients.forEach((client) => {
-          if (client.username != user.username)
-            this.io.to(client.socket.id).emit('getClientStatus', {
-              user: user.username,
-              status: 'online',
-              emitFrom: 'clientStatusGame',
-            });
-        })
-      }
+    else {
+      console.log('oui testestsstststts')
+      allClients.forEach((client) => {
+        if (client.username != user.username)
+          this.io.to(client.socket.id).emit('getClientStatus', {
+            user: user.username,
+            status: 'online',
+            emitFrom: 'clientStatusGame',
+          });
+      })
+    }
 
     console.log(`Check reco ${client.id} : ${user.username}`);
     const room = this.getRoomByClientLogin(user.username);
@@ -406,7 +405,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
     if (
       (oponnent = waitingForGame.find((item) => item.map == info.gameMap)) !=
-        undefined &&
+      undefined &&
       oponnent.user.login != info.user.login
     ) {
       this.allGames.push(

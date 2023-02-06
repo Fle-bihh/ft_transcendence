@@ -54,6 +54,17 @@
 			 margin-left: 5%;
 
 		}
+		.notifFriend{
+			text-decoration-line: none;
+    		color: grey;
+			size: small;
+
+			&:hover {
+				color: black;
+
+			}
+		}
+		
 	}
 
 }
