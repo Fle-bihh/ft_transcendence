@@ -4,11 +4,9 @@ import Navbar from "../../components/nav/Nav";
 import { actionCreators, RootState } from "../../state";
 import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
 import "./Notif.scss";
 import React, { useEffect, useState } from "react";
 import { Button, DialogActions, DialogTitle, IconButton } from "@mui/material";
-import Pong from "../pong/Pong";
 import { Navigate, NavLink } from "react-router-dom";
 
 export default function Notif() {

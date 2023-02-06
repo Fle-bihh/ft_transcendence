@@ -269,6 +269,7 @@ const ProfileOther = () => {
       console.log("send to : ", userDisplay.login);
       if (friend == NOT_FRIEND) {
         utils.socket.emit("SEND_FRIEND_REQUEST", {
+          sender: user.user?.username,
           loginToSend: userDisplay.login,
         });
       } else if (friend == FRIEND_REQUEST_SEND) {
