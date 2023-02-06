@@ -51,7 +51,9 @@ export class ChatGateway {
   @SubscribeMessage('BLOCK_USER')
   block_user(client: Socket, data: { username: string, target: string; }) {
     console.log('BLOCK_USER recu ChatGateway', data);
+
     this.usersService.addBlockList(data.username, data.target);
+
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')

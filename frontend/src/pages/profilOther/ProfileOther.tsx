@@ -66,6 +66,7 @@ const FRIEND = 4;
 const BLOCKED = 5;
 
 const ProfileOther = () => {
+
   const [open, setOpen] = React.useState(false);
   const [gameopen, setGameOpen] = React.useState(false);
   const [friend, setFriend] = useState(NOT_FRIEND);

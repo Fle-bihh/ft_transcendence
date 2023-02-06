@@ -8,8 +8,8 @@ import { NavLink } from 'react-router-dom';
 import { Button } from '@mui/material';
 
 var canvas = {
-    "width": 800,
-    "height": 600
+    "width": document.body.clientWidth,
+    "height": document.body.clientHeight
 }
 
 const SpectatorPage = (props: any) => {
@@ -109,6 +109,8 @@ const SpectatorPage = (props: any) => {
     }
 
     function render(room: GameClass) {
+        // room.canvas.width = document.body.clientWidth
+        // room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
