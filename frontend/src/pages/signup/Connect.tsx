@@ -19,34 +19,23 @@ const Connect = () => {
   const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const userReducer = useSelector((state: RootState) => state.persistantReducer.userReducer);
   const twoFAReducer = useSelector((state: RootState) => state.persistantReducer.twoFAReducer);
-  const navigate = useNavigate();
+  const utils = useSelector((state: RootState) => state.utils);
 
-  console.log('Connect 2 cookie == ', userReducer.user);
-  // if (!userReducer.user)
-  // {
-      console.log('Coucou ');
-      axios.request({
-        url: "/auth/api42/Signin",
-        method: "post",
-        baseURL: `http://${ip}:5001`,
-        params: {
-          code: code,
-          nickName: null,
-        }
-      }).then((response: AxiosResponse<any, any>) => {
-        if (response.data.user?.username) {
-          cookies.set('jwt', response.data.accessToken, { path: `/`});
-          setUser(response.data.user);
-        }
-        const jwt = cookies.get('jwt');
-        const options = {
-          headers: {
-            Authorization: `Bearer ${jwt}`
-          }
-        }
-        console.log('Connect 2 cookie == ', options);
-    }).catch((err) => { });
-  // }
+  axios.request({
+    url: "/auth/api42/Signin",
+    method: "post",
+    baseURL: `http://${ip}:5001`,
+    params: {
+      code: code,
+      nickName: null,
+    }
+  }).then((response: AxiosResponse<any, any>) => {
+    if (response.data.user?.username) {
+      cookies.set('jwt', response.data.accessToken, { path: `/` });
+      setUser(response.data.user);
+      utils.socket.emit('STORE_CLIENT_INFO', { user: response.data.user })
+    }
+  }).catch((err) => { });
 
   function verify2FA(value: string) {
     const jwt = cookies.get('jwt');

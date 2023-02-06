@@ -36,16 +36,6 @@ function App() {
     addNotif({ type: NotifType.INVITEGAME, data: data})
   })
 
-  // useEffect(() => {
-  //   console.log("Check user", persistantReducer.userReducer.user);
-  //   if (!verif && persistantReducer.userReducer.user)
-  //   {
-  //       console.log("Check reco front", persistantReducer.userReducer.user?.username);
-  //       utils.gameSocket.emit('CHECK_RECONNEXION', persistantReducer.userReducer.user ? persistantReducer.userReducer.user : '');
-  //       setVerif(true)
-  //   }
-  // })
-
   if (!verif && persistantReducer.userReducer.user)
     {
         console.log("Check reco front", persistantReducer.userReducer.user?.username);
@@ -56,8 +46,6 @@ function App() {
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>
-        
-        
         <Routes>
           <Route
             path="/home"
@@ -112,7 +100,7 @@ function App() {
               </ConnectionChecker>
             }
           />
-                 <Route
+          <Route
             path="/profileother"
             element={
               <ConnectionChecker>
@@ -148,4 +136,4 @@ function App() {
   );
 }
 
-          export default App;
+export default App;
