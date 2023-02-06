@@ -58,38 +58,32 @@ export class ChatGateway {
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
   update_user_socket(client: Socket, data: { login: string }) {
-    // if (users.findIndex((user) => user.login === data.login) >= 0) {
-    //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
-    //     client;
-    // }
-    // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
+    if (users.findIndex((user) => user.user.username === data.login) >= 0) {
+      users[users.findIndex((user) => user.user.username === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
+        client;
+    }
+    this.logger.log('UPDATE_USER_SOCKET recu ChatGateway');
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
-  store_client_info(client: Socket, data: { user: any }) {
-    // users[users.findIndex((item) => item.socket.id == client.id)].user =
-    //   data.user;
-    //
+  store_client_info(client: Socket, data: {user: any;}) {
+    console.log("STORE_CLIENT_INFO : ", data.user)
+    users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
     // client.emit('store_client_done');
-    // if (users.findIndex((user) => user.login === data.login) >= 0) {
-    //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
-    //     client;
-    // }
-    // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
   }
 
   handleConnection(client: Socket) {
     // this.logger.log(`new client connected ${client.id}`);
-    //
-    // users.push({ index: users.length, user: {}, socket: client });
+
+    users.push({ index: users.length, user: {}, socket: client });
   }
 
   handleDisconnect(client: Socket) {
-    //   this.logger.log(`client ${client.id} disconnected`);
-    //   users.splice(
-    //     users.findIndex((item) => item.socket.id == client.id),
-    //     1,
-    //   );
+    // this.logger.log(`client ${client.id} disconnected`);
+    users.splice(
+      users.findIndex((item) => item.socket.id == client.id),
+      1,
+    );
   }
 
   // -------------------------- MESSAGES ---------------------------
@@ -164,16 +158,18 @@ export class ChatGateway {
 
     this.channelsService.createMessage(sender, messageDto);
     this.logger.log('ADD_MESSAGE recu ChatGateway');
-    // CHECK EMIT ET LOGGER
-    //   this.logger.log('send newMessage to', sender.user.login);
-    //   if (sender != undefined) {
-    // sender.socket.emit('new_message');
-    //   }
-    //   this.logger.log('send newMessage to', receiver.user.login);
-    //   if (receiver != undefined) {
-    //     receiver.socket.emit('new_message');
-    //   }
-    // }
+    client.emit('new_message');
+    if (receiverChannel) {
+      // emit a tous les participants du channel
+    }
+    else {
+      users.forEach(user => {
+        if (user.user.username === data.receiver) {
+          this.logger.log('send newMessage to', data.receiver);
+          user.socket.emit('new_message');
+        }
+      })
+    }
   }
 
   // -------------------------- CHANNELS ---------------------------

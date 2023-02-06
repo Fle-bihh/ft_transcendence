@@ -19,8 +19,6 @@ import { actionCreators, RootState } from "../../state";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
 import Version2 from "../../styles/asset/Version2.gif";
-import Version3 from "../../styles/asset/Version3.gif";
-import Version4 from "../../styles/asset/Version4.gif";
 import { NotifType } from "../../state/type";
 import Version5 from "../../styles/asset/Version5.gif";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -124,13 +122,12 @@ const ProfileOther = () => {
       } else if (data.friendStatus == "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
       } else if (data.friendStatus == "request-waiting") {
-        console.log("ADDNOTIF FRIEND  -------------------------------------");
-        addNotif({
-          type: NotifType.FRIENDREQUEST,
-          data: {
-            sender: data.login,
-          },
-        });
+        // addNotif({
+        //   type: NotifType.FRIENDREQUEST,
+        //   data: {
+        //     sender: data.login,
+        //   },
+        // });
         setFriend(FRIEND_REQUEST_WAITING);
       } else if (data.friendStatus == "not-friend") {
         setFriend(NOT_FRIEND);
@@ -701,10 +698,10 @@ const ProfileOther = () => {
                   </div>
                 </div>
               </div>
-            {/* ); */}
-          {/* })} */}
-        {/* </div> */}
-      {/* </div> */}
+            );
+          })}
+        </div>
+      </div>
     </React.Fragment>
   );
 };
