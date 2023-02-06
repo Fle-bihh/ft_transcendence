@@ -66,15 +66,13 @@ const Profile = () => {
             }
         }
         if (change && inputValue != "") {
-
         //   user.suer?.id /blocked/, {username : },  option 
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
                     setmessage("change name on " + inputValue);
                     setUserMatchHistory([])
-                    // getUserData();
-                    // setFirstOpen(false);
+                    setFirstOpen(true);
                     setsucces(true);
                 }
             }).catch(err => {
@@ -86,7 +84,7 @@ const Profile = () => {
             setInputValue("")
             setsucces(false);
             seterror(false);
-        getUserData();
+            // getUserData();
         };
         setOpen(false);
     }
@@ -135,6 +133,7 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
+        console.log("userMatchHistory : ", userMatchHistory)
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
                 response.data.map((data: any) => {
@@ -159,8 +158,7 @@ const Profile = () => {
         console.log("fisrtOpen1", firstOpen)
         if (firstOpen)
             getUserData();
-
-    }, [])
+    }, [firstOpen])
 
     //----------------image pour téléchager--------------------------------------------
 
@@ -293,7 +291,7 @@ const Profile = () => {
                                 {user.user?.WinNumber}
                             </div>
                             <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank </h2>
+                                <h2 style={{ color: 'black' }}>Rank </h2>
                                 <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">

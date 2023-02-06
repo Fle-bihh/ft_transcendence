@@ -23,6 +23,7 @@ import { ip } from "../../App";
 import { RootState } from "../../state";
 import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
+import { setUser } from "../../state/action-creators";
 
 // const url = 'http://${ip}:3000/signup'
 const cookies = new Cookies();
@@ -55,16 +56,8 @@ const Signup = () => {
   const [message, setmessage] = useState("");
   const [message2, setmessage2] = useState("");
 
-
   useEffect(() => {
-    console.log("SignUp", userReducer.user);
-    if (userReducer.user != null) {
-    console.log(options);
-      axios
-        .get(`http://${ip}:5001/user/login/${userReducer.user.username}`, options).then(() => {
-          window.location.replace(`http://${ip}:3000`);
-        }).catch((err) => { })
-    }
+    setUser(null);
   }, [])
 
   const HandleCountAdding = (e: React.ChangeEvent<any>) => {

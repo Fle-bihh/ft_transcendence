@@ -7,7 +7,7 @@ import UserProfileDialog from "../../components/userProfileDialog/UserProfileDia
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/nav/Nav";
 import { useSelector } from "react-redux";
-import { Avatar, Button, Dialog, IconButton } from "@mui/material";
+import { Avatar, Button, Dialog, IconButton, Tooltip } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import CloseIcon from "@mui/icons-material/Close";
@@ -30,6 +30,7 @@ const Friends = () => {
     Array<{
       index: number;
       username: string;
+      profileImage: string;
     }>
   );
   const utils = useSelector((state: RootState) => state.utils);
@@ -37,6 +38,42 @@ const Friends = () => {
     (state: RootState) => state.persistantReducer.userReducer
   );
   const [myUsername, setMyUsername] = useState(user.user?.username);
+
+  function affUser() {
+    const ret = [];
+    for (let i = 0; i < 20; i++) {
+      ret.push(
+        usersList.map((user) => (
+          <div key={user.username} className="usersListItem">
+            <div className="userListItemContainer">
+              <div className="usersListAvatar">
+                <Tooltip title={`Go to ${user.username}'s profile`}>
+
+                <div
+                  className="image-cropper"
+                  onClick={() => {
+                    window.history.pushState({}, "", window.URL.toString());
+                    window.location.replace(
+                      `http://127.0.0.1:3000/profileother?username=${user.username}`
+                      );
+                    }}
+                    >
+                  <img src={user.profileImage} alt="" />
+                </div>
+                  </Tooltip>
+                {/* <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
+                {user.username[0]}
+              </Avatar> */}
+              </div>
+              <div className="usersListName">{user.username}</div>
+            </div>
+            <div className="userListItemContainer"></div>
+          </div>
+        ))
+      );
+    }
+    return ret;
+  }
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -54,13 +91,18 @@ const Friends = () => {
   utils.socket.removeListener("get_all_users_not_friend");
   utils.socket.on(
     "get_all_users_not_friend",
-    (users: Array<{ username: string }>) => {
+    (users: Array<{ username: string; profileImage: string }>) => {
       console.log(user.user?.username, "received get_all_users with", users);
-      let tmpArray = Array<{ index: number; username: string }>();
+      let tmpArray = Array<{
+        index: number;
+        username: string;
+        profileImage: string;
+      }>();
       users.map((user) => {
         tmpArray.push({
           index: tmpArray.length,
           username: user.username,
+          profileImage: user.profileImage,
         });
       });
       setUsersList(tmpArray);
@@ -108,6 +150,7 @@ const Friends = () => {
               </NavLink>
             ))}
           </div>
+          <div className="usersListContainer">{affUser()}</div>
         </div>
       </div>
     </div>

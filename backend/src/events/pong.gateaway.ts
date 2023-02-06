@@ -183,6 +183,22 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('CHECK_RECONNEXION')
   async checkReconnexion(client: Socket, user: { username: string }) {
     allClients.find(item => item.id == client.id)!.username = user.username
+    if (UserDisconnected.find((item) => item.username == user.username))
+      UserDisconnected.splice(
+        UserDisconnected.findIndex((item) => item.username == user.username),
+        1,
+      );
+      else {
+        console.log('oui testestsstststts')
+        allClients.forEach((client) => {
+          if (client.username != user.username)
+            this.io.to(client.socket.id).emit('getClientStatus', {
+              user: user.username,
+              status: 'online',
+              emitFrom: 'clientStatusGame',
+            });
+        })
+      }
     console.log(`Check reco ${client.id} : ${user.username}`);
     const room = this.getRoomByClientLogin(user.username)
     if (room != null) {
@@ -266,6 +282,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         login: string;
       }
     };
+    const oldGame = this.getRoomByClientLogin(info.user.login);
+    if (oldGame != null)
+      this.finishGameDeco({ roomId: oldGame[1].roomID, playerwin: oldGame[1].players[0].username == info.user.login ? 1 : 0, playerdeco: oldGame[1].players[0].username == info.user.login ? 0 : 1 })
     if (waitingForGame.findIndex(item => item.user.login == info.user.login) != -1)
       waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == info.user.login), 1)
     if ((oponnent = waitingForGame.find(item => item.map == info.gameMap)) != undefined && oponnent.user.login != info.user.login) {
@@ -294,14 +313,18 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('SEE_LIST_GAME')
   async seeListGame(client: Socket, username: string) {
     console.log("length de all games : ", this.allGames.length)
+    let game : string = "noGame"
     if (this.allGames.length != 0) {
       this.allGames.map((room) => {
-        this.io.to(client.id).emit('add_room_playing', room);
+        if (room.players[0].username != username && room.players[1].username != username) {
+          game = "yes"
+          this.io.to(client.id).emit('add_room_playing', room);
+        }
       })
-      this.io.to(client.id).emit('set_list_game', "yes");
+      this.io.to(client.id).emit('set_list_game', game);
     }
     else {
-      this.io.to(client.id).emit('set_list_game', "noGame");
+      this.io.to(client.id).emit('set_list_game', game);
     }
   }
 
@@ -368,5 +391,22 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.table(waitingForInvite)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
+  }
+  @SubscribeMessage('GET_CLIENT_STATUS')
+  getUserStatus(client: Socket, data: { nickname: string }) {
+    console.log('allClients ldisqhgvbjkhqfsbd', allClients);
+    console.log('allClients nickname', data);
+    if (allClients.find((item) => item.username == data.nickname))
+      this.io.to(client.id).emit('getClientStatus', {
+        user: data.nickname,
+        status: 'online',
+        emitFrom: 'clientStatusGame',
+      });
+    else
+      this.io.to(client.id).emit('getClientStatus', {
+        user: data.nickname,
+        status: 'offline',
+        emitFrom: 'clientStatusGame',
+      });
   }
 }

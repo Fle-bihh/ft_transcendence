@@ -5,11 +5,11 @@ import { NavLink } from "react-router-dom";
 import "./home.scss"
 
 const Home = (data: any) => {
-  
+
   return (
     <React.Fragment >
       <Navbar />
-        <div className="fondText" >
+      <div className="fondText" >
 
         <section className="zoneText" id="section">
 
@@ -17,19 +17,20 @@ const Home = (data: any) => {
             <b style={{ color: 'black', border: 'solid', borderWidth: 'thick', borderSpacing: "2" }}>Pong</b>
           </h1>
           <h2  >
-            Règles :
+            Rules:
             </h2>
           <div className="rules" >
-            Utilisez les commandes pour déplacer la raquette vers le haut ou le bas de manière à renvoyer la balle à votre adversaire, en l'empêchant de passer.
-            Celui qui remporte le match est bien entendu celui qui marque le plus de points.
+
+            Use the up and down arrows on the keyboard to move the racket and return the ball to your opponent, preventing him from passing.
+            Whoever wins the match is the one who scores 3 points.
             </div>
           <NavLink to='/pong' className="btnPlay"  >
             <Button className="btn2">
-              Jouer
+              Play
                 </Button>
           </NavLink>
         </section>
-    {/* </div> */}
+        {/* </div> */}
       </div>
     </React.Fragment>
   );

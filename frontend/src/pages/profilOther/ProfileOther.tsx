@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Cerise from "../../styles/asset/cerise.jpg";
 import Laurine from "../../styles/asset/ananas.png";
 import * as React from "react";
-import LoadingButton from "@mui/lab/LoadingButton";
+// import LoadingButton from "@mui/lab/LoadingButton";
 
 import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
@@ -19,8 +19,6 @@ import { actionCreators, RootState } from "../../state";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
 import Version2 from "../../styles/asset/Version2.gif";
-import Version3 from "../../styles/asset/Version3.gif";
-import Version4 from "../../styles/asset/Version4.gif";
 import { NotifType } from "../../state/type";
 import Version5 from "../../styles/asset/Version5.gif";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -65,16 +63,19 @@ const FRIEND_REQUEST_WAITING = 3;
 const FRIEND = 4;
 const BLOCKED = 5;
 
-const ProfileOther = () => {
+const ONLINE = 6;
+const OFFLINE = 7;
+const IN_GAME = 8;
 
+const ProfileOther = () => {
   const [open, setOpen] = React.useState(false);
   const [gameopen, setGameOpen] = React.useState(false);
   const [friend, setFriend] = useState(NOT_FRIEND);
+  const [clientStatus, setClientStatus] = useState(OFFLINE);
   const [inviteSend, setInviteSend] = useState(false);
   const [declineGame, setDeclineGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [openGame, setOpenGame] = useState(false);
-  const [replace, setReplace] = useState(false);
 
   const [matchHistory, setMatchHistory] = useState(
     Array<{
@@ -103,22 +104,22 @@ const ProfileOther = () => {
     Friend: 0,
     getData: false,
     // http://localhost:3000/Profileother?username=ldauga
-});
-let userConnect = document.getElementById("userConnect");
-let userInGame = document.getElementById("userInGame");
-let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
-const navigate = useNavigate();
-const { addNotif } = bindActionCreators(actionCreators, useDispatch());
+  });
+  let userConnect = document.getElementById("userConnect");
+  let userInGame = document.getElementById("userInGame");
+  let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
+  const navigate = useNavigate();
+  const { addNotif } = bindActionCreators(actionCreators, useDispatch());
 
   utils.socket.removeListener("updateProfileOther");
   utils.socket.on(
     "updateProfileOther",
     (data: { login: string; friendStatus: string }) => {
-      if (getComputedStyle(userInGame!).display == "flex") {
-        userConnect!.style.display = "none";
-        userInGame!.style.display = "none";
-        userConnectHorsLigne!.style.display = "none";
-      }
+      // if (getComputedStyle(userInGame!).display == "flex") {
+      //   userConnect!.style.display = "none";
+      //   userInGame!.style.display = "none";
+      //   userConnectHorsLigne!.style.display = "none";
+      // }
       if (data.login != userDisplay.login) return;
       console.log("updateProfileOther", data.login, data.friendStatus);
       if (data.friendStatus == "blocked") {
@@ -126,25 +127,52 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
       } else if (data.friendStatus == "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
       } else if (data.friendStatus == "request-waiting") {
-        console.log('ADDNOTIF FRIEND  -------------------------------------');
-        addNotif({
-            type: NotifType.FRIENDREQUEST,
-            data: {
-              sender: data.login,
-            },
-          })
+        // addNotif({
+        //   type: NotifType.FRIENDREQUEST,
+        //   data: {
+        //     sender: data.login,
+        //   },
+        // });
         setFriend(FRIEND_REQUEST_WAITING);
       } else if (data.friendStatus == "not-friend") {
         setFriend(NOT_FRIEND);
       } else {
         setFriend(FRIEND);
-        if (getComputedStyle(userInGame!).display == "none") {
-          userInGame!.style.display = "flex";
-          userConnect!.style.display = "flex";
+        // if (getComputedStyle(userInGame!).display == "none") {
+        //   userInGame!.style.display = "flex";
+        //   userConnect!.style.display = "flex";
 
-          userConnectHorsLigne!.style.display = "flex";
-        }
+        //   userConnectHorsLigne!.style.display = "flex";
+        // }
       }
+    }
+  );
+
+  utils.gameSocket.removeListener("getClientStatus");
+  utils.gameSocket.on(
+    "getClientStatus",
+    (data: { user: string; status: string }) => {
+      // if (getComputedStyle(userInGame!).display == "flex") {
+      //   userConnect!.style.display = "none";
+      //   userInGame!.style.display = "none";
+      //   userConnectHorsLigne!.style.display = "none";
+      // }
+      console.log("getClientStatus", data);
+      if (data.user != userDisplay.login) return;
+
+
+      if (data.status == 'online')
+        setClientStatus(ONLINE)
+        else if (data.status == 'offline')
+        setClientStatus(OFFLINE)
+        else if (data.status == 'in-game')
+        setClientStatus(IN_GAME)
+      // if (getComputedStyle(userInGame!).display == "none") {
+      //   userInGame!.style.display = "flex";
+      //   userConnect!.style.display = "flex";
+
+      //   userConnectHorsLigne!.style.display = "flex";
+      // }
     }
   );
 
@@ -161,7 +189,8 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
     ) {
       {
         console.log("je suis avant le if");
-        setReplace(true);
+        window.history.pushState({}, window.location.toString());
+        window.location.replace("/");
       }
     } else {
       axios
@@ -183,6 +212,9 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
             });
             utils.socket.emit("GET_FRIEND_STATUS", {
               login: response.data.login,
+            });
+            utils.gameSocket.emit("GET_CLIENT_STATUS", {
+              nickname: response.data.username,
             });
             axios
               .get(`http://localhost:5001/game/${user.user?.id}`, options)
@@ -209,7 +241,8 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
         .catch((error) => {
           console.log("je suis dans le get");
 
-          setReplace(true);
+          window.history.pushState({}, window.location.toString());
+          window.location.replace("/");
         });
     }
   };
@@ -405,9 +438,6 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
         state={{ invite: true, roomId: roomId }}
       />
     );
-  if (replace === true) {
-    return <Navigate to="/*" />;
-  }
   return (
     <React.Fragment>
       <Navbar />
@@ -421,29 +451,41 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
               className="avatarOther"
             />
           </Stack>
-          <div id="userConnect">
-            <div className="circleConnectLigne" id="userConnect"></div>
+          {friend == FRIEND ? (
+            <>
+              {clientStatus == ONLINE ? (
+                <div id="userConnect">
+                  <div className="circleConnectLigne" id="userConnect"></div>
 
-            <div className="connect" id="userConnect">
-              Online
-            </div>
-          </div>
-          <div id="userInGame">
-            <div className="circleInGame" id="userInGame"></div>
+                  <div className="connect" id="userConnect">
+                    Online
+                  </div>
+                </div>
+              ) : clientStatus == IN_GAME ? (
+                <div id="userInGame">
+                  <div className="circleInGame" id="userInGame"></div>
 
-            <div className="connect" id="userInGame">
-              In game
-            </div>
-          </div>
-          <div id="userConnectHorsLigne">
-            <div
-              className="circleConnectHorsLigne"
-              id="userConnectHorsLigne"
-            ></div>
-            <div className="connect" id="userConnectHorsLigne">
-              Not Connected
-            </div>
-          </div>
+                  <div className="connect" id="userInGame">
+                    In game
+                  </div>
+                </div>
+              ) : clientStatus == OFFLINE ? (
+                <div id="userConnectHorsLigne">
+                  <div
+                    className="circleConnectHorsLigne"
+                    id="userConnectHorsLigne"
+                  ></div>
+                  <div className="connect" id="userConnectHorsLigne">
+                    Not Connected
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
           <div className="infoUserOther">
             <h3 className="userNameOther">Login :</h3>
             <Typography className="userNamePrintOther">
@@ -608,9 +650,11 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
                   }}
                 >
                   <DialogContentText>
-                    <LoadingButton loading variant="outlined">
+                    <button>
                       <span>Submit</span>
-                    </LoadingButton>
+                    </button>
+                    {/* <LoadingButton loading variant="outlined">
+                    </LoadingButton> */}
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -634,7 +678,6 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
             )}
           </Dialog>
         </div>
-
         <div className="statOther">
           <div className="rectangleOther">
             <div className="textRectangle">
@@ -642,7 +685,7 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
               {userDisplay?.WinNumber}
             </div>
             <div className="textRectangle">
-              <h2 style={{ color: "white" }}>Rank</h2>
+              <h2 style={{ color: "black" }}>Rank</h2>
               <h3
                 style={{
                   textAlign: "center",
@@ -663,18 +706,18 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
               <div
                 className={
                   match.winner == userDisplay?.username
-                    ? "itemWinner"
-                    : "itemLoser"
+                    ? "itemWinnerOther"
+                    : "itemLoserOther"
                 }
                 key={match.id.toString()}
               >
-                <div className="results">
-                  <div className="name">
+                <div className="resultsOther">
+                  <div className="nameOther">
                     {match.player1 == userDisplay?.username
                       ? match.player1
                       : match.player2}
                   </div>
-                  <div className="score">
+                  <div className="scoreOther">
                     -
                     {match.player1 == userDisplay?.username
                       ? match.score1
@@ -682,15 +725,15 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
                     -
                   </div>
                 </div>
-                <div className="results">
-                  <div className="score">
+                <div className="resultsOther">
+                  <div className="scoreOther">
                     -
                     {match.player2 == userDisplay?.username
                       ? match.score1
                       : match.score2}
                     -
                   </div>
-                  <div className="name">
+                  <div className="nameOther">
                     {match.player2 == userDisplay?.username
                       ? match.player1
                       : match.player2}

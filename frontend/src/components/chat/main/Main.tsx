@@ -2,7 +2,6 @@
 import "./Main.scss";
 import { RootState } from "../../../state";
 import ChannelSettingsDialog from "../channelSettingsDialog/ChannelSettingsDialog";
-import UserProfileDialog from "../../userProfileDialog/UserProfileDialog";
 
 //
 import React, { useState, useEffect } from "react";
@@ -17,6 +16,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Person2Icon from "@mui/icons-material/Person2";
 import { useSelector } from "react-redux";
+import FlashMessage from '../../alert-message/Alert'
 import { NavLink } from "react-router-dom";
 
 const Main = (props: {
@@ -53,12 +53,13 @@ const Main = (props: {
   );
   const [inputValue, setInputValue] = useState("");
   const [topInputValue, setTopInputValue] = useState("");
-  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
+  const [message, setmessage] = useState("");
+  const [succes, setsucces] = useState(false);
 
   useEffect(() => {
     utils.socket.emit("GET_CONV", {
@@ -184,9 +185,6 @@ const Main = (props: {
                     style={{ color: "white", marginRight: "2%" }}
                     aria-label="upload picture"
                     component="label"
-                    onClick={() => {
-                      setProfileDialogOpen(true);
-                    }}
                   >
                     {/* <input hidden accept="image/*" type="file" /> */}
                     <Person2Icon />
@@ -209,6 +207,8 @@ const Main = (props: {
                   aria-label="upload picture"
                   component="label"
                   onClick={() => {
+                    setmessage("You blocked this user")
+                    setsucces(true)
                     utils.socket.emit("BLOCK_USER", {
                       username: user.user?.username,
                       target: props.openConvName,
@@ -305,10 +305,10 @@ const Main = (props: {
         setOpenConvName={props.setOpenConvName}
         allChannels={props.allChannels}
       />
-      <UserProfileDialog
-        profileDialogOpen={profileDialogOpen}
-        setProfileDialogOpen={setProfileDialogOpen}
-      />
+      {
+        succes ? <FlashMessage
+          message={message} /> : ''
+      }
     </div>
   );
 };
