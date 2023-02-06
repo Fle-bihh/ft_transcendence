@@ -6,8 +6,8 @@ import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from '@mui/icons-material/Done';
 import "./Notif.scss";
-import { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button, DialogActions, DialogTitle } from "@mui/material";
 import Pong from "../pong/Pong";
 import { Navigate } from "react-router-dom";
 
@@ -65,18 +65,31 @@ export default function Notif() {
             }
             case NotifType.INVITEGAME: {
               return (
+
+                // <div className="notifContainer">
                 <div className="notifElement">
+                  
                   <div className="notifCross" onClick={() => { declineInvitation(notif.data); delNotif(index); }} >
                     <CloseIcon />
                   </div>
-                  <div className="notifTitle">Invitation to play</div>
+                  {/* <div className="notifTitle">Invitation to play</div> */}
+                  <DialogTitle className="notifTitle">Invitation to play</DialogTitle>
                   <div className="notifText">{`${notif.data.sender} send you a invitation to play to the pong on the ${notif.data.gameMap}.`}</div>
-                  <div className="notifAccept" onClick={() => { acceptInvitation(notif.data); delNotif(index); }} >
-                    <DoneIcon />
-                  </div>
-                  <div className="notifDecline" onClick={() => { declineInvitation(notif.data); delNotif(index); }} >
-                    <CloseIcon />
-                  </div>
+                  
+                  <DialogActions>
+                  <Button  className="notifAccept" onClick={() => {acceptInvitation(notif.data); delNotif(index); }}>Confirm</Button>
+                 
+                  {/* <div className="notifAccept" onClick={() => { acceptInvitation(notif.data); delNotif(index); }} > */}
+                    {/* <DoneIcon />*/}
+                  {/* </div> */}
+                  <Button  className="notifDecline" onClick={() => { declineInvitation(notif.data); delNotif(index); }}>Cancel</Button>
+                  </DialogActions>
+
+                  {/* <div className="notifDecline" onClick={() => { declineInvitation(notif.data); delNotif(index); }} > */}
+                    {/* <CloseIcon /> */}
+                  {/* </div> */}
+                  
+                {/* </div> */}
                 </div>
               );
             }

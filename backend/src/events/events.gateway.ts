@@ -143,10 +143,7 @@ export class EventsGateway {
 
     this.friendRequestService.delFriendRequest(check.id);
 
-    client.emit('updateProfileOther', {
-      login: data.loginToSend,
-      friendStatus: 'not-friend',
-    });
+    client.emit('updateProfileOther', {login: data.loginToSend,friendStatus: 'not-friend'});
     if (users.find((item) => item.user.login == userToCheck.login) != undefined)
       users
         .find((item) => item.user.login == userToCheck.login)

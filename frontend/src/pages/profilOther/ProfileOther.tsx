@@ -23,7 +23,6 @@ import Version3 from "../../styles/asset/Version3.gif";
 import Version4 from "../../styles/asset/Version4.gif";
 import Version5 from "../../styles/asset/Version5.gif";
 import ButtonBase from '@mui/material/ButtonBase';
-
 import Fab from "@mui/material/Fab";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
@@ -34,6 +33,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    formLabelClasses,
     IconButton,
     TextField,
     Typography,
@@ -43,7 +43,7 @@ import { useEffect, useState } from "react";
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { PasswordRounded } from "@mui/icons-material";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import { ip } from "../../App";
 import Cookies from "universal-cookie";
 import { utilsReducer } from "../../state/reducers/utilsReducer";
@@ -61,6 +61,8 @@ const NOT_FRIEND = 1;
 const FRIEND_REQUEST_SEND = 2;
 const FRIEND_REQUEST_WAITING = 3;
 const FRIEND = 4;
+const BLOCKED = 5;
+
 
 const ProfileOther = () => {
     const [open, setOpen] = React.useState(false);
@@ -70,6 +72,8 @@ const ProfileOther = () => {
     const [declineGame, setDeclineGame] = useState(false);
     const [roomId, setRoomId] = useState("");
     const [openGame, setOpenGame] = useState(false);
+    const [replace, setReplace] = useState(false);
+
     const [matchHistory, setMatchHistory] = useState(
         Array<{
             id: string,
@@ -108,10 +112,13 @@ const ProfileOther = () => {
                 userInGame!.style.display = "none"
                 userConnectHorsLigne!.style.display = "none"
             }
-            console.log("oui");
             if (data.login != userDisplay.login) return;
             console.log("updateProfileOther", data.login, data.friendStatus);
-            if (data.friendStatus == "request-send") {
+            if (data.friendStatus == "blocked")
+            {
+                setFriend(BLOCKED);
+            }
+            else if (data.friendStatus == "request-send") {
                 setFriend(FRIEND_REQUEST_SEND);
             }
             else if (data.friendStatus == "request-waiting") {
@@ -133,13 +140,21 @@ const ProfileOther = () => {
         }
     );
 
+    
+      
+      
+
     const getUserData = () => {
         const parsed = queryString.parse(window.location.search);
         console.log("userDisplau", userDisplay);
         console.log("username moi", user.user?.username);
         console.log("parsed", parsed);
+
+
         if ( parsed.username == "" || parsed.username == undefined || parsed.username == user.user?.login ) {
-            window.location.replace(`http://${ip}:3000`);
+          {  console.log("je suis avant le if")
+              setReplace(true)
+          }
         } else {
             axios.get(`http://localhost:5001/user/username/${parsed.username} `, options)
                 .then((response) => {
@@ -178,11 +193,26 @@ const ProfileOther = () => {
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
-                    window.location.replace(`http://${ip}:3000/*`);
+            console.log("je suis dans le get")
+
+                    setReplace(true)
                 })
         }
     };
+     //   user.suer?.id /blocked/, {username : },  option 
+    //  axios.patch(`http://localhost:5001/user/${user.user?.id}/blocked`, { username: userDisplay.username }, options).then(response => {
+    //     if (response.data != null) {
+
+    //         console.log("on est bloque", response.data)
+    //     }
+    // }).catch(err => {
+    //     if (err.response!.status === 500) {
+
+    //         console.log("on est pas bloque", err.response.data)
+
+    
+    //     }
+    // })
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -325,6 +355,12 @@ const ProfileOther = () => {
     if (openGame && roomId != "") return (
         <Navigate to="/Pong" replace={true} state={{ invite:true, roomId:roomId }}/>
     )
+    if (replace === true)
+    {
+        return (
+        <Navigate to="/*" />
+        )
+    }
     return (
         <React.Fragment>
             <Navbar />
@@ -475,7 +511,7 @@ const ProfileOther = () => {
                             {userDisplay?.WinNumber}
                         </div>
                         <div className="textRectangle">
-                            <h2 style={{ color: "white" }}>Rank {userDisplay?.username}</h2>
+                            <h2 style={{ color: "white" }}>Rank</h2>
                             <h3
                                 style={{
                                     textAlign: "center",

@@ -11,4 +11,4 @@ RUN npm ci
 COPY . .
 # RUN npm rebuild bcrypt --build-form-source
 EXPOSE $BACKEND_PORT
-CMD ["npm", "start", "run:debug"]
+CMD ["npm", "start", "run"]
