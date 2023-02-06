@@ -66,6 +66,8 @@ const Profile = () => {
             }
         }
         if (change && inputValue != "") {
+
+        //   user.suer?.id /blocked/, {username : },  option 
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
@@ -75,12 +77,7 @@ const Profile = () => {
             }).catch(err => {
                 if (err.response!.status === 500) {
                     setmessage2( "username deja existant");
-                    // setmessage2(error.request);
                     seterror(true);
-                    // console.log("reponse profile quand nom", err.response.data.message);
-                    // console.log("setm messa", message2);
-
-
                 }
             })
             .catch(err => {
@@ -296,7 +293,7 @@ const Profile = () => {
                                 {user.user?.WinNumber}
                             </div>
                             <div className="textRectangle">
-                                <h2 style={{ color: 'white' }}>Rank {user.user?.username}</h2>
+                                <h2 style={{ color: 'white' }}>Rank </h2>
                                 <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
                             </div>
                             <div className="textRectangle">
