@@ -260,6 +260,7 @@ export class EventsGateway {
         client.emit('updateProfileOther', { login: data.login, friendStatus: 'request-waiting'});
       } else {
         const userFriendList = await this.friendShipService.getUserFriendList( users.find((item) => item.socket.id == client.id).user.id);
+        console.log('userFriendList ouiouiouoiuoiuoiuoiuoiuoiuo', userFriendList, userFriendList.find((item) => item.id_1 == userToCheck.id || item.id_2 == userToCheck.id))
         if (userFriendList.find((item) => item.id_1 == userToCheck.id || item.id_2 == userToCheck.id) != undefined )
           client.emit('updateProfileOther', {login: data.login,friendStatus: 'friend'});
         else

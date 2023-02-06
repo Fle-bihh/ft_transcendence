@@ -73,7 +73,6 @@ const ProfileOther = () => {
   const [declineGame, setDeclineGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [openGame, setOpenGame] = useState(false);
-  const [replace, setReplace] = useState(false);
 
   const [matchHistory, setMatchHistory] = useState(
     Array<{
@@ -113,11 +112,11 @@ const ProfileOther = () => {
   utils.socket.on(
     "updateProfileOther",
     (data: { login: string; friendStatus: string }) => {
-      if (getComputedStyle(userInGame!).display == "flex") {
-        userConnect!.style.display = "none";
-        userInGame!.style.display = "none";
-        userConnectHorsLigne!.style.display = "none";
-      }
+      // if (getComputedStyle(userInGame!).display == "flex") {
+      //   userConnect!.style.display = "none";
+      //   userInGame!.style.display = "none";
+      //   userConnectHorsLigne!.style.display = "none";
+      // }
       if (data.login != userDisplay.login) return;
       console.log("updateProfileOther", data.login, data.friendStatus);
       if (data.friendStatus == "blocked") {
@@ -137,12 +136,12 @@ const ProfileOther = () => {
         setFriend(NOT_FRIEND);
       } else {
         setFriend(FRIEND);
-        if (getComputedStyle(userInGame!).display == "none") {
-          userInGame!.style.display = "flex";
-          userConnect!.style.display = "flex";
+        // if (getComputedStyle(userInGame!).display == "none") {
+        //   userInGame!.style.display = "flex";
+        //   userConnect!.style.display = "flex";
 
-          userConnectHorsLigne!.style.display = "flex";
-        }
+        //   userConnectHorsLigne!.style.display = "flex";
+        // }
       }
     }
   );
@@ -160,7 +159,8 @@ const ProfileOther = () => {
     ) {
       {
         console.log("je suis avant le if");
-        setReplace(true);
+        window.history.pushState({}, window.location.toString());
+        window.location.replace("/");
       }
     } else {
       axios
@@ -208,7 +208,8 @@ const ProfileOther = () => {
         .catch((error) => {
           console.log("je suis dans le get");
 
-          setReplace(true);
+          window.history.pushState({}, window.location.toString());
+          window.location.replace("/");
         });
     }
   };
@@ -404,9 +405,6 @@ const ProfileOther = () => {
         state={{ invite: true, roomId: roomId }}
       />
     );
-  if (replace === true) {
-    return <Navigate to="/*" />;
-  }
   return (
     <React.Fragment>
       <Navbar />
@@ -420,29 +418,35 @@ const ProfileOther = () => {
               className="avatarOther"
             />
           </Stack>
-          <div id="userConnect">
-            <div className="circleConnectLigne" id="userConnect"></div>
+          {friend == FRIEND ? (
+            <>
+              <div id="userConnect">
+                <div className="circleConnectLigne" id="userConnect"></div>
 
-            <div className="connect" id="userConnect">
-              Online
-            </div>
-          </div>
-          <div id="userInGame">
-            <div className="circleInGame" id="userInGame"></div>
+                <div className="connect" id="userConnect">
+                  Online
+                </div>
+              </div>
+              <div id="userInGame">
+                <div className="circleInGame" id="userInGame"></div>
 
-            <div className="connect" id="userInGame">
-              In game
-            </div>
-          </div>
-          <div id="userConnectHorsLigne">
-            <div
-              className="circleConnectHorsLigne"
-              id="userConnectHorsLigne"
-            ></div>
-            <div className="connect" id="userConnectHorsLigne">
-              Not Connected
-            </div>
-          </div>
+                <div className="connect" id="userInGame">
+                  In game
+                </div>
+              </div>
+              <div id="userConnectHorsLigne">
+                <div
+                  className="circleConnectHorsLigne"
+                  id="userConnectHorsLigne"
+                ></div>
+                <div className="connect" id="userConnectHorsLigne">
+                  Not Connected
+                </div>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
           <div className="infoUserOther">
             <h3 className="userNameOther">Login :</h3>
             <Typography className="userNamePrintOther">
