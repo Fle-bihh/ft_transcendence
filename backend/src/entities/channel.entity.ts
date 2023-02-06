@@ -22,14 +22,14 @@ export class Channel {
 	@ManyToOne(type => User, user => user.channels, { nullable: true })
 	creator: User | null;
 
-	@ManyToMany(type => User, user => user.channelsAdmin)
+	@ManyToMany(type => User, user => user.channelsAdmin, { cascade: true })
 	@JoinTable()
 	admin: User[];
 
 	@OneToMany(type => Message, message => message.channel)
 	messages: Message[];
 
-	@ManyToMany(type => User, user => user.channelsConnected, { cascade: false })
+	@ManyToMany(type => User, user => user.channelsConnected, { cascade: true })
 	@JoinTable()
 	userConnected: User[];
 }

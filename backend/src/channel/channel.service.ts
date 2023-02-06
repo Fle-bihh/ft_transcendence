@@ -35,19 +35,15 @@ export class ChannelService {
       password: hashedPassword,
       description: description,
       creator: user,
-      admin: [],
+      admin: [user],
       messages: [],
-      userConnected: [],
+      userConnected: [user],
     })
 
-    channel.admin.push(user);
-    channel.userConnected.push(user);
+    this.channelsRepository.save(channel)
 
     user.channels = (await this.userService.getChannelsCreator(user)).channels;
     user.channels.push(channel);
-
-    user.channelsAdmin = (await this.userService.getChannelsAdmin(user)).channelsAdmin;
-    user.channelsAdmin.push(channel);
 
     user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
     user.channelsConnected.push(channel);
@@ -83,11 +79,12 @@ export class ChannelService {
       let user: User = await this.userService.getUserByUsername(username);
       channel.userConnected.push(user);
 
-      user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
-      user.channelsConnected.push(channel);
+      // channel.userConnected.push()
+      // user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
+      // user.channelsConnected.push(channel);
       try {
         await this.channelsRepository.save(channel);
-        await this.usersRepository.save(user);
+        // await this.usersRepository.save(user);
       } catch (e) { console.log(e.code) }
       //join the channel}
     } else {
@@ -97,14 +94,6 @@ export class ChannelService {
 
   async promoteAdmin(user: User, channel: Channel) {
     channel.admin.push(user);
-
-    try {
-      await this.channelsRepository.save(channel)
-    } catch (e) { console.log(e.code) }
-  }
-
-  async demoteAdmin(user: User, channel: Channel) {
-    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
 
     try {
       await this.channelsRepository.save(channel)
@@ -233,19 +222,25 @@ export class ChannelService {
     }
   }
 
+  // const question = dataSource.getRepository(Question)
+  // question.categories = question.categories.filter((category) => {
+  //     return category.id !== categoryToRemove.id
+  // })
+  // await dataSource.manager.save(question)
+  // const room = await this.chatRepo.findOne(roomid, { relations: ['users'] });
   async removeAdmin(user: User, channel: Channel): Promise<void> {
     if (channel.creator.username === user.username) {
       return
     }
     channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
-    user.channelsAdmin.splice(user.channelsAdmin.findIndex((u) => u.name === channel.name), 1);
-    await this.channelsRepository.save(channel);
-    await this.usersRepository.save(user);
-    console.log(channel.admin);
-    console.log("ohhhhhhhhhhhhhhh == ", user.channelsAdmin);
+    try {
+      await this.channelsRepository.save(channel)
+    } catch (e) { console.log(e.code) }
   }
 
   async kickUser(user: User, channel: Channel): Promise<void> {
+    if (channel.creator.username === user.username)
+      return
     channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
     await this.channelsRepository.save(channel);
   }

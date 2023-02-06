@@ -126,7 +126,7 @@ export class ChatGateway {
     const allMessages = await this.channelsService.getMessages();
     const tmp = allMessages.reverse();
     for (let message of tmp) {
-      let receiver = (message.channel ? message.channel.name : message.receiver.username); // verif qu'il est dans le channel avant de le push
+      let receiver = (message.channel ? message.channel?.name : message.receiver?.username); // verif qu'il est dans le channel avant de le push
       if (message.sender && message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver)) {
         retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
@@ -270,7 +270,7 @@ export class ChatGateway {
     let channel = await this.channelsService.getOneChannel(data.channel);
     await this.channelsService.addAdmin(data.new_admin, channel);
     console.log('ADD_ADMIN recu ChatGateway', data);
-    this.get_participant_role(client, {login: data.new_admin, channel: channel.name});
+    this.get_participant_role(client, { login: data.new_admin, channel: channel.name });
     // ADD NEW ADMIN IN DB OF channel
   }
 
@@ -328,7 +328,6 @@ export class ChatGateway {
     let channel = await this.channelsService.getOneChannel(data.channel);
     let user = await this.usersService.getUserByUsername(data.admin);
     this.channelsService.removeAdmin(user, channel);
-    console.log("channel admin in remove admin == ", channel.admin);
     // REMOVE ADMIN IN DB OF channel
   }
 
