@@ -7,10 +7,10 @@ class NotFoundPage extends React.Component{
     render(){
         return <div className="page">
             <Navbar />
-            <p style={{textAlign:"center"}}>
+            <span style={{textAlign:"center", display:"block"}}>
               <NavLink to="/">Go to Home </NavLink>
               <h1> 404 PAGE NOT FOUND</h1>
-            </p>
+            </span>
           </div>;
     }
 }

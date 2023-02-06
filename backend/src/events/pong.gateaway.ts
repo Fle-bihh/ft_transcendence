@@ -13,32 +13,32 @@ import { Interval } from '@nestjs/schedule'
 import { GameService } from 'src/game/game.service';
 
 interface Client {
-id : string;
-username : string;
-socket : Socket
+  id: string;
+  username: string;
+  socket: Socket
 }
 
 let allClients: Client[] = [];
 const waitingForGame = Array<{
-map: string, user: {
-  login: string;
-}
+  map: string, user: {
+    login: string;
+  }
 }>()
 const waitingForInvite = Array<{
   map: string, user: {
     login: string;
   }
-  }>()
+}>()
 
-const UserToReconnect = []
+const UserDisconnected = []
 
-@WebSocketGateway(5002, { transports: ['websocket'], "pingInterval": 5000, "pingTimeout": 20000  })
+@WebSocketGateway(5002, { transports: ['websocket'], "pingInterval": 5000, "pingTimeout": 20000 })
 export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('PongGateway');
   private allGames: Array<GameClass> = new Array();
   constructor(
     private gameService: GameService,
-  ) {}
+  ) { }
 
   @WebSocketServer() io: Server;
 
@@ -89,87 +89,106 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         this.gameService.createGame(data);
         this.allGames.splice(room[0], 1)
-        this.io.to(room[1].roomID).emit('finish', room[1])
+        this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: false })
         return;
       }
       this.io.to(roomID).emit("render", this.allGames[room[0]])
     }
   }
 
+  finishGameDeco(data: { roomId: string, playerwin: number, playerdeco: number }) {
+    console.log("finish game deco")
+    var room = this.getRoomByID(data.roomId);
+    console.log("room = ", room)
+    if (room != null) {
+      if (this.allGames[room[0]].players[data.playerdeco].score != 3)
+        this.allGames[room[0]].players[data.playerwin].score = 3
+      if (this.allGames[room[0]].players[0].score == 3 || this.allGames[room[0]].players[1].score == 3) {
+        const data = {
+          id_user1: room[1].players[0].username,
+          score_u1: room[1].players[0].score,
+          id_user2: room[1].players[1].username,
+          score_u2: room[1].players[1].score,
+          winner_id: room[1].players[0].score === 3 ? room[1].players[0].username : room[1].players[1].username,
+          map: room[1].map.mapName,
+        }
+        this.gameService.createGame(data);
+        this.allGames.splice(room[0], 1)
+        this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: true })
+      }
+    }
+  }
+
+  @Interval(5000)
+  checkDeco() {
+    for (let index = 0; index < this.allGames.length; index++) {
+      console.log("check deco")
+      if (this.allGames[index].gameOn) {
+        let millis0: number = 0;
+        let millis1: number = 0;
+        console.log("ready 0 : ", this.allGames[index].players[0].ready, " ready 1 : ", this.allGames[index].players[1].ready)
+        console.log("reco 0 : ", this.allGames[index].players[0].reco, " reco 1 : ", this.allGames[index].players[1].reco)
+        if (!this.allGames[index].players[0].ready && this.allGames[index].players[1].ready && this.allGames[index].players[0].reco === 0)
+          this.allGames[index].players[0].reco = Date.now()
+        else if (!this.allGames[index].players[1].ready && this.allGames[index].players[0].ready && this.allGames[index].players[1].reco === 0)
+          this.allGames[index].players[1].reco = Date.now()
+        else if (this.allGames[index].players[0].ready && this.allGames[index].players[0].reco != 0)
+          this.allGames[index].players[0].reco = 0
+        else if (this.allGames[index].players[1].ready && this.allGames[index].players[1].reco != 0)
+          this.allGames[index].players[1].reco = 0
+        else if (this.allGames[index].players[0].reco != 0)
+          millis0 = Date.now() - this.allGames[index].players[0].reco
+        else if (this.allGames[index].players[1].reco != 0)
+          millis1 = Date.now() - this.allGames[index].players[1].reco
+        if (millis0 != 0 && 10 - Math.floor(millis0 / 1000) === 0)
+          this.finishGameDeco({ roomId: this.allGames[index].roomID, playerwin: 1, playerdeco: 0 })
+        else if (millis1 != 0 && 10 - Math.floor(millis1 / 1000) === 0)
+          this.finishGameDeco({ roomId: this.allGames[index].roomID, playerwin: 0, playerdeco: 1 })
+      }
+    }
+  }
+
+  @SubscribeMessage('CANCEL_GAME')
+  cancelGame(client: Socket, data: { roomId: string }) {
+    console.log("cancel game deco")
+    var room = this.getRoomByID(data.roomId);
+    if (room != null) {
+      this.allGames.splice(room[0], 1)
+      this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: true })
+    }
+  }
+
   handleConnection(client: Socket) {
     this.logger.log(`new client connected ${client.id}`);
-      const newClient: Client = {
-        id: client.id,
-        username: "",
-        socket: client
-      };
-      allClients.push(newClient);
+    const newClient: Client = {
+      id: client.id,
+      username: "",
+      socket: client
+    };
+    allClients.push(newClient);
   }
 
   handleDisconnect(client: Socket) {
     //cherche l'utilisateur
     const user = allClients.find(clients => clients.id == client.id)
     this.logger.log(`client disconnected ${client.id} : ${user.username}`);
-    //ajouter l'utilisateur au tableau de gens a reconnecter si il existe
+    //ajouter l'utilisateur au tableau de gens deconnectes
     if (user != undefined && user.username != "" && user.username != undefined) {
-      UserToReconnect.push({ username: user.username, date: new Date() })
+      UserDisconnected.push({ username: user.username, date: new Date() })
     }
-    //enleve l'utilisateur de la salle d'attente
-    // console.table(waitingForGame);
-    // waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == user.username), 1);
     //enleve l'utilisateur du tableau de tous les clients
     allClients.splice(allClients.findIndex(item => item.id == client.id), 1);
-    //cherche toutes les salles ou joue le client
-    const allRoom = this.getAllRoomByClientID(client.id)
-    for (let i = 0; i < allRoom.length; i++) {
-      //cherche l'index du player
-      const player = this.allGames[allRoom[i].index].players.findIndex(player => player.id == client.id);
-      //enleve le player du jeu
-      this.allGames[allRoom[i].index].players[player].inGame = false
-      //set la date de la reconnection a maintenant
-      this.allGames[allRoom[i].index].players[player].reco = Date.now()
-      if (!this.allGames[allRoom[i].index].players[0].inGame && !this.allGames[allRoom[i].index].players[1].inGame) {
-        //si on a un probleme de connection alors on fini le jeu et on fait gagner le dernier joueur connecté
-        if (this.allGames[allRoom[i].index].players[1].username != "") {
-          this.allGames[allRoom[i].index].players[player].score = 3
-          const data = {
-            id_user1: this.allGames[allRoom[i].index].players[0].username,
-            score_u1: this.allGames[allRoom[i].index].players[0].score,
-            id_user2: this.allGames[allRoom[i].index].players[1].username,
-            score_u2: this.allGames[allRoom[i].index].players[1].score,
-            winner_id: this.allGames[allRoom[i].index].players[0].score === 3 ? this.allGames[allRoom[i].index].players[0].username : this.allGames[allRoom[i].index].players[1].username,
-            map: this.allGames[allRoom[i].index].map.mapName,
-          }
-          this.gameService.createGame(data);
-          //send notif to user qui a perdu a cause de la connection pour lui dire qu'il a perdu
-          this.allGames[allRoom[i].index].players.forEach((item, index) => {
-            if (!item.inGame && item.id != client.id) {
-              allClients.forEach((client) => {
-                if (client.username == item.username)
-                  this.io.to(client.id).emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: this.allGames[allRoom[i].index].players[index ? 0 : 1].username, roomId: this.allGames[allRoom[i].index].roomID } })
-              })
-            }
-          })
-          //send finish to the room finished
-          this.io.to(this.allGames[allRoom[i].index].roomID).emit('finish', this.allGames[allRoom[i].index])
-        }
-        //enleve la room du tableau des room en cours
-        this.allGames.splice(allRoom[i].index, 1)
-        this.logger.log(`client ${client.id} disconnect`);
-      }
-    }
   }
 
   @SubscribeMessage('CHECK_RECONNEXION')
-  async checkReconnexion( client: Socket, user: { username: string }) {
+  async checkReconnexion(client: Socket, user: { username: string }) {
     allClients.find(item => item.id == client.id)!.username = user.username
     console.log(`Check reco ${client.id} : ${user.username}`);
-    // console.table(waitingForGame);
     const room = this.getRoomByClientLogin(user.username)
     if (room != null) {
       this.joinRoom(client, this.allGames[room[0]].roomID)
       this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].id = client.id
-      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].inGame = true
+      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].connect = true
       allClients.forEach((client) => {
         this.io.to(client.id).emit('getClientStatus', { user: this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].username, status: 'in-game', emitFrom: 'CHECK_RECONNEXION' })
       })
@@ -179,7 +198,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @Interval(1000)
   clientStatusGame() {
-    UserToReconnect.forEach(async (user, index) => {
+    UserDisconnected.forEach(async (user, index) => {
       if (new Date().getSeconds() - user.date.getSeconds() != 0) {
         // envoie au front que le client a ete deconnecté
         allClients.forEach((client) => {
@@ -187,54 +206,22 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         })
         this.logger.log(`[Pong-Gateway] Client \'${user.username}\' disconnect`)
         waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == user.username), 1);
-        UserToReconnect.splice(index, 1)
+        UserDisconnected.splice(index, 1)
       }
     })
   }
 
   @Interval(16)
   async handleInterval() {
-      for (let index = 0; index < this.allGames.length; index++) {
-        if (this.allGames[index].gameOn) {
-          let stop = false
-          for (let i = 0; i < 2; i++)
-            if (!this.allGames[index].players[i].inGame) {
-              this.allGames[index].players[i].ready = false
-              if ((15 - Math.floor((Date.now() - this.allGames[index].players[i].reco) / 1000)) == 0 && this.allGames[index].players[i ? 0 : 1].score != 3) {
-                var room = this.getRoomByID(this.allGames[index].roomID)
-                this.allGames[index].players[i ? 0 : 1].score = 3
-                const data = {
-                  id_user1: room[1].players[0].username,
-                  score_u1: room[1].players[0].score,
-                  id_user2: room[1].players[1].username,
-                  score_u2: room[1].players[1].score,
-                  winner_id: room[1].players[0].score === 3 ? room[1].players[0].username : room[1].players[1].username,
-                  map: room[1].map.mapName,
-                }
-                this.gameService.createGame(data);
-                room[1].players.forEach((item, index) => {
-                  if (!item.inGame) {
-                    allClients.forEach((client) => {
-                      if (client.username == item.username)
-                        client.socket.emit('notif', { type: 'LOOSEGAMEDISCONECT', data: { opponentLogin: room[1].players[index ? 0 : 1].username, roomId: room[1].roomID } })
-                    })
-                  }
-                })
-                stop = true
-                this.io.to(room[1].roomID).emit('finish', room[1])
-                this.allGames.splice(room[0], 1)
-              }
-            }
-            else if (this.allGames[index].players[i ? 0 : 1].inGame)
-              if (!(this.allGames[index].players[0].score == 3 || this.allGames[index].players[1].score == 3))
-                if (this.allGames[index].players[0].ready && this.allGames[index].players[1].ready)
-                  this.allGames[index].moveAll();
-          if (!stop) {
-            this.render(this.allGames[index].roomID)
-          }
-        }
+    for (let index = 0; index < this.allGames.length; index++) {
+      if (this.allGames[index].gameOn) {
+        if (!(this.allGames[index].players[0].score == 3 || this.allGames[index].players[1].score == 3))
+          if (this.allGames[index].players[0].ready && this.allGames[index].players[1].ready)
+            this.allGames[index].moveAll();
+        this.render(this.allGames[index].roomID)
       }
     }
+  }
 
   @SubscribeMessage('ENTER')
   async enter(client: Socket, info: [string, boolean]) {
@@ -273,16 +260,18 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('START_GAME')
-  async startGame(client: Socket, info: { user: { login: string}, gameMap: string }) {
+  async startGame(client: Socket, info: { user: { login: string }, gameMap: string }) {
     let oponnent: {
       map: string; user: {
         login: string;
       }
     };
-    if ((oponnent = waitingForGame.find(item => item.map == info.gameMap)) != undefined) {
+    if (waitingForGame.findIndex(item => item.user.login == info.user.login) != -1)
+      waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == info.user.login), 1)
+    if ((oponnent = waitingForGame.find(item => item.map == info.gameMap)) != undefined && oponnent.user.login != info.user.login) {
       this.allGames.push(new GameClass(info.gameMap, info.user.login, info.user.login + oponnent.user.login, client.id))
       const room = this.getRoomByID(info.user.login + oponnent.user.login);
-      this.allGames[room[0]].players[0].inGame = true
+      this.allGames[room[0]].players[0].connect = true
       this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
       this.allGames[room[0]].setOponnentObstacle()
       this.allGames[room[0]].gameOn = true
@@ -290,23 +279,22 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       allClients.find(client => client.username == oponnent.user.login).socket.emit('joinRoom', room[1].roomID)
       allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
-      waitingForGame.splice(waitingForGame.findIndex(item => item.map == info.gameMap), 1)
+      waitingForGame.splice(waitingForGame.findIndex(item => item.user.login == oponnent.user.login), 1)
       console.table(waitingForGame);
       console.table(this.allGames);
       console.table(allClients);
     }
     else {
-      waitingForGame.push({ map: info.gameMap, user: { login: info.user.login }})
+      waitingForGame.push({ map: info.gameMap, user: { login: info.user.login } })
       console.table(waitingForGame)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }
-  
+
   @SubscribeMessage('SEE_LIST_GAME')
-  async seeListGame(client: Socket, username : string) {
+  async seeListGame(client: Socket, username: string) {
     console.log("length de all games : ", this.allGames.length)
-    if (this.allGames.length != 0)
-    {
+    if (this.allGames.length != 0) {
       this.allGames.map((room) => {
         this.io.to(client.id).emit('add_room_playing', room);
       })
@@ -318,23 +306,20 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('START_SPECTATE')
-  start_spectate(client : Socket, data : { roomID : string, start : boolean}) {
+  start_spectate(client: Socket, data: { roomID: string, start: boolean }) {
     const room = this.getRoomByID(data.roomID);
     if (room) {
       if (data.start == false)
         this.joinRoom(client, room[1].roomID)
       this.io.to(client.id).emit('start_spectate', room[1])
     }
-    else
-      this.io.to(client.id).emit('error_page')
   }
 
   @SubscribeMessage('INVITE_GAME')
-  inviteGame(client : Socket, data : { sender : string, gameMap : string, receiver : string}) {
+  inviteGame(client: Socket, data: { sender: string, gameMap: string, receiver: string }) {
     console.log("invite game data : ", data)
     const receiver = allClients.find(user => user.username == data.receiver);
-    if (receiver)
-    {
+    if (receiver) {
       const room = this.getRoomByClientLogin(receiver.username)
       if (!room)
         this.io.to(receiver.id).emit('invite_game', data);
@@ -344,7 +329,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('DECLINE_GAME')
-  declineGame(client : Socket, data : { sender : string, gameMap : string, receiver : string}) {
+  declineGame(client: Socket, data: { sender: string, gameMap: string, receiver: string }) {
     console.log("decline game data : ", data)
     const sender = allClients.find(user => user.username == data.sender);
     if (sender)
@@ -352,7 +337,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('ACCEPT_GAME')
-  acceptGame(client : Socket, data : { sender : string, gameMap : string, receiver : string}) {
+  acceptGame(client: Socket, data: { sender: string, gameMap: string, receiver: string }) {
     console.log("accept game data : ", data)
     const sender = allClients.find(user => user.username == data.sender);
     if (sender) {
@@ -362,12 +347,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('START_INVITE_GAME')
-  async startInviteGame(client: Socket, info: { user: { login: string}, gameMap: string, roomId: string }) {
-    let oponnent: { map: string; user: {login: string} };
+  async startInviteGame(client: Socket, info: { user: { login: string }, gameMap: string, roomId: string }) {
+    let oponnent: { map: string; user: { login: string } };
     if ((oponnent = waitingForInvite.find(item => item.map == info.gameMap)) != undefined) {
       this.allGames.push(new GameClass(info.gameMap, info.user.login, info.roomId, client.id))
       const room = this.getRoomByID(info.roomId)
-      this.allGames[room[0]].players[0].inGame = true
+      this.allGames[room[0]].players[0].connect = true
       this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
       this.allGames[room[0]].gameOn = true
       allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
@@ -379,7 +364,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.table(allClients)
     }
     else {
-      waitingForInvite.push({ map: info.gameMap, user: { login: info.user.login }})
+      waitingForInvite.push({ map: info.gameMap, user: { login: info.user.login } })
       console.table(waitingForInvite)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
