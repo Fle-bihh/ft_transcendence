@@ -313,8 +313,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.joinRoom(client, room[1].roomID)
       this.io.to(client.id).emit('start_spectate', room[1])
     }
-    else
-      this.io.to(client.id).emit('error_page')
   }
 
   @SubscribeMessage('INVITE_GAME')
