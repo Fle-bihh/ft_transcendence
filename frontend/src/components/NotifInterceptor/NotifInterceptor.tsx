@@ -20,9 +20,9 @@ export default function NotifInterceptor(props: { children: any }) {
     addNotif(data);
   });
 
-  // useEffect(() => {
-    // utilsReducer.socket.emit('STORE_CLIENT_INFO', { user: userReducer.user })
-  // }, [])
+  useEffect(() => {
+    utilsReducer.socket.emit('STORE_CLIENT_INFO', { user: userReducer.user })
+  }, [])
 
   utilsReducer.socket.removeListener('store_client_done');
   utilsReducer.socket.on("store_client_done", () => {
