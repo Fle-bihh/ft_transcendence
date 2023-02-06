@@ -130,8 +130,6 @@ const Main = (props: {
     }
   );
 
-  
-
   return (
     <div className="main">
       {props.newConvMessageBool ? (
@@ -225,33 +223,42 @@ const Main = (props: {
         </div>
       )}
       <div className="messagesContainer">
-        <div className="messagesDisplay" id="messagesDisplay">
-          {convMessages.map((message, index) => {
-            if (message.sender == user.user?.username)
-              return (
-                <div key={index.toString()} className="rightMessages">
-                  {message.content}
-                </div>
-              );
-            else if (message.sender == "___server___")
-              return (
-                <div key={index.toString()} className="serverMessagesContainer">
-                  <div className="diviser" />
-                  {message.content}
-                  <div className="diviser" />
-                </div>
-              );
-            else
-              return (
-                <div key={index.toString()} className="leftMessages">
-                  <div className="messageSender">{message.sender + " : "}</div>
-                  <div className="messageContent">{message.content}</div>
-                </div>
-              );
-          })}
-          {/* <!-- messages go here --> */}
-          {/* <Messages messages={messages} onClick={() => setMobile(false)} loading={loading} /> */}
-        </div>
+        {!props.newConvMessageBool ? (
+          <div className="messagesDisplay" id="messagesDisplay">
+            {convMessages.map((message, index) => {
+              if (message.sender == user.user?.username)
+                return (
+                  <div key={index.toString()} className="rightMessages">
+                    {message.content}
+                  </div>
+                );
+              else if (message.sender == "___server___")
+                return (
+                  <div
+                    key={index.toString()}
+                    className="serverMessagesContainer"
+                  >
+                    <div className="diviser" />
+                    {message.content}
+                    <div className="diviser" />
+                  </div>
+                );
+              else
+                return (
+                  <div key={index.toString()} className="leftMessages">
+                    <div className="messageSender">
+                      {message.sender + " : "}
+                    </div>
+                    <div className="messageContent">{message.content}</div>
+                  </div>
+                );
+            })}
+            {/* <!-- messages go here --> */}
+            {/* <Messages messages={messages} onClick={() => setMobile(false)} loading={loading} /> */}
+          </div>
+        ) : (
+          <div></div>
+        )}
         {!props.newConvMessageBool ? (
           <div className="messageInput">
             {/* <!-- input field goes here --> */}

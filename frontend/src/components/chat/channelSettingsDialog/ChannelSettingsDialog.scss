@@ -73,154 +73,98 @@ $content: grey;
     .secondRaw {
       display: flex;
       width: 90%;
-      height: 30%;
+      height: 60%;
       margin-left: 5%;
       margin-top: 2%;
       border-radius: 25px;
-      .addAdmin {
+      .participantsList {
         background-color: $secondary;
         // background-color: rgb(42, 38, 48);
-        width: 45%;
+        width: 90%;
         height: 90%;
         margin-top: 1%;
         margin-left: 3%;
         border-radius: 25px;
-        .addAdminTitle {
-          color: $content;
-          width: fit-content;
-          margin-left: 30%;
-          font-weight: bold;
-          height: 10%;
-        }
-        .addAdminContainer {
+        .participantsContainer {
           overflow: scroll;
           display: flex;
           flex-direction: column;
           scroll-behavior: smooth;
           width: 100%;
           height: 80%;
-          .addAdminContent {
+          .participantItemContainer {
             color: $content;
+            display: flex;
 
             width: 90%;
-            height: 30px;
+            height: 60px;
             min-height: 30px;
             background-color: $primary;
             margin-left: 5%;
             border-radius: 25px;
             margin-top: 10px;
-          }
-        }
-      }
-      .removeAdmin {
-        background-color: $secondary;
-        width: 45%;
-        height: 90%;
-        margin-top: 1%;
-        margin-left: 3%;
-        border-radius: 25px;
-        .removeAdminTitle {
-          color: $content;
-          width: fit-content;
-          font-weight: bold;
-          margin-left: 30%;
-          height: 10%;
-        }
-        .removeAdminContainer {
-          overflow: scroll;
-          display: flex;
-          flex-direction: column;
-          scroll-behavior: smooth;
-          width: 100%;
-          height: 80%;
-          .removeAdminContent {
-            color: $content;
-            width: 90%;
-            height: 30px;
-            min-height: 30px;
-            background-color: $primary;
-            margin-left: 5%;
-            border-radius: 25px;
-            margin-top: 10px;
-          }
-        }
-      }
-    }
-    .thirdRaw {
-      background-color: $primary;
-      display: flex;
-      width: 90%;
-      height: 30%;
-      margin-left: 5%;
-      margin-top: 2%;
-      border-radius: 25px;
-      .banUser {
-        background-color: $secondary;
-        width: 45%;
-        height: 90%;
-        margin-top: 1%;
-        margin-left: 3%;
-        border-radius: 25px;
-        .banUserTitle {
-          color: $content;
-          width: fit-content;
-          font-weight: bold;
-          margin-left: 30%;
-          height: 10%;
-        }
-        .banUserContainer {
-          overflow: scroll;
-          display: flex;
-          flex-direction: column;
-          scroll-behavior: smooth;
-          width: 100%;
-          height: 80%;
-          .banUserContent {
-            color: $content;
-            width: 90%;
-            height: 30px;
-            min-height: 30px;
-            background-color: $primary;
-            margin-left: 5%;
-            border-radius: 25px;
-            margin-top: 10px;
-          }
-        }
-      }
-      .muteUser {
-        background-color: $secondary;
-        width: 45%;
-        height: 90%;
-        margin-top: 1%;
-        margin-left: 3%;
-        border-radius: 25px;
-        .muteUserTitle {
-          color: $content;
-          width: fit-content;
-          font-weight: bold;
-          margin-left: 30%;
-          height: 10%;
-        }
-        .muteUserContainer {
-          overflow: scroll;
-          display: flex;
-          flex-direction: column;
-          scroll-behavior: smooth;
-          width: 100%;
-          height: 80%;
-          .muteUserContent {
-            color: $content;
-            width: 90%;
-            height: 30px;
-            min-height: 30px;
-            background-color: $primary;
-            margin-left: 5%;
-            border-radius: 25px;
-            margin-top: 10px;
+            .content {
+              margin-top: 10px;
+              margin-left: 5px;
+            }
+            .participantName {
+          // background-color: rgb(53, 49, 59);
+          background-color: transparent;
+              margin-top: 20px;
+              margin-left: 20px;
+              height: 25px;
+            }
+            .adminButton {
+              margin-left: 50px;
+          background-color: rgb(53, 49, 59);
+          // background-color: red;
+              margin-top: 5px;
+              border-radius: 50px;
+              height: 50px;
+              width: 70px;
+            }
+            .notAdminButton {
+              margin-left: 50px;
+          background-color: transparent;
+          // background-color: red;
+              margin-top: 5px;
+              border-radius: 50px;
+              height: 50px;
+              width: 70px;
+            }
+            .muteButton {
+          background-color: rgb(53, 49, 59);
+          // background-color: blue;
+              margin-top: 5px;
+              margin-left: 25px;
+              border-radius: 50px;
+              height: 50px;
+              width: 70px;
+            }
+            .banButton {
+          background-color: rgb(53, 49, 59);
+          // background-color: green;
+              margin-top: 5px;
+              height: 50px;
+              width: 70px;
+              margin-left: 25px;
+              border-radius: 50px;
+            }
+
+            .kickButton {
+          background-color: rgb(53, 49, 59);
+          // background-color: purple;
+              margin-top: 5px;
+              height: 50px;
+              width: 70px;
+              margin-left: 25px;
+              border-radius: 50px;
+            }
           }
         }
       }
     }
+
     .leaveChannel {
       background-color: $secondary;
       display: flex;
