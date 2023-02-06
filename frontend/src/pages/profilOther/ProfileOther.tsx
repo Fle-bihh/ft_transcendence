@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import Cerise from "../../styles/asset/cerise.jpg";
 import Laurine from "../../styles/asset/ananas.png";
 import * as React from "react";
-import LoadingButton from "@mui/lab/LoadingButton";
+// import LoadingButton from "@mui/lab/LoadingButton";
 
 import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
@@ -66,7 +66,6 @@ const FRIEND = 4;
 const BLOCKED = 5;
 
 const ProfileOther = () => {
-
   const [open, setOpen] = React.useState(false);
   const [gameopen, setGameOpen] = React.useState(false);
   const [friend, setFriend] = useState(NOT_FRIEND);
@@ -74,7 +73,6 @@ const ProfileOther = () => {
   const [declineGame, setDeclineGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [openGame, setOpenGame] = useState(false);
-  const [replace, setReplace] = useState(false);
 
   const [matchHistory, setMatchHistory] = useState(
     Array<{
@@ -103,22 +101,22 @@ const ProfileOther = () => {
     Friend: 0,
     getData: false,
     // http://localhost:3000/Profileother?username=ldauga
-});
-let userConnect = document.getElementById("userConnect");
-let userInGame = document.getElementById("userInGame");
-let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
-const navigate = useNavigate();
-const { addNotif } = bindActionCreators(actionCreators, useDispatch());
+  });
+  let userConnect = document.getElementById("userConnect");
+  let userInGame = document.getElementById("userInGame");
+  let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
+  const navigate = useNavigate();
+  const { addNotif } = bindActionCreators(actionCreators, useDispatch());
 
   utils.socket.removeListener("updateProfileOther");
   utils.socket.on(
     "updateProfileOther",
     (data: { login: string; friendStatus: string }) => {
-      if (getComputedStyle(userInGame!).display == "flex") {
-        userConnect!.style.display = "none";
-        userInGame!.style.display = "none";
-        userConnectHorsLigne!.style.display = "none";
-      }
+      // if (getComputedStyle(userInGame!).display == "flex") {
+      //   userConnect!.style.display = "none";
+      //   userInGame!.style.display = "none";
+      //   userConnectHorsLigne!.style.display = "none";
+      // }
       if (data.login != userDisplay.login) return;
       console.log("updateProfileOther", data.login, data.friendStatus);
       if (data.friendStatus == "blocked") {
@@ -126,24 +124,24 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
       } else if (data.friendStatus == "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
       } else if (data.friendStatus == "request-waiting") {
-        console.log('ADDNOTIF FRIEND  -------------------------------------');
+        console.log("ADDNOTIF FRIEND  -------------------------------------");
         addNotif({
-            type: NotifType.FRIENDREQUEST,
-            data: {
-              sender: data.login,
-            },
-          })
+          type: NotifType.FRIENDREQUEST,
+          data: {
+            sender: data.login,
+          },
+        });
         setFriend(FRIEND_REQUEST_WAITING);
       } else if (data.friendStatus == "not-friend") {
         setFriend(NOT_FRIEND);
       } else {
         setFriend(FRIEND);
-        if (getComputedStyle(userInGame!).display == "none") {
-          userInGame!.style.display = "flex";
-          userConnect!.style.display = "flex";
+        // if (getComputedStyle(userInGame!).display == "none") {
+        //   userInGame!.style.display = "flex";
+        //   userConnect!.style.display = "flex";
 
-          userConnectHorsLigne!.style.display = "flex";
-        }
+        //   userConnectHorsLigne!.style.display = "flex";
+        // }
       }
     }
   );
@@ -161,7 +159,8 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
     ) {
       {
         console.log("je suis avant le if");
-        setReplace(true);
+        window.history.pushState({}, window.location.toString());
+        window.location.replace("/");
       }
     } else {
       axios
@@ -209,7 +208,8 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
         .catch((error) => {
           console.log("je suis dans le get");
 
-          setReplace(true);
+          window.history.pushState({}, window.location.toString());
+          window.location.replace("/");
         });
     }
   };
@@ -405,9 +405,6 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
         state={{ invite: true, roomId: roomId }}
       />
     );
-  if (replace === true) {
-    return <Navigate to="/*" />;
-  }
   return (
     <React.Fragment>
       <Navbar />
@@ -421,29 +418,35 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
               className="avatarOther"
             />
           </Stack>
-          <div id="userConnect">
-            <div className="circleConnectLigne" id="userConnect"></div>
+          {friend == FRIEND ? (
+            <>
+              <div id="userConnect">
+                <div className="circleConnectLigne" id="userConnect"></div>
 
-            <div className="connect" id="userConnect">
-              Online
-            </div>
-          </div>
-          <div id="userInGame">
-            <div className="circleInGame" id="userInGame"></div>
+                <div className="connect" id="userConnect">
+                  Online
+                </div>
+              </div>
+              <div id="userInGame">
+                <div className="circleInGame" id="userInGame"></div>
 
-            <div className="connect" id="userInGame">
-              In game
-            </div>
-          </div>
-          <div id="userConnectHorsLigne">
-            <div
-              className="circleConnectHorsLigne"
-              id="userConnectHorsLigne"
-            ></div>
-            <div className="connect" id="userConnectHorsLigne">
-              Not Connected
-            </div>
-          </div>
+                <div className="connect" id="userInGame">
+                  In game
+                </div>
+              </div>
+              <div id="userConnectHorsLigne">
+                <div
+                  className="circleConnectHorsLigne"
+                  id="userConnectHorsLigne"
+                ></div>
+                <div className="connect" id="userConnectHorsLigne">
+                  Not Connected
+                </div>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
           <div className="infoUserOther">
             <h3 className="userNameOther">Login :</h3>
             <Typography className="userNamePrintOther">
@@ -608,9 +611,11 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
                   }}
                 >
                   <DialogContentText>
-                    <LoadingButton loading variant="outlined">
+                    <button>
                       <span>Submit</span>
-                    </LoadingButton>
+                    </button>
+                    {/* <LoadingButton loading variant="outlined">
+                    </LoadingButton> */}
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -634,43 +639,66 @@ const { addNotif } = bindActionCreators(actionCreators, useDispatch());
             )}
           </Dialog>
         </div>
-                <div className="statOther">
-                    <div className="rectangleOther">
-                        <div className="textRectangle">
-                            <p>nbr Win</p>
-                            {userDisplay?.WinNumber}
-                        </div>
-                        <div className="textRectangle">
-                            <h2 style={{ color: "black" }}>Rank</h2>
-                            <h3
-                                style={{
-                                    textAlign: "center",
-                                    fontWeight: "900",
-                                    marginBottom: "3px",
-                                }}
-                            >
-                                {userDisplay?.Rank}
-                            </h3>
-                        </div>
-                        <div className="textRectangle">
-                            <p>nbr Loose</p>
-                            {userDisplay?.LossNumber}
-                        </div>
-                    </div>
-                    {matchHistory.map((match) => {
-                            return (
-                                <div className={match.winner == userDisplay?.username ? 'itemWinnerOther' : 'itemLoserOther'} key={match.id.toString()}>
-                                    <div className="resultsOther" >
-                                        <div className="nameOther">{match.player1 == userDisplay?.username ? match.player1 : match.player2}</div>
-                                        <div className="scoreOther">-{match.player1 == userDisplay?.username ? match.score1 : match.score2}-</div>
-                                    </div>
-                                    <div className="resultsOther">
-                                        <div className="scoreOther">-{match.player2 == userDisplay?.username ? match.score1 : match.score2}-</div>
-                                        <div className="nameOther">{match.player2 == userDisplay?.username ? match.player1 : match.player2}</div>
-                                    </div>
-                                </div>
-                            )
-                        })}
+        <div className="statOther">
+          <div className="rectangleOther">
+            <div className="textRectangle">
+              <p>nbr Win</p>
+              {userDisplay?.WinNumber}
+            </div>
+            <div className="textRectangle">
+              <h2 style={{ color: "black" }}>Rank</h2>
+              <h3
+                style={{
+                  textAlign: "center",
+                  fontWeight: "900",
+                  marginBottom: "3px",
+                }}
+              >
+                {userDisplay?.Rank}
+              </h3>
+            </div>
+            <div className="textRectangle">
+              <p>nbr Loose</p>
+              {userDisplay?.LossNumber}
+            </div>
+          </div>
+          {matchHistory.map((match) => {
+            return (
+              <div
+                className={
+                  match.winner == userDisplay?.username
+                    ? "itemWinnerOther"
+                    : "itemLoserOther"
+                }
+                key={match.id.toString()}
+              >
+                <div className="resultsOther">
+                  <div className="nameOther">
+                    {match.player1 == userDisplay?.username
+                      ? match.player1
+                      : match.player2}
+                  </div>
+                  <div className="scoreOther">
+                    -
+                    {match.player1 == userDisplay?.username
+                      ? match.score1
+                      : match.score2}
+                    -
+                  </div>
+                </div>
+                <div className="resultsOther">
+                  <div className="scoreOther">
+                    -
+                    {match.player2 == userDisplay?.username
+                      ? match.score1
+                      : match.score2}
+                    -
+                  </div>
+                  <div className="nameOther">
+                    {match.player2 == userDisplay?.username
+                      ? match.player1
+                      : match.player2}
+                  </div>
                 </div>
               </div>
             {/* ); */}
