@@ -267,20 +267,6 @@ const ChannelDialog = (props: {
                 channelName: joinChannelSelect,
                 channelPassword: joinChannelPasswordInput,
               })
-              //   utils.socket.emit("ADD_PARTICIPANT", {
-              //     username: user.user?.username,
-              //     channel: channel.name,
-              //     admin: false,
-              //   });
-              //   console.log(
-              //     "send ADD_PARTICIPANT to back from ",
-              //     user.user?.username
-              //   );
-              //   console.log("channel: ", channel.name);
-              //   props.setOpenConvName(channel.name);
-              //   const newParticipantMsg =
-              //     user.user?.username + " joined this Channel";
-              //   handleClose();
             }}
           >
             Join this channel

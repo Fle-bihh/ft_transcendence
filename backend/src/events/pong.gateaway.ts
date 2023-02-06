@@ -114,7 +114,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         this.gameService.createGame(data);
         this.allGames.splice(room[0], 1)
-        this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: false })
+        this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: true })
       }
     }
   }

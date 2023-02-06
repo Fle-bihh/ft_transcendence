@@ -211,7 +211,8 @@ export class ChannelService {
       date: message.date,
       sender: sender,
       receiver: message.receiver,
-      channel: message.channel
+      channel: message.channel,
+      // serverMsg: message.serverMsg
     });
 
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
