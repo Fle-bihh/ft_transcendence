@@ -137,29 +137,13 @@ export class EventsGateway {
       userToSend.id,
       users.find((item) => item.socket.id == client.id).user.id,
     );
-
+      console.log("socket send to : ", userToSend)
     if (!check && userToSend) {
-      this.friendRequestService
-        .addFriendRequest(
-          users.find((item) => item.socket.id == client.id).user.id,
-          userToSend.id,
-        )
+      this.friendRequestService.addFriendRequest(users.find((item) => item.socket.id == client.id).user.id, userToSend.id )
         .then(() => {
-          client.emit('updateProfileOther', {
-            login: data.loginToSend,
-            friendStatus: 'request-send',
-          });
-          if (
-            users.find((item) => item.user.login == userToSend.login) !=
-            undefined
-          )
-            users
-              .find((item) => item.user.login == userToSend.login)
-              .socket.emit('updateProfileOther', {
-                login: users.find((item) => item.socket.id == client.id).user
-                  .login,
-                friendStatus: 'request-waiting',
-              });
+          client.emit('updateProfileOther', { login: data.loginToSend, friendStatus: 'request-send'});
+          if ( users.find((item) => item.user.login == userToSend.login) != undefined )
+            users.find((item) => item.user.login == userToSend.login).socket.emit('updateProfileOther', { login: users.find((item) => item.socket.id == client.id).user.login, friendStatus: 'request-waiting'});
         });
     }
     console.log('oui');
