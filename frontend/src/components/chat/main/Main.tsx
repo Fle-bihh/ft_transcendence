@@ -2,7 +2,6 @@
 import "./Main.scss";
 import { RootState } from "../../../state";
 import ChannelSettingsDialog from "../channelSettingsDialog/ChannelSettingsDialog";
-import UserProfileDialog from "../../userProfileDialog/UserProfileDialog";
 
 //
 import React, { useState, useEffect } from "react";
@@ -54,7 +53,6 @@ const Main = (props: {
   );
   const [inputValue, setInputValue] = useState("");
   const [topInputValue, setTopInputValue] = useState("");
-  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
@@ -187,9 +185,6 @@ const Main = (props: {
                     style={{ color: "white", marginRight: "2%" }}
                     aria-label="upload picture"
                     component="label"
-                    onClick={() => {
-                      setProfileDialogOpen(true);
-                    }}
                   >
                     {/* <input hidden accept="image/*" type="file" /> */}
                     <Person2Icon />
@@ -309,10 +304,6 @@ const Main = (props: {
         openConvName={props.openConvName}
         setOpenConvName={props.setOpenConvName}
         allChannels={props.allChannels}
-      />
-      <UserProfileDialog
-        profileDialogOpen={profileDialogOpen}
-        setProfileDialogOpen={setProfileDialogOpen}
       />
       {
         succes ? <FlashMessage
