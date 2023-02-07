@@ -33,7 +33,7 @@ const Profile = () => {
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
 
-    
+
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             id: string,
@@ -44,6 +44,19 @@ const Profile = () => {
             winner: string,
         }>()
     );
+
+    const [userDisplay, setUserDisplay] = useState({
+        id: "",
+        username: '', //pseudo
+        login: '', // prenom  to --> login 
+        profileImage: '', // oui
+        email: '',
+        Rank: 0, // la XP de notre joueur 
+        WinNumber: 0, // nbr de gagne
+        LossNumber: 0,// nbr de perdu
+        twoFactorAuth: false,
+        getData: false,
+    });
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -59,7 +72,7 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        const tmp  = inputValue.replace(/ /g, "")
+        const tmp = inputValue.replace(/ /g, "")
         // console.log("tmp=", tmp, "|")
         // setInputValue(tmp)
         // console.log("inputValue:", inputValue.length)
@@ -69,7 +82,7 @@ const Profile = () => {
 
 
 
-        //   user.suer?.id /blocked/, {username : },  option 
+            //   user.suer?.id /blocked/, {username : },  option 
             axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: tmp }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
@@ -80,7 +93,7 @@ const Profile = () => {
                 }
             }).catch(err => {
                 if (err.response!.status === 500) {
-                    setmessage2( "username deja existant");
+                    setmessage2("username deja existant");
                     seterror(true);
                 }
             })
@@ -128,8 +141,8 @@ const Profile = () => {
                 seterror(true)
                 setmessage2("Wrong code")
             });
-            setsucces(false)
-            seterror(false)
+        setsucces(false)
+        seterror(false)
     }
 
     const getUserData = () => {
@@ -139,9 +152,25 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        console.log("userMatchHistory : ", userMatchHistory)
+        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
+            if (response.data != null) {
+                setUserDisplay({
+                    id: response.data.id,
+                    username: response.data.username,
+                    login: response.data.login,
+                    profileImage: response.data.profileImage,
+                    email: response.data.email,
+                    WinNumber: response.data.WinNumber,
+                    LossNumber: response.data.LossNumber,
+                    Rank: response.data.Rank,
+                    twoFactorAuth: response.data.twoFactorAuth,
+                    getData: true,
+                })
+            }
+        })
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
+            userMatchHistory.splice(0, userMatchHistory.length)
                 response.data.forEach((data: any) => {
                     const obj = {
                         id: data.game.id,
@@ -154,6 +183,7 @@ const Profile = () => {
                     userMatchHistory.push(obj)
                 })
                 setFirstOpen(false);
+                console.log("userDisplay", userDisplay)
             }
         }).catch(error => {
             console.log(error);
@@ -238,7 +268,7 @@ const Profile = () => {
                                 type="text"
                                 fullWidth
                                 variant="standard"
-                                
+
                                 inputProps={{ maxLength: 12 }}
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
@@ -262,7 +292,7 @@ const Profile = () => {
                                         <img src={qrCode2FA} alt="QRcode" />
                                         <PinInput length={6}
                                             focus
-                                            onChange={(value) => {  }}
+                                            onChange={(value) => { }}
                                             type="numeric"
                                             inputMode="number"
                                             style={{ padding: '10px' }}
@@ -298,15 +328,15 @@ const Profile = () => {
                         <div className="rectangle">
                             <div className="textRectangle">
                                 <p>nbr Win</p>
-                                {user.user?.WinNumber}
+                                {userDisplay.WinNumber}
                             </div>
                             <div className="textRectangle">
                                 <h2 style={{ color: 'black' }}>Rank </h2>
-                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{user.user?.Rank}</h3>
+                                <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay.Rank}</h3>
                             </div>
                             <div className="textRectangle">
                                 <p>nbr Loose</p>
-                                {user.user?.LossNumber}
+                                {userDisplay.LossNumber}
                             </div>
                         </div>
                         {userMatchHistory.map((match) => {

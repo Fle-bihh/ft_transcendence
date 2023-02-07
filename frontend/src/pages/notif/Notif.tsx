@@ -5,14 +5,14 @@ import { actionCreators, RootState } from "../../state";
 import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Notif.scss";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, DialogActions, DialogTitle } from "@mui/material";
 import { Navigate, NavLink } from "react-router-dom";
 
 export default function Notif() {
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
   const dispatch = useDispatch();
-  const { delNotif, seenAllNotif, removeNotifPong } = bindActionCreators(actionCreators, dispatch);
+  const { addNotif, delNotif, seenAllNotif, removeNotifPong } = bindActionCreators(actionCreators, dispatch);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [firstOpen, setFirstOpen] = useState(true);
@@ -58,7 +58,7 @@ export default function Notif() {
     <>
       <Navbar />
       <div className="notifContainer">
-        {persistantReducer.notifReducer.notifArray.map((notif, index) => {
+        {persistantReducer.notifReducer.notifArray.length ? (persistantReducer.notifReducer.notifArray.map((notif, index) => {
           switch (notif.type) {
             case NotifType.FRIENDREQUEST: {
               return (
@@ -109,7 +109,9 @@ export default function Notif() {
               return (<></>)
             }
           }
-        })}
+        })) : (
+          <div>MET ICI CE QUE TU VEUX</div>
+        )}
       </div>
     </>
   );

@@ -43,7 +43,7 @@ const Navbar = (props: any) => {
   });
   const ItemsInNav = [
     { Name: <PersonAdd />, Link: "/Friends" },
-    { Name: <Notifications />, Link: "/Notif" },
+    { Name: <Badge badgeContent={persistantReducer.notifReducer.notifArray.filter((notif) => !notif.seen).length} showZero={false} color="error" ><Notifications /></Badge>, Link: "/Notif" },
     { Name: <Message />, Link: "/Chat" },
     { Name: <AccountCircle />, Link: "/Profile" },
     { Name: <LogoutIcon />, Link: "/Signup" },
@@ -177,11 +177,36 @@ const Navbar = (props: any) => {
       >
         <Box sx={{ width: 150, height: "21vh" }}>
           {ItemsInNav.map((item) => {
-            if (item.Link === "/Signup") {
+           if (item.Link === "/Notif")
+           return (
+             <NavLink key={item.Link} to={`${item.Link}`}  className="little-link">
+               {/* <Badge
+                 badgeContent={
+                   persistantReducer.notifReducer.notifArray.filter(
+                     (notif) => !notif.seen
+                   ).length
+                 }
+                 showZero={false}
+                 color="error"
+               > */}
+                 <MenuItem
+                   sx={{
+                     cursor: "pointer",
+                     frontSize: "14px",
+                     color: "black",
+                   }}
+                 >
+                   {item.Name}
+                 </MenuItem>
+               {/* </Badge> */}
+             </NavLink>
+           );
+
+            else if (item.Link === "/Signup") {
               return (
                 <div
                   key={item.Link}
-                  className="link"
+                  className="little-link"
                   onClick={() => {
                     const cookies = new Cookies();
                     cookies.remove("jwt");
@@ -191,16 +216,7 @@ const Navbar = (props: any) => {
                     window.location.replace("/");
                   }}
                 >
-                  <Badge
-                    badgeContent={
-                      persistantReducer.notifReducer.notifArray.filter(
-                        (notif) => !notif.seen
-                      ).length
-                    }
-                    showZero={false}
-                    color={"error"}
-                  ></Badge>
-                  <Typography
+                  <MenuItem
                     sx={{
                       cursor: "pointer",
                       frontSize: "14px",
@@ -208,7 +224,7 @@ const Navbar = (props: any) => {
                     }}
                   >
                     {item.Name}
-                  </Typography>
+                  </MenuItem>
                 </div>
               );
             } else
