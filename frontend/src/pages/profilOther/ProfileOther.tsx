@@ -56,7 +56,7 @@ const ProfileOther = () => {
   const [roomId, setRoomId] = useState("");
   const [openGame, setOpenGame] = useState(false);
 
-  const [matchHistory, setMatchHistory] = useState(
+  const [matchHistory] = useState(
     Array<{
       id: string;
       player1: string;
@@ -95,7 +95,7 @@ const ProfileOther = () => {
         setFriend(BLOCKED);
       } else if (data.friendStatus === "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
-      } else if (data.friendStatus == "request-waiting") {
+      } else if (data.friendStatus === "request-waiting") {
         setFriend(FRIEND_REQUEST_WAITING);
       } else if (data.friendStatus === "not-friend") {
         setFriend(NOT_FRIEND);
@@ -164,7 +164,7 @@ const ProfileOther = () => {
               .get(`http://localhost:5001/game/${user.user?.id}`, options)
               .then((response) => {
                 if (response.data != null) {
-                  response.data.map((data: any) => {
+                  response.data.forEach((data: any) => {
                     const obj = {
                       id: data.game.id,
                       player1: data.game.player1.username,
@@ -355,11 +355,10 @@ const ProfileOther = () => {
   //end Invitation to game
 
   useEffect(() => {
-    console.log("effect : ", userDisplay);
     if (!userDisplay?.getData) {
       getUserData();
     }
-  }, [userDisplay?.getData]);
+  }  );
 
   if (openGame && roomId !== "")
     return (

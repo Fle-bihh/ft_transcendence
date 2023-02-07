@@ -43,7 +43,7 @@ const Chat = () => {
       console.log("send GET_ALL_USERS to back");
     }
     setLaunchChatBool(false);
-  });
+  },[allConv.length, launchChatBool, utils.socket, user.user?.username]);
 
   utils.socket.removeListener("get_all_conv_info");
   utils.socket.on(
