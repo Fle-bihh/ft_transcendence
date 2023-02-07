@@ -20,6 +20,7 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import RemoveModeratorIcon from "@mui/icons-material/RemoveModerator";
 import ShieldIcon from "@mui/icons-material/Shield";
+import FlashMessage from '../../snackAlert/Alert'
 
 const ChannelDialog = (props: {
   open: boolean;
@@ -46,6 +47,9 @@ const ChannelDialog = (props: {
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
+  const [message2, setmessage2] = useState("");
+  const [error, seterror] = useState(false);
+
   const [searchInputValue, setSearchInputValue] = useState("");
   const [passwordSwitchOn, setPasswordSwitchOn] = useState(false);
   const [descriptionInput, setDescriptionInput] = useState("");
@@ -169,53 +173,53 @@ const ChannelDialog = (props: {
                 return <></>;
               return channel.privacy === "public" ||
                 channel.name === searchInputValue ? (
-                <div
-                  className={
-                    (joinChannelSelect === channel.name
-                      ? "channelDataContainer active "
-                      : "channelDataContainer inactive ") +
-                    (channel.name
-                      .toUpperCase()
-                      .indexOf(searchInputValue.toUpperCase())! > -1
-                      ? "flex"
-                      : "hidden")
-                  }
-                  onClick={() => {
-                    if (joinChannelSelect !== channel.name)
-                      setJoinChannelSelect(channel.name);
-                    else setJoinChannelSelect("");
-                  }}
-                >
-                  <div className="channelTextDiv">
-                    <div className="channelDataName">{channel.name}</div>
-                    <div className="channelDataDescription">
-                      {channel.description}
+                  <div
+                    className={
+                      (joinChannelSelect === channel.name
+                        ? "channelDataContainer active "
+                        : "channelDataContainer inactive ") +
+                      (channel.name
+                        .toUpperCase()
+                        .indexOf(searchInputValue.toUpperCase())! > -1
+                        ? "flex"
+                        : "hidden")
+                    }
+                    onClick={() => {
+                      if (joinChannelSelect !== channel.name)
+                        setJoinChannelSelect(channel.name);
+                      else setJoinChannelSelect("");
+                    }}
+                  >
+                    <div className="channelTextDiv">
+                      <div className="channelDataName">{channel.name}</div>
+                      <div className="channelDataDescription">
+                        {channel.description}
+                      </div>
                     </div>
-                  </div>
-                  <div className="channelOtherDiv">
-                    <div className="channelIcons">
-                      {channel.privacy === "private" ? (
-                        <VisibilityOffOutlinedIcon className="icon" />
-                      ) : (
-                        <></>
-                      )}
-                      {channel.password.length ? (
-                        <ShieldIcon className="icon" />
-                      ) : (
-                        <RemoveModeratorIcon className="icon" />
-                      )}
+                    <div className="channelOtherDiv">
+                      <div className="channelIcons">
+                        {channel.privacy === "private" ? (
+                          <VisibilityOffOutlinedIcon className="icon" />
+                        ) : (
+                            <></>
+                          )}
+                        {channel.password.length ? (
+                          <ShieldIcon className="icon" />
+                        ) : (
+                            <RemoveModeratorIcon className="icon" />
+                          )}
+                      </div>
+                      <div className="channelDataParticipants">0/50</div>
                     </div>
-                    <div className="channelDataParticipants">0/50</div>
-                  </div>
-                  {/* {channel.password ? (
+                    {/* {channel.password ? (
                       <div className="channelDataPasswordInput"></div>
                     ) : (
                       <div></div>
                     )} */}
-                </div>
-              ) : (
-                <></>
-              );
+                  </div>
+                ) : (
+                  <></>
+                );
             })}
           </div>
           <button
@@ -354,6 +358,10 @@ const ChannelDialog = (props: {
                 console.log("password: ", channelPasswordInput);
                 console.log("description: ", descriptionInput);
               }
+              else {
+                setmessage2("This channel name is already use")
+                seterror(true)
+              }
               handleClose();
             }}
           >
@@ -400,6 +408,9 @@ const ChannelDialog = (props: {
             }
           }}
         />
+        {
+          error ? <FlashMessage message2={message2} /> : ''
+        }
       </div>
     </Dialog>
   );
