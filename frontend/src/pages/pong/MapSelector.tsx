@@ -23,21 +23,17 @@ function MapSelector(props: any) {
     const [listGame, setListGame] = useState("");
 
     function startGame1() {
-        console.log("start game front 1");
         utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
     }
     function startGame2() {
-        console.log("start game front 2");
         utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
     }
     function startGame3() {
-        console.log("start game front 3");
         utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
     }
 
     utils.gameSocket.removeListener("start");
     utils.gameSocket.on('start', function (roomID: string) {
-        console.log('start 2 front')
         props.setRoomID(roomID);
         props.setGameStart(true);
     });
@@ -54,25 +50,19 @@ function MapSelector(props: any) {
 
     utils.gameSocket.removeListener("set_list_game");
     utils.gameSocket.on('set_list_game', function (gameExist: string) {
-        console.log("see_list_game : ", gameExist);
-        if (gameExist == 'yes')
+        if (gameExist === 'yes')
             setListGame('yes');
-        else if (gameExist == 'noGame')
+        else if (gameExist === 'noGame')
             setListGame('noGame');
     });
 
     utils.gameSocket.removeListener("add_room_playing");
     utils.gameSocket.on('add_room_playing', function (room: GameClass) {
-        console.log("Socket add room playing receved in watching");
-        console.log("room : ", room);
-        console.log("allRooms : ", allRooms);
         allRooms.push(room);
-        // props.setAllRooms(allRooms);
-        console.log("allRooms : ", allRooms);
     });
 
     function affishListGame() {
-        if (listGame == 'yes') return (
+        if (listGame === 'yes') return (
             <WatchingListGame all_rooms={allRooms} setRoomID={props.setRoomID} setSpectator={props.setSpectator} />
         )
         else return (
@@ -199,7 +189,7 @@ function MapSelector(props: any) {
                 </ImageButton>
             </Box>
             <Box alignContent={"center"} sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 100, width: '100%', }}>
-                {listGame == "" ?
+                {listGame === "" ?
                     <ImageButton focusRipple key={images[4].title} style={{ width: images[4].width }} onClick={() => { utils.gameSocket.emit('SEE_LIST_GAME', persistantReducer.userReducer.user?.username); }}>
                         <ImageSrc style={{ backgroundImage: `url(${images[4].url})`, backgroundSize: `contain` }} />
                         <ImageBackdrop className="MuiImageBackdrop-root" />

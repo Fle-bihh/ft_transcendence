@@ -12,17 +12,10 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
-import { User } from '../../state/type';
 import FlashMessage from '../../components/alert-message/Alert'
 
 
 const cookies = new Cookies();
-const jwt = cookies.get('jwt');
-const options = {
-    headers: {
-        'authorization': `Bearer ${jwt}`
-    }
-}
 
 const Profile = () => {
 

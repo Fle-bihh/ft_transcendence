@@ -1,10 +1,7 @@
-//
 import Navbar from "../../components/nav/Nav";
 import Main from "../../components/chat/main/Main";
 import Side from "../../components/chat/side/Side";
 import "./Chat.scss";
-
-//
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state";

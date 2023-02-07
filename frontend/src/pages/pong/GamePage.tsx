@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import { gameSocket } from './Pong';
 import { actionCreators, RootState } from '../../state';
 import { GameClass } from './gameClass';
-import { ip } from '../../App';
 import "./Pong.scss"
-import { io } from 'socket.io-client';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@mui/material';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
-
-// var room.canvas = {
-//     "width": document.body.clientWidth,
-//     "height": document.body.clientHeight
-// }
 
 const cookies = new Cookies();
 
@@ -49,11 +42,11 @@ const GamePage = (props: any) => {
 
     function drawPlayers(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const currentPlayer = room.players.find(item => item.username == persistantReducer.userReducer.user?.username)
+            const currentPlayer = room.players.find(item => item.username === persistantReducer.userReducer.user?.username)
             ctx.font = 'bold 20px Arial';
             ctx.fillStyle = 'white';
             ctx.textAlign = "center";
-            if (currentPlayer != undefined)
+            if (currentPlayer !== undefined)
                 ctx.fillText("YOU", currentPlayer!.posX + currentPlayer!.width / 2, currentPlayer!.posY - 10);
             ctx.fillStyle = 'rgb(255, 255, 255)';
             ctx.fillRect(room.players[0].posX, room.players[0].posY, room.players[0].width, room.players[0].height);
@@ -99,13 +92,13 @@ const GamePage = (props: any) => {
 
     function drawText(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
-            const index_p = persistantReducer.userReducer.user!.username == room.players[0].username ? 0 : 1
+            const index_p = persistantReducer.userReducer.user!.username === room.players[0].username ? 0 : 1
             if (!room.players[index_p].ready) {
                 ctx.font = 'bold 50px Arial';
                 ctx.fillStyle = 'white';
                 ctx.textAlign = "center";
                 ctx.fillText("Press ENTER to play !", room.canvas.width / 2, room.canvas.height / 2);
-                if (room.players[index_p].reco != 0) {
+                if (room.players[index_p].reco !== 0) {
                     let millis: number = Date.now() - room.players[index_p].reco;
                     ctx.fillText((10 - Math.floor(millis / 1000)).toString(), room.canvas.width / 2, room.canvas.height / 4 * 3);
                 }
@@ -119,7 +112,7 @@ const GamePage = (props: any) => {
                     ctx.font = 'bold 50px Arial';
                     ctx.fillStyle = 'white';
                     ctx.textAlign = "center";
-                    if (room.players[index_p * -1 + 1].reco != 0) {
+                    if (room.players[index_p * -1 + 1].reco !== 0) {
                         let millis: number = Date.now() - room.players[index_p * -1 + 1].reco;
                         ctx.fillText((10 - Math.floor(millis / 1000)).toString(), room.canvas.width / 2, room.canvas.height / 4 * 3);
                     }
@@ -139,8 +132,6 @@ const GamePage = (props: any) => {
     }
 
     function render(room: GameClass) {
-        // room.canvas.width = document.body.clientWidth
-        // room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
@@ -150,7 +141,7 @@ const GamePage = (props: any) => {
                 if (room.players[0].ready && room.players[1].ready) {
                     drawLimitCamps(ctx, room)
                 }
-                if (room.players[0].score != 0 || room.players[1].score != 0)
+                if (room.players[0].score !== 0 || room.players[1].score !== 0)
                     drawScore(ctx, room)
                 if (!room.players[0].ready || !room.players[1].ready) {
                     drawText(ctx, room)
@@ -209,7 +200,7 @@ const GamePage = (props: any) => {
 
     function affFinishScreen() {
         let U, H;
-        if (finishRoom?.players[0].username == persistantReducer.userReducer.user?.username) {
+        if (finishRoom?.players[0].username === persistantReducer.userReducer.user?.username) {
             U = finishRoom?.players[0]
             H = finishRoom?.players[1]
         } else {
@@ -258,7 +249,8 @@ const GamePage = (props: any) => {
             document.addEventListener("keyup", onKeyUp);
             setVerif(true);
         }
-    })
+        // eslint-disable-next-line
+    }, [verif])
 
     return (
         <div className="mainDiv">

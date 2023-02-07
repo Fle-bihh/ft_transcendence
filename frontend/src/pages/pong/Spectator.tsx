@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state';
 import { GameClass } from './gameClass';
-import { ip } from '../../App';
 import "./Pong.scss"
 import { NavLink } from 'react-router-dom';
 import { Button } from '@mui/material';
@@ -109,8 +108,6 @@ const SpectatorPage = (props: any) => {
     }
 
     function render(room: GameClass) {
-        // room.canvas.width = document.body.clientWidth
-        // room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
@@ -120,7 +117,7 @@ const SpectatorPage = (props: any) => {
                 if (room.players[0].ready && room.players[1].ready) {
                     drawLimitCamps(ctx)
                 }
-                if (room.players[0].score != 0 || room.players[1].score != 0)
+                if (room.players[0].score !== 0 || room.players[1].score !== 0)
                     drawScore(ctx, room)
                 if (!room.players[0].ready || !room.players[1].ready) {
                     drawText(ctx, room)
