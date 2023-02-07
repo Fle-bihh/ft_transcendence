@@ -12,11 +12,6 @@ import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 
-// var room.canvas = {
-//     "width": document.body.clientWidth,
-//     "height": document.body.clientHeight
-// }
-
 const cookies = new Cookies();
 
 
@@ -30,7 +25,6 @@ const GamePage = (props: any) => {
     const { setUser } = bindActionCreators(actionCreators, useDispatch());
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
-        // console.log(room.canvas.width, room.canvas.height)
         if (ctx !== null) {
             ctx.fillStyle = room.map.mapColor;
             ctx.fillRect(0, 0, room.canvas.width, room.canvas.height);
@@ -148,7 +142,7 @@ const GamePage = (props: any) => {
                 resetCanvas()
                 drawFont(ctx, room)
                 if (room.players[0].ready && room.players[1].ready) {
-                    drawLimitCamps(ctx, room)
+                    drawLimitCamps(ctx, room)                 
                 }
                 if (room.players[0].score != 0 || room.players[1].score != 0)
                     drawScore(ctx, room)
@@ -158,7 +152,7 @@ const GamePage = (props: any) => {
                 }
                 if (room.map.useObstacle) {
                     drawObstacle(ctx, room)
-                }
+                }              
                 drawBall(ctx, room)
                 drawPlayers(ctx, room)
             }

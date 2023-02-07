@@ -78,7 +78,7 @@ const Connect = () => {
   else if (userReducer.user && userReducer.user.twoFactorAuth && twoFAReducer.twoFactorVerify) return (
     <Navigate to={"/"} />)
   else return (
-    <div><p>Coucou c est moi</p></div>
+    <Navigate to={"/"} />
   )
 };
 

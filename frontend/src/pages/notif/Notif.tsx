@@ -6,6 +6,7 @@ import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Notif.scss";
 import React, { useEffect, useState } from "react";
+import { Button, DialogActions, DialogTitle } from "@mui/material";
 import { Button, DialogActions, DialogTitle, IconButton } from "@mui/material";
 import { Navigate, NavLink } from "react-router-dom";
 
@@ -18,7 +19,7 @@ export default function Notif() {
     actionCreators,
     dispatch
   );
-  const [lastNbNotif, setLastNbNotif] = useState(0);
+  // const [lastNbNotif, setLastNbNotif] = useState(0);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const utils = useSelector((state: RootState) => state.utils);
@@ -61,7 +62,7 @@ export default function Notif() {
     }
   );
 
-  if (openGame && roomId != "")
+  if (openGame && roomId !== "")
     return (
       <Navigate
         to="/Pong"

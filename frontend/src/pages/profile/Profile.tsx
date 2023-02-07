@@ -12,8 +12,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
-import { User } from '../../state/type';
 import FlashMessage from '../../components/alert-message/Alert'
+import { tmpdir } from 'os';
 
 
 const cookies = new Cookies();
@@ -65,12 +65,21 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        if (change && inputValue != "") {
+        const tmp  = inputValue.replace(/ /g, "")
+        // console.log("tmp=", tmp, "|")
+        // setInputValue(tmp)
+        // console.log("inputValue:", inputValue.length)
+        // console.log("inputValue=", inputValue, "|")
+        if (change && tmp !== "") {
+            // string.replace(/ /g, "")
+
+
+
         //   user.suer?.id /blocked/, {username : },  option 
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: tmp }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
-                    setmessage("change name on " + inputValue);
+                    setmessage("change name on " + tmp);
                     setUserMatchHistory([])
                     setFirstOpen(true);
                     setsucces(true);
@@ -136,7 +145,7 @@ const Profile = () => {
         console.log("userMatchHistory : ", userMatchHistory)
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
-                response.data.map((data: any) => {
+                response.data.forEach((data: any) => {
                     const obj = {
                         id: data.game.id,
                         player1: data.game.player1.username,
@@ -227,6 +236,7 @@ const Profile = () => {
                                 type="text"
                                 fullWidth
                                 variant="standard"
+                                
                                 inputProps={{ maxLength: 12 }}
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
@@ -247,7 +257,7 @@ const Profile = () => {
                                 <div>
                                     <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
                                     <DialogContent className='2FA'>
-                                        <img src={qrCode2FA} />
+                                        <img src={qrCode2FA} alt="QRcode" />
                                         <PinInput length={6}
                                             focus
                                             onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
@@ -301,14 +311,14 @@ const Profile = () => {
                         </div>
                         {userMatchHistory.map((match) => {
                             return (
-                                <div className={match.winner == user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
+                                <div className={match.winner === user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
                                     <div className="results" >
-                                        <div className="name">{match.player1 == user.user?.username ? match.player1 : match.player2}</div>
-                                        <div className="score">-{match.player1 == user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player1 === user.user?.username ? match.player1 : match.player2}</div>
+                                        <div className="score">-{match.player1 === user.user?.username ? match.score1 : match.score2}-</div>
                                     </div>
                                     <div className="results">
-                                        <div className="score">-{match.player2 == user.user?.username ? match.score1 : match.score2}-</div>
-                                        <div className="name">{match.player2 == user.user?.username ? match.player1 : match.player2}</div>
+                                        <div className="score">-{match.player2 === user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="name">{match.player2 === user.user?.username ? match.player1 : match.player2}</div>
                                     </div>
                                 </div>
                             )
