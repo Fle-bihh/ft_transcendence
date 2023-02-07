@@ -139,7 +139,6 @@ const SpectatorPage = (props: any) => {
                 drawPlayers(ctx, room)
             }
         }
-    }
 
     utils.gameSocket.on('finish', (data: { room: GameClass, draw: boolean }) => {
         console.log('finish front')

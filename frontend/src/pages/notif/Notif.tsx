@@ -6,7 +6,6 @@ import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Notif.scss";
 import React, { useEffect, useState } from "react";
-import { Button, DialogActions, DialogTitle } from "@mui/material";
 import { Button, DialogActions, DialogTitle, IconButton } from "@mui/material";
 import { Navigate, NavLink } from "react-router-dom";
 
