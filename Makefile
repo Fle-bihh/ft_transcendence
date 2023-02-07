@@ -1,7 +1,7 @@
 build:
 	docker-compose -f docker-compose.yml build $(c)
 up:
-	docker-compose -f docker-compose.yml up --build -d --remove-orphans$(c)
+	docker-compose -f docker-compose.yml up -d --build --remove-orphans$(c)
 start:
 	docker-compose -f docker-compose.yml start $(c)
 down:

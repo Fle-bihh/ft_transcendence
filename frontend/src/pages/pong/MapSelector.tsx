@@ -148,14 +148,18 @@ function MapSelector(props: any) {
     return (
         <React.Fragment>
             <Box paddingTop={"10%"} paddingBottom={"5%"}>
-                <Typography align="center" variant="h1" sx={{ fontWeight: 900 }} >
-                    <b style={{ color: 'black' }}>play pong</b>
+                <Typography component={'span'} variant={'h1'} align="center" sx={{ fontWeight: 900 }} >
+                    <p style={{margin: "5px"}}>
+                        <b style={{ color: 'black' }}>Play pong</b>
+                    </p>
                 </Typography>
-                <Typography align="center" variant={"body1"} pt={8}>
+                <Typography component={'span'} variant={'h3'} align="center" alignItems="center" display={"block"}>
                     <b>
                         Choose your map
                     </b>
-                    <br />
+                    <br/>
+                </Typography>
+                <Typography component={'span'} variant={'body1'} align="center" pt={8}>
                     <div>1- classic map, each his bar and a ball</div>
                     <div>2- map with obstacles</div>
                     <div>3- map where the bar shrinks as the ball hits it</div>

@@ -186,8 +186,14 @@ const Profile = () => {
         }
         axios(config).then((res) => {
             setUser(res.data);
+            setmessage("Picture upload with success")
+            setsucces(true)
         }).catch((err) => {
+            setmessage2("Picture too big")
+            seterror(true)
         })
+        setsucces(false)
+        seterror(false)
     }
     //----------------------------------------------------------------------------------------------------------------
     return (
