@@ -17,11 +17,6 @@ import { Channel } from 'src/entities/channel.entity';
 import { Interval } from '@nestjs/schedule';
 import { channel } from 'diagnostics_channel';
 
-const db_blockList = Array<{
-  index: number;
-  loginBlock: string;
-  loginEmitter: string;
-}>();
 const users = Array<{ index: number; user: any; socket: Socket }>();
 const muteList = Array<{ username: string, channel: string, time: number }>();
 const banList = Array<{ username: string, channel: string, time: number }>();
@@ -54,7 +49,17 @@ export class ChatGateway {
   block_user(client: Socket, data: { username: string, target: string; }) {
     console.log('BLOCK_USER recu ChatGateway', data);
     this.usersService.addBlockList(data.username, data.target);
-    client.emit('updateProfileOther', { login: data.target, friendStatus: 'blocked' });
+    client.emit('updateProfileOther', { username: data.target, friendStatus: 'blocked' });
+    if (users.find(user => {
+      user.user.username === data.target
+    })) {
+      users.find(user => {
+        user.user.username === data.target
+      }).socket.emit('updateProfileOther', {
+        username: data.username,
+        friendStatus: 'blocked',
+      })
+    }
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
