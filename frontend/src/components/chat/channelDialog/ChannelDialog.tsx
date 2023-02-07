@@ -333,7 +333,7 @@ const ChannelDialog = (props: {
               if (
                 props.allChannels.find(
                   (channel) => channel.name === channelNameInput
-                ) != undefined
+                ) === undefined
               ) {
                 utils.socket.emit("CREATE_CHANNEL", {
                   privacy: alignment,
