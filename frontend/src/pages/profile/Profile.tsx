@@ -13,6 +13,7 @@ import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
 import FlashMessage from '../../components/alert-message/Alert'
+import { tmpdir } from 'os';
 
 
 const cookies = new Cookies();
@@ -64,12 +65,21 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        if (change && inputValue !== "") {
+        const tmp  = inputValue.replace(/ /g, "")
+        // console.log("tmp=", tmp, "|")
+        // setInputValue(tmp)
+        // console.log("inputValue:", inputValue.length)
+        // console.log("inputValue=", inputValue, "|")
+        if (change && tmp !== "") {
+            // string.replace(/ /g, "")
+
+
+
         //   user.suer?.id /blocked/, {username : },  option 
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: inputValue }, options).then(response => {
+            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: tmp }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
-                    setmessage("change name on " + inputValue);
+                    setmessage("change name on " + tmp);
                     setUserMatchHistory([])
                     setFirstOpen(true);
                     setsucces(true);
@@ -226,6 +236,7 @@ const Profile = () => {
                                 type="text"
                                 fullWidth
                                 variant="standard"
+                                
                                 inputProps={{ maxLength: 12 }}
                                 value={inputValue}
                                 onChange={(event) => setInputValue(event.currentTarget.value)}
