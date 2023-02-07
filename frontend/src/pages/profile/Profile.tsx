@@ -121,13 +121,10 @@ const Profile = () => {
         axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
             .then(res => {
                 setUser(res.data);
-                setCode2FA('');
-                setRes2FA(res.status);
                 setsucces(true)
                 setmessage("Two factor authentification activate")
             })
             .catch(err => {
-                setRes2FA(err.response.status);
                 seterror(true)
                 setmessage2("Wrong code")
             });
