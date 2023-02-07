@@ -11,7 +11,6 @@ const options = {
     Authorization: `Bearer ${jwt}`
   }
 }
-console.log('Signup cookie == ', options);
 
 const Signup = () => {
   const [userName, setuserName] = useState(""); // nous permet de mttre userName a vide

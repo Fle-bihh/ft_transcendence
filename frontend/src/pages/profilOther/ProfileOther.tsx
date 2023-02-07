@@ -66,7 +66,6 @@ const ProfileOther = () => {
       winner: string;
     }>()
   );
-  // unsed setMatchHistory
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
@@ -84,11 +83,6 @@ const ProfileOther = () => {
     Friend: 0,
     getData: false,
   });
-  // let userConnect = document.getElementById("userConnect");
-  // let userInGame = document.getElementById("userInGame");
-  // let userConnectHorsLigne = document.getElementById("userConnectHorsLigne");
-  const navigate = useNavigate();
-  const { addNotif } = bindActionCreators(actionCreators, useDispatch());
 
   utils.socket.removeListener("updateProfileOther");
   utils.socket.on(
@@ -111,7 +105,7 @@ const ProfileOther = () => {
       }
     }
   );
-  console.log(addNotif)//pour que le addnotif soit lu
+
   utils.gameSocket.removeListener("getClientStatus");
   utils.gameSocket.on(
     "getClientStatus",
@@ -273,8 +267,8 @@ const ProfileOther = () => {
       });
       setRoomId(data.sender + data.receiver);
       setOpenGame(true);
-      if (openGame && roomId !== "")
-        navigate("/Pong", { state: { invite: true, roomId: roomId } });
+      // if (openGame && roomId !== "")
+      //   navigate("/Pong", { state: { invite: true, roomId: roomId } });
     }
   );
 

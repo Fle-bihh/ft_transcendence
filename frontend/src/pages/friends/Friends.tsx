@@ -87,7 +87,7 @@ const Friends = () => {
             Users List
           </div>
           {usersList.map((user) => (
-            <Tooltip title={`Go to ${user.username}'s profile`}>
+            <Tooltip title={`Go to ${user.username}'s profile`} key={user.index}>
               <NavLink to={`/profileother?username=${user.username}`}>
                 <IconButton>
                   <Avatar />
