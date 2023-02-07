@@ -6,20 +6,24 @@ import "./Pong.scss"
 import { NavLink } from 'react-router-dom';
 import { Button } from '@mui/material';
 
-const SpectatorPage = (props: any) => {
+const SpectatorPage = (props: {
+    roomID : string
+}) => {
     const utils = useSelector((state: RootState) => state.utils);
     const [finishGame, setFinishGame] = useState(false);
     const [finishRoom, setFinishRoom] = useState<GameClass | undefined>(undefined);
+    const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [draw, setDraw] = useState(false);
     const [verif, setVerif] = useState(false)
     useEffect(() => {
         if (!verif) {
-            utils.gameSocket.emit('START_SPECTATE', { roomID: props.roomID, start: false })
+            utils.gameSocket.emit('START_SPECTATE', { username: persistantReducer.userReducer.user?.username, roomID: props.roomID, start: false })
             setVerif(true);
         }
-    }, [verif, utils.gameSocket, props.roomID]);
+    });
+
     if (verif)
-        setInterval(() => { utils.gameSocket.emit('START_SPECTATE', { roomID: props.roomID, start: true }) }, 16)
+        setInterval(() => { utils.gameSocket.emit('START_SPECTATE', { username: persistantReducer.userReducer.user?.username, roomID: props.roomID, start: true }) }, 16)
 
     utils.gameSocket.removeListener("start_spectate");
     utils.gameSocket.on("start_spectate", (room: GameClass) => { render(room); });

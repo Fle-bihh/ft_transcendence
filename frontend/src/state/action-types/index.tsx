@@ -6,6 +6,8 @@ export enum notifActionType {
     ADDNOTIF = "ADDNOTIF",
     DELNOTIF = "DELNOTIF",
     SEENALLNOTIF = "SEENALLNOTIF",
+    REMOVENOTIFPONG = "REMOVENOTIFPONG",
+    REMOVENOTIFINVITE = "REMOVENOTIFINVITE"
 }
 
 export enum twoFAActionType {
