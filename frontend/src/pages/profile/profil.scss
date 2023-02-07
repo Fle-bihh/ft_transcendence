@@ -22,15 +22,13 @@
             .avatarItem {
                 height: 50%;
                 display: flex;
-                align-items: center;
-                flex-direction: column;
-                position: relative;
+                justify-content: center;
 
                 .avatar {
-                    margin-top: 2%;
-                    height: auto;
-                    width: 45%;
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
+                    max-width: 80%;
+                    max-height: 80%;
+                    margin: 10%;
                 }
             }
 
@@ -230,15 +228,13 @@
             .avatarItem {
                 height: 50%;
                 display: flex;
-                align-items: center;
-                flex-direction: column;
-                position: relative;
+                justify-content: center;
 
                 .avatar {
-                    margin-top: 2%;
-                    height: auto;
-                    width: 30%;
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
+                    max-height: 80%;
+                    max-width: 80%;
+                    margin: 10%;
                 }
             }
 
@@ -437,14 +433,12 @@
                 height: 50%;
                 display: flex;
                 justify-content: center;
-                position: relative;
-
+                
                 .avatar {
-                    margin-top: 2%;
-                    height: 50%;
-                    width: auto;
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
-                    max-width: 95%;
+                    max-height: 80%;
+                    max-width: 90%;
+                    margin: 5%;
                 }
             }
 
