@@ -18,7 +18,7 @@ import WatchingListGame from './WatchingListGame';
 
 function MapSelector(props: any) {
     const utils = useSelector((state: RootState) => state.utils);
-    const [allRooms, setAllRooms] = useState(Array<GameClass>);
+    const [allRooms] = useState(Array<GameClass>);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [listGame, setListGame] = useState("");
 

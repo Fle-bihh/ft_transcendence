@@ -18,7 +18,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     if (reason === 'clickaway') {
     return;
     }
-
+        
     setOpen(false);
 
   }

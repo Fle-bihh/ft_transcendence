@@ -1,63 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { ip } from "../../App";
-import Cookies from "universal-cookie";
+import { useEffect} from "react";
 import { setUser } from "../../state/action-creators";
 
-const cookies = new Cookies();
-const jwt = cookies.get('jwt');
-const options = {
-  headers: {
-    Authorization: `Bearer ${jwt}`
-  }
-}
-console.log('Signup cookie == ', options);
-
-const Signup = () => {
-  const [userName, setuserName] = useState(""); // nous permet de mttre userName a vide
-  const [lastName, setlastName] = useState("");
-  const [firstName, setfirstName] = useState("");
-  const [password, setpassword] = useState("");
-  const [succes, setsucces] = useState(false);
-  const [error, seterror] = useState(false);
-  const [message, setmessage] = useState("");
-  const [message2, setmessage2] = useState("");
+ const Signup = () => {
 
   useEffect(() => {
     setUser(null);
   }, [])
 
-  const HandleCountAdding = (e: React.ChangeEvent<any>) => {
-    const count = { userName, lastName, firstName, password };
-    e.preventDefault();
-
-    axios
-      .post(`http://${ip}:5001/users/signup`, {
-        userName: userName,
-        lastName: lastName,
-        firstName: firstName,
-        password: password,
-      })
-      .then((response) => {
-        setmessage("Welcome " + userName);
-        setsucces(true);
-        // Handle data
-      })
-      .catch((error) => {
-        if (error.response!.status === 400) {
-          setmessage2(error.response.status + " veuillez remplir correctement");
-          // setmessage2(error.request);
-
-          seterror(true);
-        } else {
-          setmessage2(error.response.status + " user existe deja");
-          seterror(true);
-        }
-      });
-    setsucces(false);
-    seterror(false);
-    // pour que quand on écrit de la merde ca recharge pas quand on valide avce le bouton
-  };
 
   return (
 

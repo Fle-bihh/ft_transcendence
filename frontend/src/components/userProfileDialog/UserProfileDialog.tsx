@@ -13,13 +13,13 @@ const UserProfileDialog = (props: {
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
-
+  
   const handleKeyDown = (event: any) => {
     if (event.key == "Escape") {
       window.removeEventListener("keydown", handleKeyDown);
     }
   };
-
+  
   const handleClickOpen = () => {
     props.setProfileDialogOpen(true);
   };

@@ -83,7 +83,7 @@ const Navbar = (props: any) => {
           onClick={() => Setopen(!open)}
         />
 
-        {/* La barre des Items NAV  */}
+        {/* La barre des Items NAV  (profil, deco etc*/}
         <ItemsNav sx={{ display: { xs: "none", sm: "none", md: "flex" } }}>
           {ItemsInNav.map((item) => {
             if (item.Link === "/Notif")
@@ -191,6 +191,15 @@ const Navbar = (props: any) => {
                     window.location.replace("/");
                   }}
                 >
+                  <Badge
+                    badgeContent={
+                      persistantReducer.notifReducer.notifArray.filter(
+                        (notif) => !notif.seen
+                      ).length
+                    }
+                    showZero={false}
+                    color={"error"}
+                  ></Badge>
                   <Typography
                     sx={{
                       cursor: "pointer",
@@ -203,19 +212,19 @@ const Navbar = (props: any) => {
                 </div>
               );
             } else
-            return (
-              <NavLink
-                key={item.Link}
-                to={`${item.Link}`}
-                className="little-link"
-              >
-                <MenuItem
-                  sx={{ cursor: "pointer", frontSize: "14px", color: "black" }}
+              return (
+                <NavLink
+                  key={item.Link}
+                  to={`${item.Link}`}
+                  className="little-link"
                 >
-                  {item.Name}
-                </MenuItem>
-              </NavLink>
-            );
+                  <MenuItem
+                    sx={{ cursor: "pointer", frontSize: "14px", color: "black" }}
+                  >
+                    {item.Name}
+                  </MenuItem>
+                </NavLink>
+              );
           })}
         </Box>
       </Menu>
