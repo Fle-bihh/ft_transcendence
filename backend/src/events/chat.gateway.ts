@@ -157,7 +157,8 @@ export class ChatGateway {
       if (message.channel) {
         receiver = message.channel.name;
         let channel: Channel = await this.channelsService.getOneChannel(receiver);
-        if (channel.userConnected.find((u) => u.username === user.username && !retArray.find((m) => m.receiver === receiver)))
+        if (!(await this.usersService.isBlocked(data.sender, message.sender.username)) && channel.userConnected.find((u) => u.username === user.username
+          && !retArray.find((m) => m.receiver === receiver)))
           retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
       else if (message.receiver.username === data.sender) {
