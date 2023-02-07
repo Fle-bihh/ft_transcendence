@@ -50,9 +50,10 @@ function MapSelector(props: any) {
 
     utils.gameSocket.removeListener("set_list_game");
     utils.gameSocket.on('set_list_game', function (gameExist: string) {
-        if (gameExist === 'yes')
+        console.log("set_list_game : ", gameExist)
+        if (gameExist === "yes")
             setListGame('yes');
-        else if (gameExist === 'noGame')
+        else if (gameExist === "noGame")
             setListGame('noGame');
     });
 
@@ -62,7 +63,8 @@ function MapSelector(props: any) {
     });
 
     function affishListGame() {
-        if (listGame === 'yes') return (
+        console.log("affishListGame : ", listGame)
+        if (listGame === "yes") return (
             <WatchingListGame all_rooms={allRooms} setRoomID={props.setRoomID} setSpectator={props.setSpectator} />
         )
         else return (
