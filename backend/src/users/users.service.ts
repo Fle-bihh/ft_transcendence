@@ -82,8 +82,14 @@ export class UsersService {
   }
 
   async getUserByUsername(username: string): Promise<User> {
-    const found = await this.usersRepository.findOneBy({ username });
-    return found
+    try {
+      const found = await this.usersRepository.findOneBy({ username });
+      if (!found)
+      throw new InternalServerErrorException();
+      return found;
+    } catch(e) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {

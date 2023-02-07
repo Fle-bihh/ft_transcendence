@@ -126,6 +126,7 @@ const ProfileOther = () => {
 
   const getUserData = () => {
     const parsed = queryString.parse(window.location.search);
+    console.log("parsed=", parsed)
     if (
       parsed.username === "" ||
       parsed.username === undefined ||
@@ -139,6 +140,7 @@ const ProfileOther = () => {
       axios
         .get(`http://localhost:5001/user/username/${parsed.username} `, options)
         .then((response) => {
+
           if (response.data.username != null) {
             setUserDisplay({
               id: response.data.id,
