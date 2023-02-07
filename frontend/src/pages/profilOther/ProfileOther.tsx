@@ -93,10 +93,10 @@ const ProfileOther = () => {
   utils.socket.removeListener("updateProfileOther");
   utils.socket.on(
     "updateProfileOther",
-    (data: { login: string; friendStatus: string }) => {
+    (data: { username: string; friendStatus: string }) => {
 
-      if (data.login !== userDisplay.login) return;
-      console.log("updateProfileOther", data.login, data.friendStatus);
+      if (data.username !== userDisplay.username) return;
+      console.log("updateProfileOther", data.username, data.friendStatus);
       if (data.friendStatus === "blocked") {
         setFriend(BLOCKED);
       } else if (data.friendStatus === "request-send") {
@@ -204,7 +204,7 @@ const ProfileOther = () => {
       if (friend === NOT_FRIEND) {
         utils.socket.emit("SEND_FRIEND_REQUEST", {
           sender: user.user?.username,
-          loginToSend: userDisplay.login,
+          receiver: userDisplay.username,
         });
       } else if (friend === FRIEND_REQUEST_SEND) {
         utils.socket.emit("DEL_FRIEND_REQUEST", {

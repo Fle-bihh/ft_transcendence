@@ -46,33 +46,18 @@ export class EventsGateway {
     );
   }
 
-  @SubscribeMessage('ADD_USER')
-  add_user(
-    client: Socket,
-    data: {
-      login: string;
-    },
-  ) {
-    console.log('ADD_USER recu EventGateway', data); // NE RIEN FAIRE POUR L'INSTANT
-    // users.push({
-    //   index: users.length,
-    //   login: data.login,
-    //   socket: client,
-    // });
-  }
-
   @SubscribeMessage('UPDATE_USER_SOCKET')
   update_user_socket(
     client: Socket,
     data: {
-      login: string;
+      username: string;
     },
   ) {
-    // if (users.findIndex((user) => user.login === data.login) >= 0) {
-    //   users[users.findIndex((user) => user.login === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
-    //     client;
-    // }
-    // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
+    if (users.findIndex((user) => user.user.username === data.username) >= 0) {
+      users[users.findIndex((user) => user.user.username === data.username)].socket = // NE RIEN FAIRE POUR L'INSTANT
+        client;
+    }
+    this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
@@ -98,8 +83,8 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('SEND_FRIEND_REQUEST')
-  async send_friend_request(client: Socket, data: { sender: string, loginToSend: string;}) {
-    const userToSend = await this.userService.getUserByLogin(data.loginToSend);
+  async send_friend_request(client: Socket, data: { sender: string, receiver: string;}) {
+    const userToSend = await this.userService.getUserByUsername(data.receiver);
     if (!userToSend) return;
     const userFriendList = await this.friendShipService.getUserFriendList(
       users.find((item) => item.socket.id == client.id).user.id,
@@ -109,14 +94,16 @@ export class EventsGateway {
     const check = await this.friendRequestService.getRelation( userToSend.id, users.find((item) => item.socket.id == client.id).user.id);
     console.log("socket send to : ", userToSend)
     console.log("socket send by : ", users.find((item) => item.socket.id == client.id).user)
+    const userSocket = users.find((item) => {item.user.username === userToSend.username}) ? (users.find((item) => item.user.username === userToSend.username).socket) : (null);
     if (!check && userToSend) {
       this.friendRequestService.addFriendRequest(users.find((item) => item.socket.id == client.id).user.id, userToSend.id )
         .then(() => {
-          client.emit('updateProfileOther', { login: data.loginToSend, friendStatus: 'request-send'});
-          if ( users.find((item) => item.user.login == userToSend.login) != undefined )
-            users.find((item) => item.user.login == userToSend.login).socket.emit('updateProfileOther', { login: users.find((item) => item.socket.id == client.id).user.login, friendStatus: 'request-waiting'});
-            users.find((item) => item.user.login == userToSend.login).socket.emit('add_notif', { type: "FRIENDREQUEST", data : { sender: data.sender }});
+          client.emit('updateProfileOther', { username: data.receiver, friendStatus: 'request-send'});
+          if ( users.find((item) => item.user.username == userToSend.username) != undefined ) {
+            userSocket.emit('updateProfileOther', { username: users.find((item) => item.socket.id == client.id).user.username, friendStatus: 'request-waiting'});
+            userSocket.emit('add_notif', { type: "FRIENDREQUEST", data : { sender: data.sender }});
             this.logger.log('add_notif with ', data.sender);
+          }
         });
     }
     console.log('oui');
