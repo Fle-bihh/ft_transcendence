@@ -42,11 +42,11 @@ export class ChannelService {
 
     this.channelsRepository.save(channel)
 
-    user.channels = (await this.userService.getChannelsCreator(user)).channels;
-    user.channels.push(channel);
+    // user.channels = (await this.userService.getChannelsCreator(user)).channels;
+    // user.channels.push(channel);
 
-    user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
-    user.channelsConnected.push(channel);
+    // user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
+    // user.channelsConnected.push(channel);
 
     try {
       await this.channelsRepository.save(channel);
@@ -146,6 +146,7 @@ export class ChannelService {
       .leftJoinAndSelect('message.sender', 'sender')
       .leftJoinAndSelect('message.receiver', 'receiver')
       .leftJoinAndSelect('message.channel', 'channel')
+      .orderBy('date', 'DESC')
 
     const messages = await query.getMany();
 
@@ -210,7 +211,7 @@ export class ChannelService {
     try {
       await this.messagesRepository.save(msg);
       await this.usersRepository.save(sender);
-    } catch (e) { console.log("wtf? == ", e.code); }
+    } catch (e) { console.log(e.code); }
   }
 
   async addAdmin(newAdmin: string, channel: Channel): Promise<void> {
