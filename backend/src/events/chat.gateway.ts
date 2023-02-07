@@ -54,6 +54,7 @@ export class ChatGateway {
   block_user(client: Socket, data: { username: string, target: string; }) {
     console.log('BLOCK_USER recu ChatGateway', data);
     this.usersService.addBlockList(data.username, data.target);
+    client.emit('updateProfileOther', { login: data.target, friendStatus: 'blocked' });
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
@@ -66,7 +67,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
-  store_client_info(client: Socket, data: {user: any;}) {
+  store_client_info(client: Socket, data: { user: any; }) {
     console.log("STORE_CLIENT_INFO : ", data.user)
     users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
     // client.emit('store_client_done');
@@ -124,8 +125,10 @@ export class ChatGateway {
       receiverChannel = await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
     let convers;
-    if (receiverUser)
+    if (receiverUser) {
+      console.log("get_conv receiver user");
       convers = await this.usersService.getConv(senderUser, receiverUser);
+    }
     else if (receiverChannel)
       convers = await this.channelsService.getConvByChannel(receiverChannel.name);
     client.emit('get_conv', convers);
@@ -143,18 +146,23 @@ export class ChatGateway {
     const user: User = await this.usersService.getUserByUsername(data.sender);
     const allMessages = await this.channelsService.getMessages();
     const tmp = allMessages.reverse();
+    let receiver: string;
     for (let message of tmp) {
-      let receiver = (message.channel ? message.channel?.name : message.receiver?.username); // verif qu'il est dans le channel avant de le push
-      if (message.sender && message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver)) {
-        console.log("channels connected == ", user.channelsConnected);
-        user.channelsConnected = (await this.usersService.getChannelsConnected(user)).channelsConnected;
-        if (user.channelsConnected?.find((c) => c.name === receiver)) {
-          retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
-        }
+      if (message.channel) {
+        receiver = message.channel.name;
+        let channel: Channel = await this.channelsService.getOneChannel(receiver);
+        if (channel.userConnected.find((u) => u.username === user.username && !retArray.find((m) => m.receiver === receiver)))
+            retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
-      receiver = (message.channel ? message.channel.name : message.sender.username);
-      if (message.receiver && message.receiver.username === user.username && !retArray.find((m) => m.receiver === receiver)) {
-        retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
+      else if (message.receiver.username === data.sender && !this.usersService.isBlocked(receiver, data.sender)) {
+        receiver = message.sender.username;
+        if (message.receiver.username === user.username && !retArray.find((m) => m.receiver === receiver))
+          retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
+      }
+      else if (!this.usersService.isBlocked(receiver, data.sender)) {
+        receiver = message.receiver.username;
+        if (message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver))
+          retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
     }
     client.emit('get_all_conv_info', retArray);
@@ -164,43 +172,43 @@ export class ChatGateway {
   @SubscribeMessage('ADD_MESSAGE')
   async add_message(client: Socket, data: { sender: string, receiver: string, content: string, server: boolean }) {
     let sender: User = await this.usersService.getUserByUsername(data.sender);
-    let receiverUser: User;
     try {
-      receiverUser = await this.usersService.getUserByUsername(data.receiver);
+      await this.usersService.getUserByUsername(data.receiver);
     } catch (e) { console.log(e.code); }
     try {
       await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
     const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
+    const receiverUser = await this.usersService.getUserByUsername(data.receiver);
     const actualTime: Date = new Date();
     if (data.server == undefined)
       data.server = false;
     const messageDto: MessagesDto = {
       date: actualTime,
       sender: sender,
-      receiver: receiverUser,
+      receiver: receiverUser == undefined ? null : receiverUser,
       body: data.content,
-      channel: receiverChannel,
+      channel: receiverChannel == undefined ? null : receiverChannel,
       serverMsg: data.server,
     };
-    if (!this.isMuted(data.sender, data.receiver)) {
+    if (!this.isMuted(data.sender, data.receiver) && (receiverUser && !(await this.usersService.isBlocked(receiverUser.username, sender.username)))) {
       this.channelsService.createMessage(sender, messageDto);
       this.logger.log('ADD_MESSAGE recu ChatGateway');
       client.emit('new_message');
       if (receiverChannel) {
         // emit a tous les participants du channel
       }
-     else {
+      else {
         users.forEach(user => {
           if (user.user.username === data.receiver) {
             this.logger.log('send newMessage to', data.receiver);
             user.socket.emit('new_message');
           }
-       })
-     }
+        })
+      }
     }
-    else { this.logger.log(data.sender, ' is muted') }
-   }
+    else { this.logger.log(data.sender, ' is muted or blocked') }
+  }
 
   // -------------------------- CHANNELS ---------------------------
 
