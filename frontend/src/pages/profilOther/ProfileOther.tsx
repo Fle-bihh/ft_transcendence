@@ -6,8 +6,8 @@ import * as React from "react";
 
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import { useDispatch, useSelector } from "react-redux";
-import { actionCreators, RootState } from "../../state";
+import {  useSelector } from "react-redux";
+import {  RootState } from "../../state";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
 import Version2 from "../../styles/asset/Version2.gif";
@@ -24,9 +24,8 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate} from "react-router-dom";
 import Cookies from "universal-cookie";
-import { bindActionCreators } from "redux";
 
 const cookies = new Cookies();
 const jwt = cookies.get("jwt");
