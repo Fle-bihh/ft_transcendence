@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state';
 import { GameClass } from './gameClass';
-import { ip } from '../../App';
 import "./Pong.scss"
 import { NavLink } from 'react-router-dom';
 import { Button } from '@mui/material';
@@ -125,8 +124,7 @@ const SpectatorPage = (props: any) => {
                     console.log("drawScore", room)
                     drawLimitCamps(ctx, room) 
                 }
-                if (room.players[0].score != 0 || room.players[1].score != 0){
-                    console.log("drawScore", room)
+                if (room.players[0].score !== 0 || room.players[1].score !== 0)
                     drawScore(ctx, room)
                 }
                 if (!room.players[0].ready || !room.players[1].ready) {
@@ -141,7 +139,6 @@ const SpectatorPage = (props: any) => {
                 drawPlayers(ctx, room)
             }
         }
-    }
 
     utils.gameSocket.on('finish', (data: { room: GameClass, draw: boolean }) => {
         console.log('finish front')

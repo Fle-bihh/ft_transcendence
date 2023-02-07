@@ -1,12 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import Cookies from "universal-cookie";
 import { actionCreators, RootState } from "../../state";
 import { NotifType } from "../../state/type";
-
-const cookies = new Cookies();
 
 export default function NotifInterceptor(props: { children: any }) {
   const [loading, setLoading] = useState(true);
@@ -15,7 +11,7 @@ export default function NotifInterceptor(props: { children: any }) {
     (state: RootState) => state.persistantReducer.userReducer
   );
   const dispatch = useDispatch();
-  const { addNotif, setUser } = bindActionCreators(actionCreators, dispatch);
+  const { addNotif } = bindActionCreators(actionCreators, dispatch);
 
   utilsReducer.socket.removeListener("add_notif");
   utilsReducer.socket.on(
@@ -27,7 +23,7 @@ export default function NotifInterceptor(props: { children: any }) {
 
   useEffect(() => {
     utilsReducer.socket.emit("STORE_CLIENT_INFO", { user: userReducer.user });
-    utilsReducer.gameSocket.emit("CHECK_RECONNEXION", userReducer.user);
+    utilsReducer.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
   }, []);
 
   utilsReducer.socket.removeListener("store_client_done");

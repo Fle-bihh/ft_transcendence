@@ -1,9 +1,5 @@
-//
 import "./UserProfileDialog.scss";
 import { RootState } from "../../state";
-
-//
-import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   Dialog,

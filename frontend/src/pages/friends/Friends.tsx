@@ -1,4 +1,3 @@
-//
 import "./Friends.scss";
 import { RootState } from "../../state";
 import { useState, useEffect } from "react";

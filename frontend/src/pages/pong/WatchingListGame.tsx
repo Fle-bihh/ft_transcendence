@@ -1,11 +1,4 @@
-// import * as React from 'react';
-// import List from '@mui/material/List';
-// import ListItem from '@mui/material/ListItem';
-// import ListItemText from '@mui/material/ListItemText';
-// import ListSubheader from '@mui/material/ListSubheader';
 import { GameClass } from './gameClass';
-// import VisibilityIcon from '@mui/icons-material/Visibility';
-// import { Box, ListItemButton, ListItemIcon } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -18,7 +11,7 @@ export default function WatchingListGame(props: {
 }) {
 
     const ImageButton = styled(ButtonBase)(({ theme }) => ({
-        position: 'relative', height: "50%", [theme.breakpoints.down('sm')]: {
+        position: 'relative', height: 200, [theme.breakpoints.down('sm')]: {
             width: '100% !important', // Overrides inline-style
             height: 100,
         },
@@ -72,9 +65,9 @@ export default function WatchingListGame(props: {
         left: 'calc(50% - 9px)',
         transition: theme.transitions.create('opacity'),
     }));
-
+    console.log("watching list game props : ", props)
     return (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%', overflowX: "scroll"}}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '100%', overflowX: "scroll"}}>
             {props.all_rooms.map((room) => (
                     <ImageButton focusRipple key={room.roomID} style={{ width: "100%" }} onClick={() => { props.setRoomID(room.roomID); props.setSpectator(true)}}>
                         <ImageSrc style={{ background:"black" }} />

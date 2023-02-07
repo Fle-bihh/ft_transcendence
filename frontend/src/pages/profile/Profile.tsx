@@ -17,12 +17,6 @@ import { tmpdir } from 'os';
 
 
 const cookies = new Cookies();
-const jwt = cookies.get('jwt');
-const options = {
-    headers: {
-        'authorization': `Bearer ${jwt}`
-    }
-}
 
 const Profile = () => {
 
