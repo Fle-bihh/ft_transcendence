@@ -170,6 +170,27 @@ export class UsersService {
     return { blockList: blockList };
   }
 
+  async isBlocked(username: string, target: string): Promise<boolean> {
+    const targetUser: User = await this.getUserByUsername(target);
+    const user: User = await this.getUserByUsername(username);
+
+    user.blockList = (await this.getBlockList(user)).blockList;
+    console.log("blocklist == ", user.blockList);
+    if (user.blockList && user.blockList.length > 0 && user.blockList.find((u) => u.username === targetUser.username))
+      return true;
+    return false;
+  }
+
+  async removeBlocklist(username: string, target: string): Promise<void> {
+    const targetUser: User = await this.getUserByUsername(target);
+    const user: User = await this.getUserByUsername(username);
+
+    user.blockList = (await this.getBlockList(user)).blockList;
+    user.blockList.splice(user.blockList.findIndex((u) => u.username === targetUser.username));
+
+    await this.usersRepository.save(user);
+  }
+
   async addBlockList(username: string, target: string): Promise<void> {
     const targetUser: User = await this.getUserByUsername(target);
     const user: User = await this.getUserByUsername(username);
@@ -177,7 +198,7 @@ export class UsersService {
     user.blockList = (await this.getBlockList(user)).blockList;
     user.blockList.push(targetUser);
 
-    this.usersRepository.save(user);
+    await this.usersRepository.save(user);
   }
 
   async getChannelsCreator(user: User): Promise<{ channels: Channel[] }> {
