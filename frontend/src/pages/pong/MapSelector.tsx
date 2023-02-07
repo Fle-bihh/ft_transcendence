@@ -21,7 +21,6 @@ function MapSelector(props: any) {
     const [allRooms, setAllRooms] = useState(Array<GameClass>);
     const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
     const [listGame, setListGame] = useState("");
-    const [invite, setInvite] = useState(false);
 
     function startGame1() {
         console.log("start game front 1");
@@ -34,19 +33,6 @@ function MapSelector(props: any) {
     function startGame3() {
         console.log("start game front 3");
         utils.gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
-    }
-
-    function inviteGame1() {
-        // console.log("start game front 1");
-        // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map1" });
-    }
-    function inviteGame2() {
-        // console.log("start game front 2");
-        // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map2" });
-    }
-    function inviteGame3() {
-        // console.log("start game front 3");
-        // gameSocket.emit('START_GAME', { user: { login: persistantReducer.userReducer.user?.username }, gameMap: "map3" });
     }
 
     utils.gameSocket.removeListener("start");
@@ -107,8 +93,8 @@ function MapSelector(props: any) {
         { url: Version1, title: 'Play Map 2', width: '33.33%' },
         { url: Version2, title: 'Play Map 3', width: '33.33%' },
         { url: Version3, title: 'Invite a player', width: '50%' },
-        { url: Version4, title: 'Watch live games', width: '50%' },
-        { url: Version5, title: 'No one is playing', width: '50%' },
+        { url: Version4, title: 'Watch live games', width: '100%' },
+        { url: Version5, title: 'No one is playing', width: '100%' },
     ];
 
     const ImageButton = styled(ButtonBase)(({ theme }) => ({
@@ -167,10 +153,6 @@ function MapSelector(props: any) {
         transition: theme.transitions.create('opacity'),
     }));
 
-    const handleInvite = () => {
-        setInvite(true);
-    };
-
     return (
         <React.Fragment>
             <Box paddingTop={"10%"} paddingBottom={"5%"}>
@@ -228,47 +210,6 @@ function MapSelector(props: any) {
                         </Image>
                     </ImageButton> :
                     <>{affishListGame()}</>
-                }
-                {invite == false ?
-                    <ImageButton focusRipple key={images[3].title} style={{ width: images[3].width }} onClick={handleInvite}>
-                        <ImageSrc style={{ backgroundImage: `url(${images[3].url})` }} />
-                        <ImageBackdrop className="MuiImageBackdrop-root" />
-                        <Image>
-                            <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
-                                {images[3].title} <ImageMarked className="MuiImageMarked-root" />
-                            </Typography>
-                        </Image>
-                    </ImageButton>
-                    :
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '50%' }}>
-                        <ImageButton focusRipple key={images[0].title} style={{ width: images[0].width }} onClick={inviteGame1}>
-                            <ImageSrc style={{ backgroundImage: `url(${images[0].url})` }} />
-                            <ImageBackdrop className="MuiImageBackdrop-root" />
-                            <Image>
-                                <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
-                                    {images[0].title} <ImageMarked className="MuiImageMarked-root" />
-                                </Typography>
-                            </Image>
-                        </ImageButton>
-                        <ImageButton focusRipple key={images[1].title} style={{ width: images[1].width }} onClick={inviteGame2}>
-                            <ImageSrc style={{ backgroundImage: `url(${images[1].url})` }} />
-                            <ImageBackdrop className="MuiImageBackdrop-root" />
-                            <Image>
-                                <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
-                                    {images[1].title} <ImageMarked className="MuiImageMarked-root" />
-                                </Typography>
-                            </Image>
-                        </ImageButton>
-                        <ImageButton focusRipple key={images[2].title} style={{ width: images[2].width }} onClick={inviteGame3}>
-                            <ImageSrc style={{ backgroundImage: `url(${images[2].url})` }} />
-                            <ImageBackdrop className="MuiImageBackdrop-root" />
-                            <Image>
-                                <Typography component="span" variant="subtitle1" color="white" sx={{ position: 'relative', p: 4, pt: 2, pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }}>
-                                    {images[2].title} <ImageMarked className="MuiImageMarked-root" />
-                                </Typography>
-                            </Image>
-                        </ImageButton>
-                    </Box>
                 }
             </Box>
         </React.Fragment>

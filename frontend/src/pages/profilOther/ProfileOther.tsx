@@ -48,7 +48,7 @@ const IN_GAME = 8;
 
 const ProfileOther = () => {
   const [open, setOpen] = React.useState(false);
-  const [gameopen, setGameOpen] = React.useState(false);
+  const [gameOpenDialog, setGameOpenDialog] = useState(false);
   const [friend, setFriend] = useState(NOT_FRIEND);
   const [clientStatus, setClientStatus] = useState(OFFLINE);
   const [inviteSend, setInviteSend] = useState(false);
@@ -223,12 +223,13 @@ const ProfileOther = () => {
     setOpen(false);
   };
 
+  //invite Game
   const handleGameOpen = () => {
-    setGameOpen(true);
+    setGameOpenDialog(true);
   };
 
   const handleGameClose = (change: boolean) => {
-    setGameOpen(false);
+    setGameOpenDialog(false);
   };
 
   function inviteGame1() {
@@ -283,7 +284,7 @@ const ProfileOther = () => {
       console.log("decline received");
       setDeclineGame(true);
       setTimeout(function () {
-        setGameOpen(false);
+        setGameOpenDialog(false);
       }, 5000);
       setTimeout(function () {
         setDeclineGame(false);
@@ -376,7 +377,6 @@ const ProfileOther = () => {
   return (
     <React.Fragment>
       <Navbar />
-
       <div className="profilePageContainerOther">
         <div className="profileOther">
           <Stack direction="row" spacing={2} className="avatarItemOther">
@@ -469,7 +469,7 @@ const ProfileOther = () => {
             <></>
           )}
           <Dialog
-            open={gameopen}
+            open={gameOpenDialog}
             onClose={() => handleGameClose(false)}
             fullWidth={true}
             maxWidth={"lg"}
@@ -576,19 +576,7 @@ const ProfileOther = () => {
             ) : !declineGame ? (
               <>
                 <DialogTitle>Waiting for the player to accept</DialogTitle>
-                <DialogContent
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    m: "auto",
-                    width: "fit-content",
-                  }}
-                >
-                  <DialogContentText>
-                    <button>
-                      <span>Submit</span>
-                    </button>
-                  </DialogContentText>
+                <DialogContent sx={{   display: "flex",   flexDirection: "column",   m: "auto",   width: "fit-content", }}>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => handleGameClose(false)}>Close</Button>
