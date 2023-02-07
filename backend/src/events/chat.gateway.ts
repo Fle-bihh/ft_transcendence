@@ -125,19 +125,20 @@ export class ChatGateway {
       receiverChannel = await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
     let convers;
-    if (receiverUser) {
+    if (receiverUser && !(await this.usersService.isBlocked(data.sender, data.receiver))) {
       convers = await this.usersService.getConv(senderUser, receiverUser);
     }
     else if (receiverChannel) {
       convers = await this.channelsService.getConvByChannel(receiverChannel.name);
       convers = convers.reverse();
     }
+    let retArray = [...convers];
     for (let conv of convers) {
-      if ((await this.usersService.isBlocked(data.sender, conv.sender)) || (await this.usersService.isBlocked(conv.sender, data.sender)))
-        convers.splice(convers.findIndex((u) => u.sender === conv.sender), 1);
+      if (await this.usersService.isBlocked(data.sender, conv.sender))
+        retArray.splice(retArray.findIndex((u) => u.sender === conv.sender), 1);
     }
-    client.emit('get_conv', convers);
-    this.logger.log('send get_conv to front', convers);
+    client.emit('get_conv', retArray);
+    this.logger.log('send get_conv to front', retArray);
   }
 
   @SubscribeMessage('GET_ALL_CONV_INFO')
