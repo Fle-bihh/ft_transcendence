@@ -87,10 +87,10 @@ export default function Notif() {
                     <CloseIcon />
                   </div>
                   <DialogTitle className="notifTitle">
-                    Friend request
+                    {notif.data.sender}
                   </DialogTitle>
                   <div className="notifText">
-                     send you a friend's request
+                     sent you a friend's request
                   </div>
                   <DialogActions>
  

@@ -127,12 +127,6 @@ const ProfileOther = () => {
       } else if (data.friendStatus == "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
       } else if (data.friendStatus == "request-waiting") {
-        // addNotif({
-        //   type: NotifType.FRIENDREQUEST,
-        //   data: {
-        //     sender: data.login,
-        //   },
-        // });
         setFriend(FRIEND_REQUEST_WAITING);
       } else if (data.friendStatus == "not-friend") {
         setFriend(NOT_FRIEND);
@@ -266,8 +260,10 @@ const ProfileOther = () => {
 
   const handleClose = (change: boolean) => {
     if (change == true) {
-      console.log("send to : ", userDisplay.login);
+
+      console.log("send to : ", userDisplay.login, 'friend = ', friend);
       if (friend == NOT_FRIEND) {
+        console.log('username = ', user.user?.username); 
         utils.socket.emit("SEND_FRIEND_REQUEST", {
           sender: user.user?.username,
           loginToSend: userDisplay.login,
