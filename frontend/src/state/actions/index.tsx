@@ -38,7 +38,17 @@ type SeenAllNotifAction = {
     type: notifActionType.SEENALLNOTIF
 }
 
-export type notifAction = AddNotifAction | DelNotifAction | SeenAllNotifAction
+type RemoveNotifPong = {
+    type: notifActionType.REMOVENOTIFPONG
+}
+
+type RemoveNotifInvite = {
+    type: notifActionType.REMOVENOTIFINVITE
+    payload: string
+}
+
+
+export type notifAction = AddNotifAction | DelNotifAction | SeenAllNotifAction | RemoveNotifPong | RemoveNotifInvite
 
 import { twoFAActionType } from "../action-types";
 

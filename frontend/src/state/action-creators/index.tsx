@@ -61,3 +61,20 @@ export const seenAllNotif = () => {
     });
   };
 };
+
+export const removeNotifPong = () => {
+  return (dispatch: Dispatch<notifAction>) => {
+    dispatch({
+      type: notifActionType.REMOVENOTIFPONG,
+    });
+  };
+};
+
+export const removeNotifInvite = (sender: string) => {
+  return (dispatch: Dispatch<notifAction>) => {
+    dispatch({
+      type: notifActionType.REMOVENOTIFINVITE,
+      payload: sender,
+    });
+  };
+};

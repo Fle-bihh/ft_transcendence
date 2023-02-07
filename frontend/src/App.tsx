@@ -25,9 +25,7 @@ function App() {
   const { addNotif } = bindActionCreators(actionCreators, useDispatch());
 
   utils.gameSocket.removeListener("invite_game");
-  utils.gameSocket.on(
-    "invite_game",
-    (data: { sender: string; gameMap: string; receiver: string }) => {
+  utils.gameSocket.on("invite_game", (data: { sender: string; gameMap: string; receiver: string }) => {
       console.log("received invitation data : ", data);
       addNotif({ type: NotifType.INVITEGAME, data: data });
     }

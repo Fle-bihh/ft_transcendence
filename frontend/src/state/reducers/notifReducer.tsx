@@ -1,6 +1,6 @@
 import { notifActionType } from "../action-types";
 import { notifAction } from "../actions";
-import { Notif } from "../type";
+import { Notif, NotifType } from "../type";
 
 export interface NotifArray {
 	notifArray: Array<Notif>
@@ -31,6 +31,29 @@ export const notifReducer = (state: NotifArray = initialState, action: notifActi
 			return {
 				...state,
 				notifArray: state.notifArray
+			};
+		}
+		case notifActionType.REMOVENOTIFPONG: {
+			let array = new Array<Notif>();
+			state.notifArray.map((notif) => {
+				if (notif.type != NotifType.INVITEGAME)
+					array.push(notif)
+			})
+			return {
+				...state,
+				notifArray: array
+			};
+		}
+		case notifActionType.REMOVENOTIFINVITE: {
+			let array = new Array<Notif>();
+			state.notifArray.map((notif) => {
+				if (action.payload != notif.data.sender)
+					if (notif.type != NotifType.FRIENDREQUEST)
+						array.push(notif)
+			})
+			return {
+				...state,
+				notifArray: array
 			};
 		}
 		default:

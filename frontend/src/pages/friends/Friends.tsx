@@ -42,13 +42,6 @@ const Friends = () => {
           profileImage: user.profileImage,
         });
       });
-      // users.map((user) => {
-      //   tmpArray.push({
-      //     index: tmpArray.length,
-      //     username: user.username,
-      //     profileImage: user.profileImage,
-      //   });
-      // });
       setUsersList(tmpArray);
     }
   );
