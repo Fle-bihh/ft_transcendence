@@ -4,11 +4,10 @@ import Navbar from "../../components/nav/Nav";
 import { actionCreators, RootState } from "../../state";
 import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
 import "./Notif.scss";
 import React, { useEffect, useState } from "react";
+import { Button, DialogActions, DialogTitle } from "@mui/material";
 import { Button, DialogActions, DialogTitle, IconButton } from "@mui/material";
-import Pong from "../pong/Pong";
 import { Navigate, NavLink } from "react-router-dom";
 
 export default function Notif() {
@@ -62,7 +61,7 @@ export default function Notif() {
     }
   );
 
-  if (openGame && roomId != "")
+  if (openGame && roomId !== "")
     return (
       <Navigate
         to="/Pong"
@@ -88,10 +87,10 @@ export default function Notif() {
                     <CloseIcon />
                   </div>
                   <DialogTitle className="notifTitle">
-                    Friend request
+                    {notif.data.sender}
                   </DialogTitle>
                   <div className="notifText">
-                     send you a friend's request
+                     sent you a friend's request
                   </div>
                   <DialogActions>
  
