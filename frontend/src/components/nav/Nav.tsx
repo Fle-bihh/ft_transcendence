@@ -86,7 +86,7 @@ const Navbar = (props: any) => {
         {/* La barre des Items NAV  */}
         <ItemsNav sx={{ display: { xs: "none", sm: "none", md: "flex" } }}>
           {ItemsInNav.map((item) => {
-            if (item.Link == "/Notif")
+            if (item.Link === "/Notif")
               return (
                 <NavLink key={item.Link} to={`${item.Link}`} className="link">
                   <Badge
@@ -110,7 +110,7 @@ const Navbar = (props: any) => {
                   </Badge>
                 </NavLink>
               );
-            else if (item.Link == "/Signup") {
+            else if (item.Link === "/Signup") {
               return (
                 <div
                   key={item.Link}
@@ -177,7 +177,7 @@ const Navbar = (props: any) => {
       >
         <Box sx={{ width: 150, height: "21vh" }}>
           {ItemsInNav.map((item) => {
-            if (item.Link == "/Signup") {
+            if (item.Link === "/Signup") {
               return (
                 <div
                   key={item.Link}
