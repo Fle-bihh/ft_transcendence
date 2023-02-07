@@ -105,7 +105,8 @@ export class ChannelService {
 
     if (found) {
       found.name = newName;
-      this.channelsRepository.save(found);
+      await this.channelsRepository.save(found);
+      return found;
     }
     else
       throw new NotFoundException('Channel not found');
