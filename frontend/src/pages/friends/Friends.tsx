@@ -1,26 +1,13 @@
 //
 import "./Friends.scss";
 import { RootState } from "../../state";
-import UserProfileDialog from "../../components/userProfileDialog/UserProfileDialog";
-
-//
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/nav/Nav";
 import { useSelector } from "react-redux";
-import { Avatar, Button, Dialog, IconButton, Tooltip } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import CloseIcon from "@mui/icons-material/Close";
-import MessageIcon from "@mui/icons-material/Message";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Avatar, IconButton, Tooltip } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
 const Friends = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState("");
-  const [inputValue, setInputValue] = useState("");
-  const [rightInputValue, setRightInputValue] = useState("");
-  const [openFriendsPage, setOpenFriendsPage] = useState(true);
   const [friendsList, setFriendsList] = useState(
     Array<{
       username: string;
@@ -37,49 +24,6 @@ const Friends = () => {
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
-  const [myUsername, setMyUsername] = useState(user.user?.username);
-
-  function affUser() {
-    const ret = [];
-    for (let i = 0; i < 20; i++) {
-      ret.push(
-        usersList.map((user) => (
-          <div key={user.username} className="usersListItem">
-            <div className="userListItemContainer">
-              <div className="usersListAvatar">
-                <Tooltip title={`Go to ${user.username}'s profile`}>
-
-                <div
-                  className="image-cropper"
-                  onClick={() => {
-                    window.history.pushState({}, "", window.URL.toString());
-                    window.location.replace(
-                      `http://127.0.0.1:3000/profileother?username=${user.username}`
-                      );
-                    }}
-                    >
-                  <img src={user.profileImage} alt="" />
-                </div>
-                  </Tooltip>
-                {/* <Avatar className="sideAvatar" sx={{ bgcolor: grey[500] }}>
-                {user.username[0]}
-              </Avatar> */}
-              </div>
-              <div className="usersListName">{user.username}</div>
-            </div>
-            <div className="userListItemContainer"></div>
-          </div>
-        ))
-      );
-    }
-    return ret;
-  }
-
-  const handleClose = () => {
-    setDialogOpen(false);
-    setInputValue("");
-    setRightInputValue("");
-  };
 
   useEffect(() => {
     utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
@@ -119,38 +63,41 @@ const Friends = () => {
       <div className="navSpace"></div>
       <Navbar />
       <div className="friendsPageContainer">
-        <div className="friendsPageSide">
-          <div className="friendsListContainer">
-            <div className="friendsListTitle">
-              Friends List
-            </div>
-            {friendsList.map((friend) => {
-              return (
+      <div className="friendsPageSide">
+        <div className="friendsListContainer">
+          <div className="friendsListTitle">
+            Friends List
+          </div>
+          {friendsList.map((friend) => {
+            return (
+              <Tooltip title={`Go to ${friend.username}'s profile`}>
                 <NavLink to={`/profileother?username=${friend.username}`}>
                   <IconButton>
                     <Avatar />
                   </IconButton>
                   <div className="friendsName">{friend.username}</div>
                 </NavLink>
-              );
-            })}
-          </div>
+              </Tooltip>
+            );
+          })}
         </div>
-        <div className="friendPageMain">
-          <div className="usersListContainer">
-          <div className="friendsListTitle">
-              Users List
-            </div>
-            {usersList.map((user) => (
+      </div>
+      <div className="friendPageMain">
+        <div className="usersListContainer">
+          <div className="usersListTitle">
+            Users List
+          </div>
+          {usersList.map((user) => (
+            <Tooltip title={`Go to ${user.username}'s profile`}>
               <NavLink to={`/profileother?username=${user.username}`}>
                 <IconButton>
                   <Avatar />
                 </IconButton>
-                <div className="UserName">{user.username}</div>
+                <div className="usersName">{user.username}</div>
               </NavLink>
-            ))}
+            </Tooltip>
+          ))}
           </div>
-          <div className="usersListContainer">{affUser()}</div>
         </div>
       </div>
     </div>
