@@ -199,7 +199,7 @@ export class ChatGateway {
       serverMsg: data.server == undefined ? false : data.server,
     };
     if (!this.isMuted(data.sender, data.receiver) && (receiverChannel || (receiverUser && !(await this.usersService.isBlocked(receiverUser.username, sender.username))))) {
-      this.channelsService.createMessage(sender, messageDto);
+      await this.channelsService.createMessage(sender, messageDto);
       this.logger.log('ADD_MESSAGE recu ChatGateway');
       client.emit('new_message');
       if (receiverChannel) {
