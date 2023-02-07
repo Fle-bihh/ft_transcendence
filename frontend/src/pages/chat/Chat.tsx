@@ -22,7 +22,7 @@ const Chat = () => {
   const [allChannels, setAllChannels] = useState(
     Array<{
       index: number;
-      privacy: string;
+      privacy: boolean;
       name: string;
       password: string;
       description: string;

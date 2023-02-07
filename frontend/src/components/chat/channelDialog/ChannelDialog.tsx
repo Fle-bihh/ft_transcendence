@@ -28,7 +28,7 @@ const ChannelDialog = (props: {
   setOpenConvName: Function;
   allChannels: Array<{
     index: number;
-    privacy: string;
+    privacy: boolean;
     name: string;
     password: string;
     description: string;
@@ -59,7 +59,7 @@ const ChannelDialog = (props: {
   const [joinChannelSelect, setJoinChannelSelect] = useState("");
   const [joinChannelPasswordInput, setJoinChannelPasswordInput] = useState("");
   const [channelPasswordInput, setChannelPasswordInput] = useState("");
-  const [alignment, setAlignment] = useState("public");
+  const [alignment, setAlignment] = useState(false);
 
   const handleKeyDown = (event: any) => {
     if (event.key === "Escape") {
@@ -71,7 +71,7 @@ const ChannelDialog = (props: {
 
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null
+    newAlignment: boolean | null
   ) => {
     if (newAlignment !== null) {
       setAlignment(newAlignment);
@@ -95,7 +95,7 @@ const ChannelDialog = (props: {
     (
       data: Array<{
         index: number;
-        privacy: string;
+        privacy: boolean;
         name: string;
         password: string;
         description: string;
@@ -171,7 +171,7 @@ const ChannelDialog = (props: {
             {props.allChannels.map((channel) => {
               if (props.allConv.find((conv) => conv.receiver === channel.name))
                 return <></>;
-              return channel.privacy === "public" ||
+              return channel.privacy === false ||
                 channel.name === searchInputValue ? (
                   <div
                     className={
@@ -196,20 +196,19 @@ const ChannelDialog = (props: {
                         {channel.description}
                       </div>
                     </div>
-                    <div className="channelOtherDiv">
-                      <div className="channelIcons">
-                        {channel.privacy === "private" ? (
-                          <VisibilityOffOutlinedIcon className="icon" />
-                        ) : (
-                            <></>
-                          )}
-                        {channel.password.length ? (
-                          <ShieldIcon className="icon" />
-                        ) : (
-                            <RemoveModeratorIcon className="icon" />
-                          )}
-                      </div>
-                      <div className="channelDataParticipants">0/50</div>
+                  </div>
+                  <div className="channelOtherDiv">
+                    <div className="channelIcons">
+                      {channel.privacy === true ? (
+                        <VisibilityOffOutlinedIcon className="icon" />
+                      ) : (
+                        <></>
+                      )}
+                      {channel.password.length ? (
+                        <ShieldIcon className="icon" />
+                      ) : (
+                        <RemoveModeratorIcon className="icon" />
+                      )}
                     </div>
                     {/* {channel.password ? (
                       <div className="channelDataPasswordInput"></div>
