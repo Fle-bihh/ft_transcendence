@@ -13,7 +13,6 @@ import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import Cookies from 'universal-cookie';
 import FlashMessage from '../../components/alert-message/Alert'
-import { tmpdir } from 'os';
 
 
 const cookies = new Cookies();
@@ -21,19 +20,20 @@ const cookies = new Cookies();
 const Profile = () => {
 
     const [firstOpen, setFirstOpen] = useState(true)
-    const utils = useSelector((state: RootState) => state.utils);
+    // const utils = useSelector((state: RootState) => state.utils);
     const user = useSelector((state: RootState) => state.persistantReducer.userReducer);
     const [inputValue, setInputValue] = useState("")
     const [open, setOpen] = React.useState(false);
     //2FA
     const [open2FA, setOpen2FA] = React.useState(false);
     const [qrCode2FA, setQrCode2FA] = useState("");
-    const [code2FA, setCode2FA] = useState("");
-    const [res2FA, setRes2FA] = useState(0);
-    const [codePin, setCodePin] = useState(0);
+    // const [code2FA, setCode2FA] = useState("");
+    // const [res2FA, setRes2FA] = useState(0);
+    // const [codePin, setCodePin] = useState(0);
     const dispatch = useDispatch();
     const { setUser } = bindActionCreators(actionCreators, dispatch);
 
+    
     const [userMatchHistory, setUserMatchHistory] = useState(
         Array<{
             id: string,
@@ -107,8 +107,8 @@ const Profile = () => {
     const handleClose2FA = () => {
         setOpen2FA(false);
         setQrCode2FA("")
-        setCode2FA("")
-        setRes2FA(0)
+        // setCode2FA("")
+        // setRes2FA(0)
     };
 
     const send2FARequest = (value: string) => {
@@ -123,10 +123,16 @@ const Profile = () => {
                 setUser(res.data);
                 setCode2FA('');
                 setRes2FA(res.status);
+                setsucces(true)
+                setmessage("Two factor authentification activate")
             })
             .catch(err => {
                 setRes2FA(err.response.status);
+                seterror(true)
+                setmessage2("Wrong code")
             });
+            setsucces(false)
+            seterror(false)
     }
 
     const getUserData = () => {
@@ -139,7 +145,7 @@ const Profile = () => {
         console.log("userMatchHistory : ", userMatchHistory)
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
-                response.data.map((data: any) => {
+                response.data.forEach((data: any) => {
                     const obj = {
                         id: data.game.id,
                         player1: data.game.player1.username,
@@ -158,10 +164,9 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        console.log("fisrtOpen1", firstOpen)
         if (firstOpen)
             getUserData();
-    }, [firstOpen])
+    })
 
     //----------------image pour téléchager--------------------------------------------
 
@@ -186,8 +191,14 @@ const Profile = () => {
         }
         axios(config).then((res) => {
             setUser(res.data);
+            setmessage("Picture upload with success")
+            setsucces(true)
         }).catch((err) => {
+            setmessage2("Picture too big")
+            seterror(true)
         })
+        setsucces(false)
+        seterror(false)
     }
     //----------------------------------------------------------------------------------------------------------------
     return (
@@ -254,14 +265,12 @@ const Profile = () => {
                                         <img src={qrCode2FA} alt="QRcode" />
                                         <PinInput length={6}
                                             focus
-                                            onChange={(value) => { setCode2FA(value); setRes2FA(0); setCodePin(0) }}
+                                            onChange={(value) => {  }}
                                             type="numeric"
-                                            inputFocusStyle={{ borderColor: '#f55951' }}
                                             inputMode="number"
                                             style={{ padding: '10px' }}
-                                            onComplete={(value) => { send2FARequest(value); setCodePin(1); setCode2FA('') }}
+                                            onComplete={(value) => { send2FARequest(value) }}
                                             autoSelect={true} />
-                                        <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
                                     </DialogContent>
                                     <DialogActions>
                                         <Button onClick={handleClose2FA}>Cancel</Button>

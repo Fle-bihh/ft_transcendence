@@ -102,7 +102,7 @@ export class ChatGateway {
     if (check != undefined && check.time >= Date.now()) {
       return true;
     }
-    muteList.splice(muteList.findIndex((u) => u.username === check.username && u.channel === check.channel));
+    muteList.splice(muteList.findIndex((u) => u.username === check.username && u.channel === check.channel), 1);
     this.logger.log(username, "is no longer muted");
     return false;
   }
@@ -113,7 +113,7 @@ export class ChatGateway {
       console.log(username, "is banned from ", channel);
       return true;
     }
-    muteList.splice(banList.findIndex((u) => u.username === check.username && u.channel === check.channel));
+    muteList.splice(banList.findIndex((u) => u.username === check.username && u.channel === check.channel), 1);
     this.logger.log(username, "is no longer banned");
     return false;
   }
@@ -136,6 +136,12 @@ export class ChatGateway {
     }
     else if (receiverChannel)
       convers = await this.channelsService.getConvByChannel(receiverChannel.name);
+    for (let conv of convers) {
+      console.log('conv === ', conv);
+      if ((await this.usersService.isBlocked(data.sender, conv.sender)) || (await this.usersService.isBlocked(conv.sender, data.sender)))
+        convers.splice(convers.findIndex((u) => u.sender === conv.sender), 1);
+    }
+    convers = convers.reverse();
     client.emit('get_conv', convers);
     this.logger.log('send get_conv to front', convers);
   }
@@ -150,24 +156,27 @@ export class ChatGateway {
     }>();
     const user: User = await this.usersService.getUserByUsername(data.sender);
     const allMessages = await this.channelsService.getMessages();
-    const tmp = allMessages.reverse();
+    // const tmp = allMessages.reverse();
     let receiver: string;
-    for (let message of tmp) {
+    console.log("WTFFFFFFFFFFFFF? =========== ", allMessages);
+    for (let message of allMessages) {
       if (message.channel) {
         receiver = message.channel.name;
         let channel: Channel = await this.channelsService.getOneChannel(receiver);
         if (channel.userConnected.find((u) => u.username === user.username && !retArray.find((m) => m.receiver === receiver)))
+          retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
+      }
+      else if (message.receiver.username === data.sender) {
+        receiver = message.sender.username;
+        if (!(await this.usersService.isBlocked(receiver, data.sender)) && !(await this.usersService.isBlocked(data.sender, receiver)))
+          if (message.receiver.username === user.username && !retArray.find((m) => m.receiver === receiver))
             retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
-      else if (message.receiver.username === data.sender && !this.usersService.isBlocked(receiver, data.sender)) {
-        receiver = message.sender.username;
-        if (message.receiver.username === user.username && !retArray.find((m) => m.receiver === receiver))
-          retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
-      }
-      else if (!this.usersService.isBlocked(receiver, data.sender)) {
+      else {
         receiver = message.receiver.username;
-        if (message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver))
-          retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
+        if (!(await this.usersService.isBlocked(receiver, data.sender)) && !(await this.usersService.isBlocked(data.sender, receiver)))
+          if (message.sender.username === user.username && !retArray.find((m) => m.receiver === receiver))
+            retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
     }
     client.emit('get_all_conv_info', retArray);
@@ -177,14 +186,14 @@ export class ChatGateway {
   @SubscribeMessage('ADD_MESSAGE')
   async add_message(client: Socket, data: { sender: string, receiver: string, content: string, server: boolean }) {
     let sender: User = await this.usersService.getUserByUsername(data.sender);
+    let receiverUser: User;
+    let receiverChannel: Channel;
     try {
-      await this.usersService.getUserByUsername(data.receiver);
+      receiverUser = await this.usersService.getUserByUsername(data.receiver);
     } catch (e) { console.log(e.code); }
     try {
-      await this.channelsService.getOneChannel(data.receiver);
+      receiverChannel = await this.channelsService.getOneChannel(data.receiver);
     } catch (e) { console.log(e.code); }
-    const receiverChannel = await this.channelsService.getOneChannel(data.receiver);
-    const receiverUser = await this.usersService.getUserByUsername(data.receiver);
     const actualTime: Date = new Date();
     if (data.server == undefined)
       data.server = false;
@@ -194,14 +203,17 @@ export class ChatGateway {
       receiver: receiverUser == undefined ? null : receiverUser,
       body: data.content,
       channel: receiverChannel == undefined ? null : receiverChannel,
-      serverMsg: data.server,
+      serverMsg: data.server == undefined ? false : data.server,
     };
-    if (!this.isMuted(data.sender, data.receiver) && (receiverUser && !(await this.usersService.isBlocked(receiverUser.username, sender.username)))) {
+    if (!this.isMuted(data.sender, data.receiver) && (receiverChannel || (receiverUser && !(await this.usersService.isBlocked(receiverUser.username, sender.username))))) {
       this.channelsService.createMessage(sender, messageDto);
       this.logger.log('ADD_MESSAGE recu ChatGateway');
       client.emit('new_message');
       if (receiverChannel) {
-        // emit a tous les participants du channel
+        for (let user of users) {
+          if (receiverChannel.userConnected.find((u) => u.username === user.user.username))
+            user.socket.emit('new_message');
+        }
       }
       else {
         users.forEach(user => {

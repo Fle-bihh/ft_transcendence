@@ -12,13 +12,7 @@ const Friends = () => {
       username: string;
     }>()
   );
-  const [usersList, setUsersList] = useState(
-    Array<{
-      index: number;
-      username: string;
-      profileImage: string;
-    }>
-  );
+  const [usersList, setUsersList] = useState( Array<{ index: number, username: string, profileImage: string }>);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
@@ -29,7 +23,7 @@ const Friends = () => {
     console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
     utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", { username: user.user?.username });
     console.log(user.user?.username, "send GET_ALL_USERS to backend");
-  }, []);
+  });
 
   utils.socket.removeListener("get_all_users_not_friend");
   utils.socket.on(
@@ -41,13 +35,20 @@ const Friends = () => {
         username: string;
         profileImage: string;
       }>();
-      users.map((user) => {
+      users.forEach((user) => {
         tmpArray.push({
           index: tmpArray.length,
           username: user.username,
           profileImage: user.profileImage,
         });
       });
+      // users.map((user) => {
+      //   tmpArray.push({
+      //     index: tmpArray.length,
+      //     username: user.username,
+      //     profileImage: user.profileImage,
+      //   });
+      // });
       setUsersList(tmpArray);
     }
   );
@@ -87,7 +88,7 @@ const Friends = () => {
             Users List
           </div>
           {usersList.map((user) => (
-            <Tooltip title={`Go to ${user.username}'s profile`}>
+            <Tooltip title={`Go to ${user.username}'s profile`} key={user.index}>
               <NavLink to={`/profileother?username=${user.username}`}>
                 <IconButton>
                   <Avatar />

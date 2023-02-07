@@ -179,34 +179,36 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('CHECK_RECONNEXION')
   async checkReconnexion(client: Socket, user: { username: string }) {
-    allClients.find(item => item.id == client.id)!.username = user.username
-    console.log(`Check reco : ${user.username}`);
-    if (UserDisconnected.find((item) => item.username == user.username))
-      UserDisconnected.splice(
-        UserDisconnected.findIndex((item) => item.username == user.username),
-        1,
-      );
-      else {
-        console.log('oui testestsstststts')
+    if (user.username != undefined) {
+      allClients.find(item => item.id == client.id)!.username = user.username
+      console.log(`Check reco : ${user.username}`);
+      if (UserDisconnected.find((item) => item.username == user.username))
+        UserDisconnected.splice(
+          UserDisconnected.findIndex((item) => item.username == user.username),
+          1,
+        );
+        else {
+          console.log('oui testestsstststts')
+          allClients.forEach((client) => {
+            if (client.username != user.username)
+              this.io.to(client.socket.id).emit('getClientStatus', {
+                user: user.username,
+                status: 'online',
+                emitFrom: 'clientStatusGame',
+              });
+          })
+        }
+      console.log(`Check reco ${client.id} : ${user.username}`);
+      const room = this.getRoomByClientLogin(user.username)
+      if (room != null) {
+        this.joinRoom(client, this.allGames[room[0]].roomID)
+        this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].id = client.id
+        this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].connect = true
         allClients.forEach((client) => {
-          if (client.username != user.username)
-            this.io.to(client.socket.id).emit('getClientStatus', {
-              user: user.username,
-              status: 'online',
-              emitFrom: 'clientStatusGame',
-            });
+          this.io.to(client.id).emit('getClientStatus', { user: this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].username, status: 'in-game', emitFrom: 'CHECK_RECONNEXION' })
         })
+        this.io.to(client.id).emit('start', room[1].roomID)
       }
-    console.log(`Check reco ${client.id} : ${user.username}`);
-    const room = this.getRoomByClientLogin(user.username)
-    if (room != null) {
-      this.joinRoom(client, this.allGames[room[0]].roomID)
-      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].id = client.id
-      this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].connect = true
-      allClients.forEach((client) => {
-        this.io.to(client.id).emit('getClientStatus', { user: this.allGames[room[0]].players[this.allGames[room[0]].players.findIndex(player => player.username == user.username)].username, status: 'in-game', emitFrom: 'CHECK_RECONNEXION' })
-      })
-      this.io.to(client.id).emit('start', room[1].roomID)
     }
   }
 

@@ -4,9 +4,9 @@ import "./Side.scss";
 import { RootState } from "../../../state";
 
 //
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import { deepPurple, grey, red } from "@mui/material/colors";
+import { grey} from "@mui/material/colors";
 import AddIcon from "@mui/icons-material/Add";
 import { useSelector } from "react-redux";
 
@@ -33,29 +33,18 @@ const Side = (props: {
   setAllChannels: Function;
 }) => {
   const [inputValue, setInputValue] = useState("");
-  const [alignment, setAlignment] = useState("left");
   const [open, setOpen] = useState(false);
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
   );
 
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null
-  ) => {
-    if (newAlignment !== null) {
-      setAlignment(newAlignment);
-    }
-  };
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+
 
   return (
     <div className="side">
@@ -143,7 +132,7 @@ const Side = (props: {
             return (
               <div
                 className={
-                  props.openConvName == convInfo.receiver
+                  props.openConvName === convInfo.receiver
                     ? "activeStartedConvItem"
                     : "startedConvItem"
                 }

@@ -13,7 +13,7 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
     if (userReducer.user === null) {
       setIsConnected(false);
     }
-  });
+  }, [userReducer.user]);
   if (isConnected) {
     return <>{props.children}</>;
   }

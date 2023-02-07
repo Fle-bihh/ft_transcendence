@@ -17,7 +17,7 @@ const SpectatorPage = (props: any) => {
             utils.gameSocket.emit('START_SPECTATE', { roomID: props.roomID, start: false })
             setVerif(true);
         }
-    })
+    }, [verif, utils.gameSocket, props.roomID]);
     if (verif)
         setInterval(() => { utils.gameSocket.emit('START_SPECTATE', { roomID: props.roomID, start: true }) }, 16)
 

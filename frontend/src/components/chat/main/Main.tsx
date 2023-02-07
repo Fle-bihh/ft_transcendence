@@ -14,11 +14,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  dividerClasses,
   IconButton,
   styled,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
@@ -85,7 +82,7 @@ const Main = (props: {
       receiver: props.openConvName,
     });
     console.log("send GET_CONV to back");
-  }, [props.openConvName, props.allConv]);
+  }, [props.openConvName, props.allConv,user.user?.username, utils.socket]);
 
   useEffect(() => {
     let tmp = document.getElementById("messagesDisplay");
@@ -277,7 +274,7 @@ const Main = (props: {
   }));
   //end invite Game
 
-  if (openGame && roomId != "")
+  if (openGame && roomId !== "")
     return ( <Navigate to="/Pong" replace={true} state={{ invite: true, roomId: roomId }} />);
   return (
     <div className="main">
@@ -296,7 +293,7 @@ const Main = (props: {
             }}
             autoFocus
             onKeyDown={(event) => {
-              if (event.key == "Enter") {
+              if (event.key === "Enter") {
                 utils.socket.emit("CHECK_USER_EXIST", topInputValue);
               }
             }}
@@ -475,7 +472,7 @@ const Main = (props: {
                     <div className="diviser" />
                   </div>
                 );
-              else if (message.sender == user.user?.username)
+              else if (message.sender === user.user?.username)
                 return (
                   <div key={index.toString()} className="rightMessages">
                     {message.content}
@@ -511,7 +508,7 @@ const Main = (props: {
               }}
               autoFocus
               onKeyDown={(event) => {
-                if (event.key == "Enter") {
+                if (event.key === "Enter") {
                   utils.socket.emit("ADD_MESSAGE", {
                     sender: user.user?.username,
                     receiver: props.openConvName,

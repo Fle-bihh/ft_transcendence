@@ -6,7 +6,6 @@ import {User} from 'src/entities/user.entity';
 import {Game} from 'src/entities/game.entity';
 import { Message } from 'src/entities/message.entity';
 import { MessagesDto } from 'src/channel/dto/messages.dto';
-import { string } from '@hapi/joi';
 
 @Injectable()
 export class MessagesService {
