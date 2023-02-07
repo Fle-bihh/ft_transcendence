@@ -145,7 +145,7 @@ const Profile = () => {
         console.log("userMatchHistory : ", userMatchHistory)
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
-                response.data.forEach((data: any) => {
+                response.data.map((data: any) => {
                     const obj = {
                         id: data.game.id,
                         player1: data.game.player1.username,
