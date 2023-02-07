@@ -96,21 +96,16 @@ export class ChatGateway {
   // @Interval(1000)
   isMuted(username: string, channel: string): boolean {
     let check = muteList.find((u) => (u.username === username && u.channel === channel));
-    console.log(muteList);
-    console.log("check == ", check);
-    console.log("date now == ", Date.now());
     if (check != undefined && check.time >= Date.now()) {
       return true;
     }
     muteList.splice(muteList.findIndex((u) => u.username === check.username && u.channel === check.channel), 1);
-    this.logger.log(username, "is no longer muted");
     return false;
   }
 
   isBanned(username: string, channel: string): boolean {
     let check = banList.find((u) => (u.username === username && u.channel === channel));
     if (check != undefined && check.time >= Date.now()) {
-      console.log(username, "is banned from ", channel);
       return true;
     }
     muteList.splice(banList.findIndex((u) => u.username === check.username && u.channel === check.channel), 1);
@@ -131,17 +126,16 @@ export class ChatGateway {
     } catch (e) { console.log(e.code); }
     let convers;
     if (receiverUser) {
-      console.log("get_conv receiver user");
       convers = await this.usersService.getConv(senderUser, receiverUser);
     }
-    else if (receiverChannel)
+    else if (receiverChannel) {
       convers = await this.channelsService.getConvByChannel(receiverChannel.name);
+      convers = convers.reverse();
+    }
     for (let conv of convers) {
-      console.log('conv === ', conv);
       if ((await this.usersService.isBlocked(data.sender, conv.sender)) || (await this.usersService.isBlocked(conv.sender, data.sender)))
         convers.splice(convers.findIndex((u) => u.sender === conv.sender), 1);
     }
-    convers = convers.reverse();
     client.emit('get_conv', convers);
     this.logger.log('send get_conv to front', convers);
   }
@@ -158,7 +152,6 @@ export class ChatGateway {
     const allMessages = await this.channelsService.getMessages();
     // const tmp = allMessages.reverse();
     let receiver: string;
-    console.log("WTFFFFFFFFFFFFF? =========== ", allMessages);
     for (let message of allMessages) {
       if (message.channel) {
         receiver = message.channel.name;
