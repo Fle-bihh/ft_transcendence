@@ -75,7 +75,6 @@ export class ChatGateway {
   store_client_info(client: Socket, data: { user: any; }) {
     console.log("STORE_CLIENT_INFO : ", data.user)
     users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
-    // client.emit('store_client_done');
   }
 
   handleConnection(client: Socket) {
@@ -93,7 +92,6 @@ export class ChatGateway {
   }
 
   // -------------------------- MESSAGES ---------------------------
-  // @Interval(1000)
   isMuted(username: string, channel: string): boolean {
     let check = muteList.find((u) => (u.username === username && u.channel === channel));
     if (check != undefined && check.time >= Date.now()) {
@@ -134,7 +132,7 @@ export class ChatGateway {
     }
     let retArray = [...convers];
     for (let conv of convers) {
-      if (await this.usersService.isBlocked(data.sender, conv.sender))
+      if (await this.usersService.isBlocked(data.sender, conv.sender) && !conv.serverMsg)
         retArray.splice(retArray.findIndex((u) => u.sender === conv.sender), 1);
     }
     client.emit('get_conv', retArray);
@@ -151,13 +149,12 @@ export class ChatGateway {
     }>();
     const user: User = await this.usersService.getUserByUsername(data.sender);
     const allMessages = await this.channelsService.getMessages();
-    // const tmp = allMessages.reverse();
     let receiver: string;
     for (let message of allMessages) {
       if (message.channel) {
         receiver = message.channel.name;
         let channel: Channel = await this.channelsService.getOneChannel(receiver);
-        if (!(await this.usersService.isBlocked(data.sender, message.sender.username)) && channel.userConnected.find((u) => u.username === user.username
+        if ((!(await this.usersService.isBlocked(data.sender, message.sender.username)) || message.serverMsg) && channel.userConnected.find((u) => u.username === user.username
           && !retArray.find((m) => m.receiver === receiver)))
           retArray.push({ receiver: receiver, last_message_time: message.date, last_message_text: message.body, new_conv: false });
       }
@@ -322,7 +319,6 @@ export class ChatGateway {
     await this.channelsService.addAdmin(data.new_admin, channel);
     console.log('ADD_ADMIN recu ChatGateway', data);
     this.get_participant_role(client, { login: data.new_admin, channel: channel.name });
-    // ADD NEW ADMIN IN DB OF channel
   }
 
   @SubscribeMessage('BAN_USER')
@@ -333,7 +329,6 @@ export class ChatGateway {
     }
     banList.push({ username: data.user, channel: data.channel, time: (Date.now() + 120000) })
     this.leave_channel(client, { login: data.user, channelName: data.channel });
-    // remove from channel
   }
 
   @SubscribeMessage('MUTE_USER')
@@ -362,10 +357,10 @@ export class ChatGateway {
   async change_channel_name(client: Socket, data: { login: string, currentName: string, newName: string }) {
     await this.channelsService.changeName(data.currentName, data.newName);
     this.logger.log('CHANGE_CHANNEL_NAME recu ChatGateway', data);
-    // this.get_all_conv_info(client, { sender: data.login });
     const retMsg = data.login + " changed the channel name to " + data.newName;
-    this.add_message(client, { sender: data.login, receiver: data.newName, content: retMsg, server: true });
-    this.get_all_channels(client, data.login);
+    await this.add_message(client, { sender: data.login, receiver: data.newName, content: retMsg, server: true });
+    await this.get_all_channels(client, data.login);
+    // await this.get_all_conv_info(client, { sender: data.login });
   }
 
   @SubscribeMessage('CHANGE_CHANNEL_PASSWORD')
