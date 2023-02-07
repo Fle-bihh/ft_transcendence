@@ -6,7 +6,7 @@ import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Notif.scss";
 import React, { useEffect, useState } from "react";
-import { Button, DialogActions, DialogTitle, IconButton } from "@mui/material";
+import { Button, DialogActions, DialogTitle} from "@mui/material";
 import { Navigate, NavLink } from "react-router-dom";
 
 export default function Notif() {
@@ -14,32 +14,23 @@ export default function Notif() {
     (state: RootState) => state.persistantReducer
   );
   const dispatch = useDispatch();
-  const { addNotif, delNotif, seenAllNotif } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { addNotif, delNotif, seenAllNotif } = bindActionCreators(actionCreators, dispatch);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const [firstOpen, setFirstOpen] = useState(true);
   const utils = useSelector((state: RootState) => state.utils);
 
-  useEffect(() => {
+  if (firstOpen) {
+    setFirstOpen(false);
     seenAllNotif();
-  }, []);
+  }
 
-  const acceptInvitation = (data: {
-    sender: string;
-    gameMap: string;
-    receiver: string;
-  }) => {
+  const acceptInvitation = (data: { sender: string; gameMap: string; receiver: string;}) => {
     //send a socket to accept the gaaaaaame
     utils.gameSocket.emit("ACCEPT_GAME", data);
   };
 
-  const declineInvitation = (data: {
-    sender: string;
-    gameMap: string;
-    receiver: string;
-  }) => {
+  const declineInvitation = (data: { sender: string; gameMap: string; receiver: string;}) => {
     //send a socket to decline the gaaaaaame
     utils.gameSocket.emit("DECLINE_GAME", data);
   };
@@ -159,6 +150,9 @@ export default function Notif() {
                     </div>
               );
             }
+            default : {
+              return (<></>)
+            }
           }
         })}
       </div>
@@ -176,5 +170,5 @@ export default function Notif() {
                     Oui
       </button>
     </>
-              );
-            }
+  );
+}

@@ -1,13 +1,4 @@
-.navbar{
-    width: 100%;
-    min-height: 50px;
-    background: red;
-    border-bottom: 1px solid blue;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
+
 
 .home-container span{
     cursor: pointer;
@@ -36,24 +27,3 @@
     color:grey;
 }
 
-.nav-active {
-    position: relative;
-    &::after {
-      content: "";
-      height: 1px;
-      width: 0;
-      background: red;
-      position: absolute;
-
-      @-webkit-keyframes anim {
-        to {
-          width: 100%;
-        }
-      }
-      @keyframes anim {
-        to {
-          width: 100%;
-        }
-      }
-    }
-}

@@ -1,5 +1,3 @@
-import { Socket } from "socket.io-client";
-
 export interface User {
     username: string
     login: string,

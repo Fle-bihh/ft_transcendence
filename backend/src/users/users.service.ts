@@ -82,11 +82,14 @@ export class UsersService {
   }
 
   async getUserByUsername(username: string): Promise<User> {
-    const found = await this.usersRepository.findOneBy({ username });
-    if (found === null) {
-      throw new HttpException('User Not Found', 404);
+    try {
+      const found = await this.usersRepository.findOneBy({ username });
+      if (!found)
+      throw new InternalServerErrorException();
+      return found;
+    } catch(e) {
+      throw new InternalServerErrorException();
     }
-    return found
   }
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
@@ -175,7 +178,6 @@ export class UsersService {
     const user: User = await this.getUserByUsername(username);
 
     user.blockList = (await this.getBlockList(user)).blockList;
-    console.log("blocklist == ", user.blockList);
     if (user.blockList && user.blockList.length > 0 && user.blockList.find((u) => u.username === targetUser.username))
       return true;
     return false;
@@ -197,8 +199,11 @@ export class UsersService {
 
     user.blockList = (await this.getBlockList(user)).blockList;
     user.blockList.push(targetUser);
+    targetUser.blockList = (await this.getBlockList(targetUser)).blockList;
+    targetUser.blockList.push(user);
 
     await this.usersRepository.save(user);
+    await this.usersRepository.save(targetUser);
   }
 
   async getChannelsCreator(user: User): Promise<{ channels: Channel[] }> {

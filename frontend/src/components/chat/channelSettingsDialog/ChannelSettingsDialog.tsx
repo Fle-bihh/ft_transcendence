@@ -6,19 +6,8 @@ import { RootState } from "../../../state";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
-  AppBar,
   Dialog,
-  IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
-  Toolbar,
-  Switch,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import RemoveModeratorIcon from "@mui/icons-material/RemoveModerator";
-import ShieldIcon from "@mui/icons-material/Shield";
 
 const ChannelSettingsDialog = (props: {
   settingsDialogOpen: boolean;
@@ -50,16 +39,6 @@ const ChannelSettingsDialog = (props: {
     (state: RootState) => state.persistantReducer.userReducer
   );
 
-  const handleKeyDown = (event: any) => {
-    if (event.key == "Escape") {
-      window.removeEventListener("keydown", handleKeyDown);
-    }
-  };
-
-  const handleClickOpen = () => {
-    props.setSettingsDialogOpen(true);
-  };
-
   const handleClose = () => {
     props.setSettingsDialogOpen(false);
     setNameInputValue("");
@@ -85,7 +64,7 @@ const ChannelSettingsDialog = (props: {
       channel: props.openConvName,
     });
     console.log("send GET_PARTICIPANTS to back from", user.user?.username);
-  }, [props.settingsDialogOpen]);
+  }, [props.settingsDialogOpen, props.openConvName, utils.socket, user.user?.username]);
 
   utils.socket.removeListener("channel_left");
   utils.socket.on("channel_left", (data: { channelName: string }) => {
@@ -172,7 +151,7 @@ const ChannelSettingsDialog = (props: {
           <div></div>
         )}
 
-        {participantRole != "participant" ? (
+        {participantRole !== "participant" ? (
           <div className="secondRaw">
             <div className="participantsList">
               <div className="participantsContainer">
@@ -271,7 +250,8 @@ const ChannelSettingsDialog = (props: {
                         </div>
                       </div>
                     );
-                  }
+                  } else 
+                  return (<></>)
                 })}
               </div>
             </div>
