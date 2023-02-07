@@ -6,8 +6,8 @@ import * as React from "react";
 
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import {  useSelector } from "react-redux";
-import {  RootState } from "../../state";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
 import Version2 from "../../styles/asset/Version2.gif";
@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Navigate} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
@@ -129,7 +129,6 @@ const ProfileOther = () => {
       axios
         .get(`http://localhost:5001/user/username/${parsed.username} `, options)
         .then((response) => {
-
           if (response.data.username != null) {
             setUserDisplay({
               id: response.data.id,
@@ -150,26 +149,6 @@ const ProfileOther = () => {
             utils.gameSocket.emit("GET_CLIENT_STATUS", {
               nickname: response.data.username,
             });
-            axios
-              .get(`http://localhost:5001/game/${user.user?.id}`, options)
-              .then((response) => {
-                if (response.data != null) {
-                  response.data.forEach((data: any) => {
-                    const obj = {
-                      id: data.game.id,
-                      player1: data.game.player1.username,
-                      score1: data.game.score_u1,
-                      player2: data.game.player2.username,
-                      score2: data.game.score_u2,
-                      winner: data.game.winner.username,
-                    };
-                    matchHistory.push(obj);
-                  });
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-              });
           }
         })
         .catch((error) => {
@@ -177,9 +156,31 @@ const ProfileOther = () => {
           window.location.replace("/*");
         });
     }
+    axios
+      .get(`http://localhost:5001/game/${user.user?.id}`, options)
+      .then((response) => {
+        if (response.data != null) {
+          response.data.forEach((data: any) => {
+            const obj = {
+              id: data.game.id,
+              player1: data.game.player1.username,
+              score1: data.game.score_u1,
+              player2: data.game.player2.username,
+              score2: data.game.score_u2,
+              winner: data.game.winner.username,
+            };
+            matchHistory.push(obj);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+  // console.log('histo', userDisplay.WinNumber, userDisplay.LossNumber)
+
   const handleClickOpen = () => {
-    if (friend != BLOCKED)
+    if (friend !== BLOCKED)
       setOpen(true);
   };
 
@@ -349,7 +350,7 @@ const ProfileOther = () => {
     if (!userDisplay?.getData) {
       getUserData();
     }
-  }  );
+  });
 
   if (openGame && roomId !== "")
     return (
@@ -400,12 +401,12 @@ const ProfileOther = () => {
                   </div>
                 </div>
               ) : (
-                <></>
-              )}
+                      <></>
+                    )}
             </>
           ) : (
-            <></>
-          )}
+              <></>
+            )}
           <div className="infoUserOther">
             <h3 className="userNameOther">Login :</h3>
             <Typography className="userNamePrintOther">
@@ -426,22 +427,22 @@ const ProfileOther = () => {
             {friend === NOT_FRIEND
               ? "ADD FRIEND"
               : friend === FRIEND_REQUEST_SEND
-              ? "FRIEND REQUEST SEND"
-              : friend === BLOCKED
-              ? "BLOCKED"
-              : friend === FRIEND_REQUEST_WAITING
-              ? "FRIEND REQUEST WAITING"
-              : "FRIEND"}
+                ? "FRIEND REQUEST SEND"
+                : friend === BLOCKED
+                  ? "BLOCKED"
+                  : friend === FRIEND_REQUEST_WAITING
+                    ? "FRIEND REQUEST WAITING"
+                    : "FRIEND"}
           </Button>
           <Dialog open={open} onClose={() => handleClose(false)}>
             <DialogTitle>
               {friend === NOT_FRIEND
                 ? `Send friend request to ${userDisplay.login} ?`
                 : friend === FRIEND_REQUEST_SEND
-                ? `Cancel Request to ${userDisplay.login} ?`
-                : friend === FRIEND_REQUEST_WAITING
-                ? `Add ${userDisplay.login} to you friend list ?`
-                : `Remove ${userDisplay.login} from your friends ?`}
+                  ? `Cancel Request to ${userDisplay.login} ?`
+                  : friend === FRIEND_REQUEST_WAITING
+                    ? `Add ${userDisplay.login} to you friend list ?`
+                    : `Remove ${userDisplay.login} from your friends ?`}
             </DialogTitle>
             <DialogActions>
               <Button onClick={() => handleClose(true)}>Confirm</Button>
@@ -453,8 +454,8 @@ const ProfileOther = () => {
               Invite to game
             </Button>
           ) : (
-            <></>
-          )}
+              <></>
+            )}
           <Dialog
             open={gameOpenDialog}
             onClose={() => handleGameClose(false)}
@@ -576,20 +577,20 @@ const ProfileOther = () => {
                 </DialogActions>
               </>
             ) : (
-              <>
-                <DialogTitle>Decline</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Sorry {userDisplay.username} decline your invitation
+                  <>
+                    <DialogTitle>Decline</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        Sorry {userDisplay.username} decline your invitation
                   </DialogContentText>
-                  <DialogActions>
-                    <Button onClick={() => handleGameClose(false)}>
-                      Close
+                      <DialogActions>
+                        <Button onClick={() => handleGameClose(false)}>
+                          Close
                     </Button>
-                  </DialogActions>
-                </DialogContent>
-              </>
-            )}
+                      </DialogActions>
+                    </DialogContent>
+                  </>
+                )}
           </Dialog>
         </div>
         <div className="statOther">

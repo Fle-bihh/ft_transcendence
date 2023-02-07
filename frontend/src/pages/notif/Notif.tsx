@@ -5,7 +5,7 @@ import { actionCreators, RootState } from "../../state";
 import { NotifType } from "../../state/type";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Notif.scss";
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import { Button, DialogActions, DialogTitle} from "@mui/material";
 import { Navigate, NavLink } from "react-router-dom";
 
