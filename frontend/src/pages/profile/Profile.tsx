@@ -121,12 +121,18 @@ const Profile = () => {
         axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
             .then(res => {
                 setUser(res.data);
-                // setCode2FA('');
-                // setRes2FA(res.status);
+                setCode2FA('');
+                setRes2FA(res.status);
+                setsucces(true)
+                setmessage("Two factor authentification activate")
             })
             .catch(err => {
-                // setRes2FA(err.response.status);
+                setRes2FA(err.response.status);
+                seterror(true)
+                setmessage2("Wrong code")
             });
+            setsucces(false)
+            seterror(false)
     }
 
     const getUserData = () => {
@@ -158,7 +164,6 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        console.log("fisrtOpen1", firstOpen)
         if (firstOpen)
             getUserData();
     })
@@ -262,12 +267,10 @@ const Profile = () => {
                                             focus
                                             onChange={(value) => {  }}
                                             type="numeric"
-                                            inputFocusStyle={{ borderColor: '#f55951' }}
                                             inputMode="number"
                                             style={{ padding: '10px' }}
                                             onComplete={(value) => { send2FARequest(value) }}
                                             autoSelect={true} />
-                                        <p className='wrong-code' style={{ display: 'none' }}>Wrong Code</p>
                                     </DialogContent>
                                     <DialogActions>
                                         <Button onClick={handleClose2FA}>Cancel</Button>
