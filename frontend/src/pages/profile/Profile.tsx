@@ -152,9 +152,25 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        console.log("userMatchHistory : ", userMatchHistory)
+        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
+            if (response.data != null) {
+                setUserDisplay({
+                    id: response.data.id,
+                    username: response.data.username,
+                    login: response.data.login,
+                    profileImage: response.data.profileImage,
+                    email: response.data.email,
+                    WinNumber: response.data.WinNumber,
+                    LossNumber: response.data.LossNumber,
+                    Rank: response.data.Rank,
+                    twoFactorAuth: response.data.twoFactorAuth,
+                    getData: true,
+                })
+            }
+        })
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
+            userMatchHistory.splice(0, userMatchHistory.length)
                 response.data.forEach((data: any) => {
                     const obj = {
                         id: data.game.id,
@@ -166,32 +182,12 @@ const Profile = () => {
                     }
                     userMatchHistory.push(obj)
                 })
-
                 setFirstOpen(false);
                 console.log("userDisplay", userDisplay)
-            } 
+            }
         }).catch(error => {
             console.log(error);
         });
-        if (userMatchHistory !== null){
-
-            axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
-                if (response.data != null) {
-                    setUserDisplay({
-                        id: response.data.id,
-                        username: response.data.username,
-                        login: response.data.login,
-                        profileImage: response.data.profileImage,
-                        email: response.data.email,
-                        WinNumber: response.data.WinNumber,
-                        LossNumber: response.data.LossNumber,
-                        Rank: response.data.Rank,
-                        twoFactorAuth: response.data.twoFactorAuth,
-                        getData: true,
-                    })
-                }
-            })
-        }
     }
 
     useEffect(() => {
