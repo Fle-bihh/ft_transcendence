@@ -7,11 +7,6 @@ import "./Pong.scss"
 import { NavLink } from 'react-router-dom';
 import { Button } from '@mui/material';
 
-var canvas = {
-    "width": document.body.clientWidth,
-    "height": document.body.clientHeight
-}
-
 const SpectatorPage = (props: any) => {
     const utils = useSelector((state: RootState) => state.utils);
     const [finishGame, setFinishGame] = useState(false);
@@ -31,6 +26,7 @@ const SpectatorPage = (props: any) => {
     utils.gameSocket.on("start_spectate", (room: GameClass) => { render(room); });
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
+        console.log("font", room.canvas.width, room.canvas.height)
         if (ctx !== null) {
             ctx.fillStyle = room.map.mapColor;
             ctx.fillRect(0, 0, room.canvas.width, room.canvas.height);
@@ -65,25 +61,35 @@ const SpectatorPage = (props: any) => {
         }
     }
 
+    function drawObstacle(ctx: CanvasRenderingContext2D | null, room: GameClass) {
+        if (ctx !== null) {
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(room.map.mapObstacles[0].posX, room.map.mapObstacles[0].posY, room.map.mapObstacles[0].width, room.map.mapObstacles[0].height);
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(room.map.mapObstacles[1].posX, room.map.mapObstacles[1].posY, room.map.mapObstacles[1].width, room.map.mapObstacles[1].height);
+            ctx.shadowBlur = 0;
+        }
+    }
+
     function drawScore(ctx: CanvasRenderingContext2D | null, room: GameClass) {
         if (ctx !== null) {
             ctx.textAlign = 'center'
             ctx.font = '50px Arial'
             ctx.fillStyle = 'white'
-            ctx.fillText(room.players[0].score.toString(), canvas.width / 4 + canvas.width / 16, canvas.height / 10);
+            ctx.fillText(room.players[0].score.toString(), room.canvas.width / 4 + room.canvas.width / 16, room.canvas.height / 10);
             ctx.fillStyle = 'white'
-            ctx.fillText(room.players[1].score.toString(), (canvas.width / 4 * 3) - canvas.width / 16, canvas.height / 10);
+            ctx.fillText(room.players[1].score.toString(), (room.canvas.width / 4 * 3) - room.canvas.width / 16, room.canvas.height / 10);
         }
     }
 
-    function drawLimitCamps(ctx: CanvasRenderingContext2D | null) {
+    function drawLimitCamps(ctx: CanvasRenderingContext2D | null, room : GameClass) {
         if (ctx !== null) {
             ctx.beginPath();
             ctx.lineWidth = 5;
             ctx.strokeStyle = 'rgb(255, 255, 255)';
-            ctx.setLineDash([canvas.height / 30, canvas.height / 120]);
-            ctx.moveTo(canvas.width / 2, 0);
-            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.setLineDash([room.canvas.height / 30, room.canvas.height / 120]);
+            ctx.moveTo(room.canvas.width / 2, 0);
+            ctx.lineTo(room.canvas.width / 2, room.canvas.height);
             ctx.stroke();
             ctx.setLineDash([]);
         }
@@ -94,37 +100,42 @@ const SpectatorPage = (props: any) => {
             ctx.font = 'bold 50px Arial';
             ctx.fillStyle = 'white';
             ctx.textAlign = "center";
-            ctx.fillText("Players Not ready", canvas.width / 2, canvas.height / 2);
+            ctx.fillText("Players Not ready", room.canvas.width / 2, room.canvas.height / 2);
         }
     }
 
-    function resetCanvas() {
+    function resetCanvas(room : GameClass) {
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
             if (ctx !== null) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                ctx.clearRect(0, 0, room.canvas.width, room.canvas.height)
             }
         }
     }
 
     function render(room: GameClass) {
-        // room.canvas.width = document.body.clientWidth
-        // room.canvas.height = document.body.clientHeight
         var canvas = document.getElementById('pongCanvas') as HTMLCanvasElement
         if (canvas !== null) {
             var ctx = canvas.getContext('2d')
             if (ctx !== null) {
-                resetCanvas()
+                resetCanvas(room)
                 drawFont(ctx, room)
                 if (room.players[0].ready && room.players[1].ready) {
-                    drawLimitCamps(ctx)
+                    console.log("drawScore", room)
+                    drawLimitCamps(ctx, room) 
                 }
-                if (room.players[0].score != 0 || room.players[1].score != 0)
+                if (room.players[0].score != 0 || room.players[1].score != 0){
+                    console.log("drawScore", room)
                     drawScore(ctx, room)
+                }
                 if (!room.players[0].ready || !room.players[1].ready) {
+                    console.log("drawText", room)
                     drawText(ctx, room)
                     return
+                }
+                if (room.map.useObstacle) {
+                    drawObstacle(ctx, room)
                 }
                 drawBall(ctx, room)
                 drawPlayers(ctx, room)
@@ -189,8 +200,8 @@ const SpectatorPage = (props: any) => {
                             <canvas
                                 id='pongCanvas'
                                 className='pongCanvas'
-                                height={canvas.height}
-                                width={canvas.width}
+                                width="800px"
+                                height="600px"
                             />
                         </div>
                     </div>
