@@ -160,6 +160,7 @@ const ProfileOther = () => {
       .get(`http://localhost:5001/game/${user.user?.id}`, options)
       .then((response) => {
         if (response.data != null) {
+        matchHistory.splice(0, matchHistory.length)
           response.data.forEach((data: any) => {
             const obj = {
               id: data.game.id,
