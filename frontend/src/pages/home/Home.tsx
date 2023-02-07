@@ -10,7 +10,6 @@ const Home = (data: any) => {
     <React.Fragment >
       <Navbar />
       <div className="fondText" >
-
         <section className="zoneText" id="section">
 
           <h1 >

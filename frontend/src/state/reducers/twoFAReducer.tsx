@@ -1,4 +1,3 @@
-import { io } from "socket.io-client"
 import { twoFAActionType } from "../action-types";
 import { twoFAAction } from "../actions";
 
