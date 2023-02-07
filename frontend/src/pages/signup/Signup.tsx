@@ -61,7 +61,7 @@ const Signup = () => {
 
   return (
 
-    <div className="div_signup">
+    <div className="signup">
       <button
         className="i42_button"
         onClick={() =>
