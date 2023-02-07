@@ -14,6 +14,7 @@ import {
   Toolbar,
   Tooltip,
   Switch,
+  Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -357,7 +358,9 @@ const ChannelDialog = (props: {
               handleClose();
             }}
           >
+            <Button style={{backgroundColor:"rgb(53, 49, 59)", color:"whitesmoke"}}>
             Create
+            </Button>
           </div>
         </div>
       </div>
