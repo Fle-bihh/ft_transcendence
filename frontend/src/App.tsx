@@ -4,7 +4,6 @@ import ProfileOther from "./pages/profilOther/ProfileOther";
 import Pong from "./pages/pong/Pong";
 import Home from "./pages/home/Home";
 import NotFoundPage from "./pages/error_404/NotFoundPage";
-import Signin from "./pages/signin/Signin";
 import Signup from "./pages/signup/Signup";
 import Friends from "./pages/friends/Friends";
 import ConnectionChecker from "./modules/ConnectionChecker";
@@ -13,23 +12,17 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./state/store";
 import NotifInterceptor from "./components/NotifInterceptor/NotifInterceptor";
 import Notif from "./pages/notif/Notif";
-import { io } from "socket.io-client";
 import Connect from "./pages/signup/Connect";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, RootState } from "./state";
 import { bindActionCreators } from "redux";
 import { NotifType } from "./state/type";
-import { useEffect, useState } from "react";
 
 export const ip = window.location.hostname;
-// export const gameSocket = io(`ws://${ip}:5002`, { transports: ['websocket'] });
 
 function App() {
   const utils = useSelector((state: RootState) => state.utils);
   const { addNotif } = bindActionCreators(actionCreators, useDispatch());
-  const persistantReducer = useSelector(
-    (state: RootState) => state.persistantReducer
-  );
 
   utils.gameSocket.removeListener("invite_game");
   utils.gameSocket.on(

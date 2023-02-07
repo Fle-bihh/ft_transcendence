@@ -19,7 +19,6 @@ export default function Notif() {
     actionCreators,
     dispatch
   );
-  // const [lastNbNotif, setLastNbNotif] = useState(0);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const utils = useSelector((state: RootState) => state.utils);

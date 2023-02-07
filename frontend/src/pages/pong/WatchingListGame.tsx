@@ -1,11 +1,4 @@
-// import * as React from 'react';
-// import List from '@mui/material/List';
-// import ListItem from '@mui/material/ListItem';
-// import ListItemText from '@mui/material/ListItemText';
-// import ListSubheader from '@mui/material/ListSubheader';
 import { GameClass } from './gameClass';
-// import VisibilityIcon from '@mui/icons-material/Visibility';
-// import { Box, ListItemButton, ListItemIcon } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';

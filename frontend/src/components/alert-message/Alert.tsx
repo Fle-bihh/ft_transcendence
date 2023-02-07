@@ -2,11 +2,6 @@ import * as React from 'react';
 
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import signup from '../../pages/signup/Signup'
-
-// function Alert(prop)
-//     return <MuiALert elevation={6} variant="filled" {...prop} />
-
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,

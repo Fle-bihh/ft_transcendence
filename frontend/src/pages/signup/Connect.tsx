@@ -11,7 +11,6 @@ const Connect = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get("code") as string;
-  const err = urlParams.get("error") as string;
   const cookies = new Cookies();
 
   const dispatch = useDispatch();
@@ -35,7 +34,7 @@ const Connect = () => {
       setUser(response.data.user);
       utils.socket.emit('STORE_CLIENT_INFO', { user: response.data.user })
     }
-  }).catch((err) => { });
+  }).catch(() => {});
 
   function verify2FA(value: string) {
     const jwt = cookies.get('jwt');
@@ -46,10 +45,10 @@ const Connect = () => {
     }
     console.log('Connect 1 cookie == ', options);
     axios.get(`http://localhost:5001/user/${userReducer.user?.id}/2fa/verify/` + value, options)
-      .then((e) => {
+      .then(() => {
         setTwoFA(true);
       })
-      .catch((e) => {
+      .catch(() => {
         setTwoFA(false);
         const div = document.getElementById("wrong-code") as HTMLDivElement;
         div.style.display = "flex";

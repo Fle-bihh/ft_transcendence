@@ -1,31 +1,9 @@
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import React, { Component, SyntheticEvent, useEffect, useState } from "react";
-
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import FlashMessage from "../../components/alert-message/Alert";
-import {
-  Avatar,
-  Box,
-  Button,
-  Grid,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-
 import { ip } from "../../App";
-import { RootState } from "../../state";
-import { useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import { setUser } from "../../state/action-creators";
 
-// const url = 'http://${ip}:3000/signup'
 const cookies = new Cookies();
 const jwt = cookies.get('jwt');
 const options = {
@@ -36,20 +14,9 @@ const options = {
 console.log('Signup cookie == ', options);
 
 const Signup = () => {
-  const userReducer = useSelector(
-    (state: RootState) => state.persistantReducer.userReducer
-  );
-  const paperStyle = { padding: 20, height: 500, width: 300, margin: "0 auto" };
-  const avatarStyle = { backgroundColor: "red", margin: "10px auto" };
-  // const textStyle={textAlign:'center'}
-  const btnStyle = { margin: "10px 90px" }; //placer le bouton
-  const formStyle = { lineHeight: "4" }; //espace entre les lignes
-  const styleSignin = { marginLeft: 103 };
-
   const [userName, setuserName] = useState(""); // nous permet de mttre userName a vide
   const [lastName, setlastName] = useState("");
   const [firstName, setfirstName] = useState("");
-  const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [succes, setsucces] = useState(false);
   const [error, seterror] = useState(false);
