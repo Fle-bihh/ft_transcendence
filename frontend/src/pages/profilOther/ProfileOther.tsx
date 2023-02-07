@@ -161,7 +161,7 @@ const ProfileOther = () => {
               getData: true,
             });
             utils.socket.emit("GET_FRIEND_STATUS", {
-              login: response.data.login,
+              username: response.data.username,
             });
             utils.gameSocket.emit("GET_CLIENT_STATUS", {
               nickname: response.data.username,
@@ -200,7 +200,7 @@ const ProfileOther = () => {
 
   const handleClose = (change: boolean) => {
     if (change === true) {
-      console.log("send to : ", userDisplay.login);
+      console.log("send ", friend, "to : ", userDisplay.login);
       if (friend === NOT_FRIEND) {
         utils.socket.emit("SEND_FRIEND_REQUEST", {
           sender: user.user?.username,
@@ -208,15 +208,16 @@ const ProfileOther = () => {
         });
       } else if (friend === FRIEND_REQUEST_SEND) {
         utils.socket.emit("DEL_FRIEND_REQUEST", {
-          loginToSend: userDisplay.login,
+          receiver: userDisplay.username,
         });
       } else if (friend === FRIEND_REQUEST_WAITING) {
         utils.socket.emit("ACCEPT_FRIEND_REQUEST", {
-          loginToSend: userDisplay.login,
+          receiver: userDisplay.username,
         });
+        
       } else {
         utils.socket.emit("REMOVE_FRIEND_SHIP", {
-          loginToSend: userDisplay.login,
+          receiver: userDisplay.username,
         });
       }
     }
@@ -437,12 +438,17 @@ const ProfileOther = () => {
           <Button
             className="buttonChangeOther"
             type="submit"
-            onClick={handleClickOpen}
+            onClick={() => {if (friend != BLOCKED)  {handleClickOpen}
+          else {
+            console.log('USER IS BLOCKED')
+          }}}
           >
             {friend === NOT_FRIEND
               ? "ADD FRIEND"
               : friend === FRIEND_REQUEST_SEND
               ? "FRIEND REQUEST SEND"
+              : friend === BLOCKED
+              ? "BLOCKED"
               : friend === FRIEND_REQUEST_WAITING
               ? "FRIEND REQUEST WAITING"
               : "FRIEND"}
