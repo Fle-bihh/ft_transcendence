@@ -186,6 +186,7 @@ const Main = (props: {
       utils.gameSocket.emit("START_INVITE_GAME", {
         user: { login: user.user?.username },
         gameMap: data.gameMap,
+        roomId: data.sender + data.receiver,
       });
       setRoomId(data.sender + data.receiver);
       setOpenGame(true);

@@ -180,6 +180,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('CHECK_RECONNEXION')
   async checkReconnexion(client: Socket, user: { username: string }) {
     allClients.find(item => item.id == client.id)!.username = user.username
+    console.log(`Check reco : ${user.username}`);
     if (UserDisconnected.find((item) => item.username == user.username))
       UserDisconnected.splice(
         UserDisconnected.findIndex((item) => item.username == user.username),
@@ -369,6 +370,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('START_INVITE_GAME')
   async startInviteGame(client: Socket, info: { user: { login: string }, gameMap: string, roomId: string }) {
     let oponnent: { map: string; user: { login: string } };
+    console.log("start invite = ", info)
     if ((oponnent = waitingForInvite.find(item => item.map == info.gameMap)) != undefined) {
       this.allGames.push(new GameClass(info.gameMap, info.user.login, info.roomId, client.id))
       const room = this.getRoomByID(info.roomId)
