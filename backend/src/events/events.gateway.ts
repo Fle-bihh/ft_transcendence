@@ -40,10 +40,58 @@ export class EventsGateway {
 
   @SubscribeMessage('CHECK_USER_EXIST')
   async check_user_exist(client: Socket, username: string) {
-    client.emit(
-      'check_user_exist',
-      (await this.userService.getUserByUsername(username)) != null,
-    );
+    // let emitter;
+    // this.logger.log('users = ', users);
+    // if (
+    //   users.find((user) => {
+    //     user.socket.id === client.id;
+    //   })
+    // ) {
+    //   emitter = users.find((user) => {
+    //     user.socket.id === client.id;
+    //   }).user;
+    // }
+    // let blocked;
+    // let exist;
+    // if (emitter) {
+    //   blocked = await this.userService.isBlocked(emitter.username, username);
+    //   exist =
+    //     users.find((user) => {
+    //       user.socket.id === client.id;
+    //     }).user.username === username
+    //       ? await this.userService.getUserByUsername(username)
+    //       : false;
+    // }
+
+    // if is not me
+    // if exist
+    // if is_blocked
+
+    let exist = false;
+
+    let user = users.find((user) => user.socket.id === client.id);
+    this.logger.log('check_user_exist-->username = ', username);
+    if (user) {
+      if (user.user.username != username) {
+        try {
+          if ((await this.userService.getUserByUsername(username))) {
+            if (
+              (await this.userService.isBlocked(
+                user.user.username,
+                username,
+              ))
+            ) {
+              exist = false; // not very logic but you know sometimes the man gotta do what he got to do
+            } else {
+              exist = true;
+            }
+          }
+        } catch (error) {
+          this.logger.log('ERROR USERSERVICE IN CHECK_USER_EXIST');
+        }
+      }
+    }
+    client.emit('check_user_exist', exist);
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
@@ -128,11 +176,12 @@ export class EventsGateway {
             username: data.receiver,
             friendStatus: 'request-send',
           });
-          this.logger.log("emit update to client with", data.receiver);
+          this.logger.log('emit update to client with', data.receiver);
           // if ( users.find((item) => item.user.username == userToSend.username) != undefined ) {
           if (receiverSocket != undefined) {
             receiverSocket.emit('updateProfileOther', {
-              username: users.find((item) => item.socket.id == client.id).user.username,
+              username: users.find((item) => item.socket.id == client.id).user
+                .username,
               friendStatus: 'request-waiting',
             });
             this.logger.log(
@@ -188,8 +237,7 @@ export class EventsGateway {
         });
       this.logger.log(
         'emit updateProfileOther to ',
-        users.find((item) => item.socket.id == client.id).user
-            .username,
+        users.find((item) => item.socket.id == client.id).user.username,
         'with not-friend',
       );
     }
@@ -240,7 +288,7 @@ export class EventsGateway {
     });
     this.logger.log(
       'emit updateProfileOther to ',
-      users.find(user => user.socket.id === client.id).user.username,
+      users.find((user) => user.socket.id === client.id).user.username,
       'with friend',
     );
     if (
@@ -250,7 +298,8 @@ export class EventsGateway {
       users
         .find((item) => item.user.username == userToCheck.username)
         .socket.emit('updateProfileOther', {
-          username: users.find(user => user.socket.id === client.id).user.username,
+          username: users.find((user) => user.socket.id === client.id).user
+            .username,
           friendStatus: 'friend',
         });
   }
@@ -298,7 +347,8 @@ export class EventsGateway {
       users
         .find((item) => item.user.username == userToCheck.username)
         .socket.emit('updateProfileOther', {
-          username: users.find(user => user.socket.id === client.id).user.username,
+          username: users.find((user) => user.socket.id === client.id).user
+            .username,
           friendStatus: 'not-friend',
         });
   }
