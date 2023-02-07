@@ -23,7 +23,7 @@ const Friends = () => {
     console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
     utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", { username: user.user?.username });
     console.log(user.user?.username, "send GET_ALL_USERS to backend");
-  });
+  }, [user.user?.username, utils.socket]);
 
   utils.socket.removeListener("get_all_users_not_friend");
   utils.socket.on(
