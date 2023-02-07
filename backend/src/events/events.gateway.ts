@@ -98,7 +98,7 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('SEND_FRIEND_REQUEST')
-  async send_friend_request(client: Socket, data: {loginToSend: string;}) {
+  async send_friend_request(client: Socket, data: { sender: string, loginToSend: string;}) {
     const userToSend = await this.userService.getUserByLogin(data.loginToSend);
     if (!userToSend) return;
     const userFriendList = await this.friendShipService.getUserFriendList(
@@ -115,6 +115,8 @@ export class EventsGateway {
           client.emit('updateProfileOther', { login: data.loginToSend, friendStatus: 'request-send'});
           if ( users.find((item) => item.user.login == userToSend.login) != undefined )
             users.find((item) => item.user.login == userToSend.login).socket.emit('updateProfileOther', { login: users.find((item) => item.socket.id == client.id).user.login, friendStatus: 'request-waiting'});
+            users.find((item) => item.user.login == userToSend.login).socket.emit('add_notif', { type: "FRIENDREQUEST", data : { sender: data.sender }});
+            this.logger.log('add_notif with ', data.sender);
         });
     }
     console.log('oui');

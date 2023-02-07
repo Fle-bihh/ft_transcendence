@@ -101,8 +101,7 @@ const ProfileOther = () => {
         setFriend(BLOCKED);
       } else if (data.friendStatus === "request-send") {
         setFriend(FRIEND_REQUEST_SEND);
-      } else if (data.friendStatus === "request-waiting") {
-
+      } else if (data.friendStatus == "request-waiting") {
         setFriend(FRIEND_REQUEST_WAITING);
       } else if (data.friendStatus === "not-friend") {
         setFriend(NOT_FRIEND);
@@ -204,6 +203,7 @@ const ProfileOther = () => {
       console.log("send to : ", userDisplay.login);
       if (friend === NOT_FRIEND) {
         utils.socket.emit("SEND_FRIEND_REQUEST", {
+          sender: user.user?.username,
           loginToSend: userDisplay.login,
         });
       } else if (friend === FRIEND_REQUEST_SEND) {
