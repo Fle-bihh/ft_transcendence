@@ -197,8 +197,11 @@ export class UsersService {
 
     user.blockList = (await this.getBlockList(user)).blockList;
     user.blockList.push(targetUser);
+    targetUser.blockList = (await this.getBlockList(targetUser)).blockList;
+    targetUser.blockList.push(user);
 
     await this.usersRepository.save(user);
+    await this.usersRepository.save(targetUser);
   }
 
   async getChannelsCreator(user: User): Promise<{ channels: Channel[] }> {

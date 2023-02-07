@@ -94,9 +94,8 @@ const ProfileOther = () => {
   utils.socket.on(
     "updateProfileOther",
     (data: { username: string; friendStatus: string }) => {
-
+      console.log("updateProfileOther received with", data.username, data.friendStatus, 'usrname = ', userDisplay.username);
       if (data.username !== userDisplay.username) return;
-      console.log("updateProfileOther", data.username, data.friendStatus);
       if (data.friendStatus === "blocked") {
         setFriend(BLOCKED);
       } else if (data.friendStatus === "request-send") {
@@ -107,27 +106,20 @@ const ProfileOther = () => {
         setFriend(NOT_FRIEND);
       } else {
         setFriend(FRIEND);
-
       }
     }
   );
-  console.log(addNotif)//pour que le addnotif soit lu
+  console.log(addNotif); //pour que le addnotif soit lu
   utils.gameSocket.removeListener("getClientStatus");
   utils.gameSocket.on(
     "getClientStatus",
     (data: { user: string; status: string }) => {
-
       console.log("getClientStatus", data);
       if (data.user !== userDisplay.login) return;
 
-
-      if (data.status === 'online')
-        setClientStatus(ONLINE)
-        else if (data.status === 'offline')
-        setClientStatus(OFFLINE)
-        else if (data.status === 'in-game')
-        setClientStatus(IN_GAME)
-
+      if (data.status === "online") setClientStatus(ONLINE);
+      else if (data.status === "offline") setClientStatus(OFFLINE);
+      else if (data.status === "in-game") setClientStatus(IN_GAME);
     }
   );
 
@@ -137,12 +129,10 @@ const ProfileOther = () => {
       parsed.username === "" ||
       parsed.username === undefined ||
       parsed.username === user.user?.login
-    )
-      {
-        window.history.pushState({}, window.location.toString());
-        window.location.replace("/");
-      }
-     else {
+    ) {
+      window.history.pushState({}, window.location.toString());
+      window.location.replace("/");
+    } else {
       axios
         .get(`http://localhost:5001/user/username/${parsed.username} `, options)
         .then((response) => {
@@ -195,7 +185,8 @@ const ProfileOther = () => {
     }
   };
   const handleClickOpen = () => {
-    setOpen(true);
+    if (friend != BLOCKED)
+      setOpen(true);
   };
 
   const handleClose = (change: boolean) => {
@@ -214,7 +205,6 @@ const ProfileOther = () => {
         utils.socket.emit("ACCEPT_FRIEND_REQUEST", {
           receiver: userDisplay.username,
         });
-        
       } else {
         utils.socket.emit("REMOVE_FRIEND_SHIP", {
           receiver: userDisplay.username,
@@ -438,10 +428,7 @@ const ProfileOther = () => {
           <Button
             className="buttonChangeOther"
             type="submit"
-            onClick={() => {if (friend != BLOCKED)  {handleClickOpen}
-          else {
-            console.log('USER IS BLOCKED')
-          }}}
+            onClick={handleClickOpen}
           >
             {friend === NOT_FRIEND
               ? "ADD FRIEND"
@@ -583,8 +570,14 @@ const ProfileOther = () => {
             ) : !declineGame ? (
               <>
                 <DialogTitle>Waiting for the player to accept</DialogTitle>
-                <DialogContent sx={{   display: "flex",   flexDirection: "column",   m: "auto",   width: "fit-content", }}>
-                </DialogContent>
+                <DialogContent
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    m: "auto",
+                    width: "fit-content",
+                  }}
+                ></DialogContent>
                 <DialogActions>
                   <Button onClick={() => handleGameClose(false)}>Close</Button>
                 </DialogActions>
