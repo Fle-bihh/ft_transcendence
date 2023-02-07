@@ -82,7 +82,7 @@ export class GameClass {
 				let direction = (this.ball.posX + this.ball.radius < this.canvas.width / 2) ? 1 : -1
 				this.ball.directionX = direction * this.ball.speed * Math.cos(angleRad)
 				this.ball.directionY = this.ball.speed * Math.sin(angleRad)
-				if (this.ball.speed < 6) {
+				if (this.ball.speed < 12) {
 					this.ball.speed += 0.1
 					this.players[0].speed += 0.1
 					this.players[1].speed += 0.1
@@ -166,7 +166,7 @@ export class Player {
         this.goDown = false
         this.score = 0
         this.ready = false
-        this.speed = 3
+        this.speed = 6
         this.posX = canvas.width / 10 - this.width / 2
         this.posY = canvas.height / 2 - this.height / 2
 		this.reco = 0
@@ -180,7 +180,7 @@ export class Player {
 		this.goUp = false
 		this.posX = canvas.width / 10 - this.width / 2
 		this.posY = canvas.height / 2 - this.height / 2
-		this.speed = 3
+		this.speed = 6
 	}
 }
 
@@ -243,7 +243,7 @@ export class Ball {
     constructor(canvas : Canvas) {
         this.posX = canvas.width / 2
         this.posY = canvas.height / 2
-        this.speed = 3
+        this.speed = 6
         this.directionX = random(0, 1) ? - this.speed : this.speed
         this.directionY = 0
         this.radius = 10;
@@ -252,7 +252,7 @@ export class Ball {
     reset(canvas: Canvas) {
 		this.posX = canvas.width / 2
 		this.posY = canvas.height / 2
-		this.speed = 3
+		this.speed = 6
 		this.directionX = random(0, 1) ? - this.speed : this.speed
 		this.directionY = 0
 		this.radius = 10

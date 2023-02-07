@@ -119,15 +119,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @Interval(5000)
+  @Interval(1000)
   checkDeco() {
     for (let index = 0; index < this.allGames.length; index++) {
-      console.log("check deco")
       if (this.allGames[index].gameOn) {
         let millis0: number = 0;
         let millis1: number = 0;
-        console.log("ready 0 : ", this.allGames[index].players[0].ready, " ready 1 : ", this.allGames[index].players[1].ready)
-        console.log("reco 0 : ", this.allGames[index].players[0].reco, " reco 1 : ", this.allGames[index].players[1].reco)
         if (!this.allGames[index].players[0].ready && this.allGames[index].players[1].ready && this.allGames[index].players[0].reco === 0)
           this.allGames[index].players[0].reco = Date.now()
         else if (!this.allGames[index].players[1].ready && this.allGames[index].players[0].ready && this.allGames[index].players[1].reco === 0)
