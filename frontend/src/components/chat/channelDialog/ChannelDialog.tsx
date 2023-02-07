@@ -3,26 +3,15 @@ import "./ChannelDialog.scss";
 import { RootState } from "../../../state";
 
 //
-import React, { useState, useEffect } from "react";
-import Avatar from "@mui/material/Avatar";
-import { deepPurple, grey, red } from "@mui/material/colors";
-import AddIcon from "@mui/icons-material/Add";
+import React, { useState} from "react";
 import { useSelector } from "react-redux";
-import { TransitionProps } from "@mui/material/transitions";
 import {
   AppBar,
-  Button,
   Dialog,
-  Divider,
   IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Slide,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
-  Typography,
   Tooltip,
   Switch,
 } from "@mui/material";
@@ -69,7 +58,7 @@ const ChannelDialog = (props: {
   const [alignment, setAlignment] = useState("public");
 
   const handleKeyDown = (event: any) => {
-    if (event.key == "Escape") {
+    if (event.key === "Escape") {
       setJoinChannelPasswordInput("");
       setShowJoinChannelPasswordModal(false);
       window.removeEventListener("keydown", handleKeyDown);
@@ -83,16 +72,6 @@ const ChannelDialog = (props: {
     if (newAlignment !== null) {
       setAlignment(newAlignment);
     }
-  };
-
-  const handleClickOpen = () => {
-    props.setOpen(true);
-
-    // setPasswordSwitchOn(false);
-    // setCreateSwitchOn(false);
-    // setChannelPasswordInput("");
-    // setChannelNameInput("");
-    // setDescriptionInput("");
   };
 
   const handleClose = () => {
@@ -193,13 +172,13 @@ const ChannelDialog = (props: {
           />
           <div className="channelsContainer" id="listChannel">
             {props.allChannels.map((channel) => {
-              if (props.allConv.find((conv) => conv.receiver == channel.name))
-                return;
+              if (props.allConv.find((conv) => conv.receiver === channel.name))
+                return <></>;
               return channel.privacy === "public" ||
                 channel.name === searchInputValue ? (
                 <div
                   className={
-                    (joinChannelSelect == channel.name
+                    (joinChannelSelect === channel.name
                       ? "channelDataContainer active "
                       : "channelDataContainer inactive ") +
                     (channel.name
@@ -209,7 +188,7 @@ const ChannelDialog = (props: {
                       : "hidden")
                   }
                   onClick={() => {
-                    if (joinChannelSelect != channel.name)
+                    if (joinChannelSelect !== channel.name)
                       setJoinChannelSelect(channel.name);
                     else setJoinChannelSelect("");
                   }}
@@ -251,7 +230,7 @@ const ChannelDialog = (props: {
             disabled={
               props.allChannels.find(
                 (channel) => channel.name === joinChannelSelect
-              ) == undefined
+              ) === undefined
             }
             onClick={() => {
               if (
@@ -394,11 +373,11 @@ const ChannelDialog = (props: {
           }
           value={joinChannelPasswordInput}
           onKeyDown={(event) => {
-            if (event.key == "Enter") {
+            if (event.key === "Enter") {
               if (
                 props.allChannels.find(
                   (channel) => channel.name === joinChannelSelect
-                )!.password != joinChannelPasswordInput
+                )!.password !== joinChannelPasswordInput
               ) {
                 document
                   .getElementById("joinChannelInput")!
