@@ -239,7 +239,7 @@ const ChannelSettingsDialog = (props: {
                               }}
                             >
                               <div key={index} className="content">KICK</div>
-                            </div>
+                            </div> 
                           ) : (
                             <div key={index}></div>
                           )}
