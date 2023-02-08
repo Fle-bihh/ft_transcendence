@@ -110,7 +110,7 @@ const ProfileOther = () => {
     "getClientStatus",
     (data: { user: string; status: string }) => {
       console.log("getClientStatus", data);
-      if (data.user !== userDisplay.login) return;
+      if (data.user !== userDisplay.username) return;
 
       if (data.status === "online") setClientStatus(ONLINE);
       else if (data.status === "offline") setClientStatus(OFFLINE);

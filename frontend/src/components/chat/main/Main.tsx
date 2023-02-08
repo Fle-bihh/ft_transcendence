@@ -515,10 +515,6 @@ const Main = (props: {
                     content: inputValue,
                   });
                   console.log("send ADD_MESSAGE to back");
-                  // utils.socket.emit("GET_CONV", {
-                  //   sender: user.user?.username,
-                  //   receiver: props.openConvName,
-                  // });
                   setInputValue("");
                 }
               }}

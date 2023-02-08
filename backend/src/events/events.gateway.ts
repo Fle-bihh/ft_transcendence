@@ -45,21 +45,25 @@ export class EventsGateway {
     let user = users.find((user) => user.socket.id === client.id);
     this.logger.log('check_user_exist-->username = ', username);
     if (user) {
-      if (user.user.username != username) {
-        try {
-          if (await this.userService.getUserByUsername(username)) {
-            if (
-              await this.userService.isBlocked(user.user.username, username)
-            ) {
-              exist = false; // not very logic but you know sometimes the man gotta do what he got to do
-            } else {
-              exist = true;
-            }
-          }
-        } catch (error) {
-          this.logger.log('ERROR USERSERVICE IN CHECK_USER_EXIST');
+      try {
+        if (await this.userService.getUserByUsername(username)) {
+          exist = true;
         }
+      } catch (error) {
+        this.logger.log(
+          'ERROR USERSERVICE getUserByUsername IN CHECK_USER_EXIST',
+        );
       }
+      try {
+        if (await this.userService.isBlocked(user.user.username, username)) {
+          exist = false;
+        }
+      } catch (error) {
+        this.logger.log('ERROR USERSERVICE isBlocked IN CHECK_USER_EXIST');
+      }
+    }
+    if (user.user.username === username) {
+      exist = false;
     }
     client.emit('check_user_exist', exist);
   }
