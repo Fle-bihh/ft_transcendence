@@ -18,8 +18,8 @@ import { Interval } from '@nestjs/schedule';
 import { channel } from 'diagnostics_channel';
 
 const users = Array<{ user: any; socket: Socket }>();
-const muteList = Array<{ username: string, channel: string, time: number }>();
-const banList = Array<{ username: string, channel: string, time: number }>();
+const muteList = Array<{ username: string; channel: string; time: number }>();
+const banList = Array<{ username: string; channel: string; time: number }>();
 
 @WebSocketGateway({
   cors: {
@@ -69,10 +69,11 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
-  store_client_info(client: Socket, data: { user: any; }) {
-    console.log("STORE_CLIENT_INFO Chat: ", data)
-    users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
-    console.table(users)
+  store_client_info(client: Socket, data: { user: any }) {
+    console.log('STORE_CLIENT_INFO Chat: ', data);
+    users[users.findIndex((item) => item.socket.id == client.id)].user =
+      data.user;
+    console.table(users);
   }
 
   handleConnection(client: Socket) {
@@ -153,18 +154,22 @@ export class ChatGateway {
       convers = convers.reverse();
     }
     let retArray = [...convers];
-    for (let conv of convers) {
-      if (
-        (await this.usersService.isBlocked(data.sender, conv.sender)) &&
-        !conv.serverMsg
-      )
-        retArray.splice(
-          retArray.findIndex((u) => u.sender === conv.sender),
-          1,
-        );
+    try {
+      for (let conv of convers) {
+        if (
+          (await this.usersService.isBlocked(data.sender, conv.sender)) &&
+          !conv.serverMsg
+        )
+          retArray.splice(
+            retArray.findIndex((u) => u.sender === conv.sender),
+            1,
+          );
+      }
+      client.emit('get_conv', retArray);
+      this.logger.log('send get_conv to front', retArray);
+    } catch (e) {
+      this.logger.log(e.code);
     }
-    client.emit('get_conv', retArray);
-    this.logger.log('send get_conv to front', retArray);
   }
 
   @SubscribeMessage('GET_ALL_CONV_INFO')
@@ -184,54 +189,62 @@ export class ChatGateway {
         let channel: Channel = await this.channelsService.getOneChannel(
           receiver,
         );
-        if (
-          (!(await this.usersService.isBlocked(
-            data.sender,
-            message.sender.username,
-          )) ||
-            message.serverMsg) &&
-          channel.userConnected.find(
-            (u) =>
-              u.username === user.username &&
-              !retArray.find((m) => m.receiver === receiver),
+        try {
+          if (
+            (!(await this.usersService.isBlocked(
+              data.sender,
+              message.sender.username,
+            )) ||
+              message.serverMsg) &&
+            channel.userConnected.find(
+              (u) =>
+                u.username === user.username &&
+                !retArray.find((m) => m.receiver === receiver),
+            )
           )
-        )
-          retArray.push({
-            receiver: receiver,
-            last_message_time: message.date,
-            last_message_text: message.body,
-            new_conv: false,
-          });
+            retArray.push({
+              receiver: receiver,
+              last_message_time: message.date,
+              last_message_text: message.body,
+              new_conv: false,
+            });
+        } catch (e) {
+          this.logger.log(e.code);
+        }
       } else if (message.receiver.username === data.sender) {
         receiver = message.sender.username;
-        if (
-          !(await this.usersService.isBlocked(receiver, data.sender))
-        )
-          if (
-            message.receiver.username === user.username &&
-            !retArray.find((m) => m.receiver === receiver)
-          )
-            retArray.push({
-              receiver: receiver,
-              last_message_time: message.date,
-              last_message_text: message.body,
-              new_conv: false,
-            });
+        try {
+          if (!(await this.usersService.isBlocked(receiver, data.sender)))
+            if (
+              message.receiver.username === user.username &&
+              !retArray.find((m) => m.receiver === receiver)
+            )
+              retArray.push({
+                receiver: receiver,
+                last_message_time: message.date,
+                last_message_text: message.body,
+                new_conv: false,
+              });
+        } catch (e) {
+          this.logger.log(e.code);
+        }
       } else {
-        receiver = message.receiver.username;
-        if (
-          !(await this.usersService.isBlocked(receiver, data.sender))
-        )
-          if (
-            message.sender.username === user.username &&
-            !retArray.find((m) => m.receiver === receiver)
-          )
-            retArray.push({
-              receiver: receiver,
-              last_message_time: message.date,
-              last_message_text: message.body,
-              new_conv: false,
-            });
+        try {
+          receiver = message.receiver.username;
+          if (!(await this.usersService.isBlocked(receiver, data.sender)))
+            if (
+              message.sender.username === user.username &&
+              !retArray.find((m) => m.receiver === receiver)
+            )
+              retArray.push({
+                receiver: receiver,
+                last_message_time: message.date,
+                last_message_text: message.body,
+                new_conv: false,
+              });
+        } catch (e) {
+          this.logger.log(e.code);
+        }
       }
     }
     client.emit('get_all_conv_info', retArray);
@@ -271,15 +284,20 @@ export class ChatGateway {
       channel: receiverChannel == undefined ? null : receiverChannel,
       serverMsg: data.server == undefined ? false : data.server,
     };
+    const isMute = this.isMuted(data.sender, data.receiver);
+    let isBlock: boolean;
+    try {
+      isBlock = await this.usersService.isBlocked(receiverUser.username, sender.username);
+    } catch (e) {
+      this.logger.log(e.code);
+    }
+    this.logger.log('ADD|MESSAGE|INFO:', receiverChannel, isBlock, isMute);
     if (
-      receiverChannel?.userConnected.find((u) => u.username === data.sender) &&
-      !this.isMuted(data.sender, data.receiver) &&
+      receiverChannel?.userConnected.find((u) => u.username === data.sender) ||
+      (!isMute &&
       (receiverChannel ||
         (receiverUser &&
-          !(await this.usersService.isBlocked(
-            receiverUser.username,
-            sender.username,
-          ))))
+          !isBlock)))
     ) {
       await this.channelsService.createMessage(sender, messageDto);
       this.logger.log('ADD_MESSAGE recu ChatGateway');
@@ -314,7 +332,7 @@ export class ChatGateway {
   async get_all_channels(client: Socket, login: string) {
     this.logger.log('GET_ALL_CHANNELS recu ChatGateway with');
     const channels = await this.channelsService.getChannel();
-    console.log("channels = ", channels)
+    console.log('channels = ', channels);
     const retArray = Array<{
       privacy: boolean;
       name: string;
@@ -327,7 +345,7 @@ export class ChatGateway {
         privacy: channel.privacy,
         name: channel.name,
         description: channel.description,
-        owner: channel.creator ? channel.creator.username : "" ,
+        owner: channel.creator ? channel.creator.username : '',
         password: channel.password.length > 0 ? true : false,
       });
     });
