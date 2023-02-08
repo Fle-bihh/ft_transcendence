@@ -1,12 +1,20 @@
 import { useEffect} from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state";
 import { setUser, removeNotifPong } from "../../state/action-creators";
 import "./signup.scss";
 
  const Signup = () => {
+  const userReducer = useSelector(
+    (state: RootState) => state.persistantReducer.userReducer
+  );
+
 
   useEffect(() => {
     console.log("refresh")
+    console.log()
     setUser(null);
+    console.log("pls c est quoi ca? == ",userReducer.user)
     removeNotifPong();
   }, [])
 
