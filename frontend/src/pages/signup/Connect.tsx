@@ -33,6 +33,7 @@ const Connect = () => {
       cookies.set('jwt', response.data.accessToken, { path: `/` });
       setUser(response.data.user);
       utils.socket.emit('STORE_CLIENT_INFO', { user: response.data.user })
+      utils.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
     }
   }).catch(() => {});
 

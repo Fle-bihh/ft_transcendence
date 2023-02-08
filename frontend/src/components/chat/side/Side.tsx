@@ -26,9 +26,9 @@ const Side = (props: {
     index: number;
     privacy: boolean;
     name: string;
-    password: string;
     description: string;
     owner: string;
+    password: boolean;
   }>;
   setAllChannels: Function;
 }) => {
