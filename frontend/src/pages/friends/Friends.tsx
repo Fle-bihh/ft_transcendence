@@ -12,7 +12,9 @@ const Friends = () => {
       username: string;
     }>()
   );
-  const [usersList, setUsersList] = useState( Array<{ index: number, username: string, profileImage: string }>);
+  const [usersList, setUsersList] = useState(
+    Array<{ index: number; username: string; profileImage: string }>
+  );
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
     (state: RootState) => state.persistantReducer.userReducer
@@ -21,7 +23,9 @@ const Friends = () => {
   useEffect(() => {
     utils.socket.emit("GET_USER_FRIENDS", user.user?.username);
     console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
-    utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", { username: user.user?.username });
+    utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", {
+      username: user.user?.username,
+    });
     console.log(user.user?.username, "send GET_ALL_USERS to backend");
   }, [user.user?.username, utils.socket]);
 
@@ -56,40 +60,41 @@ const Friends = () => {
       <div className="navSpace"></div>
       <Navbar />
       <div className="friendsPageContainer">
-      <div className="friendsPageSide">
-        <div className="friendsListContainer">
-          <div className="friendsListTitle">
-            Friends List
+        <div className="friendsPageSide">
+          <div className="friendsListContainer">
+            <div className="friendsListTitle">Friends List</div>
+            {friendsList.map((friend) => {
+              return (
+                <Tooltip title={`Go to ${friend.username}'s profile`}>
+                  <NavLink to={`/profileother?username=${friend.username}`}>
+                    <div className="friendListItem">
+                      <IconButton>
+                        <Avatar />
+                      </IconButton>
+                      <div className="friendsName">{friend.username}</div>
+                    </div>
+                  </NavLink>
+                </Tooltip>
+              );
+            })}
           </div>
-          {friendsList.map((friend) => {
-            return (
-              <Tooltip title={`Go to ${friend.username}'s profile`}>
-                <NavLink to={`/profileother?username=${friend.username}`}>
+        </div>
+        <div className="friendPageMain">
+          <div className="usersListContainer">
+            <div className="usersListTitle">Users List</div>
+            {usersList.map((user) => (
+              <Tooltip
+                title={`Go to ${user.username}'s profile`}
+                key={user.index}
+              >
+                <NavLink to={`/profileother?username=${user.username}`}>
                   <IconButton>
                     <Avatar />
                   </IconButton>
-                  <div className="friendsName">{friend.username}</div>
+                  <div className="usersName">{user.username}</div>
                 </NavLink>
               </Tooltip>
-            );
-          })}
-        </div>
-      </div>
-      <div className="friendPageMain">
-        <div className="usersListContainer">
-          <div className="usersListTitle">
-            Users List
-          </div>
-          {usersList.map((user) => (
-            <Tooltip title={`Go to ${user.username}'s profile`} key={user.index}>
-              <NavLink to={`/profileother?username=${user.username}`}>
-                <IconButton>
-                  <Avatar />
-                </IconButton>
-                <div className="usersName">{user.username}</div>
-              </NavLink>
-            </Tooltip>
-          ))}
+            ))}
           </div>
         </div>
       </div>

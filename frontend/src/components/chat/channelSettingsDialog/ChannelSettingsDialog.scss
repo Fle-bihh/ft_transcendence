@@ -1,6 +1,7 @@
-$primary: rgb(42, 38, 48);
-$secondary: rgb(53, 49, 59);
-$content: grey;
+$primary: rgb(255, 255, 255,);
+$secondary: rgb(190, 190, 190);
+$third: rgb(150, 150, 150);
+$content: black;
 
 .channelSettingsDialog {
   .rawContainer {
@@ -24,7 +25,7 @@ $content: grey;
         margin-top: 2%;
         border-radius: 25px;
         .changeChannelNameInput {
-          background-color: rgb(53, 49, 59);
+          background-color: $secondary;
 
           display: flex;
           justify-content: space-between;
@@ -51,7 +52,7 @@ $content: grey;
         margin-top: 2%;
         border-radius: 25px;
         .changeChannelPasswordInput {
-          background-color: rgb(53, 49, 59);
+          background-color: $secondary;
 
           display: flex;
           justify-content: space-between;
@@ -79,7 +80,7 @@ $content: grey;
       border-radius: 25px;
       .participantsList {
         background-color: $secondary;
-        // background-color: rgb(42, 38, 48);
+        // background-color: $primary;
         width: 90%;
         height: 90%;
         margin-top: 1%;
@@ -108,16 +109,16 @@ $content: grey;
               margin-left: 5px;
             }
             .participantName {
-          // background-color: rgb(53, 49, 59);
-          background-color: transparent;
+              // background-color: $secondary;
+              background-color: transparent;
               margin-top: 20px;
               margin-left: 20px;
               height: 25px;
             }
             .adminButton {
               margin-left: 50px;
-          background-color: rgb(53, 49, 59);
-          // background-color: red;
+              background-color: $secondary;
+              // background-color: red;
               margin-top: 5px;
               border-radius: 50px;
               height: 50px;
@@ -125,16 +126,16 @@ $content: grey;
             }
             .notAdminButton {
               margin-left: 50px;
-          background-color: transparent;
-          // background-color: red;
+              background-color: transparent;
+              // background-color: red;
               margin-top: 5px;
               border-radius: 50px;
               height: 50px;
               width: 70px;
             }
             .muteButton {
-          background-color: rgb(53, 49, 59);
-          // background-color: blue;
+              background-color: $secondary;
+              // background-color: blue;
               margin-top: 5px;
               margin-left: 25px;
               border-radius: 50px;
@@ -142,8 +143,8 @@ $content: grey;
               width: 70px;
             }
             .banButton {
-          background-color: rgb(53, 49, 59);
-          // background-color: green;
+              background-color: $secondary;
+              // background-color: green;
               margin-top: 5px;
               height: 50px;
               width: 70px;
@@ -152,8 +153,8 @@ $content: grey;
             }
 
             .kickButton {
-          background-color: rgb(53, 49, 59);
-          // background-color: purple;
+              background-color: $secondary;
+              // background-color: purple;
               margin-top: 5px;
               height: 50px;
               width: 70px;

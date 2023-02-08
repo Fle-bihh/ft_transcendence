@@ -1,10 +1,14 @@
+$primary: rgb(255, 255, 255,);
+$secondary: rgb(190, 190, 190);
+$third: rgb(150, 150, 150);
+
 .main {
   height: 100%;
   width: 78%;
 
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
 
-  color: white;
+  color: black;
 
   .mainTitleContainer {
     width: 100%;
@@ -13,7 +17,7 @@
     justify-content: flex-start;
     align-items: center;
     text-align: center;
-    background-color: rgb(54, 51, 57);
+    background-color: $third;
 
     .mainTitle {
       width: 35px;
@@ -21,17 +25,17 @@
       align-items: center;
       margin-right: 2%;
       margin-left: 2%;
-      color: grey;
+      color: black;
     }
 
     .openConvName {
       margin-left: 1%;
-      background-color: rgb(54, 51, 57);
+      background-color: $third;
     }
 
     .newConvMessageInput {
       width: 100%;
-      color: white;
+      color: black;
       padding-left: 2%;
       font-size: large;
       background-color: transparent;
@@ -70,8 +74,8 @@
       height: 34px;
       width: 400px;
 
-      background-color: rgb(53, 49, 59);
-      color: whitesmoke;
+      background-color: $secondary;
+      color: blacksmoke;
 
       display: flex;
       justify-content: space-between;
@@ -89,7 +93,7 @@
       font-size: large;
     }
     .channelPrivacyToggleButton {
-      background-color: rgb(53, 49, 59);
+      background-color: $secondary;
     }
   }
 
@@ -191,7 +195,7 @@
       input {
         font-weight: bold;
         width: 100%;
-        color: white;
+        color: black;
         padding-left: 2%;
         font-size: large;
         background-color: transparent;
