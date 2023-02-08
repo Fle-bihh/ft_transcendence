@@ -65,8 +65,6 @@ export class AuthService {
           login: login,
         }
       });
-      if (user)
-        user.firstConnection = false;
       if (!user) {
         try {
           await this.usersRepository.save(authCredentialsDto);

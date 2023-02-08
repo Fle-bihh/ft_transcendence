@@ -97,10 +97,12 @@ export class UsersService {
     if (found) {
       found.username = username;
       try {
+        found.firstConnection = false;
         await this.usersRepository.save(found);
       } catch (e) {
         console.log(e.code);
         if (e.code === '23505') {
+          found.firstConnection = true;
           throw new InternalServerErrorException('Username already exists');
         }
       }

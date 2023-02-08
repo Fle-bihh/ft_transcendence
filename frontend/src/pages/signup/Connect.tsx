@@ -7,7 +7,7 @@ import { actionCreators, RootState } from "../../state";
 import Cookies from "universal-cookie";
 import PinInput from "react-pin-input";
 import "./Connect.scss";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 
 
@@ -16,7 +16,8 @@ const Connect = () => {
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get("code") as string;
   const cookies = new Cookies();
-  const [firstCo, setFirstCo] = useState(true)
+  const [firstCo, setFirstCo] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [inputValue, setInputValue] = useState("")
 
   const dispatch = useDispatch();
@@ -45,14 +46,19 @@ const Connect = () => {
         cookies.set("jwt", response.data.accessToken, { path: `/` });
         setUser(response.data.user);
         if (response.data.user.firstConnection) {
-          setFirstCo (true);
+          setFirstCo(true);
         }
+        setLoading(false)
         console.log('response.data.user -->', firstCo)
-        utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
-        utils.gameSocket.emit("CHECK_RECONNEXION", {
-          username: userReducer.user?.username,
-        });
+        // const tmp = true
+
+
+        console.log('response.data.user -->', firstCo)
       }
+      utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
+      utils.gameSocket.emit("CHECK_RECONNEXION", {
+        username: userReducer.user?.username,
+      });
     })
     .catch(() => { });
 
@@ -79,59 +85,60 @@ const Connect = () => {
         div.style.display = "flex";
       });
 
-    }
-      const handleClose = () => {
-        const jwt = cookies.get('jwt');
-        const options = {
-            headers: {
-                'authorization': `Bearer ${jwt}`
-            }
-          }
-          const tmp = inputValue.replace(/ /g, "")
-          console.log("tmp=", tmp)
-        if (tmp !== null){
-          console.log("iiiiii")
-          axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
-            if (response.data != null) {
-                setUser(response.data)
-              }
-            })
-          }
-        //   else  {
-        //   console.log("izzzdzdzdiiiii")
+  }
 
-        //     axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: userReducer.user!.username }, options).then(response => {
-        //       if (response.data != null) {
-        //         setUser(response.data)
-        //     }
-        //   })
-        // }
-          setFirstCo(false)
-          window.history.pushState({}, window.location.toString());
-          window.location.replace("/");
+  useEffect(() => {
+    console.log('ouiouiouoiuoiui', firstCo)
+  }, [firstCo])
+
+  const handleClose = () => {
+    const jwt = cookies.get('jwt');
+    const options = {
+      headers: {
+        'authorization': `Bearer ${jwt}`
+      }
     }
-  if (firstCo)
-    return (
-      <div className="connectPage">
-        <div className="setUsernameContainer">
-          <div className="setUsernameTitle"><h1>Welcome to The Last Dance</h1></div>
-          <div className="setUsernameDescription" onClick={() => {
-          }}>
-            <h2>Please choose the username everyone will see in game. You will still
-            be able to change it later.</h2>
+    const tmp = inputValue.replace(/ /g, "")
+    console.log("tmp=", tmp)
+    if (tmp !== "") {
+      console.log("iiiiii")
+      axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
+        if (response.data != null) {
+          setUser(response.data)
+        }
+      })
+    }
+    window.history.pushState({}, window.location.toString());
+    window.location.replace("/");
+    setFirstCo(false)
+  }
+  console.log('response.data.user! -->', firstCo)
+
+
+  if (loading) return (<></>)
+
+if (firstCo)
+  return (
+    <div className="connectPage">
+      <div className="setUsernameContainer">
+        <div className="setUsernameTitle">Welcome to The Last Dance</div>
+        <div className="setUsernameDescription" onClick={() => {
+        }}>
+          Please choose the username everyone will see in game. You will still
+          be able to change it later.
           </div>
-          <TextField
-            className="setUsernameTextField"
-              placeholder={userReducer.user?.username}
-             inputProps={{ maxLength: 12 }}
-            // va˘lue={userReducer.user?.username}
-             onChange={(event) => setInputValue(event.currentTarget.value)}
-             onKeyUp={(e) => { if (e.key === 'Enter') { handleClose()} }}
-          ></TextField>
-            <Button onClick={() => handleClose()}>Confirm</Button>
-        </div>
+        <TextField
+          className="setUsernameTextField"
+          placeholder={userReducer.user?.username}
+          inputProps={{ maxLength: 12 }}
+          onChange={(event) => setInputValue(event.currentTarget.value)}
+          onKeyUp={(e) => { if (e.key === 'Enter') { handleClose() } }}
+        ></TextField>
+        <Button onClick={() => handleClose()}>Confirm</Button>
       </div>
-    );
+    </div>
+  );
+
   else if (userReducer.user && !userReducer.user.twoFactorAuth)
     return <Navigate to={"/"} />;
   else if (
@@ -139,6 +146,7 @@ const Connect = () => {
     userReducer.user.twoFactorAuth &&
     !twoFAReducer.twoFactorVerify
   )
+
     return (
       <div className="login-2fa">
         <h1>Google Authenticator Code</h1>
