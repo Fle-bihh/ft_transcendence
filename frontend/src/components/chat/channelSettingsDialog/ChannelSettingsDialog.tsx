@@ -190,6 +190,7 @@ const ChannelSettingsDialog = (props: {
                                     "emit ADD_ADMIN to back from ",
                                     user.user?.username
                                   );
+                                  handleClose();
                                 } else {
                                   utils.socket.emit("REMOVE_ADMIN", {
                                     new_admin: participant.username,
@@ -199,6 +200,7 @@ const ChannelSettingsDialog = (props: {
                                     "emit REMOVE_ADMIN to back from ",
                                     user.user?.username
                                   );
+                                  handleClose();
                                 }
                               }}
                             >
@@ -219,6 +221,7 @@ const ChannelSettingsDialog = (props: {
                                   "emit MUTE_USER to back from ",
                                   participant.username
                                 );
+                                handleClose();
                               }
                             }}
                           >
@@ -236,6 +239,7 @@ const ChannelSettingsDialog = (props: {
                                   "emit BAN_USER to back from ",
                                   participant.username
                                 );
+                                handleClose();
                               }
                             }}
                           >
@@ -254,6 +258,7 @@ const ChannelSettingsDialog = (props: {
                                     "emit KICK_USER to back from ",
                                     participant.username
                                   );
+                                  handleClose();
                                 }
                               }}
                             >
