@@ -30,6 +30,11 @@ const waitingForInvite = Array<{
   }
 }>()
 
+const spectators = Array<{
+  roomId: string,
+  login: string,
+}>()
+
 const UserDisconnected = []
 
 @WebSocketGateway(5002, { transports: ['websocket'], "pingInterval": 5000, "pingTimeout": 20000 })
@@ -90,6 +95,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.gameService.createGame(data);
         this.allGames.splice(room[0], 1)
         this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: false })
+        let toRemove = Array<string>()
+        spectators.map((user) => {
+          if (user.roomId == room[1].roomID)
+            toRemove.push(user.login);
+        })
+        for (var i = 0; i <= toRemove.length; i++) {
+          spectators.splice(spectators.findIndex((u) => u.login == toRemove[i]), 1);
+        }
+        this.io.socketsLeave("room1");
         return;
       }
       this.io.to(roomID).emit("render", this.allGames[room[0]])
@@ -115,6 +129,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.gameService.createGame(data);
         this.allGames.splice(room[0], 1)
         this.io.to(room[1].roomID).emit('finish', { room: room[1], draw: true })
+        let toRemove = Array<string>()
+        spectators.map((user) => {
+          if (user.roomId == room[1].roomID)
+            toRemove.push(user.login);
+        })
+        for (var i = 0; i <= toRemove.length; i++) {
+          spectators.splice(spectators.findIndex((u) => u.login == toRemove[i]), 1);
+        }
+        this.io.socketsLeave("room1");
       }
     }
   }
@@ -277,11 +300,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('START_GAME')
   async startGame(client: Socket, info: { user: { login: string }, gameMap: string }) {
-    let oponnent: {
-      map: string; user: {
-        login: string;
-      }
-    };
+    let oponnent: { map: string; user: { login: string; }};
+    const spectateI = spectators.findIndex((u) => u.login == info.user.login)
+    if (spectateI != -1) {
+      client.leave(spectators[spectateI].roomId)
+      spectators.splice(spectateI, 1);
+    }
     const oldGame = this.getRoomByClientLogin(info.user.login);
     if (oldGame != null)
       this.finishGameDeco({ roomId: oldGame[1].roomID, playerwin: oldGame[1].players[0].username == info.user.login ? 1 : 0, playerdeco: oldGame[1].players[0].username == info.user.login ? 0 : 1 })
@@ -329,12 +353,23 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('START_SPECTATE')
-  start_spectate(client: Socket, data: { roomID: string, start: boolean }) {
+  start_spectate(client: Socket, data: { username : string, roomID: string, start: boolean }) {
     const room = this.getRoomByID(data.roomID);
+    console.log("data= ", data)
+    console.log("spectator = ", spectators)
     if (room) {
-      if (data.start == false)
+      if (data.start == false) {
+        const spectateI = spectators.findIndex((u) => u.login == data.username)
+        if (spectateI != -1) {
+          console.log("spectate= ", spectateI)
+          client.leave(spectators[spectateI].roomId)
+          spectators.splice(spectateI, 1);
+        }
+        spectators.push({roomId : room[1].roomID, login : data.username})
         this.joinRoom(client, room[1].roomID)
-      this.io.to(client.id).emit('start_spectate', room[1])
+      }
+      if (spectators.find((u) => u.roomId == data.roomID))
+        this.io.to(client.id).emit('start_spectate', room[1])
     }
   }
 
@@ -373,6 +408,14 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async startInviteGame(client: Socket, info: { user: { login: string }, gameMap: string, roomId: string }) {
     let oponnent: { map: string; user: { login: string } };
     console.log("start invite = ", info)
+    const spectateI = spectators.findIndex((u) => u.login == info.user.login)
+    if (spectateI != -1) {
+      client.leave(spectators[spectateI].roomId)
+      spectators.splice(spectateI, 1);
+    }
+    const oldGame = this.getRoomByClientLogin(info.user.login);
+    if (oldGame != null)
+      this.finishGameDeco({ roomId: oldGame[1].roomID, playerwin: oldGame[1].players[0].username == info.user.login ? 1 : 0, playerdeco: oldGame[1].players[0].username == info.user.login ? 0 : 1 })
     if ((oponnent = waitingForInvite.find(item => item.map == info.gameMap)) != undefined) {
       this.allGames.push(new GameClass(info.gameMap, info.user.login, info.roomId, client.id))
       const room = this.getRoomByID(info.roomId)
@@ -393,6 +436,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }
+
   @SubscribeMessage('GET_CLIENT_STATUS')
   getUserStatus(client: Socket, data: { nickname: string }) {
     console.log('allClients ldisqhgvbjkhqfsbd', allClients);

@@ -1,11 +1,13 @@
 import { useEffect} from "react";
-import { setUser } from "../../state/action-creators";
+import { setUser, removeNotifPong } from "../../state/action-creators";
 import "./signup.scss";
 
  const Signup = () => {
 
   useEffect(() => {
+    console.log("refresh")
     setUser(null);
+    removeNotifPong();
   }, [])
 
 

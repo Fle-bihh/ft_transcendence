@@ -6,8 +6,9 @@ import * as React from "react";
 
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state";
+import {  useDispatch, useSelector } from "react-redux";
+import {  actionCreators, RootState } from "../../state";
+import { bindActionCreators } from "redux";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
 import Version2 from "../../styles/asset/Version2.gif";
@@ -54,6 +55,8 @@ const ProfileOther = () => {
   const [declineGame, setDeclineGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [openGame, setOpenGame] = useState(false);
+  const dispatch = useDispatch();
+  const { removeNotifInvite } = bindActionCreators(actionCreators, dispatch);
 
   const [matchHistory] = useState(
     Array<{
@@ -205,6 +208,7 @@ const ProfileOther = () => {
         utils.socket.emit("REMOVE_FRIEND_SHIP", {
           receiver: userDisplay.username,
         });
+        removeNotifInvite(user.user!.username)
       }
     }
     setOpen(false);
