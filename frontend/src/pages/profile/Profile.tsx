@@ -163,7 +163,7 @@ const Profile = () => {
                     getData: true,
                 })
             }
-        })
+        }).catch(() => {})
         axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
             userMatchHistory.splice(0, userMatchHistory.length)

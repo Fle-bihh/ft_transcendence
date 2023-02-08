@@ -24,8 +24,8 @@ import { seenAllNotif } from "../../state/action-creators";
 
 const Navbar = (props: any) => {
   const dispatch = useDispatch();
-  const { setUser } = bindActionCreators(actionCreators, dispatch);
-  const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
+  const { setUser, setTwoFA } = bindActionCreators(actionCreators, dispatch);
+  // const { setTwoFA } = bindActionCreators(actionCreators, dispatch);
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
   const utilsReducer = useSelector((state: RootState) => state.utils);
   const StyledToolbar = styled(Toolbar)({display: "flex",justifyContent: "space-between",});
@@ -102,7 +102,7 @@ const Navbar = (props: any) => {
                     setUser(null);
                     setTwoFA(false);
                     window.history.pushState({}, window.location.toString());
-                    window.location.replace("/");
+                    window.location.replace("/signup");
                   }}
                 >
                   <Typography
