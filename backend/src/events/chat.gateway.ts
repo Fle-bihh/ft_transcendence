@@ -68,17 +68,6 @@ export class ChatGateway {
     }
   }
 
-  @SubscribeMessage('UPDATE_USER_SOCKET')
-
-  update_user_socket(client: Socket, data: { username: string }) {
-    // if (users.findIndex((user) => user.user.username === data.username) >= 0) {
-    //   users[
-    //     users.findIndex((user) => user.user.username === data.username)
-    //   ].socket = client;
-    // }
-    // this.logger.log('UPDATE_USER_SOCKET recu ChatGateway');
-  }
-
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any; }) {
     console.log("STORE_CLIENT_INFO Chat: ", data)
@@ -216,8 +205,7 @@ export class ChatGateway {
       } else if (message.receiver.username === data.sender) {
         receiver = message.sender.username;
         if (
-          !(await this.usersService.isBlocked(receiver, data.sender)) &&
-          !(await this.usersService.isBlocked(data.sender, receiver))
+          !(await this.usersService.isBlocked(receiver, data.sender))
         )
           if (
             message.receiver.username === user.username &&
@@ -232,8 +220,7 @@ export class ChatGateway {
       } else {
         receiver = message.receiver.username;
         if (
-          !(await this.usersService.isBlocked(receiver, data.sender)) &&
-          !(await this.usersService.isBlocked(data.sender, receiver))
+          !(await this.usersService.isBlocked(receiver, data.sender))
         )
           if (
             message.sender.username === user.username &&
@@ -435,8 +422,6 @@ export class ChatGateway {
     },
   ) {
     this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
-    console.log("get one channel : ", this.channelsService.getOneChannel(data.name))
-    // if (!this.channelsService.getOneChannel(data.name)) {
     try {
       const user = await this.usersService.getUserByUsername(data.owner);
       const channel: Channel = await this.channelsService.createChannel(
@@ -457,7 +442,6 @@ export class ChatGateway {
       this.logger.log('ERROR USER IN CREATE_CHANNEL');
     }
     this.get_all_conv_info(client, { sender: data.owner });
-  // }
   }
 
   @SubscribeMessage('JOIN_CHANNEL')
