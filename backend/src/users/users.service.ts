@@ -85,27 +85,26 @@ export class UsersService {
     try {
       const found = await this.usersRepository.findOneBy({ username });
       return found;
-    } catch(e) {
+    } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
-    const found = await this.getUserById(id, user);
+    let found = await this.getUserById(id, user);
+    console.log(found);
+    found.username = username
     if (username.length > 12)
       throw new InternalServerErrorException('Username must be shorter or equal to 12 characters');
     if (found) {
-      found.username = username;
       try {
-        found.firstConnection = false;
         await this.usersRepository.save(found);
       } catch (e) {
-        console.log(e.code);
         if (e.code === '23505') {
-          found.firstConnection = true;
           throw new InternalServerErrorException('Username already exists');
         }
       }
+      found = await this.getUserByUsername(username);
       return found;
     }
     return null;

@@ -60,12 +60,12 @@ export class AuthService {
       const { data } = await lastValueFrom(response$);
       const authCredentialsDto: AuthCredentialsDto = await this.setAuthCredentialsDto({ username: data.login, login: data.login, profileImage: data.image.link, email: data.email });
       const { login } = authCredentialsDto;
-      let user: User = await this.usersRepository.findOne({
-        where: {
-          login: login,
-        }
-      });
-      if (!user) {
+      let user: User;
+      try {
+        user = await this.userService.getUserByLogin(data.login);
+        user.firstConnection = false;
+        await this.usersRepository.save(user);
+      } catch (e) {
         try {
           await this.usersRepository.save(authCredentialsDto);
         }
@@ -73,14 +73,9 @@ export class AuthService {
           throw new InternalServerErrorException();
         }
       }
-      user = await this.usersRepository.findOne({
-        where: {
-          login: login,
-        }
-      });
+      user = await this.userService.getUserByLogin(data.login);
       const payload: JwtPayload = { login };
       const accessToken: string = this.jwtService.sign(payload);
-      console.log(user);
       return { accessToken: accessToken, user: user };
     } catch (e) { console.log(e.code) }
   }
