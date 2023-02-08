@@ -24,9 +24,9 @@ const Chat = () => {
       index: number;
       privacy: boolean;
       name: string;
-      password: string;
       description: string;
       owner: string;
+      password: boolean;
     }>
   );
   const [openConvName, setOpenConvName] = useState("");

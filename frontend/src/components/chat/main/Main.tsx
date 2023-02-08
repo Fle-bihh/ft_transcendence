@@ -45,9 +45,9 @@ const Main = (props: {
     index: number;
     privacy: boolean;
     name: string;
-    password: string;
     description: string;
     owner: string;
+    password: boolean;
   }>;
   setAllChannels: Function;
 }) => {
@@ -137,11 +137,11 @@ const Main = (props: {
     (
       data: Array<{
         index: number;
-        privacy: string;
+        privacy: boolean;
         name: string;
-        password: string;
         description: string;
         owner: string;
+        password: boolean;
       }>
     ) => {
       console.log("get_all_channels recu", user.user?.username);

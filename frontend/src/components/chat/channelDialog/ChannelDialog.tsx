@@ -30,9 +30,9 @@ const ChannelDialog = (props: {
     index: number;
     privacy: boolean;
     name: string;
-    password: string;
     description: string;
     owner: string;
+    password: boolean;
   }>;
   setAllChannels: Function;
   allConv: Array<{
@@ -94,7 +94,6 @@ const ChannelDialog = (props: {
         index: number;
         privacy: boolean;
         name: string;
-        password: string;
         description: string;
         owner: string;
       }>
@@ -197,7 +196,7 @@ const ChannelDialog = (props: {
                       ) : (
                         <></>
                       )}
-                      {channel.password.length ? (
+                      {channel.password ? (
                         <ShieldIcon className="icon" />
                       ) : (
                         <RemoveModeratorIcon className="icon" />
@@ -227,7 +226,7 @@ const ChannelDialog = (props: {
               if (
                 props.allChannels.find(
                   (channel) => channel.name === joinChannelSelect
-                )!.password.length
+                )!.password
               ) {
                 setShowJoinChannelPasswordModal(true);
                 window.addEventListener("keydown", handleKeyDown);
@@ -372,22 +371,22 @@ const ChannelDialog = (props: {
           value={joinChannelPasswordInput}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              if (
-                props.allChannels.find(
-                  (channel) => channel.name === joinChannelSelect
-                )!.password !== joinChannelPasswordInput
-              ) {
-                document
-                  .getElementById("joinChannelInput")!
-                  .classList.add("error");
-                const timeOut = setTimeout(() => {
-                  document
-                    .getElementById("joinChannelInput")!
-                    .classList.remove("error");
-                  clearTimeout(timeOut);
-                }, 200);
-              }
-              // setShowJoinChannelPasswordModal(false);
+              // if (
+              //   props.allChannels.find(
+              //     (channel) => channel.name === joinChannelSelect
+              //   )!.password !== joinChannelPasswordInput
+              // ) {
+              //   document
+              //     .getElementById("joinChannelInput")!
+              //     .classList.add("error");
+              //   const timeOut = setTimeout(() => {
+              //     document
+              //       .getElementById("joinChannelInput")!
+              //       .classList.remove("error");
+              //     clearTimeout(timeOut);
+              //   }, 200);
+              // }
+              // // setShowJoinChannelPasswordModal(false);
               utils.socket.emit("JOIN_CHANNEL", {
                 username: user.user?.username,
                 channelName: joinChannelSelect,
