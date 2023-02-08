@@ -163,8 +163,7 @@ const ChannelSettingsDialog = (props: {
                     if (
                       !props.allChannels.find(
                         (channel) =>
-                          channel.name === props.openConvName &&
-                          participant.username === channel.owner
+                          channel.name === props.openConvName
                       )
                     ) {
                       return (
