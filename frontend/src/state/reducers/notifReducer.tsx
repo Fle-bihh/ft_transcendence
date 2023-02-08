@@ -35,9 +35,10 @@ export const notifReducer = (state: NotifArray = initialState, action: notifActi
 		}
 		case notifActionType.REMOVENOTIFPONG: {
 			let array = new Array<Notif>();
-			state.notifArray.map((notif) => {
-				if (notif.type != NotifType.INVITEGAME)
+			state.notifArray.forEach((notif) => {
+				if (notif.type !== NotifType.INVITEGAME)
 					array.push(notif)
+				
 			})
 			return {
 				...state,
@@ -46,9 +47,9 @@ export const notifReducer = (state: NotifArray = initialState, action: notifActi
 		}
 		case notifActionType.REMOVENOTIFINVITE: {
 			let array = new Array<Notif>();
-			state.notifArray.map((notif) => {
-				if (action.payload != notif.data.sender)
-					if (notif.type != NotifType.FRIENDREQUEST)
+			state.notifArray.forEach((notif) => {
+				if (action.payload !== notif.data.sender)
+					if (notif.type !== NotifType.FRIENDREQUEST)
 						array.push(notif)
 			})
 			return {
