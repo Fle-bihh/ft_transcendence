@@ -62,8 +62,14 @@ export class ChannelService {
   }
 
   async getOneChannel(id: string): Promise<Channel> {
-    let found: Channel = (await this.getChannel()).find((channel) => channel.name === id);
-    return found;
+    let found: Channel;
+    try {
+      
+      found = (await this.getChannel()).find((channel) => channel.name === id);
+      return found;
+    } catch (error) {
+      return found;
+    }
   }
 
   async joinChannel(username: string, channelName: string, password: string) {

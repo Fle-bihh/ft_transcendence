@@ -5,11 +5,23 @@ import { setUser, removeNotifPong } from "../../state/action-creators";
 import "./signup.scss";
 
  const Signup = () => {
+<<<<<<< HEAD
   const utils = useSelector((state: RootState) => state.utils);
 
   useEffect(() => {
     console.log("refresh utils = ", utils.ip)
+=======
+  const userReducer = useSelector(
+    (state: RootState) => state.persistantReducer.userReducer
+  );
+
+
+  useEffect(() => {
+    console.log("refresh")
+    console.log()
+>>>>>>> 2e62612e36d2dcd716942090ea31ff7eaf560fa4
     setUser(null);
+    console.log("pls c est quoi ca? == ",userReducer.user)
     removeNotifPong();
   }, [])
 

@@ -47,6 +47,8 @@ const Connect = () => {
         if (response.data.user.firstConnection) {
           setFirstCo(true);
         }
+        else
+          setFirstCo(false);
         setLoading(false)
         console.log('response.data.user -->', firstCo)
         // const tmp = true
@@ -103,6 +105,7 @@ const Connect = () => {
       console.log("iiiiii")
       axios.patch(`http://${utils.ip}:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
         if (response.data != null) {
+          console.log('resp data == ', response.data);
           setUser(response.data)
         }
       })
@@ -116,27 +119,27 @@ const Connect = () => {
 
   if (loading) return (<></>)
 
-if (firstCo)
-  return (
-    <div className="connectPage">
-      <div className="setUsernameContainer">
-        <div className="setUsernameTitle">Welcome to The Last Dance</div>
-        <div className="setUsernameDescription" onClick={() => {
-        }}>
-          Please choose the username everyone will see in game. You will still
-          be able to change it later.
+  if (firstCo)
+    return (
+      <div className="connectPage">
+        <div className="setUsernameContainer">
+          <div className="setUsernameTitle">Welcome to The Last Dance</div>
+          <div className="setUsernameDescription" onClick={() => {
+          }}>
+            Please choose the username everyone will see in game. You will still
+            be able to change it later.
           </div>
-        <TextField
-          className="setUsernameTextField"
-          placeholder={userReducer.user?.username}
-          inputProps={{ maxLength: 12 }}
-          onChange={(event) => setInputValue(event.currentTarget.value)}
-          onKeyUp={(e) => { if (e.key === 'Enter') { handleClose() } }}
-        ></TextField>
-        <Button onClick={() => handleClose()}>Confirm</Button>
+          <TextField
+            className="setUsernameTextField"
+            placeholder={userReducer.user?.username}
+            inputProps={{ maxLength: 12 }}
+            onChange={(event) => setInputValue(event.currentTarget.value)}
+            onKeyUp={(e) => { if (e.key === 'Enter') { handleClose() } }}
+          ></TextField>
+          <Button onClick={() => handleClose()}>Confirm</Button>
+        </div>
       </div>
-    </div>
-  );
+    );
 
   else if (userReducer.user && !userReducer.user.twoFactorAuth)
     return <Navigate to={"/"} />;

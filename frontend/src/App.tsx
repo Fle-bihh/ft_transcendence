@@ -49,11 +49,7 @@ function App() {
           <Route
             path="/"
             element={
-              <ConnectionChecker>
-                <NotifInterceptor>
                   <Home />
-                </NotifInterceptor>
-              </ConnectionChecker>
             }
           />
         <Route path="*" element={<NotFoundPage />} />
