@@ -129,7 +129,7 @@ const ProfileOther = () => {
       window.location.replace("/");
     } else {
       axios
-        .get(`http://localhost:5001/user/username/${parsed.username} `, options)
+        .get(`http://${utils.ip}:5001/user/username/${parsed.username} `, options)
         .then((response) => {
           if (response.data.username != null) {
             setUserDisplay({
@@ -159,7 +159,7 @@ const ProfileOther = () => {
         });
     }
     axios
-      .get(`http://localhost:5001/game/${user.user?.id}`, options)
+      .get(`http://${utils.ip}:5001/game/${user.user?.id}`, options)
       .then((response) => {
         if (response.data != null) {
         matchHistory.splice(0, matchHistory.length)

@@ -20,7 +20,7 @@ const cookies = new Cookies();
 const Profile = () => {
 
     const [firstOpen, setFirstOpen] = useState(true)
-    // const utils = useSelector((state: RootState) => state.utils);
+    const utils = useSelector((state: RootState) => state.utils);
     const user = useSelector((state: RootState) => state.persistantReducer.userReducer);
     const [inputValue, setInputValue] = useState("")
     const [open, setOpen] = React.useState(false);
@@ -79,7 +79,7 @@ const Profile = () => {
 
 
             //   user.suer?.id /blocked/, {username : },  option 
-            axios.patch(`http://localhost:5001/user/${user.user?.id}/username`, { username: tmp }, options).then(response => {
+            axios.patch(`http://${utils.ip}:5001/user/${user.user?.id}/username`, { username: tmp }, options).then(response => {
                 if (response.data != null) {
                     setUser(response.data)
                     setmessage("change name on " + tmp);
@@ -110,7 +110,7 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
+        axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
     };
 
     const handleClose2FA = () => {
@@ -127,7 +127,7 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/activate/` + value, options)
+        axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/activate/` + value, options)
             .then(res => {
                 setUser(res.data);
                 setsucces(true)
@@ -148,7 +148,7 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://localhost:5001/user/id/${user.user?.id}`, options).then(response => {
+        axios.get(`http://${utils.ip}:5001/user/id/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
                 setUserDisplay({
                     id: response.data.id,
@@ -164,7 +164,7 @@ const Profile = () => {
                 })
             }
         })
-        axios.get(`http://localhost:5001/game/${user.user?.id}`, options).then(response => {
+        axios.get(`http://${utils.ip}:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
             userMatchHistory.splice(0, userMatchHistory.length)
                 response.data.forEach((data: any) => {
@@ -206,7 +206,7 @@ const Profile = () => {
 
         var config = {
             method: 'POST',
-            url: `http://localhost:5001/user/${user.user?.id}/profileImage`,
+            url: `http://${utils.ip}:5001/user/${user.user?.id}/profileImage`,
             headers: options.headers,
             profileImage: formData,
             data: formData,
@@ -309,7 +309,7 @@ const Profile = () => {
                                         'authorization': `Bearer ${jwt}`
                                     }
                                 }
-                                axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                                axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
                                     setUser(res.data)
                                 })
                             }}>

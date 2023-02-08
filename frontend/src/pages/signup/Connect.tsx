@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { bindActionCreators } from "redux";
-import { ip } from "../../App";
 import { actionCreators, RootState } from "../../state";
 import Cookies from "universal-cookie";
 import PinInput from "react-pin-input";
@@ -35,7 +34,7 @@ const Connect = () => {
     .request({
       url: "/auth/api42/Signin",
       method: "post",
-      baseURL: `http://${ip}:5001`,
+      baseURL: `http://${utils.ip}:5001`,
       params: {
         code: code,
         nickName: null,
@@ -72,7 +71,7 @@ const Connect = () => {
     console.log("Connect 1 cookie == ", options);
     axios
       .get(
-        `http://localhost:5001/user/${userReducer.user?.id}/2fa/verify/` +
+        `http://${utils.ip}:5001/user/${userReducer.user?.id}/2fa/verify/` +
         value,
         options
       )
@@ -102,7 +101,7 @@ const Connect = () => {
     console.log("tmp=", tmp)
     if (tmp !== "") {
       console.log("iiiiii")
-      axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
+      axios.patch(`http://${utils.ip}:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
         if (response.data != null) {
           setUser(response.data)
         }

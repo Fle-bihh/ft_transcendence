@@ -19,14 +19,12 @@ import { bindActionCreators } from "redux";
 import { NotifType } from "./state/type";
 import { useEffect } from "react";
 
-export const ip = window.location.hostname;
-
 function App() {
   const utils = useSelector((state: RootState) => state.utils);
   const { addNotif } = bindActionCreators(actionCreators, useDispatch());
-  const user = useSelector(
-    (state: RootState) => state.persistantReducer.userReducer
-  );
+  const ip = process.env.REACT_APP_IP
+  const user = useSelector((state: RootState) => state.persistantReducer.userReducer);
+  
   utils.gameSocket.removeListener("invite_game");
   utils.gameSocket.on("invite_game", (data: { sender: string; gameMap: string; receiver: string }) => {
       console.log("received invitation data : ", data);
@@ -41,7 +39,7 @@ function App() {
       utils.gameSocket.emit("CHECK_RECONNEXION", {username : user.user?.username});
     }
   });
-
+  console.log("ip = ", ip);
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>

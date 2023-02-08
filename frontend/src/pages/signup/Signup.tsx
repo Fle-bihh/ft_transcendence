@@ -1,11 +1,14 @@
 import { useEffect} from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state";
 import { setUser, removeNotifPong } from "../../state/action-creators";
 import "./signup.scss";
 
  const Signup = () => {
+  const utils = useSelector((state: RootState) => state.utils);
 
   useEffect(() => {
-    console.log("refresh")
+    console.log("refresh utils = ", utils.ip)
     setUser(null);
     removeNotifPong();
   }, [])
@@ -18,7 +21,7 @@ import "./signup.scss";
         className="i42_button"
         onClick={() =>
           window.open(
-            `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2ba494ca541577ab12aead4ea4f59fc22b4c2bea05058775f2524344f2e602a9&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fhome&response_type=code`,
+            `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2ba494ca541577ab12aead4ea4f59fc22b4c2bea05058775f2524344f2e602a9&redirect_uri=http%3A%2F%2F${utils.ip}%3A3000%2Fhome&response_type=code`,
             "_self"
           )
         }
