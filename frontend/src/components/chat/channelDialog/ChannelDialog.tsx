@@ -141,9 +141,6 @@ const ChannelDialog = (props: {
 
               if (list != null) {
                 for (let i = 0; i < list.children.length; i++) {
-                  console.log(
-                    list.children[i].children[0].children[0].textContent
-                  );
                   if (
                     !event.currentTarget.value.length ||
                     list.children[i].children[0].children[0].textContent
@@ -351,10 +348,6 @@ const ChannelDialog = (props: {
                     "send ADD_MESSAGE to back from ",
                     user.user?.username
                   );
-                  console.log("privacy: ", alignment);
-                  console.log("name: ", channelNameInput);
-                  console.log("password: ", channelPasswordInput);
-                  console.log("description: ", descriptionInput);
                 }
                 handleClose();
               }}

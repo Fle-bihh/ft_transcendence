@@ -47,7 +47,7 @@ export class ChatGateway {
 
   @SubscribeMessage('BLOCK_USER')
   block_user(client: Socket, data: { username: string, target: string; }) {
-    console.log('BLOCK_USER recu ChatGateway', data);
+    this.logger.log('BLOCK_USER recu ChatGateway', data);
     this.usersService.addBlockList(data.username, data.target);
     client.emit('updateProfileOther', { username: data.target, friendStatus: 'blocked' });
     if (users.find(user => {
@@ -73,7 +73,7 @@ export class ChatGateway {
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any; }) {
-    console.log("STORE_CLIENT_INFO : ", data.user)
+    this.logger.log("STORE_CLIENT_INFO : ")
     users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
   }
 
@@ -118,10 +118,10 @@ export class ChatGateway {
     let receiverChannel: Channel;
     try {
       receiverUser = await this.usersService.getUserByUsername(data.receiver);
-    } catch (e) { console.log(e.code); }
+    } catch (e) { this.logger.log(e.code); }
     try {
       receiverChannel = await this.channelsService.getOneChannel(data.receiver);
-    } catch (e) { console.log(e.code); }
+    } catch (e) { this.logger.log(e.code); }
     let convers;
     if (receiverUser && !(await this.usersService.isBlocked(data.sender, data.receiver))) {
       convers = await this.usersService.getConv(senderUser, receiverUser);
@@ -182,10 +182,10 @@ export class ChatGateway {
     let receiverChannel: Channel;
     try {
       receiverUser = await this.usersService.getUserByUsername(data.receiver);
-    } catch (e) { console.log(e.code); }
+    } catch (e) { this.logger.log(e.code); }
     try {
       receiverChannel = await this.channelsService.getOneChannel(data.receiver);
-    } catch (e) { console.log(e.code); }
+    } catch (e) { this.logger.log(e.code); }
     const actualTime: Date = new Date();
     if (data.server == undefined)
       data.server = false;
@@ -249,6 +249,7 @@ export class ChatGateway {
 
   @SubscribeMessage('GET_PARTICIPANT_ROLE')
   async get_participant_role(client: Socket, data: { login: string, channel: string }) {
+    this.logger.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
     const user = await this.usersService.getUserByUsername(data.login);
     let role: string;
     try {
@@ -261,13 +262,12 @@ export class ChatGateway {
       else
         role = 'participant';
     } catch (e) { role = 'participant' }
-    console.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
     client.emit('get_participant_role', { role: role });
   }
 
   @SubscribeMessage('GET_PARTICIPANT_STATUS')
   async get_participant_status(client: Socket, data: { username: string, channel: string }) {  /////////////////////////////////////
-    console.log('GET_PARTICIPANT_status recu ChatGateway', data);
+    this.logger.log('GET_PARTICIPANT_status recu ChatGateway', data);
     let status: string;
     //  status = "ban", "mute", "null" 
     client.emit('get_participant_status', { status: status });
@@ -281,10 +281,9 @@ export class ChatGateway {
       channel = await this.channelsService.getOneChannel(data.channel)
       retArray = await this.channelsService.getChannelAdmins(channel);
     } catch (e) {
-      console.log('Not a channel');
       retArray = [];
     }
-    console.log('GET_CHANNEL_ADMINS recu ChatGateway', data);
+    this.logger.log('GET_CHANNEL_ADMINS recu ChatGateway', data);
     client.emit('get_channel_admins', { admins: retArray });
   }
 
@@ -293,22 +292,31 @@ export class ChatGateway {
   @SubscribeMessage('CREATE_CHANNEL')
   async create_channel(client: Socket, data: { privacy: boolean, name: string, password: string, description: string, owner: string }) {
     this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
-    const user = await this.usersService.getUserByUsername(data.owner);
-    const channel: Channel = await this.channelsService.createChannel(user, data.name, data.password, data.description, data.privacy); // ADD MSG CHANNEL CREATED
-    const retMsg = user.username + " created this channel"
-    this.add_message(client, { sender: data.owner, receiver: data.name, content: retMsg, server: true });
+    try {
+      const user = await this.usersService.getUserByUsername(data.owner);
+      const channel: Channel = await this.channelsService.createChannel(user, data.name, data.password, data.description, data.privacy); // ADD MSG CHANNEL CREATED
+      const retMsg = user.username + " created this channel"
+      this.add_message(client, { sender: data.owner, receiver: data.name, content: retMsg, server: true });
+    } catch (error) {
+      this.logger.log('ERROR USER IN CREATE_CHANNEL');
+    }
     this.get_all_conv_info(client, { sender: data.owner });
   }
 
   @SubscribeMessage('JOIN_CHANNEL')
   async join_channel(client: Socket, data: { username: string, channelName: string, channelPassword: string }) {
-    console.log('JOIN_CHANNEL recu ChatGateway', data);
-    if (!this.isBanned(data.username, data.channelName)) {
-      await this.channelsService.joinChannel(data.username, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
-      const retMsg = data.username + " joined this channel"
-      this.add_message(client, { sender: data.username, receiver: data.channelName, content: retMsg, server: true });
-      client.emit('channel_joined', { channelName: data.channelName });
-      this.get_all_conv_info(client, { sender: data.username });
+    this.logger.log('JOIN_CHANNEL recu ChatGateway', data);
+    try {
+      
+      if (!this.isBanned(data.username, data.channelName)) {
+        await this.channelsService.joinChannel(data.username, data.channelName, data.channelPassword); // ADD MSG X JOINED THE CHANNEL, ADD THAT IF MSG EMPTY PERSON JOINING BECOMES ADMIN
+        const retMsg = data.username + " joined this channel"
+        this.add_message(client, { sender: data.username, receiver: data.channelName, content: retMsg, server: true });
+        client.emit('channel_joined', { channelName: data.channelName });
+        this.get_all_conv_info(client, { sender: data.username });
+      }
+    } catch (error) {
+      this.logger.log('ERROR CHANNELSERVICE IN JOIN_CHANNEL');
     }
     client.emit('banned', { channelName: data.channelName });
   }
@@ -317,13 +325,13 @@ export class ChatGateway {
   async add_admin(client: Socket, data: { new_admin: string, channel: string }) { /////////////////////////////////////
     let channel = await this.channelsService.getOneChannel(data.channel);
     await this.channelsService.addAdmin(data.new_admin, channel);
-    console.log('ADD_ADMIN recu ChatGateway', data);
+    this.logger.log('ADD_ADMIN recu ChatGateway', data);
     this.get_participant_role(client, { login: data.new_admin, channel: channel.name });
   }
 
   @SubscribeMessage('BAN_USER')
   async ban_user(client: Socket, data: { user: string, channel: string }) { /////////////////////////////////////
-    console.log('BAN_USER recu ChatGateway', data);
+    this.logger.log('BAN_USER recu ChatGateway', data);
     if (banList.find((u) => (u.username === data.user && u.channel === data.channel))) {
       banList.splice(banList.findIndex((u) => (u.username === data.user && u.channel === data.channel)))
     }
@@ -333,7 +341,7 @@ export class ChatGateway {
 
   @SubscribeMessage('MUTE_USER')
   async mute_user(client: Socket, data: { user: string, channel: string }) {  /////////////////////////////////////
-    console.log('MUTE_USER recu ChatGateway', data);
+    this.logger.log('MUTE_USER recu ChatGateway', data);
     if (muteList.find((u) => (u.username === data.user && u.channel === data.channel))) {
       muteList.splice(muteList.findIndex((u) => (u.username === data.user && u.channel === data.channel)))
     }
@@ -380,7 +388,7 @@ export class ChatGateway {
 
   @SubscribeMessage('REMOVE_ADMIN')
   async remove_admin(client: Socket, data: { admin: string, channel: string }) {  /////////////////////////////////////
-    console.log('REMOVE_ADMIN recu ChatGateway', data);
+    this.logger.log('REMOVE_ADMIN recu ChatGateway', data);
     let channel = await this.channelsService.getOneChannel(data.channel);
     let user = await this.usersService.getUserByUsername(data.admin);
     this.channelsService.removeAdmin(user, channel);
@@ -389,7 +397,7 @@ export class ChatGateway {
 
   @SubscribeMessage('KICK_USER')
   async kick_user(client: Socket, data: { user: string, channel: string }) {  /////////////////////////////////////
-    console.log('KICK_USER recu ChatGateway', data);
+    this.logger.log('KICK_USER recu ChatGateway', data);
     let channel = await this.channelsService.getOneChannel(data.channel);
     let user = await this.usersService.getUserByUsername(data.user);
     this.channelsService.kickUser(user, channel);

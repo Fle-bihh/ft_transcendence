@@ -73,10 +73,6 @@ const Profile = () => {
             }
         }
         const tmp = inputValue.replace(/ /g, "")
-        // console.log("tmp=", tmp, "|")
-        // setInputValue(tmp)
-        // console.log("inputValue:", inputValue.length)
-        // console.log("inputValue=", inputValue, "|")
         if (change && tmp !== "") {
             // string.replace(/ /g, "")
 
@@ -314,7 +310,6 @@ const Profile = () => {
                                     }
                                 }
                                 axios.get(`http://localhost:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
-                                    console.log('data', res.data)
                                     setUser(res.data)
                                 })
                             }}>

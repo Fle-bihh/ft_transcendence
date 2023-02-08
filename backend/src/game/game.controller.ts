@@ -14,7 +14,6 @@ export class GameController {
 
   @Post()
   async createGame(@Body() gameResultsDto: GameResultsDto) {
-    console.log('yes no maybe idk');
     return await this.gameService.createGame(gameResultsDto);
   }
 
