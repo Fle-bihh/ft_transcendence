@@ -83,17 +83,16 @@ const Friends = () => {
           <div className="usersListContainer">
             <div className="usersListTitle">Users List</div>
             {usersList.map((user) => (
-              <Tooltip
-                title={`Go to ${user.username}'s profile`}
-                key={user.index}
-              >
-                <NavLink to={`/profileother?username=${user.username}`}>
+              <Tooltip title={`Go to ${user.username}'s profile`}>
+              <NavLink to={`/profileother?username=${user.username}`}>
+                <div className="friendListItem">
                   <IconButton>
                     <Avatar />
                   </IconButton>
-                  <div className="usersName">{user.username}</div>
-                </NavLink>
-              </Tooltip>
+                  <div className="friendsName">{user.username}</div>
+                </div>
+              </NavLink>
+            </Tooltip>
             ))}
           </div>
         </div>

@@ -124,7 +124,7 @@ const ProfileOther = () => {
     if (
       parsed.username === "" ||
       parsed.username === undefined ||
-      parsed.username === user.user?.login
+      parsed.username === user.user?.username
     ) {
       window.history.pushState({}, window.location.toString());
       window.location.replace("/");

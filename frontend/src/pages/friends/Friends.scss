@@ -20,20 +20,23 @@ $third: rgb(150, 150, 150);
       padding-left: 1%;
       .friendsListTitle {
         color: black;
+        font-size: xx-large;
+        margin-left: 30%;
         padding-top: 1%;
       }
       .friendListItem {
         width: 80%;
         height: 50px;
-        background-color: red;
+        background-color: $third;
         display: flex;
+        margin-left: 50px;
+        margin-top: 10px;
+        border-radius: 25px;
         .friendsName {
-
+          margin-left: 30%;
+          margin-top: 10px;
+          font-size: x-large;
         }
-      }
-      .friendsName {
-        color: black;
-        text-decoration: none;
       }
     }
   }
@@ -49,12 +52,24 @@ $third: rgb(150, 150, 150);
     .usersListContainer {
       padding-left: 1%;
       .usersListTitle {
+        font-size: xx-large;
+        margin-left: 40%;
         color: black;
         padding-top: 1%;
       }
-      .usersName {
-        color: black;
-        text-decoration: none;
+      .friendListItem {
+        width: 80%;
+        height: 50px;
+        background-color: $third;
+        display: flex;
+        margin-left: 50px;
+        margin-top: 10px;
+        border-radius: 25px;
+        .friendsName {
+          margin-left: 30%;
+          margin-top: 10px;
+          font-size: x-large;
+        }
       }
     }
   }
