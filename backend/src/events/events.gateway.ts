@@ -13,7 +13,7 @@ import { UsersService } from 'src/users/users.service';
 import { FriendRequestService } from 'src/friends/friendRequest.service';
 import { FriendShipService } from 'src/friends/friendShip.service';
 
-const users = Array<{ index: number; user: any; socket: Socket }>();
+const users = Array<{ user: any; socket: Socket }>();
 
 @WebSocketGateway({
   cors: {
@@ -377,6 +377,7 @@ export class EventsGateway {
 
   @SubscribeMessage('GET_USER_FRIENDS')
   async get_user_friends(client: Socket) {
+    console.log("get user friends : ", users)
     const userFriendList = await this.friendShipService.getUserFriendList(
       users.find((item) => item.socket.id == client.id).user.id,
     );
@@ -429,8 +430,8 @@ export class EventsGateway {
 
   handleConnection(client: Socket) {
     this.logger.log(`new client connected ${client.id}`);
-
-    users.push({ index: users.length, user: {}, socket: client });
+    users.push({ user: {}, socket: client });
+    console.table(users);
   }
 
   handleDisconnect(client: Socket) {

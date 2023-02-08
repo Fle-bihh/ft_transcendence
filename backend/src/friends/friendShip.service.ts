@@ -22,9 +22,7 @@ export class FriendShipService {
   }
 
   async getUserFriendList(id: string): Promise<FriendShip[]> {
-    const ret = await this.friendShipRepository.find({
-      where: [{ id_1: id }, { id_2: id }],
-    });
+    const ret = await this.friendShipRepository.find({ where: [{ id_1: id }, { id_2: id }]});
     return ret;
   }
 

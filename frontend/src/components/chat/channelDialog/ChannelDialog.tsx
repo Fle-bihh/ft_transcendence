@@ -162,7 +162,7 @@ const ChannelDialog = (props: {
           <div className="channelsContainer" id="listChannel">
             {props.allChannels.map((channel, index) => {
               if (props.allConv.find((conv) => conv.receiver === channel.name))
-                return <></>;
+                return <div key={index}></div>;
               return channel.privacy === false ||
                 channel.name === searchInputValue ? (
                 <div
@@ -211,7 +211,7 @@ const ChannelDialog = (props: {
                     )} */}
                 </div>
               ) : (
-                <></>
+                <div key={index}></div>
               );
             })}
           </div>

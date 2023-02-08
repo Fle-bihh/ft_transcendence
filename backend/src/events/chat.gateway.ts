@@ -17,7 +17,7 @@ import { Channel } from 'src/entities/channel.entity';
 import { Interval } from '@nestjs/schedule';
 import { channel } from 'diagnostics_channel';
 
-const users = Array<{ index: number; user: any; socket: Socket }>();
+const users = Array<{ user: any; socket: Socket }>();
 const muteList = Array<{ username: string, channel: string, time: number }>();
 const banList = Array<{ username: string, channel: string, time: number }>();
 
@@ -64,23 +64,24 @@ export class ChatGateway {
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
   update_user_socket(client: Socket, data: { login: string }) {
-    if (users.findIndex((user) => user.user.username === data.login) >= 0) {
-      users[users.findIndex((user) => user.user.username === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
-        client;
-    }
-    this.logger.log('UPDATE_USER_SOCKET recu ChatGateway');
+    // if (users.findIndex((user) => user.user.username === data.login) >= 0) {
+    //   users[users.findIndex((user) => user.user.username === data.login)].socket = // NE RIEN FAIRE POUR L'INSTANT
+    //     client;
+    // }
+    // this.logger.log('UPDATE_USER_SOCKET recu ChatGateway');
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any; }) {
-    this.logger.log("STORE_CLIENT_INFO Chat: ")
+    console.log("STORE_CLIENT_INFO Chat: ", data)
     users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
+    console.table(users)
   }
 
   handleConnection(client: Socket) {
     // this.logger.log(`new client connected ${client.id}`);
 
-    users.push({ index: users.length, user: {}, socket: client });
+    users.push({ user: {}, socket: client });
   }
 
   handleDisconnect(client: Socket) {
@@ -230,6 +231,7 @@ export class ChatGateway {
   async get_all_channels(client: Socket, login: string) {
     this.logger.log('GET_ALL_CHANNELS recu ChatGateway with');
     const channels = await this.channelsService.getChannel();
+    console.log("channels = ", channels)
     const retArray = Array<{
       privacy: boolean;
         name: string;
@@ -242,7 +244,7 @@ export class ChatGateway {
         privacy: channel.privacy,
         name: channel.name,
         description: channel.description,
-        owner: channel.creator.username,
+        owner: channel.creator ? channel.creator.username : "" ,
         password: channel.password.length > 0 ? true : false,
       })
     })
@@ -311,6 +313,8 @@ export class ChatGateway {
   @SubscribeMessage('CREATE_CHANNEL')
   async create_channel(client: Socket, data: { privacy: boolean, name: string, password: string, description: string, owner: string }) {
     this.logger.log('CREATE_CHANNEL recu ChatGateway with', data.name);
+    console.log("get one channel : ", this.channelsService.getOneChannel(data.name))
+    // if (!this.channelsService.getOneChannel(data.name)) {
     try {
       const user = await this.usersService.getUserByUsername(data.owner);
       const channel: Channel = await this.channelsService.createChannel(user, data.name, data.password, data.description, data.privacy); // ADD MSG CHANNEL CREATED
@@ -320,6 +324,7 @@ export class ChatGateway {
       this.logger.log('ERROR USER IN CREATE_CHANNEL');
     }
     this.get_all_conv_info(client, { sender: data.owner });
+  // }
   }
 
   @SubscribeMessage('JOIN_CHANNEL')

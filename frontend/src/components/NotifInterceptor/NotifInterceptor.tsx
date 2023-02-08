@@ -22,8 +22,11 @@ export default function NotifInterceptor(props: { children: any }) {
   );
   
   useEffect(() => {
-    // utilsReducer.socket.emit("STORE_CLIENT_INFO", { user: userReducer.user });
-    // utilsReducer.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
+    if (userReducer.user)
+    {
+      utilsReducer.socket.emit("STORE_CLIENT_INFO", { user: userReducer.user });
+      utilsReducer.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
+    }
   });
 
   // utilsReducer.socket.removeListener("store_client_done");

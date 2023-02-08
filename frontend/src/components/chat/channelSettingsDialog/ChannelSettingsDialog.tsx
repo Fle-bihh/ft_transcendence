@@ -151,8 +151,8 @@ const ChannelSettingsDialog = (props: {
             </div>
           </div>
         ) : (
-            <div></div>
-          )}
+          <div></div>
+        )}
 
         {participantRole !== "participant" ? (
           <div className="secondRaw">
@@ -161,55 +161,31 @@ const ChannelSettingsDialog = (props: {
                 {participants.map((participant, index) => {
                   console.log('channel = ', props.allChannels.find(channel => (channel.name === props.openConvName)));
                   if (participant.username !== user.user?.username) {
-                    if (
-                      !props.allChannels.find(
-                        (channel) =>
-                          channel.name === props.openConvName &&
-                          channel.owner === participant.username
-                      )
-                    ) {
+                    if (!props.allChannels.find((channel) => channel.name === props.openConvName && channel.owner === participant.username)) {
                       return (
-                        <div className="participantItemContainer" key={index}>
-                          <div className="participantName">
+                        <div key={index} className="participantItemContainer">
+                          <div key={index} className="participantName">
                             {participant.username}
                           </div>
                           {participantRole === "owner" ? (
-                            <div
-                              className={
-                                participant.admin
-                                  ? "adminButton"
-                                  : "notAdminButton"
-                              }
+                            <div key={index} className={participant.admin ? "adminButton" : "notAdminButton"}
                               onClick={() => {
                                 if (!participant.admin) {
-                                  utils.socket.emit("ADD_ADMIN", {
-                                    new_admin: participant.username,
-                                    channel: props.openConvName,
-                                  });
-                                  console.log(
-                                    "emit ADD_ADMIN to back from ",
-                                    user.user?.username
-                                  );
+                                  utils.socket.emit("ADD_ADMIN", { new_admin: participant.username, channel: props.openConvName, });
+                                  console.log("emit ADD_ADMIN to back from ", user.user?.username);
                                   handleClose();
                                 } else {
-                                  utils.socket.emit("REMOVE_ADMIN", {
-                                    new_admin: participant.username,
-                                    channel: props.openConvName,
-                                  });
-                                  console.log(
-                                    "emit REMOVE_ADMIN to back from ",
-                                    user.user?.username
-                                  );
+                                  utils.socket.emit("REMOVE_ADMIN", { new_admin: participant.username, channel: props.openConvName });
+                                  console.log("emit REMOVE_ADMIN to back from ", user.user?.username);
                                   handleClose();
                                 }
-                              }}
-                            >
-                              <div className="content">ADMIN</div>
+                              }}>
+                              <div key={index} className="content">ADMIN</div>
                             </div>
                           ) : (
-                              <div></div>
-                            )}
-                          <div
+                            <div key={index}></div>
+                          )}
+                          <div key={index}
                             className="muteButton"
                             onClick={() => {
                               if (1) {
@@ -225,9 +201,9 @@ const ChannelSettingsDialog = (props: {
                               }
                             }}
                           >
-                            <div className="content">MUTE</div>
+                            <div key={index} className="content">MUTE</div>
                           </div>
-                          <div
+                          <div key={index}
                             className="banButton"
                             onClick={() => {
                               if (1) {
@@ -243,10 +219,10 @@ const ChannelSettingsDialog = (props: {
                               }
                             }}
                           >
-                            <div className="content">BAN</div>
+                            <div key={index} className="content">BAN</div>
                           </div>
                           {participantRole === "owner" ? (
-                            <div
+                            <div key={index}
                               className="kickButton"
                               onClick={() => {
                                 if (1) {
@@ -262,24 +238,23 @@ const ChannelSettingsDialog = (props: {
                                 }
                               }}
                             >
-                              <div className="content">KICK</div>
+                              <div key={index} className="content">KICK</div>
                             </div>
                           ) : (
-                            <div></div>
+                            <div key={index}></div>
                           )}
                         </div>
                       );
                     }
                   }
-                  return <> </>;
-
+                  return <div key={index}> </div>;
                 })}
               </div>
             </div>
           </div>
         ) : (
-            <div></div>
-          )}
+          <div></div>
+        )}
         <div
           className="leaveChannel"
           onClick={() => {
