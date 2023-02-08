@@ -76,19 +76,17 @@ export class EventsGateway {
     },
   ) {
     if (users.findIndex((user) => user.user.username === data.username) >= 0) {
-      users[
-        users.findIndex((user) => user.user.username === data.username)
-      ].socket = // NE RIEN FAIRE POUR L'INSTANT
-        client;
+      users[users.findIndex((user) => user.user.username === data.username)].socket = client;
     }
     this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any }) {
-    this.logger.log('STORE_CLIENT_INFO : ');
-    users[users.findIndex((item) => item.socket.id == client.id)].user =
-      data.user;
+    this.logger.log('STORE_CLIENT_INFO event : ');
+    console.log("data = ", data)
+    users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
+    console.log("user = ", users)
     client.emit('store_client_done');
   }
 
@@ -418,6 +416,15 @@ export class EventsGateway {
       }
     });
     client.emit('get_all_users_not_friend', retArray);
+  }
+
+  @SubscribeMessage('DISCONNECT_SOCKET')
+  disconnectSocket(client: Socket) {
+    this.logger.log(`client ${client.id} disconnected socket`);
+    users.splice(
+      users.findIndex((item) => item.socket.id == client.id),
+      1,
+    );
   }
 
   handleConnection(client: Socket) {
