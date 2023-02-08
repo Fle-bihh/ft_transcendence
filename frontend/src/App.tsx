@@ -36,7 +36,7 @@ function App() {
     if (user.user)
     {
       utils.socket.emit("STORE_CLIENT_INFO", { user: user.user });
-      utils.gameSocket.emit("CHECK_RECONNEXION", {username : user.user?.username});
+      // utils.gameSocket.emit("CHECK_RECONNEXION", {username : user.user?.username});
     }
   });
   console.log("ip = ", ip);

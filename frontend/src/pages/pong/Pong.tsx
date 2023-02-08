@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../../components/nav/Nav';
 import GamePage from './GamePage';
 import MapSelector from './MapSelector';
@@ -6,6 +6,8 @@ import "./Pong.scss"
 import SpectatorPage from './Spectator';
 import waiting from "../../styles/asset/Loading.gif";
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state';
 
 
 const Pong = () => {
@@ -14,6 +16,15 @@ const Pong = () => {
     const [waitingOponnent, setWaitingOponnent] = useState(false);
     const [spectator, setSpectator] = useState(false);
     const [roomID, setRoomID] = useState("");
+    const userReducer = useSelector((state: RootState) => state.persistantReducer.userReducer);
+    const utilsReducer = useSelector((state: RootState) => state.utils);
+    useEffect(() => {
+        if (userReducer.user)
+        {
+        //   utilsReducer.socket.emit("STORE_CLIENT_INFO", { user: userReducer.user });
+            utilsReducer.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
+        }
+    }, []);
 
     console.log("pong = ", location.state)
     if (location.state && location.state.invite === true) return (

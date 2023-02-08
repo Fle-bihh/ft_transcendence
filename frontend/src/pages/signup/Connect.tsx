@@ -57,9 +57,9 @@ const Connect = () => {
         console.log('response.data.user -->', firstCo)
       }
       utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
-      utils.gameSocket.emit("CHECK_RECONNEXION", {
-        username: userReducer.user?.username,
-      });
+      // utils.gameSocket.emit("CHECK_RECONNEXION", {
+      //   username: userReducer.user?.username,
+      // });
     })
     .catch(() => { });
 
