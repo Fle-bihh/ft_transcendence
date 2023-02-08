@@ -16,9 +16,9 @@ const ChannelSettingsDialog = (props: {
     index: number;
     privacy: boolean;
     name: string;
-    password: string;
     description: string;
     owner: string;
+    password: boolean;
   }>;
 }) => {
   const [nameInputValue, setNameInputValue] = useState("");
@@ -159,11 +159,13 @@ const ChannelSettingsDialog = (props: {
             <div className="participantsList">
               <div className="participantsContainer">
                 {participants.map((participant) => {
+                  console.log('channel = ', props.allChannels.find(channel => (channel.name === props.openConvName)));
                   if (participant.username !== user.user?.username) {
                     if (
                       !props.allChannels.find(
                         (channel) =>
-                          channel.name === props.openConvName
+                          channel.name === props.openConvName &&
+                          channel.owner === participant.username
                       )
                     ) {
                       return (
@@ -239,23 +241,27 @@ const ChannelSettingsDialog = (props: {
                           >
                             <div className="content">BAN</div>
                           </div>
-                          <div
-                            className="kickButton"
-                            onClick={() => {
-                              if (1) {
-                                utils.socket.emit("KICK_USER", {
-                                  user: participant.username,
-                                  channel: props.openConvName,
-                                });
-                                console.log(
-                                  "emit KICK_USER to back from ",
-                                  participant.username
-                                );
-                              }
-                            }}
-                          >
-                            <div className="content">KICK</div>
-                          </div>
+                          {participantRole === "owner" ? (
+                            <div
+                              className="kickButton"
+                              onClick={() => {
+                                if (1) {
+                                  utils.socket.emit("KICK_USER", {
+                                    user: participant.username,
+                                    channel: props.openConvName,
+                                  });
+                                  console.log(
+                                    "emit KICK_USER to back from ",
+                                    participant.username
+                                  );
+                                }
+                              }}
+                            >
+                              <div className="content">KICK</div>
+                            </div>
+                          ) : (
+                            <div></div>
+                          )}
                         </div>
                       );
                     }

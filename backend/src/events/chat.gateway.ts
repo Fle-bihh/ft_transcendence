@@ -230,8 +230,24 @@ export class ChatGateway {
   async get_all_channels(client: Socket, login: string) {
     this.logger.log('GET_ALL_CHANNELS recu ChatGateway with');
     const channels = await this.channelsService.getChannel();
-    client.emit('get_all_channels', channels);
-    this.logger.log('send get_all_channels to ', login, 'with', channels);
+    const retArray = Array<{
+      privacy: boolean;
+        name: string;
+        description: string;
+        owner: string;
+        password: boolean;
+    }>();
+    channels.forEach(channel => {
+      retArray.push({
+        privacy: channel.privacy,
+        name: channel.name,
+        description: channel.description,
+        owner: channel.creator.username,
+        password: channel.password.length > 0 ? true : false,
+      })
+    })
+    client.emit('get_all_channels', retArray);
+    this.logger.log('send get_all_channels to ', login, 'with', retArray);
   }
 
   @SubscribeMessage('GET_PARTICIPANTS')
