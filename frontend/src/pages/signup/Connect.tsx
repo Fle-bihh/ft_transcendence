@@ -45,7 +45,7 @@ const Connect = () => {
         cookies.set("jwt", response.data.accessToken, { path: `/` });
         setUser(response.data.user);
         if (response.data.user.firstConnection) {
-          firstCo = true;
+          setFirstCo (true);
         }
         console.log('response.data.user -->', firstCo)
         utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
@@ -114,11 +114,11 @@ const Connect = () => {
     return (
       <div className="connectPage">
         <div className="setUsernameContainer">
-          <div className="setUsernameTitle">Welcome to The Last Dance</div>
+          <div className="setUsernameTitle"><h1>Welcome to The Last Dance</h1></div>
           <div className="setUsernameDescription" onClick={() => {
           }}>
-            Please choose the username everyone will see in game. You will still
-            be able to change it later.
+            <h2>Please choose the username everyone will see in game. You will still
+            be able to change it later.</h2>
           </div>
           <TextField
             className="setUsernameTextField"
@@ -129,7 +129,6 @@ const Connect = () => {
              onKeyUp={(e) => { if (e.key === 'Enter') { handleClose()} }}
           ></TextField>
             <Button onClick={() => handleClose()}>Confirm</Button>
-
         </div>
       </div>
     );
