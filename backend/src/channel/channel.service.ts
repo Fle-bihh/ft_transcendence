@@ -74,6 +74,8 @@ export class ChannelService {
       channel.userConnected.push(user);
       if (channel.admin.length === 0) {
         channel.admin.push(user);
+      if (channel.creator === null)
+        channel.creator = user;
       }
       try {
         await this.channelsRepository.save(channel);
@@ -127,8 +129,14 @@ export class ChannelService {
     // user.channelsAdmin.splice(user.channelsAdmin.findIndex((c) => c.name === channel.name), 1);
     channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
     channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
-    if (channel.creator.username === user.username)
+    if (channel.creator.username === user.username) {
       channel.creator = null;
+      if (channel.userConnected.length !== 0)
+        channel.creator = channel.userConnected[0];
+      if (channel.admin.length === 0) {
+        channel.admin.push(channel.userConnected[0]);
+      }
+    }
     // this.usersRepository.save(user);
     this.channelsRepository.save(channel);
   }
