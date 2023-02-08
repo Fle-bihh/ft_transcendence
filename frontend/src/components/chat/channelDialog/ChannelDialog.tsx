@@ -291,7 +291,7 @@ const ChannelDialog = (props: {
             >
               <input
                 className="createChannelInput"
-                type="text"
+                type="password"
                 id="outlined-basic"
                 placeholder={"Channel Password"}
                 value={channelPasswordInput}

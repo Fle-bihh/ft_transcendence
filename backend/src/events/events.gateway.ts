@@ -39,7 +39,7 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('CHECK_USER_EXIST')
-  async check_user_exist(client: Socket, data: {username: string}) {
+  async check_user_exist(client: Socket, data: { username: string }) {
     let exist = false;
 
     let user = users.find((user) => user.socket.id === client.id);
@@ -55,7 +55,9 @@ export class EventsGateway {
         );
       }
       try {
-        if (await this.userService.isBlocked(user.user.username, data.username)) {
+        if (
+          await this.userService.isBlocked(user.user.username, data.username)
+        ) {
           exist = false;
         }
       } catch (error) {
@@ -65,28 +67,16 @@ export class EventsGateway {
     if (user.user.username === data.username) {
       exist = false;
     }
-    client.emit('check_user_exist', { exist: exist, username: data.username});
-  }
-
-  @SubscribeMessage('UPDATE_USER_SOCKET')
-  update_user_socket(
-    client: Socket,
-    data: {
-      username: string;
-    },
-  ) {
-    if (users.findIndex((user) => user.user.username === data.username) >= 0) {
-      users[users.findIndex((user) => user.user.username === data.username)].socket = client;
-    }
-    this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
+    client.emit('check_user_exist', { exist: exist, username: data.username });
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any }) {
     this.logger.log('STORE_CLIENT_INFO event : ');
-    console.log("data = ", data)
-    users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
-    console.log("user = ", users)
+    console.log('data = ', data);
+    users[users.findIndex((item) => item.socket.id == client.id)].user =
+      data.user;
+    console.log('user = ', users);
     client.emit('store_client_done');
   }
 
@@ -235,10 +225,10 @@ export class EventsGateway {
       friendList.find(
         (item) =>
           item.id_1 == userToCheck.id ||
-          (item.id_2 == userToCheck.id) != undefined,
+          item.id_2 == userToCheck.id,
       )
     )
-      return;
+    {this.logger.log('Y A L ERREUR LA LA PUTAIN DE SA M*** ELELALA JOUE avec', userToCheck.username); return;}
     await this.friendRequestService.delFriendRequest(check.id);
     await this.friendShipService.addFriendShip(
       userToCheck.id,

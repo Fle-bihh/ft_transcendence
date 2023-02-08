@@ -46,8 +46,6 @@ const Connect = () => {
         cookies.set("jwt", response.data.accessToken, { path: `/` });
         setUser(response.data.user);
         if (response.data.user.firstConnection) {
-          console.log("3coucoucouc")
-          
           setFirstCo(true);
         }
         setLoading(false)
@@ -110,15 +108,6 @@ const Connect = () => {
         }
       })
     }
-    //   else  {
-    //   console.log("izzzdzdzdiiiii")
-
-    //     axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: userReducer.user!.username }, options).then(response => {
-    //       if (response.data != null) {
-    //         setUser(response.data)
-    //     }
-    //   })
-    // }
     window.history.pushState({}, window.location.toString());
     window.location.replace("/");
     setFirstCo(false)
@@ -142,7 +131,6 @@ if (firstCo)
           className="setUsernameTextField"
           placeholder={userReducer.user?.username}
           inputProps={{ maxLength: 12 }}
-          // va˘lue={userReducer.user?.username}
           onChange={(event) => setInputValue(event.currentTarget.value)}
           onKeyUp={(e) => { if (e.key === 'Enter') { handleClose() } }}
         ></TextField>

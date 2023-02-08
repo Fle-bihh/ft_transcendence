@@ -84,8 +84,6 @@ export class UsersService {
   async getUserByUsername(username: string): Promise<User> {
     try {
       const found = await this.usersRepository.findOneBy({ username });
-      if (!found)
-      throw new InternalServerErrorException();
       return found;
     } catch(e) {
       throw new InternalServerErrorException();
