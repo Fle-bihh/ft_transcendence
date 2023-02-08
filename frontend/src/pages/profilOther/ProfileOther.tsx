@@ -120,7 +120,6 @@ const ProfileOther = () => {
 
   const getUserData = () => {
     const parsed = queryString.parse(window.location.search);
-    console.log("parsed=", parsed)
     if (
       parsed.username === "" ||
       parsed.username === undefined ||
@@ -190,7 +189,7 @@ const ProfileOther = () => {
 
   const handleClose = (change: boolean) => {
     if (change === true) {
-      console.log("send ", friend, "to : ", userDisplay.login);
+      console.log("send ", friend, "to : back with ", userDisplay.login);
       if (friend === NOT_FRIEND) {
         utils.socket.emit("SEND_FRIEND_REQUEST", {
           sender: user.user?.username,

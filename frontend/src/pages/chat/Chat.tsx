@@ -62,7 +62,6 @@ const Chat = () => {
         tmp
       );
       console.log("get_all_conv_info recu front with", data);
-      console.log("get_all_conv_info recu front with", allConv);
     }
   );
 

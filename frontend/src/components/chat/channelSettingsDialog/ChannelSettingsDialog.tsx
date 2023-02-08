@@ -5,9 +5,7 @@ import { RootState } from "../../../state";
 //
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import {
-  Dialog,
-} from "@mui/material";
+import { Dialog } from "@mui/material";
 
 const ChannelSettingsDialog = (props: {
   settingsDialogOpen: boolean;
@@ -64,7 +62,12 @@ const ChannelSettingsDialog = (props: {
       channel: props.openConvName,
     });
     console.log("send GET_PARTICIPANTS to back from", user.user?.username);
-  }, [props.settingsDialogOpen, props.openConvName, utils.socket, user.user?.username]);
+  }, [
+    props.settingsDialogOpen,
+    props.openConvName,
+    utils.socket,
+    user.user?.username,
+  ]);
 
   utils.socket.removeListener("channel_left");
   utils.socket.on("channel_left", (data: { channelName: string }) => {
@@ -156,102 +159,108 @@ const ChannelSettingsDialog = (props: {
             <div className="participantsList">
               <div className="participantsContainer">
                 {participants.map((participant) => {
-                  // if (participant.login != user.user?.username && !props.allChannels.find(channel => { channel.name === props.openConvName && participant.login === channel.owner })) {
-                  if (1) {
-                    return (
-                      <div className="participantItemContainer">
-                        <div className="participantName">
-                          {participant.login}
-                        </div>
-                        {participantRole === "owner" ? (
+                  if (participant.login != user.user?.username) {
+                    if (
+                      !props.allChannels.find(
+                        (channel) =>
+                          channel.name === props.openConvName &&
+                          participant.login === channel.owner
+                      )
+                    ) {
+                      return (
+                        <div className="participantItemContainer">
+                          <div className="participantName">
+                            {participant.login}
+                          </div>
+                          {participantRole === "owner" ? (
+                            <div
+                              className={
+                                participant.admin
+                                  ? "adminButton"
+                                  : "notAdminButton"
+                              }
+                              onClick={() => {
+                                if (!participant.admin) {
+                                  utils.socket.emit("ADD_ADMIN", {
+                                    new_admin: participant.login,
+                                    channel: props.openConvName,
+                                  });
+                                  console.log(
+                                    "emit ADD_ADMIN to back from ",
+                                    user.user?.username
+                                  );
+                                } else {
+                                  utils.socket.emit("REMOVE_ADMIN", {
+                                    new_admin: participant.login,
+                                    channel: props.openConvName,
+                                  });
+                                  console.log(
+                                    "emit REMOVE_ADMIN to back from ",
+                                    user.user?.username
+                                  );
+                                }
+                              }}
+                            >
+                              <div className="content">ADMIN</div>
+                            </div>
+                          ) : (
+                            <div></div>
+                          )}
                           <div
-                            className={
-                              participant.admin
-                                ? "adminButton"
-                                : "notAdminButton"
-                            }
+                            className="muteButton"
                             onClick={() => {
-                              if (!participant.admin) {
-                                utils.socket.emit("ADD_ADMIN", {
-                                  new_admin: participant.login,
+                              if (1) {
+                                utils.socket.emit("MUTE_USER", {
+                                  user: participant.login,
                                   channel: props.openConvName,
                                 });
                                 console.log(
-                                  "emit ADD_ADMIN to back from ",
-                                  user.user?.username
-                                );
-                              } else {
-                                utils.socket.emit("REMOVE_ADMIN", {
-                                  new_admin: participant.login,
-                                  channel: props.openConvName,
-                                });
-                                console.log(
-                                  "emit REMOVE_ADMIN to back from ",
-                                  user.user?.username
+                                  "emit MUTE_USER to back from ",
+                                  participant.login
                                 );
                               }
                             }}
                           >
-                            <div className="content">ADMIN</div>
+                            <div className="content">MUTE</div>
                           </div>
-                        ) : (
-                          <div></div>
-                        )}
-                        <div
-                          className="muteButton"
-                          onClick={() => {
-                            if (1) {
-                              utils.socket.emit("MUTE_USER", {
-                                user: participant.login,
-                                channel: props.openConvName,
-                              });
-                              console.log(
-                                "emit MUTE_USER to back from ",
-                                participant.login
-                              );
-                            }
-                          }}
-                        >
-                          <div className="content">MUTE</div>
+                          <div
+                            className="banButton"
+                            onClick={() => {
+                              if (1) {
+                                utils.socket.emit("BAN_USER", {
+                                  user: participant.login,
+                                  channel: props.openConvName,
+                                });
+                                console.log(
+                                  "emit BAN_USER to back from ",
+                                  participant.login
+                                );
+                              }
+                            }}
+                          >
+                            <div className="content">BAN</div>
+                          </div>
+                          <div
+                            className="kickButton"
+                            onClick={() => {
+                              if (1) {
+                                utils.socket.emit("KICK_USER", {
+                                  user: participant.login,
+                                  channel: props.openConvName,
+                                });
+                                console.log(
+                                  "emit KICK_USER to back from ",
+                                  participant.login
+                                );
+                              }
+                            }}
+                          >
+                            <div className="content">KICK</div>
+                          </div>
                         </div>
-                        <div
-                          className="banButton"
-                          onClick={() => {
-                            if (1) {
-                              utils.socket.emit("BAN_USER", {
-                                user: participant.login,
-                                channel: props.openConvName,
-                              });
-                              console.log(
-                                "emit BAN_USER to back from ",
-                                participant.login
-                              );
-                            }
-                          }}
-                        >
-                          <div className="content">BAN</div>
-                        </div>
-                        <div
-                          className="kickButton"
-                          onClick={() => {
-                            if (1) {
-                              utils.socket.emit("KICK_USER", {
-                                user: participant.login,
-                                channel: props.openConvName,
-                              });
-                              console.log(
-                                "emit KICK_USER to back from ",
-                                participant.login
-                              );
-                            }
-                          }}
-                        >
-                          <div className="content">KICK</div>
-                        </div>
-                      </div>
-                    );
-                  } else 
-                  return (<></>)
+                      );
+                    }
+                  } else return <></>;
                 })}
               </div>
             </div>

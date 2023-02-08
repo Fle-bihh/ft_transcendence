@@ -116,7 +116,7 @@ $content: black;
               height: 25px;
             }
             .adminButton {
-              margin-left: 50px;
+              margin-left: 20px;
               background-color: $secondary;
               // background-color: red;
               margin-top: 5px;
@@ -124,8 +124,12 @@ $content: black;
               height: 50px;
               width: 70px;
             }
+            .adminButton:hover {
+              cursor: pointer;
+            }
+
             .notAdminButton {
-              margin-left: 50px;
+              margin-left: 20px;
               background-color: transparent;
               // background-color: red;
               margin-top: 5px;
@@ -133,15 +137,23 @@ $content: black;
               height: 50px;
               width: 70px;
             }
+            .notAdminButton:hover {
+              cursor: pointer;
+            }
+
             .muteButton {
               background-color: $secondary;
               // background-color: blue;
               margin-top: 5px;
-              margin-left: 25px;
+              margin-left: 50%;
               border-radius: 50px;
               height: 50px;
               width: 70px;
             }
+            .muteButton:hover {
+              cursor: pointer;
+            }
+
             .banButton {
               background-color: $secondary;
               // background-color: green;
@@ -150,6 +162,9 @@ $content: black;
               width: 70px;
               margin-left: 25px;
               border-radius: 50px;
+            }
+            .banButton:hover {
+              cursor: pointer;
             }
 
             .kickButton {
@@ -160,6 +175,9 @@ $content: black;
               width: 70px;
               margin-left: 25px;
               border-radius: 50px;
+            }
+            .kickButton:hover {
+              cursor: pointer;
             }
           }
         }
