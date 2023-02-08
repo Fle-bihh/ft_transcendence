@@ -160,7 +160,7 @@ const ChannelDialog = (props: {
             autoFocus
           />
           <div className="channelsContainer" id="listChannel">
-            {props.allChannels.map((channel) => {
+            {props.allChannels.map((channel, index) => {
               if (props.allConv.find((conv) => conv.receiver === channel.name))
                 return <></>;
               return channel.privacy === false ||
@@ -181,6 +181,7 @@ const ChannelDialog = (props: {
                       setJoinChannelSelect(channel.name);
                     else setJoinChannelSelect("");
                   }}
+                  key={index}
                 >
                   <div className="channelTextDiv">
                     <div className="channelDataName">{channel.name}</div>

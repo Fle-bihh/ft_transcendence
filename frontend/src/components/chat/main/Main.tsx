@@ -111,16 +111,18 @@ const Main = (props: {
   );
 
   utils.socket.removeListener("check_user_exist");
-  utils.socket.on("check_user_exist", (exist: boolean) => {
-    if (exist) {
+  utils.socket.on("check_user_exist", (data: {exist: boolean, username: string}) => {
+    if (data.exist) {
       const tmpArray = [...props.allConv];
       tmpArray.shift();
-      tmpArray.unshift({
-        receiver: topInputValue,
-        last_message_text: "",
-        last_message_time: new Date(),
-        new_conv: false,
-      });
+      if (!props.allConv.find(conv => (conv.receiver === data.username))) {
+        tmpArray.unshift({
+          receiver: topInputValue,
+          last_message_text: "",
+          last_message_time: new Date(),
+          new_conv: false,
+        });
+      }
       props.setAllConv(tmpArray);
       props.setOpenConvName(topInputValue);
       props.setNewConvMessageBool(false);

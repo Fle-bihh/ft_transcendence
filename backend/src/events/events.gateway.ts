@@ -65,7 +65,7 @@ export class EventsGateway {
     if (user.user.username === data.username) {
       exist = false;
     }
-    client.emit('check_user_exist', exist);
+    client.emit('check_user_exist', { exist: exist, username: data.username});
   }
 
   @SubscribeMessage('UPDATE_USER_SOCKET')
