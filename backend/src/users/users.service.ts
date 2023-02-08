@@ -10,6 +10,7 @@ import { toDataURL } from 'qrcode';
 import { Channel } from 'src/entities/channel.entity';
 import { Message } from 'src/entities/message.entity';
 import { validate, Validate } from 'class-validator';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,9 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    private configService: ConfigService,
   ) { }
+  private readonly ip: string = this.configService.get('IP');
 
   async signUp(userCredentialsDto: UserCredentialsDto): Promise<void> {
     const salt = await bcrypt.genSalt();
@@ -290,7 +293,7 @@ export class UsersService {
     if (!user)
       return null;
 
-    user.profileImage = `http://localhost:5001/user/profilePic/:${filename}`;
+    user.profileImage = `http://${this.ip}:5001/user/profilePic/:${filename}`;
     this.usersRepository.save(user);
 
     return user;

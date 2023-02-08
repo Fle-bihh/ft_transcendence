@@ -152,7 +152,9 @@ export class ChatGateway {
       );
       convers = convers.reverse();
     }
-    let retArray = [...convers];
+    let retArray;
+    if (convers.length)
+      retArray = [...convers];
     for (let conv of convers) {
       if (
         (await this.usersService.isBlocked(data.sender, conv.sender)) &&
