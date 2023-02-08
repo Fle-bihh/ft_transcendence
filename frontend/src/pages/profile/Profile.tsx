@@ -140,7 +140,26 @@ const Profile = () => {
         setsucces(false)
         seterror(false)
     }
-
+    const send2FARequestDesactivate = (value: string) => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/desactivate/` + value, options)
+            .then(res => {
+                setUser(res.data);
+                setsucces(true)
+                setmessage("Two factor authentification activate")
+            })
+            .catch(err => {
+                seterror(true)
+                setmessage2("Wrong code")
+            });
+        setsucces(false)
+        seterror(false)
+    }
     const getUserData = () => {
         const jwt = cookies.get('jwt');
         const options = {
@@ -309,14 +328,14 @@ const Profile = () => {
                                 <div>
                                     <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
                                     <DialogContent className='2FA'>
-                                        <img src={qrCode2FA} alt="QRcode" />
+                                        {/* <img src={qrCode2FA} alt="QRcode" /> */}
                                         <PinInput length={6}
                                             focus
                                             onChange={(value) => { }}
                                             type="numeric"
                                             inputMode="number"
                                             style={{ padding: '10px' }}
-                                            onComplete={(value) => { send2FARequest(value) }}
+                                            onComplete={(value) => { send2FARequestDesactivate(value) }}
                                             autoSelect={true} />
                                     </DialogContent>
                                     <DialogActions>
