@@ -15,13 +15,20 @@ const Pong = () => {
     const [spectator, setSpectator] = useState(false);
     const [roomID, setRoomID] = useState("");
 
+    console.log("pong = ", location.state)
     if (location.state && location.state.invite === true) return (
         <div>
             <Navbar />
             <GamePage roomID={location.state.roomId}/>
         </div>
     )
-    if (gameStart) return (
+    else if (location.state && location.state.spectate === true) return (
+        <div>
+            <Navbar />
+            <SpectatorPage roomID={location.state.roomId}/>
+        </div>
+    )
+    else if (gameStart) return (
         <div>
             <Navbar />
             <GamePage gameStart={gameStart} setGameStart={setGameStart} roomID={roomID}/>

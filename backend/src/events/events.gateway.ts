@@ -70,21 +70,6 @@ export class EventsGateway {
     client.emit('check_user_exist', { exist: exist, username: data.username });
   }
 
-  @SubscribeMessage('UPDATE_USER_SOCKET')
-  update_user_socket(
-    client: Socket,
-    data: {
-      username: string;
-    },
-  ) {
-    // if (users.findIndex((user) => user.user.username === data.username) >= 0) {
-    //   users[
-    //     users.findIndex((user) => user.user.username === data.username)
-    //   ].socket = client;
-    // }
-    // this.logger.log('UPDATE_USER_SOCKET recu EventGateway');
-  }
-
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any }) {
     this.logger.log('STORE_CLIENT_INFO event : ');
@@ -240,10 +225,10 @@ export class EventsGateway {
       friendList.find(
         (item) =>
           item.id_1 == userToCheck.id ||
-          (item.id_2 == userToCheck.id) != undefined,
+          item.id_2 == userToCheck.id,
       )
     )
-      return;
+    {this.logger.log('Y A L ERREUR LA LA PUTAIN DE SA M*** ELELALA JOUE avec', userToCheck.username); return;}
     await this.friendRequestService.delFriendRequest(check.id);
     await this.friendShipService.addFriendShip(
       userToCheck.id,
