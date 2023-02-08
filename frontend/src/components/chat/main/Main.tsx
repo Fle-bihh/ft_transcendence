@@ -294,7 +294,7 @@ const Main = (props: {
             autoFocus
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                utils.socket.emit("CHECK_USER_EXIST", topInputValue);
+                utils.socket.emit("CHECK_USER_EXIST", {username: topInputValue});
               }
             }}
           ></input>

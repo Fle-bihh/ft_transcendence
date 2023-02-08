@@ -39,14 +39,14 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('CHECK_USER_EXIST')
-  async check_user_exist(client: Socket, username: string) {
+  async check_user_exist(client: Socket, data: {username: string}) {
     let exist = false;
 
     let user = users.find((user) => user.socket.id === client.id);
-    this.logger.log('check_user_exist-->username = ', username);
+    this.logger.log('check_user_exist-->username = ', data.username);
     if (user) {
       try {
-        if (await this.userService.getUserByUsername(username)) {
+        if (await this.userService.getUserByUsername(data.username)) {
           exist = true;
         }
       } catch (error) {
@@ -55,14 +55,14 @@ export class EventsGateway {
         );
       }
       try {
-        if (await this.userService.isBlocked(user.user.username, username)) {
+        if (await this.userService.isBlocked(user.user.username, data.username)) {
           exist = false;
         }
       } catch (error) {
         this.logger.log('ERROR USERSERVICE isBlocked IN CHECK_USER_EXIST');
       }
     }
-    if (user.user.username === username) {
+    if (user.user.username === data.username) {
       exist = false;
     }
     client.emit('check_user_exist', exist);
