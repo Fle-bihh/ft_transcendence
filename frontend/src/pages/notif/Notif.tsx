@@ -50,6 +50,17 @@ export default function Notif() {
     }
   );
 
+  // utils.socket.removeListener("check_user_exist");
+  // utils.socket.on("check_user_exist", (exist: boolean) => {
+  //   if (!exist) {
+  //     persistantReducer.notifReducer.notifArray.map((notif, index) => {
+  //       if (notif.type === NotifType.FRIENDREQUEST) {
+  //         delNotif(index);
+  //       }
+  //     })
+  //   }
+  // });
+
   if (openGame && roomId !== "")
     return (
       <Navigate to="/Pong" replace={true} state={{ invite: true, roomId: roomId }} />
@@ -61,6 +72,8 @@ export default function Notif() {
         {persistantReducer.notifReducer.notifArray.length ? (persistantReducer.notifReducer.notifArray.map((notif, index) => {
           switch (notif.type) {
             case NotifType.FRIENDREQUEST: {
+              // utils.socket.emit('CHECK_USER_EXIST', {username: notif.data.sender});
+              // console.log('send CHECK_USER_EXIST to back');
               return (
                 <div className="notifElement">
                   <div
