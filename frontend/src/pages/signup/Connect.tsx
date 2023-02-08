@@ -7,12 +7,17 @@ import { actionCreators, RootState } from "../../state";
 import Cookies from "universal-cookie";
 import PinInput from "react-pin-input";
 import "./Connect.scss";
+import React, { useState } from "react";
+import { Button, TextField } from "@mui/material";
+
+
 const Connect = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get("code") as string;
   const cookies = new Cookies();
-  let firstCo = false;
+  const [firstCo, setFirstCo] = useState(true)
+  const [inputValue, setInputValue] = useState("")
 
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
@@ -49,7 +54,7 @@ const Connect = () => {
         });
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 
   function verify2FA(value: string) {
     const jwt = cookies.get("jwt");
@@ -62,7 +67,7 @@ const Connect = () => {
     axios
       .get(
         `http://localhost:5001/user/${userReducer.user?.id}/2fa/verify/` +
-          value,
+        value,
         options
       )
       .then(() => {
@@ -73,7 +78,38 @@ const Connect = () => {
         const div = document.getElementById("wrong-code") as HTMLDivElement;
         div.style.display = "flex";
       });
-  }
+
+    }
+      const handleClose = () => {
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+          }
+          const tmp = inputValue.replace(/ /g, "")
+          console.log("tmp=", tmp)
+        if (tmp !== null){
+          console.log("iiiiii")
+          axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
+            if (response.data != null) {
+                setUser(response.data)
+              }
+            })
+          }
+        //   else  {
+        //   console.log("izzzdzdzdiiiii")
+
+        //     axios.patch(`http://localhost:5001/user/${userReducer.user?.id}/username`, { username: userReducer.user!.username }, options).then(response => {
+        //       if (response.data != null) {
+        //         setUser(response.data)
+        //     }
+        //   })
+        // }
+          setFirstCo(false)
+          window.history.pushState({}, window.location.toString());
+          window.location.replace("/");
+    }
   if (firstCo)
     return (
       <div className="connectPage">
@@ -84,10 +120,16 @@ const Connect = () => {
             Please choose the username everyone will see in game. You will still
             be able to change it later.
           </div>
-          <input
-            className="setUsernameInput"
-            placeholder="Enter a username"
-          ></input>
+          <TextField
+            className="setUsernameTextField"
+              placeholder={userReducer.user?.username}
+             inputProps={{ maxLength: 12 }}
+            // va˘lue={userReducer.user?.username}
+             onChange={(event) => setInputValue(event.currentTarget.value)}
+             onKeyUp={(e) => { if (e.key === 'Enter') { handleClose()} }}
+          ></TextField>
+            <Button onClick={() => handleClose()}>Confirm</Button>
+
         </div>
       </div>
     );
