@@ -249,7 +249,7 @@ const Profile = () => {
                             userName :
                         </h3>
                         <Typography className="userNamePrintChange">
-                            {user.user?.username}
+                            {userDisplay?.username}
                         </Typography>
                     </div>
                     <Button className="buttonChange" type="submit" onClick={handleClickOpen}> Change UserName </Button>

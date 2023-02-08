@@ -16,8 +16,8 @@ const Connect = () => {
   const urlParams = new URLSearchParams(queryString);
   const code = urlParams.get("code") as string;
   const cookies = new Cookies();
-  const [firstCo, setFirstCo] = useState(true)
-  const test = false
+  const [firstCo, setFirstCo] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [inputValue, setInputValue] = useState("")
 
   const dispatch = useDispatch();
@@ -48,9 +48,10 @@ const Connect = () => {
         if (response.data.user.firstConnection) {
           console.log("3coucoucouc")
           
+          setFirstCo(true);
         }
+        setLoading(false)
         console.log('response.data.user -->', firstCo)
-        setFirstCo(true);
         // const tmp = true
 
 
@@ -87,6 +88,11 @@ const Connect = () => {
       });
 
   }
+
+  useEffect(() => {
+    console.log('ouiouiouoiuoiui', firstCo)
+  }, [firstCo])
+
   const handleClose = () => {
     const jwt = cookies.get('jwt');
     const options = {
@@ -119,6 +125,8 @@ const Connect = () => {
   }
   console.log('response.data.user! -->', firstCo)
 
+
+  if (loading) return (<></>)
 
 if (firstCo)
   return (
