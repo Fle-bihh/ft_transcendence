@@ -210,7 +210,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
           UserDisconnected.findIndex((item) => item.username == user.username),
           1,
         );
-        else {
+        // else {
           console.log('oui testestsstststts')
           allClients.forEach((client) => {
             if (client.username != user.username)
@@ -220,7 +220,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 emitFrom: 'clientStatusGame',
               });
           })
-        }
+        // }
       console.log(`Check reco ${client.id} : ${user.username}`);
       const room = this.getRoomByClientLogin(user.username)
       if (room != null) {

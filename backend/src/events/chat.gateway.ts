@@ -73,7 +73,7 @@ export class ChatGateway {
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any; }) {
-    this.logger.log("STORE_CLIENT_INFO : ")
+    this.logger.log("STORE_CLIENT_INFO Chat: ")
     users[users.findIndex((item) => item.socket.id == client.id)].user = data.user;
   }
 

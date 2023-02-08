@@ -12,16 +12,10 @@ import { Navigate, NavLink } from "react-router-dom";
 export default function Notif() {
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
   const dispatch = useDispatch();
-  const { addNotif, delNotif, seenAllNotif, removeNotifPong } = bindActionCreators(actionCreators, dispatch);
+  const { delNotif, removeNotifPong } = bindActionCreators(actionCreators, dispatch);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
-  const [firstOpen, setFirstOpen] = useState(true);
   const utils = useSelector((state: RootState) => state.utils);
-
-  if (firstOpen) {
-    setFirstOpen(false);
-    seenAllNotif();
-  }
 
   const acceptInvitation = (data: { sender: string; gameMap: string; receiver: string; }) => {
     //send a socket to accept the gaaaaaame
@@ -50,17 +44,6 @@ export default function Notif() {
     }
   );
 
-  // utils.socket.removeListener("check_user_exist");
-  // utils.socket.on("check_user_exist", (exist: boolean) => {
-  //   if (!exist) {
-  //     persistantReducer.notifReducer.notifArray.map((notif, index) => {
-  //       if (notif.type === NotifType.FRIENDREQUEST) {
-  //         delNotif(index);
-  //       }
-  //     })
-  //   }
-  // });
-
   if (openGame && roomId !== "")
     return (
       <Navigate to="/Pong" replace={true} state={{ invite: true, roomId: roomId }} />
@@ -75,7 +58,7 @@ export default function Notif() {
               // utils.socket.emit('CHECK_USER_EXIST', {username: notif.data.sender});
               // console.log('send CHECK_USER_EXIST to back');
               return (
-                <div className="notifElement">
+                <div className="notifElement" key={index}>
                   <div
                     className="notifCross"
                     onClick={() => {
@@ -99,7 +82,7 @@ export default function Notif() {
             }
             case NotifType.INVITEGAME: {
               return (
-                <div className="notifElement">
+                <div className="notifElement" key={index}>
                   <div className="notifCross" onClick={() => { declineInvitation(notif.data); delNotif(index); }}>
                     <CloseIcon />
                   </div>

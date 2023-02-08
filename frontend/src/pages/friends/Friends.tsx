@@ -63,9 +63,9 @@ const Friends = () => {
         <div className="friendsPageSide">
           <div className="friendsListContainer">
             <div className="friendsListTitle">Friends List</div>
-            {friendsList.map((friend) => {
+            {friendsList.map((friend, index) => {
               return (
-                <Tooltip title={`Go to ${friend.username}'s profile`}>
+                <Tooltip key={index} title={`Go to ${friend.username}'s profile`}>
                   <NavLink to={`/profileother?username=${friend.username}`}>
                     <div className="friendListItem">
                       <IconButton>
@@ -82,8 +82,8 @@ const Friends = () => {
         <div className="friendPageMain">
           <div className="usersListContainer">
             <div className="usersListTitle">Users List</div>
-            {usersList.map((user) => (
-              <Tooltip title={`Go to ${user.username}'s profile`}>
+            {usersList.map((user, index) => (
+              <Tooltip key={index} title={`Go to ${user.username}'s profile`}>
               <NavLink to={`/profileother?username=${user.username}`}>
                 <div className="friendListItem">
                   <IconButton>
