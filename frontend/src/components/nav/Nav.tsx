@@ -98,7 +98,7 @@ const Navbar = (props: any) => {
                   onClick={() => {
                     utilsReducer.gameSocket.emit("DISCONNECT_SOCKET");
                     const cookies = new Cookies();
-                    cookies.remove("jwt");
+                    cookies.set('jwt', '', {path: '/',sameSite: 'lax'});
                     setUser(null);
                     setTwoFA(false);
                     window.history.pushState({}, window.location.toString());

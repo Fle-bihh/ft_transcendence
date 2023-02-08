@@ -30,7 +30,7 @@ const Connect = () => {
     }
   }).then((response: AxiosResponse<any, any>) => {
     if (response.data.user?.username) {
-      cookies.set('jwt', response.data.accessToken, { path: `/` });
+      cookies.set('jwt', response.data.accessToken, { path: `/`, sameSite: 'lax' });
       setUser(response.data.user);
       utils.socket.emit('STORE_CLIENT_INFO', { user: response.data.user })
       utils.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
