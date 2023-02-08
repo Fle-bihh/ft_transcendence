@@ -6,6 +6,9 @@ import "./signup.scss";
 
  const Signup = () => {
   const utils = useSelector((state: RootState) => state.utils);
+  const userReducer = useSelector(
+    (state: RootState) => state.persistantReducer.userReducer
+  );
 
   useEffect(() => {
     console.log("refresh utils = ", utils.ip)

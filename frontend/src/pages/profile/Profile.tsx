@@ -164,8 +164,8 @@ const Profile = () => {
                 })
             }
         })
-        axios.get(`http://${utils.ip}:5001/game/${user.user?.id}`, options).then(response => {
         }).catch(() => {})
+        axios.get(`http://${utils.ip}:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
             userMatchHistory.splice(0, userMatchHistory.length)
                 response.data.forEach((data: any) => {

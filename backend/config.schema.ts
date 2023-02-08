@@ -11,4 +11,5 @@ export const configValidationSchema = Joi.object({
   CLIENT_ID: Joi.string().required(),
   CLIENT_SECRET: Joi.string().required(),
   REDIRECT_URI: Joi.string().required(),
+  IP: Joi.string().required()
 });
