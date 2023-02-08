@@ -23,9 +23,9 @@ function ConnectionChecker(props: { children: any }): JSX.Element {
           authorization: `Bearer ${jwt}`,
         },
       }
-      axios.get(`localhost:5001/user/login/${userReducer.user.login}`, options)
+      axios.get(`http://localhost:5001/user/login/${userReducer.user.login}`, options)
         .then(() => { })
-        .catch(() => { setIsConnected(false)})
+        .catch((err) => { console.log(err); setIsConnected(false)})
     }
   }, [userReducer.user]);
   if (isConnected) {
