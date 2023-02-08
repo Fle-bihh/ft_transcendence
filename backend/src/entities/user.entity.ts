@@ -3,7 +3,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { Channel } from "./channel.entity";
 import { FriendRequest } from "./friend-request.entity";
 import { Game } from "./game.entity";
-import {Message} from "./message.entity";
+import { Message } from "./message.entity";
 
 @Entity()
 export class User {
@@ -66,4 +66,7 @@ export class User {
 	@ManyToMany(type => User, user => user.blockList, { cascade: false })
 	@JoinTable()
 	blockList: User[];
+
+	@Column({ default: true })
+	firstConnection: boolean;
 }
