@@ -163,6 +163,7 @@ const Profile = () => {
                     getData: true,
                 })
             }
+        })
         }).catch(() => {})
         axios.get(`http://${utils.ip}:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {

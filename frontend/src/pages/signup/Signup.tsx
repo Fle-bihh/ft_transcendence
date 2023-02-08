@@ -10,10 +10,9 @@ import "./signup.scss";
     (state: RootState) => state.persistantReducer.userReducer
   );
 
-
   useEffect(() => {
-    console.log("refresh")
-    console.log()
+    console.log("refresh utils = ", utils.ip)
+
     setUser(null);
     console.log("pls c est quoi ca? == ",userReducer.user)
     removeNotifPong();
