@@ -158,7 +158,7 @@ const ChannelSettingsDialog = (props: {
           <div className="secondRaw">
             <div className="participantsList">
               <div className="participantsContainer">
-                {participants.map((participant) => {
+                {participants.map((participant, index) => {
                   console.log('channel = ', props.allChannels.find(channel => (channel.name === props.openConvName)));
                   if (participant.username !== user.user?.username) {
                     if (
@@ -169,7 +169,7 @@ const ChannelSettingsDialog = (props: {
                       )
                     ) {
                       return (
-                        <div className="participantItemContainer">
+                        <div className="participantItemContainer" key={index}>
                           <div className="participantName">
                             {participant.username}
                           </div>

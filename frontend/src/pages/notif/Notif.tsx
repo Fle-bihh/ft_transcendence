@@ -51,10 +51,12 @@ export default function Notif() {
   );
 
   utils.socket.removeListener("check_user_exist");
-  utils.socket.on("check_user_exist", (exist: boolean) => {
-    if (!exist) {
-      persistantReducer.notifReducer.notifArray.map((notif, index) => {
-        if (notif.type === NotifType.FRIENDREQUEST) {
+  utils.socket.on("check_user_exist", (data: {exist: boolean, username: string}) => {
+    console.log('check_user_exist received front', data.exist);
+    if (!data.exist) {
+      persistantReducer.notifReducer.notifArray.forEach((notif, index) => {
+        console.log('notif.data.sender = ', notif.data.sender)
+        if (notif.type === NotifType.FRIENDREQUEST && notif.data.sender === data.username) {
           delNotif(index);
         }
       })
