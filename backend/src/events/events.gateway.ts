@@ -355,22 +355,23 @@ export class EventsGateway {
 
   @SubscribeMessage('GET_FRIEND_STATUS')
   async get_friend_status(client: Socket, data: { username: string }) {
-    const userToCheck = await this.userService.getUserByLogin(data.username);
-    console.log('getfriend status : ', userToCheck);
-    if (!userToCheck) return;
-    const check = await this.friendRequestService.getRelation(
-      userToCheck.id,
-      users.find((item) => item.socket.id == client.id).user.id,
-    );
-    console.log('relation : ', check);
-    const blocked = await this.userService.getBlockList(
-      users.find((item) => item.socket.id == client.id).user,
+    try { 
+      const userToCheck = await this.userService.getUserByUsername(data.username);
+      console.log('getfriend status : ', userToCheck);
+      if (!userToCheck) return;
+      const check = await this.friendRequestService.getRelation(
+        userToCheck.id,
+        users.find((item) => item.socket.id == client.id).user.id,
+        );
+        console.log('relation : ', check);
+        const blocked = await this.userService.getBlockList(
+          users.find((item) => item.socket.id == client.id).user,
     );
     if (blocked.blockList.findIndex((item) => item.id == userToCheck.id) != -1)
-      client.emit('updateProfileOther', {
-        username: data.username,
-        friendStatus: 'blocked',
-      });
+    client.emit('updateProfileOther', {
+      username: data.username,
+      friendStatus: 'blocked',
+    });
     else {
       if (check && check.receiver_id == userToCheck.id) {
         client.emit('updateProfileOther', {
@@ -389,19 +390,22 @@ export class EventsGateway {
         if (
           userFriendList.find(
             (item) =>
-              item.id_1 == userToCheck.id || item.id_2 == userToCheck.id,
-          ) != undefined
+            item.id_1 == userToCheck.id || item.id_2 == userToCheck.id,
+            ) != undefined
         )
-          client.emit('updateProfileOther', {
-            username: data.username,
-            friendStatus: 'friend',
-          });
+        client.emit('updateProfileOther', {
+          username: data.username,
+          friendStatus: 'friend',
+        });
         else
           client.emit('updateProfileOther', {
             username: data.username,
             friendStatus: 'not-friend',
           });
+        }
       }
+    } catch (error) {
+      this.logger.log('ERROR USER IN GET_FRIEND_STATUS'); 
     }
   }
 
