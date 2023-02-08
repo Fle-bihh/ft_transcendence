@@ -45,7 +45,7 @@ const Connect = () => {
         cookies.set("jwt", response.data.accessToken, { path: `/` });
         setUser(response.data.user);
         if (response.data.user.firstConnection) {
-          firstCo = true;
+          setFirstCo(false);
         }
         console.log('response.data.user -->', firstCo)
         utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });

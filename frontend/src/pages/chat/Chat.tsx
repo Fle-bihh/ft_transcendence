@@ -37,7 +37,7 @@ const Chat = () => {
     if (!allConv.length && launchChatBool) {
       utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.username });
       console.log("send GET_ALL_CONV_INFO to back");
-      utils.socket.emit("UPDATE_USER_SOCKET", { login: user.user?.username });
+      utils.socket.emit("UPDATE_USER_SOCKET", { username: user.user?.username });
       console.log("send UPDATE_USER_SOCKET to back");
       utils.socket.emit("GET_ALL_USERS");
       console.log("send GET_ALL_USERS to back");
