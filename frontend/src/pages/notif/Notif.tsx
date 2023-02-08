@@ -44,6 +44,19 @@ export default function Notif() {
     }
   );
 
+  utils.socket.removeListener("check_user_exist");
+  utils.socket.on("check_user_exist", (data: {exist: boolean, username: string}) => {
+    console.log('check_user_exist received front', data.exist);
+    if (!data.exist) {
+      persistantReducer.notifReducer.notifArray.forEach((notif, index) => {
+        console.log('notif.data.sender = ', notif.data.sender)
+        if (notif.type === NotifType.FRIENDREQUEST && notif.data.sender === data.username) {
+          delNotif(index);
+        }
+      })
+    }
+  });
+
   if (openGame && roomId !== "")
     return (
       <Navigate to="/Pong" replace={true} state={{ invite: true, roomId: roomId }} />
@@ -55,8 +68,8 @@ export default function Notif() {
         {persistantReducer.notifReducer.notifArray.length ? (persistantReducer.notifReducer.notifArray.map((notif, index) => {
           switch (notif.type) {
             case NotifType.FRIENDREQUEST: {
-              // utils.socket.emit('CHECK_USER_EXIST', {username: notif.data.sender});
-              // console.log('send CHECK_USER_EXIST to back');
+              utils.socket.emit('CHECK_USER_EXIST', {username: notif.data.sender});
+              console.log('send CHECK_USER_EXIST to back');
               return (
                 <div className="notifElement" key={index}>
                   <div
@@ -72,8 +85,8 @@ export default function Notif() {
                   <div className="notifText">
                     sent you a friend's request
                   </div>
-                  <DialogActions>
-                    <Button className="notifAccept" >
+                  <DialogActions onClick={() => {delNotif(index)}}>
+                    <Button className="notifAccept">
                       <NavLink to={`/profileother?username=${notif.data.sender}`} className="notifFriend">Look my send friend's request</NavLink>
                     </Button>
                   </DialogActions>

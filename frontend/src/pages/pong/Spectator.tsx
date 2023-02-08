@@ -20,7 +20,7 @@ const SpectatorPage = (props: {
             utils.gameSocket.emit('START_SPECTATE', { username: persistantReducer.userReducer.user?.username, roomID: props.roomID, start: false })
             setVerif(true);
         }
-    });
+    }, [verif, utils.gameSocket, persistantReducer.userReducer.user?.username, props.roomID]);
 
     if (verif)
         setInterval(() => { utils.gameSocket.emit('START_SPECTATE', { username: persistantReducer.userReducer.user?.username, roomID: props.roomID, start: true }) }, 16)

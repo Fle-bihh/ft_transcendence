@@ -38,6 +38,7 @@ export const notifReducer = (state: NotifArray = initialState, action: notifActi
 			state.notifArray.forEach((notif) => {
 				if (notif.type !== NotifType.INVITEGAME)
 					array.push(notif)
+				
 			})
 			return {
 				...state,
