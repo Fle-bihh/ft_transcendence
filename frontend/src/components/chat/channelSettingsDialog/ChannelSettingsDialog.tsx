@@ -245,7 +245,6 @@ const ChannelSettingsDialog = (props: {
                           >
                             <div className="content">BAN</div>
                           </div>
-                          {participantRole === "owner" ? (
                             <div
                               className="kickButton"
                               onClick={() => {
@@ -264,9 +263,6 @@ const ChannelSettingsDialog = (props: {
                             >
                               <div className="content">KICK</div>
                             </div>
-                          ) : (
-                            <div></div>
-                          )}
                         </div>
                       );
                     }
