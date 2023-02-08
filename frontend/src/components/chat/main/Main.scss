@@ -165,8 +165,11 @@ $third: rgb(150, 150, 150);
 
       .serverMessagesContainer {
         display: flex;
-        height: 20px;
+        // height: 20px;
         // background-color: red;
+        // word-wrap: break-word;
+        // padding:10%;
+
         justify-content: space-evenly;
         align-items: center;
         color: rgb(0, 0, 0, 0.5);

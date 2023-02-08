@@ -53,7 +53,7 @@ export default function Notif() {
   utils.socket.removeListener("check_user_exist");
   utils.socket.on("check_user_exist", (exist: boolean) => {
     if (!exist) {
-      persistantReducer.notifReducer.notifArray.map((notif, index) => {
+      persistantReducer.notifReducer.notifArray.forEach((notif, index) => {
         if (notif.type === NotifType.FRIENDREQUEST) {
           delNotif(index);
         }

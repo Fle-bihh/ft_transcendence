@@ -5,7 +5,7 @@ import { RootState } from "../../../state";
 //
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Dialog } from "@mui/material";
+import { Button, Dialog } from "@mui/material";
 
 const ChannelSettingsDialog = (props: {
   settingsDialogOpen: boolean;
@@ -288,7 +288,7 @@ const ChannelSettingsDialog = (props: {
       </div>
       <Dialog open={nameSecurityDialog} onClose={handleCloseSecuName}>
         <div className="securityText">Are you sure ?</div>
-        <div
+        <Button
           className="yesButton"
           onClick={() => {
             utils.socket.emit("CHANGE_CHANNEL_NAME", {
@@ -306,10 +306,10 @@ const ChannelSettingsDialog = (props: {
           }}
         >
           Yes
-        </div>
-        <div className="noButton" onClick={handleCloseSecuName}>
+        </Button>
+        <Button className="noButton" onClick={handleCloseSecuName}>
           No
-        </div>
+        </Button>
       </Dialog>
       <Dialog open={passwordSecurityDialog} onClose={handleCloseSecuPassword}>
         <div className="securityText">Are you sure ?</div>
