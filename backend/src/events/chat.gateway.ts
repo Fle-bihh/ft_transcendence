@@ -232,25 +232,25 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('GET_PARTICIPANTS')
-  async get_participants(client: Socket, data: { login: string, channel: string }) {
+  async get_participants(client: Socket, data: { username: string, channel: string }) {
     let userConnected: User[];
-    let retArray: Array<{ login: string, admin: boolean }> = new Array<{ login: string, admin: boolean }>;
+    let retArray: Array<{ username: string, admin: boolean }> = new Array<{ username: string, admin: boolean }>;
     let channel = await this.channelsService.getOneChannel(data.channel);
     try {
       userConnected = (await this.channelsService.getOneChannel(data.channel)).userConnected
     } catch (e) { userConnected = [] }
     for (let user of userConnected) {
       let admin = await this.channelsService.isAdmin(user, channel);
-      retArray.push({ login: user.username, admin: admin })
+      retArray.push({ username: user.username, admin: admin })
     }
     client.emit('get_participants', retArray);
     this.logger.log('send get_participants with', retArray);
   }
 
   @SubscribeMessage('GET_PARTICIPANT_ROLE')
-  async get_participant_role(client: Socket, data: { login: string, channel: string }) {
+  async get_participant_role(client: Socket, data: { username: string, channel: string }) {
     this.logger.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
-    const user = await this.usersService.getUserByUsername(data.login);
+    const user = await this.usersService.getUserByUsername(data.username);
     let role: string;
     try {
       const channel = await this.channelsService.getOneChannel(data.channel);
@@ -326,7 +326,7 @@ export class ChatGateway {
     let channel = await this.channelsService.getOneChannel(data.channel);
     await this.channelsService.addAdmin(data.new_admin, channel);
     this.logger.log('ADD_ADMIN recu ChatGateway', data);
-    this.get_participant_role(client, { login: data.new_admin, channel: channel.name });
+    this.get_participant_role(client, { username: data.new_admin, channel: channel.name });
   }
 
   @SubscribeMessage('BAN_USER')
