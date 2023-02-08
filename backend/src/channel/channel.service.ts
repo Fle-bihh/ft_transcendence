@@ -40,13 +40,7 @@ export class ChannelService {
       userConnected: [user],
     })
 
-    this.channelsRepository.save(channel)
-
-    // user.channels = (await this.userService.getChannelsCreator(user)).channels;
-    // user.channels.push(channel);
-
-    // user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
-    // user.channelsConnected.push(channel);
+    this.channelsRepository.save(channel);
 
     try {
       await this.channelsRepository.save(channel);
@@ -78,15 +72,12 @@ export class ChannelService {
     if (channel && (channel.password === "" || await bcrypt.compare(password, channel.password))) {
       let user: User = await this.userService.getUserByUsername(username);
       channel.userConnected.push(user);
-
-      // channel.userConnected.push()
-      // user.channelsConnected = (await this.userService.getChannelsConnected(user)).channelsConnected;
-      // user.channelsConnected.push(channel);
+      if (channel.admin.length === 0) {
+        channel.admin.push(user);
+      }
       try {
         await this.channelsRepository.save(channel);
-        // await this.usersRepository.save(user);
       } catch (e) { console.log(e.code) }
-      //join the channel}
     } else {
       throw new UnauthorizedException('Wrong password');
     }

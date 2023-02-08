@@ -45,6 +45,7 @@ export default function Notif() {
   );
 
   utils.socket.removeListener("check_user_exist");
+
   utils.socket.on("check_user_exist", (data: {exist: boolean, username: string}) => {
     console.log('check_user_exist received front', data.exist);
     if (!data.exist) {
