@@ -163,10 +163,10 @@ const Profile = () => {
                     getData: true,
                 })
             }
-        }).catch(() => {})
+        }).catch(() => { })
         axios.get(`http://${utils.ip}:5001/game/${user.user?.id}`, options).then(response => {
             if (response.data != null) {
-            userMatchHistory.splice(0, userMatchHistory.length)
+                userMatchHistory.splice(0, userMatchHistory.length)
                 response.data.forEach((data: any) => {
                     const obj = {
                         id: data.game.id,
@@ -302,20 +302,44 @@ const Profile = () => {
                             </Dialog>
                         </div> :
                         <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={() => {
-                                const jwt = cookies.get('jwt');
-                                const options = {
-                                    headers: {
-                                        'authorization': `Bearer ${jwt}`
-                                    }
-                                }
-                                axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
-                                    setUser(res.data)
-                                })
-                            }}>
-                                Deactivate 2FA
+                            <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
+                                Desactivate 2FA
                             </Button>
+                            <Dialog open={open2FA} onClose={handleClose2FA} >
+                                <div>
+                                    <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
+                                    <DialogContent className='2FA'>
+                                        <img src={qrCode2FA} alt="QRcode" />
+                                        <PinInput length={6}
+                                            focus
+                                            onChange={(value) => { }}
+                                            type="numeric"
+                                            inputMode="number"
+                                            style={{ padding: '10px' }}
+                                            onComplete={(value) => { send2FARequest(value) }}
+                                            autoSelect={true} />
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleClose2FA}>Cancel</Button>
+                                    </DialogActions>
+                                </div>
+                            </Dialog>
                         </div>
+                        // <div>
+                        //     <Button className="buttonChange2FA" type="submit" onClick={() => {
+                        //         const jwt = cookies.get('jwt');
+                        //         const options = {
+                        //             headers: {
+                        //                 'authorization': `Bearer ${jwt}`
+                        //             }
+                        //         }
+                        //         axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
+                        //             setUser(res.data)
+                        //         })
+                        //     }}>
+                        //         Deactivate 2FA
+                        //     </Button>
+                        // </div>
                     }
                 </div>
                 <div className="stat">
