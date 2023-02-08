@@ -65,6 +65,8 @@ export class AuthService {
           login: login,
         }
       });
+      if (user)
+        user.firstConnection = false;
       if (!user) {
         try {
           await this.usersRepository.save(authCredentialsDto);
@@ -80,6 +82,7 @@ export class AuthService {
       });
       const payload: JwtPayload = { login };
       const accessToken: string = this.jwtService.sign(payload);
+      console.log(user);
       return { accessToken: accessToken, user: user };
     } catch (e) { console.log(e.code) }
   }
