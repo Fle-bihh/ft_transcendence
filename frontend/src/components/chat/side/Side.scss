@@ -1,19 +1,23 @@
+$primary: rgb(255, 255, 255,);
+$secondary: rgb(190, 190, 190);
+$third: rgb(150, 150, 150);
+
 .side {
   // margin-left: 30%;
   height: calc(100vh - 64px);
   width: 320px;
   min-width: 320px;
 
-  background-color: rgb(42, 38, 48);
+  background-color: $primary;
 
-  color: white;
+  color: black;
 
   .searchBar {
     height: 30px;
     width: 300px;
 
-    background-color: rgb(53, 49, 59);
-    color: whitesmoke;
+    background-color: $secondary;
+    color: blacksmoke;
 
     display: flex;
     justify-content: space-between;
@@ -43,12 +47,12 @@
     align-items: center;
 
     .newConvMessage {
-      background-color: rgb(53, 49, 59);
+      background-color: $secondary;
       height: 25px;
       width: 150px;
       border-radius: 25px;
       display: flex;
-      color: grey;
+      color: black;
       .newConvButtonText {
         width: 140px;
         font-size: smaller;
@@ -62,17 +66,17 @@
     }
     .newConvMessage:hover {
       cursor: pointer;
-      background-color: rgb(42, 38, 48);
+      background-color: $primary;
     }
 
     .newConvChannel {
-      background-color: rgb(53, 49, 59);
+      background-color: $secondary;
       height: 25px;
       width: 150px;
       border-radius: 25px;
       display: flex;
       margin-left: 5px;
-      color: grey;
+      color: black;
       .newConvButtonText {
         width: 140px;
         font-size: smaller;
@@ -85,7 +89,7 @@
       }
     }
     .newConvChannel:hover {
-      background-color: rgb(42, 38, 48);
+      background-color: $primary;
       cursor: pointer;
     }
   }
@@ -117,7 +121,7 @@
         }
 
         .startedConvMessage {
-          color: grey;
+          color: black;
           word-break: break-all;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -153,7 +157,7 @@
         }
 
         .startedConvMessage {
-          color: grey;
+          color: black;
           word-break: break-all;
           overflow: hidden;
           text-overflow: ellipsis;

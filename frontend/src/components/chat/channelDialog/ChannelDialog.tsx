@@ -316,51 +316,51 @@ const ChannelDialog = (props: {
               />
             </div>
           </div>
-          <input
-            className="descriptionInput"
-            type="text"
-            id="outlined-basic"
-            placeholder="Channel Description"
-            value={descriptionInput}
-            autoComplete={"off"}
-            onChange={(event) => {
-              setDescriptionInput(event.currentTarget.value);
-            }}
-          ></input>
-          <div
-            className="createChannelButton"
-            onClick={() => {
-              if (
-                props.allChannels.find(
-                  (channel) => channel.name === channelNameInput
-                ) === undefined
-              ) {
-                utils.socket.emit("CREATE_CHANNEL", {
-                  privacy: alignment,
-                  name: channelNameInput,
-                  password: channelPasswordInput,
-                  description: descriptionInput,
-                  owner: user.user?.username,
-                });
-                console.log(
-                  "send CREATE_CHANNEL to back from ",
-                  user.user?.username
-                );
-                console.log(
-                  "send ADD_MESSAGE to back from ",
-                  user.user?.username
-                );
-                console.log("privacy: ", alignment);
-                console.log("name: ", channelNameInput);
-                console.log("password: ", channelPasswordInput);
-                console.log("description: ", descriptionInput);
-              }
-              handleClose();
-            }}
-          >
-            <Button style={{backgroundColor:"rgb(53, 49, 59)", color:"whitesmoke"}}>
-            Create
-            </Button>
+          <div className="createChannelLastRaw">
+            <input
+              className="descriptionInput"
+              type="text"
+              id="outlined-basic"
+              placeholder="Channel Description"
+              value={descriptionInput}
+              autoComplete={"off"}
+              onChange={(event) => {
+                setDescriptionInput(event.currentTarget.value);
+              }}
+            ></input>
+            <div
+              className="createChannelButton"
+              onClick={() => {
+                if (
+                  props.allChannels.find(
+                    (channel) => channel.name === channelNameInput
+                  ) === undefined
+                ) {
+                  utils.socket.emit("CREATE_CHANNEL", {
+                    privacy: alignment,
+                    name: channelNameInput,
+                    password: channelPasswordInput,
+                    description: descriptionInput,
+                    owner: user.user?.username,
+                  });
+                  console.log(
+                    "send CREATE_CHANNEL to back from ",
+                    user.user?.username
+                  );
+                  console.log(
+                    "send ADD_MESSAGE to back from ",
+                    user.user?.username
+                  );
+                  console.log("privacy: ", alignment);
+                  console.log("name: ", channelNameInput);
+                  console.log("password: ", channelPasswordInput);
+                  console.log("description: ", descriptionInput);
+                }
+                handleClose();
+              }}
+            >
+              <div className="createChannelButtonTitle">Create</div>
+            </div>
           </div>
         </div>
       </div>
