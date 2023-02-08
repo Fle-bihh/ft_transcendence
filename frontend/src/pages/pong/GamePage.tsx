@@ -171,7 +171,7 @@ const GamePage = (props: any) => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://localhost:5001/user/username/${persistantReducer.userReducer.user?.username}`, options)
+        axios.get(`http://${utils.ip}:5001/user/username/${persistantReducer.userReducer.user?.username}`, options)
             .then(res => {
                 setUser(res.data);
             })
