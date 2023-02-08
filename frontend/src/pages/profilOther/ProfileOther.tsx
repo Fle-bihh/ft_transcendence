@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
@@ -54,10 +54,12 @@ const ProfileOther = () => {
   const [inviteSend, setInviteSend] = useState(false);
   const [declineGame, setDeclineGame] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const [roomSpectate, setRoomSpectate] = useState("");
+  const [spectate, setSpectate] = useState(false);
   const [openGame, setOpenGame] = useState(false);
   const dispatch = useDispatch();
   const { removeNotifInvite } = bindActionCreators(actionCreators, dispatch);
-
+  const navigate = useNavigate();
   const [matchHistory] = useState(
     Array<{
       id: string;
@@ -106,12 +108,10 @@ const ProfileOther = () => {
     }
   );
   utils.gameSocket.removeListener("getClientStatus");
-  utils.gameSocket.on(
-    "getClientStatus",
-    (data: { user: string; status: string }) => {
+  utils.gameSocket.on( "getClientStatus", (data: { user: string; status: string }) => {
       console.log("getClientStatus", data);
-      if (data.user !== userDisplay.username) return;
-
+      if (data.user !== userDisplay.username) 
+        return;
       if (data.status === "online") setClientStatus(ONLINE);
       else if (data.status === "offline") setClientStatus(OFFLINE);
       else if (data.status === "in-game") setClientStatus(IN_GAME);
@@ -356,15 +356,27 @@ const ProfileOther = () => {
     }
   });
 
-  if (openGame && roomId !== "")
-    return (
+  utils.gameSocket.removeListener("getRoomId");
+  utils.gameSocket.on("getRoomId", (roomId: string) => {
+    setRoomSpectate(roomId)
+    setSpectate(true);
+  });
+
+  if (openGame && roomId !== "") return (
       <Navigate
         to="/Pong"
         replace={true}
         state={{ invite: true, roomId: roomId }}
       />
-    );
-  return (
+  )
+  else if (spectate === true && roomSpectate != "") return (
+    <Navigate
+        to="/Pong"
+        replace={true}
+        state={{ spectate: true, roomId: roomSpectate }}
+      />
+  )
+  else return (
     <React.Fragment>
       <Navbar />
       <div className="profilePageContainerOther">
@@ -596,6 +608,13 @@ const ProfileOther = () => {
                   </>
                 )}
           </Dialog>
+          {clientStatus === IN_GAME ? 
+            <Button className="buttonChangeOther" onClick={() => {
+              utils.gameSocket.emit('GET_ROOM_ID', {userToSee : userDisplay.username})
+            }}>
+              Watch his game
+            </Button> : 
+            <></>}
         </div>
         <div className="statOther">
           <div className="rectangleOther">
