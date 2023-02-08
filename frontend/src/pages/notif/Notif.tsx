@@ -12,7 +12,7 @@ import { Navigate, NavLink } from "react-router-dom";
 export default function Notif() {
   const persistantReducer = useSelector((state: RootState) => state.persistantReducer);
   const dispatch = useDispatch();
-  const { addNotif, delNotif, seenAllNotif, removeNotifPong } = bindActionCreators(actionCreators, dispatch);
+  const {delNotif, seenAllNotif, removeNotifPong } = bindActionCreators(actionCreators, dispatch);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [firstOpen, setFirstOpen] = useState(true);

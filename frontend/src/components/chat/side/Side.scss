@@ -47,12 +47,12 @@ $third: rgb(150, 150, 150);
     align-items: center;
 
     .newConvMessage {
-      background-color: $secondary;
+      background-color: black;
       height: 25px;
       width: 150px;
-      border-radius: 25px;
+      // border-radius: 25px;
       display: flex;
-      color: black;
+      color: white;
       .newConvButtonText {
         width: 140px;
         font-size: smaller;
@@ -66,17 +66,17 @@ $third: rgb(150, 150, 150);
     }
     .newConvMessage:hover {
       cursor: pointer;
-      background-color: $primary;
+      background-color: grey;
     }
 
     .newConvChannel {
-      background-color: $secondary;
+      background-color: black;
       height: 25px;
       width: 150px;
-      border-radius: 25px;
+      // border-radius: 25px;
       display: flex;
       margin-left: 5px;
-      color: black;
+      color: white;
       .newConvButtonText {
         width: 140px;
         font-size: smaller;
@@ -89,7 +89,7 @@ $third: rgb(150, 150, 150);
       }
     }
     .newConvChannel:hover {
-      background-color: $primary;
+      background-color: grey;
       cursor: pointer;
     }
   }

@@ -151,15 +151,16 @@ const ChannelSettingsDialog = (props: {
             </div>
           </div>
         ) : (
-          <div></div>
-        )}
+            <div></div>
+          )}
 
         {participantRole !== "participant" ? (
           <div className="secondRaw">
             <div className="participantsList">
               <div className="participantsContainer">
                 {participants.map((participant) => {
-                  if (participant.login != user.user?.username) {
+
+                  if (participant.login !== user.user?.username) {
                     if (
                       !props.allChannels.find(
                         (channel) =>
@@ -204,8 +205,8 @@ const ChannelSettingsDialog = (props: {
                               <div className="content">ADMIN</div>
                             </div>
                           ) : (
-                            <div></div>
-                          )}
+                              <div></div>
+                            )}
                           <div
                             className="muteButton"
                             onClick={() => {
@@ -260,14 +261,16 @@ const ChannelSettingsDialog = (props: {
                         </div>
                       );
                     }
-                  } else return <></>;
+                  }
+                  return <> </>;
+
                 })}
               </div>
             </div>
           </div>
         ) : (
-          <div></div>
-        )}
+            <div></div>
+          )}
         <div
           className="leaveChannel"
           onClick={() => {
