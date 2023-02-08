@@ -153,21 +153,9 @@ export class ChatGateway {
       );
       convers = convers.reverse();
     }
-<<<<<<< HEAD
     let retArray;
     if (convers.length)
       retArray = [...convers];
-    for (let conv of convers) {
-      if (
-        (await this.usersService.isBlocked(data.sender, conv.sender)) &&
-        !conv.serverMsg
-      )
-        retArray.splice(
-          retArray.findIndex((u) => u.sender === conv.sender),
-          1,
-        );
-=======
-    let retArray = [...convers];
     try {
       for (let conv of convers) {
         if (
@@ -183,7 +171,6 @@ export class ChatGateway {
       this.logger.log('send get_conv to front', retArray);
     } catch (e) {
       this.logger.log(e.code);
->>>>>>> 2e62612e36d2dcd716942090ea31ff7eaf560fa4
     }
   }
 
