@@ -159,7 +159,8 @@ const ChannelSettingsDialog = (props: {
             <div className="participantsList">
               <div className="participantsContainer">
                 {participants.map((participant) => {
-                  if (participant.username != user.user?.username) {
+                  if (participant.username !== user.user?.username) {
+
                     if (
                       !props.allChannels.find(
                         (channel) =>
