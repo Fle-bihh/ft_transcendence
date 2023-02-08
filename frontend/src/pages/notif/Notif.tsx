@@ -110,7 +110,7 @@ export default function Notif() {
             }
           }
         })) : (
-          <div>MET ICI CE QUE TU VEUX</div>
+          <h1 className="no_notif">You have no notification</h1>
         )}
       </div>
     </>
