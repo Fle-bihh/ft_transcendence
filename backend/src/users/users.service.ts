@@ -87,6 +87,9 @@ export class UsersService {
   async getUserByUsername(username: string): Promise<User> {
     try {
       const found = await this.usersRepository.findOneBy({ username });
+      if (found === null) {
+        throw new HttpException('User Not Found', 404);
+      }
       return found;
     } catch (e) {
       throw new InternalServerErrorException();
@@ -95,7 +98,6 @@ export class UsersService {
 
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     let found = await this.getUserById(id, user);
-    console.log(found);
     found.username = username
     if (username.length > 12)
       throw new InternalServerErrorException('Username must be shorter or equal to 12 characters');

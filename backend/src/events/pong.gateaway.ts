@@ -168,7 +168,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('CANCEL_GAME')
   cancelGame(client: Socket, data: { roomId: string }) {
-    console.log("cancel game deco")
     var room = this.getRoomByID(data.roomId);
     if (room != null) {
       this.allGames.splice(room[0], 1)
@@ -202,7 +201,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async checkReconnexion(client: Socket, user: { username: string }) {
     if (user.username != undefined) {
       allClients.find(item => item.id == client.id)!.username = user.username
-      console.log(`Check reco : ${user.username}`);
       if (UserDisconnected.find((item) => item.username == user.username))
         UserDisconnected.splice(
           UserDisconnected.findIndex((item) => item.username == user.username),
@@ -315,7 +313,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     else {
       waitingForGame.push({ map: info.gameMap, user: { login: info.user.login } })
-      console.table(waitingForGame)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }
@@ -411,14 +408,10 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
       waitingForInvite.splice(waitingForInvite.findIndex(item => item.map == info.gameMap), 1)
-      console.table(waitingForInvite)
       console.table(this.allGames)
-      console.log(room[1].players)
-      console.table(allClients)
     }
     else {
       waitingForInvite.push({ map: info.gameMap, user: { login: info.user.login } })
-      console.table(waitingForInvite)
       this.io.to(client.id).emit('joined_waiting', info.user)
     }
   }
@@ -432,7 +425,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
         emitFrom: 'getUserStatus',
       });
     }
-    else if (allClients.find((item) => item.username == data.login))
+    else if (allClients.find((item) => item.id == client.id))
       this.io.to(client.id).emit('getClientStatus', {
         user: data.login,
         status: 'online',

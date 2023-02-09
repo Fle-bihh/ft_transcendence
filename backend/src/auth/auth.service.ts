@@ -78,7 +78,6 @@ export class AuthService {
       const accessToken: string = this.jwtService.sign(payload);
       return { accessToken: accessToken, user: user };
     } catch (e) {
-      console.log("errrorr ===== ", e);
       return null;
     }
   }
