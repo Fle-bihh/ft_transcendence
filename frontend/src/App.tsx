@@ -27,7 +27,6 @@ function App() {
   
   utils.gameSocket.removeListener("invite_game");
   utils.gameSocket.on("invite_game", (data: { sender: string; gameMap: string; receiver: string }) => {
-      console.log("received invitation data : ", data);
       addNotif({ type: NotifType.INVITEGAME, data: data });
     }
   );
@@ -39,7 +38,6 @@ function App() {
       // utils.gameSocket.emit("CHECK_RECONNEXION", {username : user.user?.username});
     }
   });
-  console.log("ip = ", ip);
   return (
     <div className="app">
       <PersistGate loading={null} persistor={persistor}>

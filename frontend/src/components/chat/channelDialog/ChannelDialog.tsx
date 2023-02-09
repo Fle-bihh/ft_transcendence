@@ -97,7 +97,6 @@ const ChannelDialog = (props: {
         owner: string;
       }>
     ) => {
-      console.log("get_all_channels recu", user.user?.username, "with", data);
       props.setAllChannels([...data]);
     }
   );
@@ -339,14 +338,6 @@ const ChannelDialog = (props: {
                     description: descriptionInput,
                     owner: user.user?.username,
                   });
-                  console.log(
-                    "send CREATE_CHANNEL to back from ",
-                    user.user?.username
-                  );
-                  console.log(
-                    "send ADD_MESSAGE to back from ",
-                    user.user?.username
-                  );
                 }
                 handleClose();
               }}
