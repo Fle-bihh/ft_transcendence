@@ -91,6 +91,8 @@ export class UsersService {
         throw new HttpException('User Not Found', 404);
       }
       return found;
+      else 
+      throw new HttpException('User Not Found', 404);
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -153,7 +155,8 @@ export class UsersService {
 
   async deactivate2FA(user: User): Promise<User> {
     user.twoFactorAuth = false;
-    return await this.usersRepository.save(user);
+    user = await this.usersRepository.save(user);
+    return (user);
   }
 
   async activate2FA(user: User): Promise<User> {

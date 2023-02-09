@@ -29,45 +29,48 @@ const Connect = () => {
   );
   const utils = useSelector((state: RootState) => state.utils);
 
-  axios
-    .request({
-      url: "/auth/api42/Signin",
-      method: "post",
-      baseURL: `http://${utils.ip}:5001`,
-      params: {
-        code: code,
-        nickName: null,
-      },
-    })
-    .then((response: AxiosResponse<any, any>) => {
-      if (!response.data) {
-        window.history.pushState({}, window.location.toString());
-        window.location.replace("/");
-      }
-      if (response.data.user?.username) {
-        cookies.set("jwt", response.data.accessToken, { path: `/` });
-        setUser(response.data.user);
-        if (response.data.user.firstConnection) {
-          setFirstCo(true);
+  useEffect(() => {
+    axios
+      .request({
+        url: "/auth/api42/Signin",
+        method: "post",
+        baseURL: `http://${utils.ip}:5001`,
+        params: {
+          code: code,
+          nickName: null,
+        },
+      })
+      .then((response: AxiosResponse<any, any>) => {
+        if (!response.data) {
+          window.history.pushState({}, window.location.toString());
+          window.location.replace("/");
         }
-        else
-          setFirstCo(false);
-        setLoading(false)
-        console.log('response.data.user -->', firstCo)
-        // const tmp = true
+        if (response.data.user?.username && response.data.accesToken !== null) {
+          cookies.set("jwt", response.data.accessToken, { path: `/` });
+          setUser(response.data.user);
+          if (response.data.user.firstConnection && response.data.accessToken) {
+            setFirstCo(true);
+          }
+          else if (response.data.accessToken)
+            setFirstCo(false);
+          setLoading(false)
+
+          console.log('response.data.user -->', firstCo)
+          // const tmp = true
 
 
-        console.log('response.data.user -->', firstCo)
-      }
-      // utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
-      // utils.gameSocket.emit("CHECK_RECONNEXION", {
-      //   username: userReducer.user?.username,
-      // });
-    })
-    .catch(() => {
-      /*  window.history.pushState({}, window.location.toString());
-        window.location.replace("/signup");*/
-    });
+          console.log('response.data.user -->', firstCo)
+        }
+        // utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
+        // utils.gameSocket.emit("CHECK_RECONNEXION", {
+        //   username: userReducer.user?.username,
+        // });
+      })
+      .catch(() => {
+        /*  window.history.pushState({}, window.location.toString());
+          window.location.replace("/signup");*/
+      });
+  },[])
 
   function verify2FA(value: string) {
     const jwt = cookies.get("jwt");
