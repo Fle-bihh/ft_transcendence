@@ -82,7 +82,6 @@ const Main = (props: {
       sender: user.user?.username,
       receiver: props.openConvName,
     });
-    console.log("send GET_CONV to back");
   }, [props.openConvName, props.allConv, user.user?.username, utils.socket]);
 
   useEffect(() => {
@@ -105,7 +104,6 @@ const Main = (props: {
         serverMsg: boolean;
       }>
     ) => {
-      console.log("get_conv recu front", openConv);
       const sorted = openConv.sort((a, b) => a.id - b.id);
       setConvMessages(sorted);
     }
