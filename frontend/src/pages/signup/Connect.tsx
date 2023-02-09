@@ -40,7 +40,9 @@ const Connect = () => {
       },
     })
     .then((response: AxiosResponse<any, any>) => {
+      console.log('Inside \'.then\', response = ')
       if (!response.data) {
+        console.log('response.data = false');
         window.history.pushState({}, window.location.toString());
         window.location.replace("/");
       }
@@ -53,10 +55,6 @@ const Connect = () => {
         else
           setFirstCo(false);
         setLoading(false)
-        console.log('response.data.user -->', firstCo)
-        // const tmp = true
-
-
         console.log('response.data.user -->', firstCo)
       }
       // utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
@@ -94,9 +92,9 @@ const Connect = () => {
 
   }
 
-  useEffect(() => {
-    console.log('ouiouiouoiuoiui', firstCo)
-  }, [firstCo])
+  // useEffect(() => {
+  //   console.log('ouiouiouoiuoiui', firstCo)
+  // }, [firstCo])
 
   const handleClose = () => {
     const jwt = cookies.get('jwt');
@@ -108,7 +106,6 @@ const Connect = () => {
     const tmp = inputValue.replace(/ /g, "")
     console.log("tmp=", tmp)
     if (tmp !== "") {
-      console.log("iiiiii")
       axios.patch(`http://${utils.ip}:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
         if (response.data != null) {
           console.log('resp data == ', response.data);
