@@ -25,6 +25,7 @@ export default function NotifInterceptor(props: { children: any }) {
     if (userReducer.user)
     {
       utilsReducer.socket.emit("STORE_CLIENT_INFO", { user: userReducer.user });
+      utilsReducer.gameSocket.emit("STORE_CLIENT_INFO", { user: userReducer.user });
       // utilsReducer.gameSocket.emit("CHECK_RECONNEXION", {username : userReducer.user?.username});
     }
   });
