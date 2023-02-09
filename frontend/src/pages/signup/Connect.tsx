@@ -9,7 +9,6 @@ import "./Connect.scss";
 import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 
-
 const Connect = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -56,7 +55,7 @@ const Connect = () => {
 
         console.log('response.data.user -->', firstCo)
       }
-      utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
+      // utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
       // utils.gameSocket.emit("CHECK_RECONNEXION", {
       //   username: userReducer.user?.username,
       // });

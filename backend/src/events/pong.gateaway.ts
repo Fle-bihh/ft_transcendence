@@ -444,27 +444,27 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('GET_CLIENT_STATUS')
-  getUserStatus(client: Socket, data: { nickname: string }) {
+  getUserStatus(client: Socket, data: { login: string }) {
     console.log('allClients ldisqhgvbjkhqfsbd', allClients);
     console.log('allClients nickname', data);
-    if (this.getRoomByClientLogin(data.nickname) != null) {
+    if (this.getRoomByClientLogin(data.login) != null) {
       this.io.to(client.id).emit('getClientStatus', {
-        user: data.nickname,
+        user: data.login,
         status: 'in-game',
-        emitFrom: 'clientStatusGame',
+        emitFrom: 'getUserStatus',
       });
     }
-    else if (allClients.find((item) => item.username == data.nickname))
+    else if (allClients.find((item) => item.username == data.login))
       this.io.to(client.id).emit('getClientStatus', {
-        user: data.nickname,
+        user: data.login,
         status: 'online',
-        emitFrom: 'clientStatusGame',
+        emitFrom: 'getUserStatus',
       });
     else
       this.io.to(client.id).emit('getClientStatus', {
-        user: data.nickname,
+        user: data.login,
         status: 'offline',
-        emitFrom: 'clientStatusGame',
+        emitFrom: 'getUserStatus',
       });
   }
 }

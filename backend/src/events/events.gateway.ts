@@ -366,46 +366,40 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('GET_USER_FRIENDS')
-  async get_user_friends(client: Socket) {
+  async get_user_friends(client: Socket, data: { username: string }) {
+    console.log("get user friends : ", data)
     console.log("get user friends : ", users)
-    const userFriendList = await this.friendShipService.getUserFriendList(
-      users.find((item) => item.socket.id == client.id).user.id,
-    );
+    const user = users.find((item) => item.user.username === data.username);
+    const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
     const retArray = Array<{ username: string }>();
-    allUsers.forEach((item) => {
-      if (
-        userFriendList.find(
-          (tmp) => tmp.id_1 == item.id || tmp.id_2 == item.id,
-        ) != undefined &&
-        item.id != users.find((item) => item.socket.id == client.id).user.id
-      ) {
-        retArray.push({ username: item.username });
+    for (let item of allUsers) {
+      if (!(await this.userService.isBlocked(item.username, user.user.username)) &&
+      userFriendList.find((tmp) => (tmp.id_1 == item.id || tmp.id_2 == item.id) ) && item.id != user.user.id) {
+          retArray.push({ username: item.username });
       }
-    });
+    }
+    console.log("retArray == ", retArray);
     client.emit('get_user_friends', retArray);
   }
 
   @SubscribeMessage('GET_ALL_USERS_NOT_FRIEND')
   async get_all_users_not_friend(client: Socket, data: { username: string }) {
-    const userFriendList = await this.friendShipService.getUserFriendList(
-      users.find((item) => item.socket.id == client.id).user.id,
-    );
+    console.log("get user not friends : ", data)
+    console.log("get user not friends : ", users)
+    const user = users.find((item) => item.user.username === data.username);
+    const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
-
     const retArray = Array<{ username: string }>();
 
-    allUsers.forEach((item) => {
-      if (
-        userFriendList.find(
-          (tmp) => tmp.id_1 == item.id || tmp.id_2 == item.id,
-        ) == undefined &&
-        item.id != users.find((item) => item.socket.id == client.id).user.id
-      ) {
+    for (let item of allUsers) {
+      if ((await this.userService.isBlocked(item.username, data.username) || !userFriendList.find( (tmp) => (tmp.id_1 == item.id || tmp.id_2 == item.id))) &&
+      item.id != user.user.id) {
         if (item.username !== data.username)
           retArray.push({ username: item.username });
       }
-    });
+    }
+    console.log("retArray == ", retArray);
     client.emit('get_all_users_not_friend', retArray);
   }
 
