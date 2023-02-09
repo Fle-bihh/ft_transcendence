@@ -33,7 +33,7 @@ export class AuthService {
   private readonly clientSecret: string = this.configService.get('CLIENT_SECRET');
   private readonly redirectURI: string = this.configService.get('REDIRECT_URI');
 
-  async setAuthCredentialsDto(data: { username: string, login: string, profileImage: string, email: string }): Promise<AuthCredentialsDto> {
+  async setAuthCredentialsDto(data: { username: string, login: string, profileImage: string, email: string, accessToken: string }): Promise<AuthCredentialsDto> {
     let user: User = await this.usersRepository.findOne({
       where: {
         username: data.username,
@@ -44,42 +44,61 @@ export class AuthService {
       return this.setAuthCredentialsDto(data)
     }
     else
-      return ({ username: data.username, login: data.login, profileImage: data.profileImage, email: data.email, admin: false, games: [], messagesSent: [], messagesReceived: [], channels: [], channelsAdmin: [], channelsConnected: [], blockList: [] });
+      return ({ username: data.username, login: data.login, profileImage: data.profileImage, email: data.email, admin: false, games: [], messagesSent: [], messagesReceived: [], channels: [], channelsAdmin: [], channelsConnected: [], blockList: [], accessToken: data.accessToken });
   }
 
   async signIn42(auth42Dto: Auth42Dto): Promise<{ accessToken: string, user: User }> {
+    let found: User;
     try {
-      const token = this.http.post(
-        `${this.authorizationURI}?grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${auth42Dto.code}&redirect_uri=${this.redirectURI}`,
-      );
-      this.accessToken = (await lastValueFrom(token)).data.access_token;
-      this.headers = { Authorization: `Bearer ${this.accessToken}` };
-      const response$ = this.http.get(`${this.endpoint}/me`, {
-        headers: this.headers,
-      });
-      const { data } = await lastValueFrom(response$);
-      const authCredentialsDto: AuthCredentialsDto = await this.setAuthCredentialsDto({ username: data.login, login: data.login, profileImage: data.image.link, email: data.email });
-      const { login } = authCredentialsDto;
-      let user: User;
-      try {
-        user = await this.userService.getUserByLogin(data.login);
-        user.firstConnection = false;
-        await this.usersRepository.save(user);
-      } catch (e) {
-        try {
-          await this.usersRepository.save(authCredentialsDto);
-        }
-        catch (error) {
-          throw new InternalServerErrorException();
-        }
-      }
-      user = await this.userService.getUserByLogin(data.login);
-      const payload: JwtPayload = { login };
+      found = await this.usersRepository.findOneBy({ accessToken: auth42Dto.code });
+      found.firstConnection = false;
+      const payload: JwtPayload = { login: found.login };
+      this.usersRepository.save(found);
       const accessToken: string = this.jwtService.sign(payload);
-      return { accessToken: accessToken, user: user };
-    } catch (e) {
-      console.log("errrorr ===== ", e);
-      return null;
+      return { accessToken: null, user: found };
+    } catch {
+      try {
+        try {
+          found = await this.usersRepository.findOneBy({ accessToken: auth42Dto.code });
+        } catch {
+          const payload: JwtPayload = { login: found.login };
+          const accessToken: string = this.jwtService.sign(payload);
+          return { accessToken: accessToken, user: found };
+        }
+        const token = this.http.post(
+          `${this.authorizationURI}?grant_type=authorization_code&client_id=${this.clientId}&client_secret=${this.clientSecret}&code=${auth42Dto.code}&redirect_uri=${this.redirectURI}`,
+        );
+        this.accessToken = (await lastValueFrom(token)).data.access_token;
+        this.headers = { Authorization: `Bearer ${this.accessToken}` };
+        const response$ = this.http.get(`${this.endpoint}/me`, {
+          headers: this.headers,
+        });
+        const { data } = await lastValueFrom(response$);
+        const authCredentialsDto: AuthCredentialsDto = await this.setAuthCredentialsDto({ username: data.login, login: data.login, profileImage: data.image.link, email: data.email, accessToken: auth42Dto.code });
+        const { login } = authCredentialsDto;
+        let user: User;
+        try {
+          user = await this.userService.getUserByLogin(data.login);
+          user.accessToken = auth42Dto.code;
+          user.firstConnection = false;
+          await this.usersRepository.save(user);
+        } catch (e) {
+          try {
+            await this.usersRepository.save(authCredentialsDto);
+          }
+          catch (error) {
+            throw new InternalServerErrorException();
+          }
+        }
+        user = await this.userService.getUserByLogin(data.login);
+        user.accessToken = auth42Dto.code;
+        await this.usersRepository.save(user);
+        const payload: JwtPayload = { login };
+        const accessToken: string = this.jwtService.sign(payload);
+        return { accessToken: accessToken, user: user };
+      } catch (e) {
+        return null;
+      }
     }
   }
 

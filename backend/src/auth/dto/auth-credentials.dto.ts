@@ -35,4 +35,6 @@ export class AuthCredentialsDto {
   channelsConnected: Channel[];
 
   blockList: User[];
+
+  accessToken: string | null;
 }

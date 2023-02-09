@@ -69,4 +69,7 @@ export class User {
 
 	@Column({ default: true })
 	firstConnection: boolean;
+
+	@Column()
+	accessToken: string | null;
 }
