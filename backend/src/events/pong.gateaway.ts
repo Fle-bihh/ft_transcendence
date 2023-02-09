@@ -402,6 +402,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('START_INVITE_GAME')
   async startInviteGame(client: Socket, info: { user: { login: string }, gameMap: string, roomId: string }) {
     let oponnent: { map: string; user: { login: string } };
+    console.log("info : ", info);
     const spectateI = spectators.findIndex((u) => u.login == info.user.login)
     if (spectateI != -1) {
       client.leave(spectators[spectateI].roomId)
@@ -416,10 +417,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.allGames[room[0]].players[0].connect = true
       this.allGames[room[0]].setOponnent(allClients.find(client => client.username == oponnent.user.login).id, oponnent.user.login)
       this.allGames[room[0]].gameOn = true
-      allClients.find(client => client.username == oponnent.user.login).socket.emit('start', room[1].roomID)
+      users.find(client => client.user.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
       waitingForInvite.splice(waitingForInvite.findIndex(item => item.map == info.gameMap), 1)
-      // console.table(this.allGames)
     }
     else {
       waitingForInvite.push({ map: info.gameMap, user: { login: info.user.login } })
