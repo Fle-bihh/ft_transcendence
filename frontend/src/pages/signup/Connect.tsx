@@ -41,6 +41,10 @@ const Connect = () => {
       },
     })
     .then((response: AxiosResponse<any, any>) => {
+      if (!response.data) {
+        window.history.pushState({}, window.location.toString());
+        window.location.replace("/");
+      }
       if (response.data.user?.username) {
         cookies.set("jwt", response.data.accessToken, { path: `/` });
         setUser(response.data.user);
@@ -61,7 +65,10 @@ const Connect = () => {
       //   username: userReducer.user?.username,
       // });
     })
-    .catch(() => { });
+    .catch(() => {
+      /*  window.history.pushState({}, window.location.toString());
+        window.location.replace("/signup");*/
+    });
 
   function verify2FA(value: string) {
     const jwt = cookies.get("jwt");

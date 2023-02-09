@@ -155,7 +155,7 @@ export class UsersService {
   }
 
   async activate2FA(user: User): Promise<User> {
-    user.twoFactorAuth = !user.twoFactorAuth;
+    user.twoFactorAuth = true;
     return await this.usersRepository.save(user);
   }
 
