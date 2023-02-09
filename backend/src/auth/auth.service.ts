@@ -77,7 +77,7 @@ export class AuthService {
       const payload: JwtPayload = { login };
       const accessToken: string = this.jwtService.sign(payload);
       return { accessToken: accessToken, user: user };
-    } catch (e) { console.log(e.code) }
+    } catch (e) { throw new InternalServerErrorException() }
   }
 
   async getUserFromToken(token: string): Promise<User> {
