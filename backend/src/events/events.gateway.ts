@@ -359,7 +359,10 @@ export class EventsGateway {
 
   @SubscribeMessage('GET_USER_FRIENDS')
   async get_user_friends(client: Socket, data: { username: string }) {
-    const user = users.find((item) => item.user.username === data.username);
+    console.log("get user friend : ", data)
+    const user = users.find((item) => (item.user.username != undefined && item.user.username === data.username));
+    if (!user)
+      return;
     const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
     const retArray = Array<{ username: string }>();
@@ -375,11 +378,12 @@ export class EventsGateway {
 
   @SubscribeMessage('GET_ALL_USERS_NOT_FRIEND')
   async get_all_users_not_friend(client: Socket, data: { username: string }) {
-    const user = users.find((item) => item.user.username === data.username);
+    const user = users.find((item) => (item.user.username != undefined && item.user.username === data.username));
+    if (!user)
+      return;
     const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
     const retArray = Array<{ username: string }>();
-
     for (let item of allUsers) {
       if ((await this.userService.isBlocked(item.username, data.username) || !userFriendList.find( (tmp) => (tmp.id_1 == item.id || tmp.id_2 == item.id))) &&
       item.id != user.user.id) {

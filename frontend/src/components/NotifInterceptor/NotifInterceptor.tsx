@@ -30,12 +30,13 @@ export default function NotifInterceptor(props: { children: any }) {
     }
   });
 
-  // utilsReducer.socket.removeListener("store_client_done");
-  // utilsReducer.socket.on("store_client_done", () => {
-  //   setLoading(false);
-  // });
+  utilsReducer.socket.removeListener("store_client_done");
+  utilsReducer.socket.on("store_client_done", () => {
+    setLoading(false);
+  });
 
-  // if (loading) return <></>;
+  
+  if (loading) return <></>;
 
   return <>{props.children}</>;
 }

@@ -363,11 +363,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('INVITE_GAME')
   inviteGame(client: Socket, data: { sender: string, gameMap: string, receiver: string }) {
-    const receiver = allClients.find(user => user.username == data.receiver);
+    const receiver = users.find(user => user.user.username == data.receiver);
     if (receiver) {
-      const room = this.getRoomByClientLogin(receiver.username)
+      const room = this.getRoomByClientLogin(receiver.user.username)
       if (!room)
-        this.io.to(receiver.id).emit('invite_game', data);
+        this.io.to(receiver.socket.id).emit('invite_game', data);
     }
     else
       this.io.to(client.id).emit('cant_invite', data);
@@ -375,16 +375,18 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('DECLINE_GAME')
   declineGame(client: Socket, data: { sender: string, gameMap: string, receiver: string }) {
-    const sender = allClients.find(user => user.username == data.sender);
+    // const sender = allClients.find(user => user.username == data.sender);
+    const sender = users.find(user => user.user.username == data.sender);
     if (sender)
-      this.io.to(sender.id).emit('decline_game', data);
+      this.io.to(sender.socket.id).emit('decline_game', data);
   }
 
   @SubscribeMessage('ACCEPT_GAME')
   acceptGame(client: Socket, data: { sender: string, gameMap: string, receiver: string }) {
-    const sender = allClients.find(user => user.username == data.sender);
+    // const sender = allClients.find(user => user.username == data.sender);
+    const sender = users.find(user => user.user.username == data.sender);
     if (sender) {
-      this.io.to(sender.id).emit('accept_game', data);
+      this.io.to(sender.socket.id).emit('accept_game', data);
       this.io.to(client.id).emit('redirect_to_game', data);
     }
   }
