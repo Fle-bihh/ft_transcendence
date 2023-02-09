@@ -359,8 +359,6 @@ export class EventsGateway {
 
   @SubscribeMessage('GET_USER_FRIENDS')
   async get_user_friends(client: Socket, data: { username: string }) {
-    console.log("get user friends : ", data)
-    console.log("get user friends : ", users)
     const user = users.find((item) => item.user.username === data.username);
     const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
@@ -371,12 +369,12 @@ export class EventsGateway {
           retArray.push({ username: item.username });
       }
     }
+    console.log("retArray == ", retArray);
+    client.emit('get_user_friends', retArray);
   }
 
   @SubscribeMessage('GET_ALL_USERS_NOT_FRIEND')
   async get_all_users_not_friend(client: Socket, data: { username: string }) {
-    console.log("get user not friends : ", data)
-    console.log("get user not friends : ", users)
     const user = users.find((item) => item.user.username === data.username);
     const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
@@ -389,6 +387,8 @@ export class EventsGateway {
           retArray.push({ username: item.username });
       }
     }
+    console.log("retArray == ", retArray);
+    client.emit('get_all_users_not_friend', retArray);
   }
 
   @SubscribeMessage('DISCONNECT_SOCKET')
@@ -403,7 +403,6 @@ export class EventsGateway {
   handleConnection(client: Socket) {
     this.logger.log(`new client connected ${client.id}`);
     users.push({ user: {}, socket: client });
-    console.table(users);
   }
 
   handleDisconnect(client: Socket) {

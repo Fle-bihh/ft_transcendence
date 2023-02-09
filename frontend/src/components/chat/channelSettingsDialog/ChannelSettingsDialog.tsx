@@ -56,12 +56,10 @@ const ChannelSettingsDialog = (props: {
       username: user.user?.username,
       channel: props.openConvName,
     });
-    console.log("send GET_PARTICIPANT_ROLE to back from", user.user?.username);
     utils.socket.emit("GET_PARTICIPANTS", {
       username: user.user?.username,
       channel: props.openConvName,
     });
-    console.log("send GET_PARTICIPANTS to back from", user.user?.username);
   }, [
     props.settingsDialogOpen,
     props.openConvName,
@@ -71,7 +69,6 @@ const ChannelSettingsDialog = (props: {
 
   utils.socket.removeListener("channel_left");
   utils.socket.on("channel_left", (data: { channelName: string }) => {
-    console.log(user.user?.username, "received channel_left from back with");
     props.setSettingsDialogOpen(false);
     props.setOpenConvName("");
     handleClose();
@@ -79,11 +76,6 @@ const ChannelSettingsDialog = (props: {
 
   utils.socket.removeListener("get_participant_role");
   utils.socket.on("get_participant_role", (data: { role: string }) => {
-    console.log(
-      user.user?.username,
-      "received get_participant_role from back with",
-      data
-    );
     setParticipantRole(data.role);
   });
 
@@ -96,11 +88,6 @@ const ChannelSettingsDialog = (props: {
         admin: boolean;
       }>
     ) => {
-      console.log(
-        user.user?.username,
-        "received get_participants from back with",
-        data
-      );
       setParticipants([...data]);
     }
   );
@@ -159,7 +146,6 @@ const ChannelSettingsDialog = (props: {
             <div className="participantsList">
               <div className="participantsContainer">
                 {participants.map((participant, index) => {
-                  console.log('channel = ', props.allChannels.find(channel => (channel.name === props.openConvName)));
                   if (participant.username !== user.user?.username) {
                     if (!props.allChannels.find((channel) => channel.name === props.openConvName && channel.owner === participant.username)) {
                       return (
@@ -172,11 +158,9 @@ const ChannelSettingsDialog = (props: {
                               onClick={() => {
                                 if (!participant.admin) {
                                   utils.socket.emit("ADD_ADMIN", { new_admin: participant.username, channel: props.openConvName, });
-                                  console.log("emit ADD_ADMIN to back from ", user.user?.username);
                                   handleClose();
                                 } else {
                                   utils.socket.emit("REMOVE_ADMIN", { new_admin: participant.username, channel: props.openConvName });
-                                  console.log("emit REMOVE_ADMIN to back from ", user.user?.username);
                                   handleClose();
                                 }
                               }}>
@@ -193,10 +177,6 @@ const ChannelSettingsDialog = (props: {
                                   user: participant.username,
                                   channel: props.openConvName,
                                 });
-                                console.log(
-                                  "emit MUTE_USER to back from ",
-                                  participant.username
-                                );
                                 handleClose();
                               }
                             }}
@@ -211,10 +191,6 @@ const ChannelSettingsDialog = (props: {
                                   user: participant.username,
                                   channel: props.openConvName,
                                 });
-                                console.log(
-                                  "emit BAN_USER to back from ",
-                                  participant.username
-                                );
                                 handleClose();
                               }
                             }}
@@ -230,10 +206,6 @@ const ChannelSettingsDialog = (props: {
                                     user: participant.username,
                                     channel: props.openConvName,
                                   });
-                                  console.log(
-                                    "emit KICK_USER to back from ",
-                                    participant.username
-                                  );
                                   handleClose();
                                 }
                               }}
@@ -262,10 +234,6 @@ const ChannelSettingsDialog = (props: {
               login: user.user?.username,
               channelName: props.openConvName,
             });
-            console.log(
-              "send LEAVE_CHANNEL to back from ",
-              user.user?.username
-            );
             handleClose();
           }}
         >
@@ -282,10 +250,6 @@ const ChannelSettingsDialog = (props: {
               currentName: props.openConvName,
               newName: nameInputValue,
             });
-            console.log(
-              "send CHANGE_CHANNEL_NAME to back from ",
-              user.user?.username
-            );
             props.setOpenConvName(nameInputValue);
             handleCloseSecuName();
             handleClose();
@@ -307,10 +271,6 @@ const ChannelSettingsDialog = (props: {
               channelName: props.openConvName,
               newPassword: passwordInputValue,
             });
-            console.log(
-              "send CHANGE_CHANNEL_PASSWORD to back from ",
-              user.user?.username
-            );
             handleCloseSecuPassword();
             handleClose();
           }}

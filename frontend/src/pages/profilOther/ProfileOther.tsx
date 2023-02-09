@@ -6,8 +6,8 @@ import * as React from "react";
 
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import {  useDispatch, useSelector } from "react-redux";
-import {  actionCreators, RootState } from "../../state";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators, RootState } from "../../state";
 import { bindActionCreators } from "redux";
 import Version0 from "../../styles/asset/Version0.gif";
 import Version1 from "../../styles/asset/Version1.gif";
@@ -92,7 +92,13 @@ const ProfileOther = () => {
   utils.socket.on(
     "updateProfileOther",
     (data: { username: string; friendStatus: string }) => {
-      console.log("updateProfileOther received with", data.username, data.friendStatus, 'usrname = ', userDisplay.username);
+      console.log(
+        "updateProfileOther received with",
+        data.username,
+        data.friendStatus,
+        "usrname = ",
+        userDisplay.username
+      );
       if (data.username !== userDisplay.username) return;
       if (data.friendStatus === "blocked") {
         setFriend(BLOCKED);
@@ -108,10 +114,11 @@ const ProfileOther = () => {
     }
   );
   utils.gameSocket.removeListener("getClientStatus");
-  utils.gameSocket.on( "getClientStatus", (data: { user: string; status: string }) => {
-      console.log("getClientStatus", data);
-      if (data.user !== userDisplay.username) 
-        return;
+  utils.gameSocket.on(
+    "getClientStatus",
+    (data: { user: string; status: string; emitFrom: string }) => {
+      console.log("getClientStatus", data, userDisplay);
+      if (data.user !== userDisplay.login) return;
       if (data.status === "online") setClientStatus(ONLINE);
       else if (data.status === "offline") setClientStatus(OFFLINE);
       else if (data.status === "in-game") setClientStatus(IN_GAME);
@@ -120,6 +127,7 @@ const ProfileOther = () => {
 
   const getUserData = () => {
     const parsed = queryString.parse(window.location.search);
+    console.log("parsed = ", parsed);
     if (
       parsed.username === "" ||
       parsed.username === undefined ||
@@ -129,7 +137,10 @@ const ProfileOther = () => {
       window.location.replace("/");
     } else {
       axios
-        .get(`http://${utils.ip}:5001/user/username/${parsed.username} `, options)
+        .get(
+          `http://${utils.ip}:5001/user/username/${parsed.username} `,
+          options
+        )
         .then((response) => {
           if (response.data.username != null) {
             setUserDisplay({
@@ -149,7 +160,7 @@ const ProfileOther = () => {
               username: response.data.username,
             });
             utils.gameSocket.emit("GET_CLIENT_STATUS", {
-              nickname: response.data.login,
+              login: response.data.login,
             });
           }
         })
@@ -162,7 +173,7 @@ const ProfileOther = () => {
       .get(`http://${utils.ip}:5001/game/${user.user?.id}`, options)
       .then((response) => {
         if (response.data != null) {
-        matchHistory.splice(0, matchHistory.length)
+          matchHistory.splice(0, matchHistory.length);
           response.data.forEach((data: any) => {
             const obj = {
               id: data.game.id,
@@ -183,8 +194,7 @@ const ProfileOther = () => {
   // console.log('histo', userDisplay.WinNumber, userDisplay.LossNumber)
 
   const handleClickOpen = () => {
-    if (friend !== BLOCKED)
-      setOpen(true);
+    if (friend !== BLOCKED) setOpen(true);
   };
 
   const handleClose = (change: boolean) => {
@@ -207,7 +217,7 @@ const ProfileOther = () => {
         utils.socket.emit("REMOVE_FRIEND_SHIP", {
           receiver: userDisplay.username,
         });
-        removeNotifInvite(user.user!.username)
+        removeNotifInvite(user.user!.username);
       }
     }
     setOpen(false);
@@ -358,331 +368,345 @@ const ProfileOther = () => {
 
   utils.gameSocket.removeListener("getRoomId");
   utils.gameSocket.on("getRoomId", (roomId: string) => {
-    setRoomSpectate(roomId)
+    setRoomSpectate(roomId);
     setSpectate(true);
   });
 
-  if (openGame && roomId !== "") return (
+  if (openGame && roomId !== "")
+    return (
       <Navigate
         to="/Pong"
         replace={true}
         state={{ invite: true, roomId: roomId }}
       />
-  )
-  else if (spectate === true && roomSpectate != "") return (
-    <Navigate
+    );
+  else if (spectate === true && roomSpectate != "")
+    return (
+      <Navigate
         to="/Pong"
         replace={true}
         state={{ spectate: true, roomId: roomSpectate }}
       />
-  )
-  else return (
-    <React.Fragment>
-      <Navbar />
-      <div className="profilePageContainerOther">
-        <div className="profileOther">
-          <Stack direction="row" spacing={2} className="avatarItemOther">
-            <img
-              alt="Cerise"
-              src={userDisplay!.profileImage}
-              className="avatarOther"
-            />
-          </Stack>
-          {friend === FRIEND ? (
-            <>
-              {clientStatus === ONLINE ? (
-                <div id="userConnect">
-                  <div className="circleConnectLigne" id="userConnect"></div>
-
-                  <div className="connect" id="userConnect">
-                    Online
-                  </div>
-                </div>
-              ) : clientStatus === IN_GAME ? (
-                <div id="userInGame">
-                  <div className="circleInGame" id="userInGame"></div>
-
-                  <div className="connect" id="userInGame">
-                    In game
-                  </div>
-                </div>
-              ) : clientStatus === OFFLINE ? (
-                <div id="userConnectHorsLigne">
-                  <div
-                    className="circleConnectHorsLigne"
-                    id="userConnectHorsLigne"
-                  ></div>
-                  <div className="connect" id="userConnectHorsLigne">
-                    Not Connected
-                  </div>
-                </div>
-              ) : (
-                      <></>
-                    )}
-            </>
-          ) : (
-              <></>
-            )}
-          <div className="infoUserOther">
-            <h3 className="userNameOther">Login :</h3>
-            <Typography className="userNamePrintOther">
-              {userDisplay?.login}
-            </Typography>
-          </div>
-          <div className="infoUsernameOther">
-            <h3 className="userNameChangeOther">userName :</h3>
-            <Typography className="userNamePrintChangeOther">
-              {userDisplay?.username}
-            </Typography>
-          </div>
-          <Button
-            className="buttonChangeOther"
-            type="submit"
-            onClick={handleClickOpen}
-          >
-            {friend === NOT_FRIEND
-              ? "ADD FRIEND"
-              : friend === FRIEND_REQUEST_SEND
-                ? "FRIEND REQUEST SEND"
-                : friend === BLOCKED
-                  ? "BLOCKED"
-                  : friend === FRIEND_REQUEST_WAITING
-                    ? "FRIEND REQUEST WAITING"
-                    : "FRIEND"}
-          </Button>
-          <Dialog open={open} onClose={() => handleClose(false)}>
-            <DialogTitle>
-              {friend === NOT_FRIEND
-                ? `Send friend request to ${userDisplay.login} ?`
-                : friend === FRIEND_REQUEST_SEND
-                  ? `Cancel Request to ${userDisplay.login} ?`
-                  : friend === FRIEND_REQUEST_WAITING
-                    ? `Add ${userDisplay.login} to you friend list ?`
-                    : `Remove ${userDisplay.login} from your friends ?`}
-            </DialogTitle>
-            <DialogActions>
-              <Button onClick={() => handleClose(true)}>Confirm</Button>
-              <Button onClick={() => handleClose(false)}>Cancel</Button>
-            </DialogActions>
-          </Dialog>
-          {friend === FRIEND ? (
-            <Button className="buttonChangeOther" onClick={handleGameOpen}>
-              Invite to game
-            </Button>
-          ) : (
-              <></>
-            )}
-          <Dialog
-            open={gameOpenDialog}
-            onClose={() => handleGameClose(false)}
-            fullWidth={true}
-            maxWidth={"lg"}
-          >
-            {!inviteSend ? (
+    );
+  else
+    return (
+      <React.Fragment>
+        <Navbar />
+        <div className="profilePageContainerOther">
+          <div className="profileOther">
+            <Stack direction="row" spacing={2} className="avatarItemOther">
+              <img
+                alt="Cerise"
+                src={userDisplay!.profileImage}
+                className="avatarOther"
+              />
+            </Stack>
+            {friend === FRIEND ? (
               <>
-                <DialogTitle>Choose the map you want to play :</DialogTitle>
-                <DialogContentText>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      minWidth: 800,
-                      width: "100%",
-                    }}
-                  >
-                    <ImageButton
-                      focusRipple
-                      key={images[0].title}
-                      style={{ width: images[0].width }}
-                      onClick={inviteGame1}
-                    >
-                      <ImageSrc
-                        style={{ backgroundImage: `url(${images[0].url})` }}
-                      />
-                      <ImageBackdrop className="MuiImageBackdrop-root" />
-                      <Image>
-                        <Typography
-                          component="span"
-                          variant="subtitle1"
-                          color="white"
-                          sx={{
-                            position: "relative",
-                            p: 4,
-                            pt: 2,
-                            pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
-                          }}
-                        >
-                          {images[0].title}{" "}
-                          <ImageMarked className="MuiImageMarked-root" />
-                        </Typography>
-                      </Image>
-                    </ImageButton>
-                    <ImageButton
-                      focusRipple
-                      key={images[1].title}
-                      style={{ width: images[1].width }}
-                      onClick={inviteGame2}
-                    >
-                      <ImageSrc
-                        style={{ backgroundImage: `url(${images[1].url})` }}
-                      />
-                      <ImageBackdrop className="MuiImageBackdrop-root" />
-                      <Image>
-                        <Typography
-                          component="span"
-                          variant="subtitle1"
-                          color="white"
-                          sx={{
-                            position: "relative",
-                            p: 4,
-                            pt: 2,
-                            pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
-                          }}
-                        >
-                          {images[1].title}{" "}
-                          <ImageMarked className="MuiImageMarked-root" />
-                        </Typography>
-                      </Image>
-                    </ImageButton>
-                    <ImageButton
-                      focusRipple
-                      key={images[2].title}
-                      style={{ width: images[2].width }}
-                      onClick={inviteGame3}
-                    >
-                      <ImageSrc
-                        style={{ backgroundImage: `url(${images[2].url})` }}
-                      />
-                      <ImageBackdrop className="MuiImageBackdrop-root" />
-                      <Image>
-                        <Typography
-                          component="span"
-                          variant="subtitle1"
-                          color="white"
-                          sx={{
-                            position: "relative",
-                            p: 4,
-                            pt: 2,
-                            pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
-                          }}
-                        >
-                          {images[2].title}{" "}
-                          <ImageMarked className="MuiImageMarked-root" />
-                        </Typography>
-                      </Image>
-                    </ImageButton>
-                  </Box>
-                </DialogContentText>
-                <DialogActions>
-                  <Button onClick={() => handleGameClose(false)}>Cancel</Button>
-                </DialogActions>
-              </>
-            ) : !declineGame ? (
-              <>
-                <DialogTitle>Waiting for the player to accept</DialogTitle>
-                <DialogContent
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    m: "auto",
-                    width: "fit-content",
-                  }}
-                ></DialogContent>
-                <DialogActions>
-                  <Button onClick={() => handleGameClose(false)}>Close</Button>
-                </DialogActions>
+                {clientStatus === ONLINE ? (
+                  <div id="userConnect">
+                    <div className="circleConnectLigne" id="userConnect"></div>
+
+                    <div className="connect" id="userConnect">
+                      Online
+                    </div>
+                  </div>
+                ) : clientStatus === IN_GAME ? (
+                  <div id="userInGame">
+                    <div className="circleInGame" id="userInGame"></div>
+
+                    <div className="connect" id="userInGame">
+                      In game
+                    </div>
+                  </div>
+                ) : clientStatus === OFFLINE ? (
+                  <div id="userConnectHorsLigne">
+                    <div
+                      className="circleConnectHorsLigne"
+                      id="userConnectHorsLigne"
+                    ></div>
+                    <div className="connect" id="userConnectHorsLigne">
+                      Not Connected
+                    </div>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </>
             ) : (
-                  <>
-                    <DialogTitle>Decline</DialogTitle>
-                    <DialogContent>
-                      <DialogContentText>
-                        Sorry {userDisplay.username} decline your invitation
-                  </DialogContentText>
-                      <DialogActions>
-                        <Button onClick={() => handleGameClose(false)}>
-                          Close
-                    </Button>
-                      </DialogActions>
-                    </DialogContent>
-                  </>
-                )}
-          </Dialog>
-          {clientStatus === IN_GAME ? 
-            <Button className="buttonChangeOther" onClick={() => {
-              utils.gameSocket.emit('GET_ROOM_ID', {userToSee : userDisplay.username})
-            }}>
-              Watch his game
-            </Button> : 
-            <></>}
-        </div>
-        <div className="statOther">
-          <div className="rectangleOther">
-            <div className="textRectangle">
-              <p>nbr Win</p>
-              {userDisplay?.WinNumber}
+              <></>
+            )}
+            <div className="infoUserOther">
+              <h3 className="userNameOther">Login :</h3>
+              <Typography className="userNamePrintOther">
+                {userDisplay?.login}
+              </Typography>
             </div>
-            <div className="textRectangle">
-              <h2 style={{ color: "black" }}>Rank</h2>
-              <h3
-                style={{
-                  textAlign: "center",
-                  fontWeight: "900",
-                  marginBottom: "3px",
+            <div className="infoUsernameOther">
+              <h3 className="userNameChangeOther">userName :</h3>
+              <Typography className="userNamePrintChangeOther">
+                {userDisplay?.username}
+              </Typography>
+            </div>
+            <Button
+              className="buttonChangeOther"
+              type="submit"
+              onClick={handleClickOpen}
+            >
+              {friend === NOT_FRIEND
+                ? "ADD FRIEND"
+                : friend === FRIEND_REQUEST_SEND
+                ? "FRIEND REQUEST SEND"
+                : friend === BLOCKED
+                ? "BLOCKED"
+                : friend === FRIEND_REQUEST_WAITING
+                ? "FRIEND REQUEST WAITING"
+                : "FRIEND"}
+            </Button>
+            <Dialog open={open} onClose={() => handleClose(false)}>
+              <DialogTitle>
+                {friend === NOT_FRIEND
+                  ? `Send friend request to ${userDisplay.login} ?`
+                  : friend === FRIEND_REQUEST_SEND
+                  ? `Cancel Request to ${userDisplay.login} ?`
+                  : friend === FRIEND_REQUEST_WAITING
+                  ? `Add ${userDisplay.login} to you friend list ?`
+                  : `Remove ${userDisplay.login} from your friends ?`}
+              </DialogTitle>
+              <DialogActions>
+                <Button onClick={() => handleClose(true)}>Confirm</Button>
+                <Button onClick={() => handleClose(false)}>Cancel</Button>
+              </DialogActions>
+            </Dialog>
+            {friend === FRIEND ? (
+              <Button className="buttonChangeOther" onClick={handleGameOpen}>
+                Invite to game
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Dialog
+              open={gameOpenDialog}
+              onClose={() => handleGameClose(false)}
+              fullWidth={true}
+              maxWidth={"lg"}
+            >
+              {!inviteSend ? (
+                <>
+                  <DialogTitle>Choose the map you want to play :</DialogTitle>
+                  <DialogContentText>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        minWidth: 800,
+                        width: "100%",
+                      }}
+                    >
+                      <ImageButton
+                        focusRipple
+                        key={images[0].title}
+                        style={{ width: images[0].width }}
+                        onClick={inviteGame1}
+                      >
+                        <ImageSrc
+                          style={{ backgroundImage: `url(${images[0].url})` }}
+                        />
+                        <ImageBackdrop className="MuiImageBackdrop-root" />
+                        <Image>
+                          <Typography
+                            component="span"
+                            variant="subtitle1"
+                            color="white"
+                            sx={{
+                              position: "relative",
+                              p: 4,
+                              pt: 2,
+                              pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                            }}
+                          >
+                            {images[0].title}{" "}
+                            <ImageMarked className="MuiImageMarked-root" />
+                          </Typography>
+                        </Image>
+                      </ImageButton>
+                      <ImageButton
+                        focusRipple
+                        key={images[1].title}
+                        style={{ width: images[1].width }}
+                        onClick={inviteGame2}
+                      >
+                        <ImageSrc
+                          style={{ backgroundImage: `url(${images[1].url})` }}
+                        />
+                        <ImageBackdrop className="MuiImageBackdrop-root" />
+                        <Image>
+                          <Typography
+                            component="span"
+                            variant="subtitle1"
+                            color="white"
+                            sx={{
+                              position: "relative",
+                              p: 4,
+                              pt: 2,
+                              pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                            }}
+                          >
+                            {images[1].title}{" "}
+                            <ImageMarked className="MuiImageMarked-root" />
+                          </Typography>
+                        </Image>
+                      </ImageButton>
+                      <ImageButton
+                        focusRipple
+                        key={images[2].title}
+                        style={{ width: images[2].width }}
+                        onClick={inviteGame3}
+                      >
+                        <ImageSrc
+                          style={{ backgroundImage: `url(${images[2].url})` }}
+                        />
+                        <ImageBackdrop className="MuiImageBackdrop-root" />
+                        <Image>
+                          <Typography
+                            component="span"
+                            variant="subtitle1"
+                            color="white"
+                            sx={{
+                              position: "relative",
+                              p: 4,
+                              pt: 2,
+                              pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                            }}
+                          >
+                            {images[2].title}{" "}
+                            <ImageMarked className="MuiImageMarked-root" />
+                          </Typography>
+                        </Image>
+                      </ImageButton>
+                    </Box>
+                  </DialogContentText>
+                  <DialogActions>
+                    <Button onClick={() => handleGameClose(false)}>
+                      Cancel
+                    </Button>
+                  </DialogActions>
+                </>
+              ) : !declineGame ? (
+                <>
+                  <DialogTitle>Waiting for the player to accept</DialogTitle>
+                  <DialogContent
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      m: "auto",
+                      width: "fit-content",
+                    }}
+                  ></DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => handleGameClose(false)}>
+                      Close
+                    </Button>
+                  </DialogActions>
+                </>
+              ) : (
+                <>
+                  <DialogTitle>Decline</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Sorry {userDisplay.username} decline your invitation
+                    </DialogContentText>
+                    <DialogActions>
+                      <Button onClick={() => handleGameClose(false)}>
+                        Close
+                      </Button>
+                    </DialogActions>
+                  </DialogContent>
+                </>
+              )}
+            </Dialog>
+            {clientStatus === IN_GAME ? (
+              <Button
+                className="buttonChangeOther"
+                onClick={() => {
+                  utils.gameSocket.emit("GET_ROOM_ID", {
+                    userToSee: userDisplay.username,
+                  });
                 }}
               >
-                {userDisplay?.Rank}
-              </h3>
-            </div>
-            <div className="textRectangle">
-              <p>nbr Loose</p>
-              {userDisplay?.LossNumber}
-            </div>
+                Watch his game
+              </Button>
+            ) : (
+              <></>
+            )}
           </div>
-          {matchHistory.map((match) => {
-            return (
-              <div
-                className={
-                  match.winner === userDisplay?.username
-                    ? "itemWinnerOther"
-                    : "itemLoserOther"
-                }
-                key={match.id.toString()}
-              >
-                <div className="resultsOther">
-                  <div className="nameOther">
-                    {match.player1 === userDisplay?.username
-                      ? match.player1
-                      : match.player2}
-                  </div>
-                  <div className="scoreOther">
-                    -
-                    {match.player1 === userDisplay?.username
-                      ? match.score1
-                      : match.score2}
-                    -
-                  </div>
-                </div>
-                <div className="resultsOther">
-                  <div className="scoreOther">
-                    -
-                    {match.player2 === userDisplay?.username
-                      ? match.score1
-                      : match.score2}
-                    -
-                  </div>
-                  <div className="nameOther">
-                    {match.player2 === userDisplay?.username
-                      ? match.player1
-                      : match.player2}
-                  </div>
-                </div>
+          <div className="statOther">
+            <div className="rectangleOther">
+              <div className="textRectangle">
+                <p>nbr Win</p>
+                {userDisplay?.WinNumber}
               </div>
-            );
-          })}
+              <div className="textRectangle">
+                <h2 style={{ color: "black" }}>Rank</h2>
+                <h3
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "900",
+                    marginBottom: "3px",
+                  }}
+                >
+                  {userDisplay?.Rank}
+                </h3>
+              </div>
+              <div className="textRectangle">
+                <p>nbr Loose</p>
+                {userDisplay?.LossNumber}
+              </div>
+            </div>
+            {matchHistory.map((match) => {
+              return (
+                <div
+                  className={
+                    match.winner === userDisplay?.username
+                      ? "itemWinnerOther"
+                      : "itemLoserOther"
+                  }
+                  key={match.id.toString()}
+                >
+                  <div className="resultsOther">
+                    <div className="nameOther">
+                      {match.player1 === userDisplay?.username
+                        ? match.player1
+                        : match.player2}
+                    </div>
+                    <div className="scoreOther">
+                      -
+                      {match.player1 === userDisplay?.username
+                        ? match.score1
+                        : match.score2}
+                      -
+                    </div>
+                  </div>
+                  <div className="resultsOther">
+                    <div className="scoreOther">
+                      -
+                      {match.player2 === userDisplay?.username
+                        ? match.score1
+                        : match.score2}
+                      -
+                    </div>
+                    <div className="nameOther">
+                      {match.player2 === userDisplay?.username
+                        ? match.player1
+                        : match.player2}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </React.Fragment>
-  );
+      </React.Fragment>
+    );
 };
 export default ProfileOther;

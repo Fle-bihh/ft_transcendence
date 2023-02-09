@@ -16,7 +16,6 @@ export class FriendShipService {
   }
 
   async addFriendShip(id_1: string, id_2: string): Promise<FriendShip> {
-    console.log('create friend ship', id_1, id_2)
     const ret = await this.friendShipRepository.save({id_1: id_1, id_2: id_2})
     return ret;
   }
