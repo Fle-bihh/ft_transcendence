@@ -43,7 +43,6 @@ export class EventsGateway {
     let exist = false;
 
     let user = users.find((user) => user.socket.id === client.id);
-    this.logger.log('check_user_exist-->username = ', data.username);
     if (user) {
       try {
         if (await this.userService.getUserByUsername(data.username)) {
@@ -73,16 +72,13 @@ export class EventsGateway {
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any }) {
     this.logger.log('STORE_CLIENT_INFO event : ');
-    console.log('data = ', data);
     users[users.findIndex((item) => item.socket.id == client.id)].user =
       data.user;
-    console.log('user = ', users);
     client.emit('store_client_done');
   }
 
   @SubscribeMessage('GET_ALL_USERS')
   async get_all_users(client: Socket, login: string) {
-    this.logger.log('GET_ALL_USERS received back');
     const retArray = Array<{ id: string; username: string }>();
     const user = await this.userService.getAll();
     user.map((user) => {
@@ -92,7 +88,6 @@ export class EventsGateway {
       });
     });
     client.emit('get_all_users', retArray);
-    this.logger.log('send get_all_users to front', retArray);
   }
 
   @SubscribeMessage('SEND_FRIEND_REQUEST')
@@ -121,7 +116,6 @@ export class EventsGateway {
       if (user.user.username === userToSend.username)
         receiverSocket = user.socket;
     });
-    this.logger.log('socket =', receiverSocket, 'username = ', data.receiver);
     if (!check && userToSend) {
       this.friendRequestService
         .addFriendRequest(
@@ -133,7 +127,6 @@ export class EventsGateway {
             username: data.receiver,
             friendStatus: 'request-send',
           });
-          this.logger.log('emit update to client with', data.receiver);
           // if ( users.find((item) => item.user.username == userToSend.username) != undefined ) {
           if (receiverSocket != undefined) {
             receiverSocket.emit('updateProfileOther', {
@@ -150,7 +143,6 @@ export class EventsGateway {
               type: 'FRIENDREQUEST',
               data: { sender: data.sender },
             });
-            this.logger.log('add_notif friend with ', data.sender);
           }
         });
     }
@@ -366,47 +358,37 @@ export class EventsGateway {
   }
 
   @SubscribeMessage('GET_USER_FRIENDS')
-  async get_user_friends(client: Socket) {
+  async get_user_friends(client: Socket, data: { username: string }) {
+    console.log("get user friends : ", data)
     console.log("get user friends : ", users)
-    const userFriendList = await this.friendShipService.getUserFriendList(
-      users.find((item) => item.socket.id == client.id).user.id,
-    );
+    const user = users.find((item) => item.user.username === data.username);
+    const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
     const retArray = Array<{ username: string }>();
-    allUsers.forEach((item) => {
-      if (
-        userFriendList.find(
-          (tmp) => tmp.id_1 == item.id || tmp.id_2 == item.id,
-        ) != undefined &&
-        item.id != users.find((item) => item.socket.id == client.id).user.id
-      ) {
-        retArray.push({ username: item.username });
+    for (let item of allUsers) {
+      if (!(await this.userService.isBlocked(item.username, user.user.username)) &&
+      userFriendList.find((tmp) => (tmp.id_1 == item.id || tmp.id_2 == item.id) ) && item.id != user.user.id) {
+          retArray.push({ username: item.username });
       }
-    });
-    client.emit('get_user_friends', retArray);
+    }
   }
 
   @SubscribeMessage('GET_ALL_USERS_NOT_FRIEND')
   async get_all_users_not_friend(client: Socket, data: { username: string }) {
-    const userFriendList = await this.friendShipService.getUserFriendList(
-      users.find((item) => item.socket.id == client.id).user.id,
-    );
+    console.log("get user not friends : ", data)
+    console.log("get user not friends : ", users)
+    const user = users.find((item) => item.user.username === data.username);
+    const userFriendList = await this.friendShipService.getUserFriendList(user.user.id);
     const allUsers = await this.userService.getAll();
-
     const retArray = Array<{ username: string }>();
 
-    allUsers.forEach((item) => {
-      if (
-        userFriendList.find(
-          (tmp) => tmp.id_1 == item.id || tmp.id_2 == item.id,
-        ) == undefined &&
-        item.id != users.find((item) => item.socket.id == client.id).user.id
-      ) {
+    for (let item of allUsers) {
+      if ((await this.userService.isBlocked(item.username, data.username) || !userFriendList.find( (tmp) => (tmp.id_1 == item.id || tmp.id_2 == item.id))) &&
+      item.id != user.user.id) {
         if (item.username !== data.username)
           retArray.push({ username: item.username });
       }
-    });
-    client.emit('get_all_users_not_friend', retArray);
+    }
   }
 
   @SubscribeMessage('DISCONNECT_SOCKET')
