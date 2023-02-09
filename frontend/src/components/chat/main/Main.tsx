@@ -23,7 +23,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Person2Icon from "@mui/icons-material/Person2";
 import { useSelector } from "react-redux";
-import FlashMessage from '../../alert-message/Alert'
+import FlashMessage from "../../alert-message/Alert";
 import { Navigate, NavLink } from "react-router-dom";
 import Version0 from "../../../styles/asset/Version0.gif";
 import Version1 from "../../../styles/asset/Version1.gif";
@@ -75,6 +75,7 @@ const Main = (props: {
   const [declineGame, setDeclineGame] = useState(false);
   const [openGame, setOpenGame] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const [msgTimeout, setMsgTimeout] = useState(0);
 
   useEffect(() => {
     utils.socket.emit("GET_CONV", {
@@ -82,7 +83,7 @@ const Main = (props: {
       receiver: props.openConvName,
     });
     console.log("send GET_CONV to back");
-  }, [props.openConvName, props.allConv,user.user?.username, utils.socket]);
+  }, [props.openConvName, props.allConv, user.user?.username, utils.socket]);
 
   useEffect(() => {
     let tmp = document.getElementById("messagesDisplay");
@@ -111,27 +112,30 @@ const Main = (props: {
   );
 
   utils.socket.removeListener("check_user_exist");
-  utils.socket.on("check_user_exist", (data: {exist: boolean, username: string}) => {
-    if (data.exist) {
-      const tmpArray = [...props.allConv];
-      tmpArray.shift();
-      if (!props.allConv.find(conv => (conv.receiver === data.username))) {
-        tmpArray.unshift({
-          receiver: topInputValue,
-          last_message_text: "",
-          last_message_time: new Date(),
-          new_conv: false,
-        });
+  utils.socket.on(
+    "check_user_exist",
+    (data: { exist: boolean; username: string }) => {
+      if (data.exist) {
+        const tmpArray = [...props.allConv];
+        tmpArray.shift();
+        if (!props.allConv.find((conv) => conv.receiver === data.username)) {
+          tmpArray.unshift({
+            receiver: topInputValue,
+            last_message_text: "",
+            last_message_time: new Date(),
+            new_conv: false,
+          });
+        }
+        props.setAllConv(tmpArray);
+        props.setOpenConvName(topInputValue);
+        props.setNewConvMessageBool(false);
+        setTopInputValue("");
+      } else {
+        setTopInputValue("");
+        alert("User not found...");
       }
-      props.setAllConv(tmpArray);
-      props.setOpenConvName(topInputValue);
-      props.setNewConvMessageBool(false);
-      setTopInputValue("");
-    } else {
-      setTopInputValue("");
-      alert("User not found...");
     }
-  });
+  );
 
   utils.socket.removeListener("get_all_channels");
   utils.socket.on(
@@ -160,19 +164,31 @@ const Main = (props: {
     setGameOpenDialog(false);
   };
 
-  function inviteGame1(username : string) {
+  function inviteGame1(username: string) {
     console.log("invite game front 1 to : ", username);
-    utils.gameSocket.emit("INVITE_GAME", { sender: user.user?.username, gameMap: "map1", receiver: username,});
+    utils.gameSocket.emit("INVITE_GAME", {
+      sender: user.user?.username,
+      gameMap: "map1",
+      receiver: username,
+    });
     setInviteSend(true);
   }
-  function inviteGame2(username : string) {
+  function inviteGame2(username: string) {
     console.log("invite game front 2");
-    utils.gameSocket.emit("INVITE_GAME", { sender: user.user?.username, gameMap: "map2", receiver: username,});
+    utils.gameSocket.emit("INVITE_GAME", {
+      sender: user.user?.username,
+      gameMap: "map2",
+      receiver: username,
+    });
     setInviteSend(true);
   }
-  function inviteGame3(username : string) {
+  function inviteGame3(username: string) {
     console.log("invite game front 3");
-    utils.gameSocket.emit("INVITE_GAME", { sender: user.user?.username, gameMap: "map3", receiver: username,});
+    utils.gameSocket.emit("INVITE_GAME", {
+      sender: user.user?.username,
+      gameMap: "map3",
+      receiver: username,
+    });
     setInviteSend(true);
   }
 
@@ -277,7 +293,13 @@ const Main = (props: {
   //end invite Game
 
   if (openGame && roomId !== "")
-    return ( <Navigate to="/Pong" replace={true} state={{ invite: true, roomId: roomId }} />);
+    return (
+      <Navigate
+        to="/Pong"
+        replace={true}
+        state={{ invite: true, roomId: roomId }}
+      />
+    );
   return (
     <div className="main">
       {props.newConvMessageBool ? (
@@ -296,7 +318,9 @@ const Main = (props: {
             autoFocus
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                utils.socket.emit("CHECK_USER_EXIST", {username: topInputValue});
+                utils.socket.emit("CHECK_USER_EXIST", {
+                  username: topInputValue,
+                });
               }
             }}
           ></input>
@@ -334,28 +358,47 @@ const Main = (props: {
                     <Person2Icon />
                   </IconButton>
                 </NavLink>
-                <IconButton className="startGameButton" color="secondary" style={{ color: "white", marginRight: "2%" }} aria-label="upload picture" component="label"
-                  onClick={handleGameOpen}>
+                <IconButton
+                  className="startGameButton"
+                  color="secondary"
+                  style={{ color: "white", marginRight: "2%" }}
+                  aria-label="upload picture"
+                  component="label"
+                  onClick={handleGameOpen}
+                >
                   <SportsEsportsIcon />
                 </IconButton>
-                <Dialog open={gameOpenDialog} onClose={() => handleGameClose(false)} fullWidth={true} maxWidth={"lg"} >
+                <Dialog
+                  open={gameOpenDialog}
+                  onClose={() => handleGameClose(false)}
+                  fullWidth={true}
+                  maxWidth={"lg"}
+                >
                   {!inviteSend ? (
                     <>
-                      <DialogTitle>Choose the map you want to play :</DialogTitle>
+                      <DialogTitle>
+                        Choose the map you want to play :
+                      </DialogTitle>
                       <DialogContentText>
-                        <Box sx={{ display: "flex", flexWrap: "wrap", minWidth: 800, width: "100%", }}>
-                          <ImageButton focusRipple key={images[0].title} style={{ width: images[0].width }} onClick={() => inviteGame1(props.openConvName)} >
-                            <ImageSrc style={{ backgroundImage: `url(${images[0].url})` }}/>
-                            <ImageBackdrop className="MuiImageBackdrop-root" />
-                            <Image>
-                              <Typography component="span" variant="subtitle1" color="white" sx={{   position: "relative",   p: 4,   pt: 2,   pb: (theme) => `calc(${theme.spacing(1)} + 6px)`, }} >
-                                {images[0].title}{" "}
-                                <ImageMarked className="MuiImageMarked-root" />
-                              </Typography>
-                            </Image>
-                          </ImageButton>
-                          <ImageButton focusRipple key={images[1].title} style={{ width: images[1].width }} onClick={() => inviteGame2(props.openConvName)}>
-                            <ImageSrc style={{ backgroundImage: `url(${images[1].url})` }}/>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            minWidth: 800,
+                            width: "100%",
+                          }}
+                        >
+                          <ImageButton
+                            focusRipple
+                            key={images[0].title}
+                            style={{ width: images[0].width }}
+                            onClick={() => inviteGame1(props.openConvName)}
+                          >
+                            <ImageSrc
+                              style={{
+                                backgroundImage: `url(${images[0].url})`,
+                              }}
+                            />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                               <Typography
@@ -366,7 +409,38 @@ const Main = (props: {
                                   position: "relative",
                                   p: 4,
                                   pt: 2,
-                                  pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                                  pb: (theme) =>
+                                    `calc(${theme.spacing(1)} + 6px)`,
+                                }}
+                              >
+                                {images[0].title}{" "}
+                                <ImageMarked className="MuiImageMarked-root" />
+                              </Typography>
+                            </Image>
+                          </ImageButton>
+                          <ImageButton
+                            focusRipple
+                            key={images[1].title}
+                            style={{ width: images[1].width }}
+                            onClick={() => inviteGame2(props.openConvName)}
+                          >
+                            <ImageSrc
+                              style={{
+                                backgroundImage: `url(${images[1].url})`,
+                              }}
+                            />
+                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                            <Image>
+                              <Typography
+                                component="span"
+                                variant="subtitle1"
+                                color="white"
+                                sx={{
+                                  position: "relative",
+                                  p: 4,
+                                  pt: 2,
+                                  pb: (theme) =>
+                                    `calc(${theme.spacing(1)} + 6px)`,
                                 }}
                               >
                                 {images[1].title}{" "}
@@ -374,8 +448,17 @@ const Main = (props: {
                               </Typography>
                             </Image>
                           </ImageButton>
-                          <ImageButton focusRipple key={images[2].title} style={{ width: images[2].width }} onClick={() => inviteGame3(props.openConvName)} >
-                            <ImageSrc style={{ backgroundImage: `url(${images[2].url})` }} />
+                          <ImageButton
+                            focusRipple
+                            key={images[2].title}
+                            style={{ width: images[2].width }}
+                            onClick={() => inviteGame3(props.openConvName)}
+                          >
+                            <ImageSrc
+                              style={{
+                                backgroundImage: `url(${images[2].url})`,
+                              }}
+                            />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                               <Typography
@@ -386,7 +469,8 @@ const Main = (props: {
                                   position: "relative",
                                   p: 4,
                                   pt: 2,
-                                  pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                                  pb: (theme) =>
+                                    `calc(${theme.spacing(1)} + 6px)`,
                                 }}
                               >
                                 {images[2].title}{" "}
@@ -397,12 +481,16 @@ const Main = (props: {
                         </Box>
                       </DialogContentText>
                       <DialogActions>
-                        <Button onClick={() => handleGameClose(false)}>Cancel</Button>
+                        <Button onClick={() => handleGameClose(false)}>
+                          Cancel
+                        </Button>
                       </DialogActions>
                     </>
                   ) : !declineGame ? (
                     <>
-                      <DialogTitle>Waiting for the player to accept</DialogTitle>
+                      <DialogTitle>
+                        Waiting for the player to accept
+                      </DialogTitle>
                       <DialogContent
                         sx={{
                           display: "flex",
@@ -410,10 +498,11 @@ const Main = (props: {
                           m: "auto",
                           width: "fit-content",
                         }}
-                      >
-                      </DialogContent>
+                      ></DialogContent>
                       <DialogActions>
-                        <Button onClick={() => handleGameClose(false)}>Close</Button>
+                        <Button onClick={() => handleGameClose(false)}>
+                          Close
+                        </Button>
                       </DialogActions>
                     </>
                   ) : (
@@ -439,8 +528,8 @@ const Main = (props: {
                   aria-label="upload picture"
                   component="label"
                   onClick={() => {
-                    setmessage("You blocked this user")
-                    setsucces(true)
+                    setmessage("You blocked this user");
+                    setsucces(true);
                     utils.socket.emit("BLOCK_USER", {
                       username: user.user?.username,
                       target: props.openConvName,
@@ -497,7 +586,8 @@ const Main = (props: {
           <div></div>
         )}
         {!props.newConvMessageBool ? (
-          <div className="messageInput">
+          <div className="messageInput"
+          id="messageInput">
             {/* <!-- input field goes here --> */}
             <input
               type="text"
@@ -511,13 +601,18 @@ const Main = (props: {
               autoFocus
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  utils.socket.emit("ADD_MESSAGE", {
-                    sender: user.user?.username,
-                    receiver: props.openConvName,
-                    content: inputValue,
-                  });
-                  console.log("send ADD_MESSAGE to back");
-                  setInputValue("");
+                  if (inputValue.length) {
+                    if (new Date().getTime() - msgTimeout > 2500) {
+                      utils.socket.emit("ADD_MESSAGE", {
+                        sender: user.user?.username,
+                        receiver: props.openConvName,
+                        content: inputValue,
+                      });
+                      console.log("send ADD_MESSAGE to back");
+                      setMsgTimeout(new Date().getTime());
+                      setInputValue("");
+                    }
+                  }
                 }
               }}
             />
@@ -533,10 +628,7 @@ const Main = (props: {
         setOpenConvName={props.setOpenConvName}
         allChannels={props.allChannels}
       />
-      {
-        succes ? <FlashMessage
-          message={message} /> : ''
-      }
+      {succes ? <FlashMessage message={message} /> : ""}
     </div>
   );
 };
