@@ -55,7 +55,7 @@ const ChannelDialog = (props: {
   const [joinChannelSelect, setJoinChannelSelect] = useState("");
   const [joinChannelPasswordInput, setJoinChannelPasswordInput] = useState("");
   const [channelPasswordInput, setChannelPasswordInput] = useState("");
-  const [alignment, setAlignment] = useState(false);
+  const [alignment, setAlignment] = useState('public');
 
   const handleKeyDown = (event: any) => {
     if (event.key === "Escape") {
@@ -67,11 +67,10 @@ const ChannelDialog = (props: {
 
   const handleAlignment = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: boolean | null
+    newAlignment: string | null
   ) => {
-    if (newAlignment !== null) {
-      setAlignment(newAlignment);
-    }
+    if (newAlignment != null)
+      setAlignment(newAlignment)
   };
 
   const handleClose = () => {
@@ -129,7 +128,7 @@ const ChannelDialog = (props: {
           <input
             className="searchBar"
             type="text"
-            id="outlined-basic"
+            id="join-channel-search-id"
             placeholder="Research"
             value={searchInputValue}
             autoComplete={"off"}
@@ -138,19 +137,22 @@ const ChannelDialog = (props: {
 
               if (list != null) {
                 for (let i = 0; i < list.children.length; i++) {
-                  if (
-                    !event.currentTarget.value.length ||
-                    list.children[i].children[0].children[0].textContent
-                      ?.toUpperCase()
-                      .indexOf(event.currentTarget.value.toUpperCase())! > -1
-                  ) {
-                    list.children[i].classList.remove("hidden");
-                    list.children[i].classList.add("flex");
-                  } else {
-                    list.children[i].classList.remove("flex");
+                  console.log(list.children[i]);
+                  console.log(event.currentTarget.value);
+                  if (list.children[i].children.length)
+                    if (
+                      !event.currentTarget.value.length ||
+                      list.children[i].children[0].children[0].textContent
+                        ?.toUpperCase()
+                        .indexOf(event.currentTarget.value.toUpperCase())! > -1
+                    ) {
+                      list.children[i].classList.remove("hidden");
+                      list.children[i].classList.add("flex");
+                    } else {
+                      list.children[i].classList.remove("flex");
 
-                    list.children[i].classList.add("hidden");
-                  }
+                      list.children[i].classList.add("hidden");
+                    }
                 }
               }
 
@@ -248,7 +250,7 @@ const ChannelDialog = (props: {
             <input
               className="createChannelInput"
               type="text"
-              id="outlined-basic"
+              id="channel-name-input-id"
               placeholder="Channel Name"
               value={channelNameInput}
               autoComplete={"off"}
@@ -267,12 +269,12 @@ const ChannelDialog = (props: {
                 className="channelPrivacyToggleButton"
                 defaultChecked={false}
               >
-                <ToggleButton value="public" aria-label="left aligned">
+                <ToggleButton value={'public'} aria-label="left aligned">
                   <Tooltip title="Public">
                     <VisibilityOutlinedIcon />
                   </Tooltip>
                 </ToggleButton>
-                <ToggleButton value="private" aria-label="centered">
+                <ToggleButton value={'private'} aria-label="centered">
                   <Tooltip title="Private">
                     <VisibilityOffOutlinedIcon />
                   </Tooltip>
@@ -291,7 +293,7 @@ const ChannelDialog = (props: {
               <input
                 className="createChannelInput"
                 type="password"
-                id="outlined-basic"
+                id="channel-password-input-id"
                 placeholder={"Channel Password"}
                 value={channelPasswordInput}
                 autoComplete={"off"}
@@ -315,7 +317,7 @@ const ChannelDialog = (props: {
             <input
               className="descriptionInput"
               type="text"
-              id="outlined-basic"
+              id="description-channel-input-id"
               placeholder="Channel Description"
               value={descriptionInput}
               autoComplete={"off"}
@@ -332,7 +334,7 @@ const ChannelDialog = (props: {
                   ) === undefined
                 ) {
                   utils.socket.emit("CREATE_CHANNEL", {
-                    privacy: alignment,
+                    privacy: alignment === 'private' ? true : false,
                     name: channelNameInput,
                     password: channelPasswordInput,
                     description: descriptionInput,

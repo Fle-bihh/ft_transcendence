@@ -60,7 +60,7 @@ const ProfileOther = () => {
   const dispatch = useDispatch();
   const { removeNotifInvite } = bindActionCreators(actionCreators, dispatch);
   const navigate = useNavigate();
-  const [matchHistory] = useState(
+  const [matchHistory, setMatchHistory] = useState(
     Array<{
       id: string;
       player1: string;
@@ -125,7 +125,7 @@ const ProfileOther = () => {
     }
   );
 
-  const getUserData = () => {
+  const getUserData = async () => {
     const parsed = queryString.parse(window.location.search);
     console.log("parsed = ", parsed);
     if (
@@ -162,6 +162,28 @@ const ProfileOther = () => {
             utils.gameSocket.emit("GET_CLIENT_STATUS", {
               login: response.data.login,
             });
+            axios
+              .get(`http://${utils.ip}:5001/game/${response.data.id}`, options)
+              .then((response) => {
+                if (response.data != null) {
+                  let tmp = Array<{ id: string; player1: string; score1: number; player2: string; score2: number; winner: string; }>();
+                  response.data.forEach((data: any) => {
+                    const obj = {
+                      id: data.game.id,
+                      player1: data.game.player1.username,
+                      score1: data.game.score_u1,
+                      player2: data.game.player2.username,
+                      score2: data.game.score_u2,
+                      winner: data.game.winner.username,
+                    };
+                    tmp.push(obj);
+                  });
+                  setMatchHistory(tmp)
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           }
         })
         .catch((error) => {
@@ -169,27 +191,7 @@ const ProfileOther = () => {
           window.location.replace("/*");
         });
     }
-    axios
-      .get(`http://${utils.ip}:5001/game/${user.user?.id}`, options)
-      .then((response) => {
-        if (response.data != null) {
-          matchHistory.splice(0, matchHistory.length);
-          response.data.forEach((data: any) => {
-            const obj = {
-              id: data.game.id,
-              player1: data.game.player1.username,
-              score1: data.game.score_u1,
-              player2: data.game.player2.username,
-              score2: data.game.score_u2,
-              winner: data.game.winner.username,
-            };
-            matchHistory.push(obj);
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
   };
   // console.log('histo', userDisplay.WinNumber, userDisplay.LossNumber)
 
@@ -456,22 +458,22 @@ const ProfileOther = () => {
               {friend === NOT_FRIEND
                 ? "ADD FRIEND"
                 : friend === FRIEND_REQUEST_SEND
-                ? "FRIEND REQUEST SEND"
-                : friend === BLOCKED
-                ? "BLOCKED"
-                : friend === FRIEND_REQUEST_WAITING
-                ? "FRIEND REQUEST WAITING"
-                : "FRIEND"}
+                  ? "FRIEND REQUEST SEND"
+                  : friend === BLOCKED
+                    ? "BLOCKED"
+                    : friend === FRIEND_REQUEST_WAITING
+                      ? "FRIEND REQUEST WAITING"
+                      : "FRIEND"}
             </Button>
             <Dialog open={open} onClose={() => handleClose(false)}>
               <DialogTitle>
                 {friend === NOT_FRIEND
                   ? `Send friend request to ${userDisplay.login} ?`
                   : friend === FRIEND_REQUEST_SEND
-                  ? `Cancel Request to ${userDisplay.login} ?`
-                  : friend === FRIEND_REQUEST_WAITING
-                  ? `Add ${userDisplay.login} to you friend list ?`
-                  : `Remove ${userDisplay.login} from your friends ?`}
+                    ? `Cancel Request to ${userDisplay.login} ?`
+                    : friend === FRIEND_REQUEST_WAITING
+                      ? `Add ${userDisplay.login} to you friend list ?`
+                      : `Remove ${userDisplay.login} from your friends ?`}
               </DialogTitle>
               <DialogActions>
                 <Button onClick={() => handleClose(true)}>Confirm</Button>
@@ -664,6 +666,7 @@ const ProfileOther = () => {
               </div>
             </div>
             {matchHistory.map((match) => {
+              console.log('maq:kshvbdlkbdsfkvtch', match)
               return (
                 <div
                   className={
