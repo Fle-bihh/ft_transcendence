@@ -1,8 +1,5 @@
-import { IsString } from 'class-validator';
-
 export class Auth42Dto {
-  @IsString()
-  code: string;
+  code: string | null;
   
   nickName?: string | null;
 

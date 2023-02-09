@@ -26,6 +26,7 @@ const Profile = () => {
     const [open, setOpen] = React.useState(false);
     //2FA
     const [open2FA, setOpen2FA] = React.useState(false);
+    const [open2FA2, setOpen2FA2] = React.useState(false);
     const [qrCode2FA, setQrCode2FA] = useState("");
     // const [code2FA, setCode2FA] = useState("");
     // const [res2FA, setRes2FA] = useState(0);
@@ -100,8 +101,25 @@ const Profile = () => {
         };
         setOpen(false);
     }
-
     //2FA
+
+    const handleClickOpen2FA2 = () => {
+        setOpen2FA2(true);
+        const jwt = cookies.get('jwt');
+        const options = {
+            headers: {
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+    };
+
+    const handleClose2FA2 = () => {
+        setOpen2FA2(false);
+        setQrCode2FA("")
+        // setCode2FA("")
+        // setRes2FA(0)
+    };
+
     const handleClickOpen2FA = () => {
         setOpen2FA(true);
         const jwt = cookies.get('jwt');
@@ -110,7 +128,7 @@ const Profile = () => {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
+            axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/generate`, options).then(res => (setQrCode2FA(res.data)))
     };
 
     const handleClose2FA = () => {
@@ -130,6 +148,7 @@ const Profile = () => {
         axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/activate/` + value, options)
             .then(res => {
                 setUser(res.data);
+                setOpen2FA(false);
                 setsucces(true)
                 setmessage("Two factor authentification activate")
             })
@@ -140,18 +159,19 @@ const Profile = () => {
         setsucces(false)
         seterror(false)
     }
-    const send2FARequestDesactivate = (value: string) => {
+    const send2FARequestDeactivate = (value: string) => {
         const jwt = cookies.get('jwt');
         const options = {
             headers: {
                 'authorization': `Bearer ${jwt}`
             }
         }
-        axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/desactivate/` + value, options)
+        axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/deactivate/` + value, options)
             .then(res => {
                 setUser(res.data);
                 setsucces(true)
-                setmessage("Two factor authentification activate")
+                setmessage("Two factor authentification deactivated")
+                setOpen2FA2(false);
             })
             .catch(err => {
                 seterror(true)
@@ -321,44 +341,28 @@ const Profile = () => {
                             </Dialog>
                         </div> :
                         <div>
-                            <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA}>
-                                Desactivate 2FA
+                            <Button className="buttonChange2FA" type="submit" onClick={handleClickOpen2FA2}>
+                                Deactivate 2FA
                             </Button>
-                            <Dialog open={open2FA} onClose={handleClose2FA} >
+                            <Dialog open={open2FA2} onClose={handleClose2FA2} >
                                 <div>
-                                    <DialogTitle>Scan the folowing QR code with Google authenticator</DialogTitle>
+                                    <DialogTitle>Deactivate 2FA</DialogTitle>
                                     <DialogContent className='2FA'>
-                                        {/* <img src={qrCode2FA} alt="QRcode" /> */}
                                         <PinInput length={6}
                                             focus
                                             onChange={(value) => { }}
                                             type="numeric"
                                             inputMode="number"
                                             style={{ padding: '10px' }}
-                                            onComplete={(value) => { send2FARequestDesactivate(value) }}
+                                            onComplete={(value) => { send2FARequestDeactivate(value) }}
                                             autoSelect={true} />
                                     </DialogContent>
                                     <DialogActions>
-                                        <Button onClick={handleClose2FA}>Cancel</Button>
+                                        <Button onClick={handleClose2FA2}>Cancel</Button>
                                     </DialogActions>
                                 </div>
                             </Dialog>
                         </div>
-                        // <div>
-                        //     <Button className="buttonChange2FA" type="submit" onClick={() => {
-                        //         const jwt = cookies.get('jwt');
-                        //         const options = {
-                        //             headers: {
-                        //                 'authorization': `Bearer ${jwt}`
-                        //             }
-                        //         }
-                        //         axios.get(`http://${utils.ip}:5001/user/${user.user?.id}/2fa/deactivate/`, options).then(res => {
-                        //             setUser(res.data)
-                        //         })
-                        //     }}>
-                        //         Deactivate 2FA
-                        //     </Button>
-                        // </div>
                     }
                 </div>
                 <div className="stat">
