@@ -133,10 +133,13 @@ export class UsersController {
     return await this.usersService.get2FA(user);
   }
 
-  @Get('/:id/2fa/deactivate')
+  @Get('/:id/2FA/deactivate/:secret')
 @UseGuards(AuthGuard('jwt'))
-  async deactivate2FA(@Param('id') id: string) {
-    const user = await this.usersService.getUserById(id);
+  async deactivate2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<User> {
+    const user: User = await this.usersService.getUserById(id);
+    const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
+    if (!isCodeValid)
+      throw new UnauthorizedException('Wrong authentication code');
     return await this.usersService.deactivate2FA(user);
   }
 
