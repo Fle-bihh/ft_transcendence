@@ -149,7 +149,7 @@ const ProfileOther = () => {
               username: response.data.username,
             });
             utils.gameSocket.emit("GET_CLIENT_STATUS", {
-              nickname: response.data.username,
+              nickname: response.data.login,
             });
           }
         })

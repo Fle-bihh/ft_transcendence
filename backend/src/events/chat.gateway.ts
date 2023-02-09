@@ -70,7 +70,6 @@ export class ChatGateway {
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any }) {
-    console.log('STORE_CLIENT_INFO Chat: ', data);
     users[users.findIndex((item) => item.socket.id == client.id)].user =
       data.user;
     console.table(users);
@@ -332,9 +331,7 @@ export class ChatGateway {
 
   @SubscribeMessage('GET_ALL_CHANNELS')
   async get_all_channels(client: Socket, login: string) {
-    this.logger.log('GET_ALL_CHANNELS recu ChatGateway with');
     const channels = await this.channelsService.getChannel();
-    console.log('channels = ', channels);
     const retArray = Array<{
       privacy: boolean;
       name: string;
@@ -352,7 +349,6 @@ export class ChatGateway {
       });
     });
     client.emit('get_all_channels', retArray);
-    this.logger.log('send get_all_channels to ', login, 'with', retArray);
   }
 
   @SubscribeMessage('GET_PARTICIPANTS')
@@ -376,8 +372,6 @@ export class ChatGateway {
       let admin = await this.channelsService.isAdmin(user, channel);
       retArray.push({ username: user.username, admin: admin });
     }
-    client.emit('get_participants', retArray);
-    this.logger.log('send get_participants with', retArray);
   }
 
   @SubscribeMessage('GET_PARTICIPANT_ROLE')
@@ -385,7 +379,6 @@ export class ChatGateway {
     client: Socket,
     data: { username: string; channel: string },
   ) {
-    this.logger.log('GET_PARTICIPANT_ROLE recu ChatGateway', data);
     const user = await this.usersService.getUserByUsername(data.username);
     let role: string;
     try {
@@ -424,7 +417,6 @@ export class ChatGateway {
     } catch (e) {
       retArray = [];
     }
-    this.logger.log('GET_CHANNEL_ADMINS recu ChatGateway', data);
     client.emit('get_channel_admins', { admins: retArray });
   }
 
@@ -517,7 +509,6 @@ export class ChatGateway {
 
   @SubscribeMessage('BAN_USER')
   async ban_user(client: Socket, data: { user: string; channel: string }) {
-    /////////////////////////////////////
     this.logger.log('BAN_USER recu ChatGateway', data);
     if (
       banList.find(
@@ -547,7 +538,6 @@ export class ChatGateway {
 
   @SubscribeMessage('MUTE_USER')
   async mute_user(client: Socket, data: { user: string; channel: string }) {
-    /////////////////////////////////////
     this.logger.log('MUTE_USER recu ChatGateway', data);
     if (
       muteList.find(
