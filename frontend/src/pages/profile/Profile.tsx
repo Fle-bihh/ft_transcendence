@@ -76,9 +76,6 @@ const Profile = () => {
         const tmp = inputValue.replace(/ /g, "")
         if (change && tmp !== "") {
             // string.replace(/ /g, "")
-
-
-
             //   user.suer?.id /blocked/, {username : },  option 
             axios.patch(`http://${utils.ip}:5001/user/${user.user?.id}/username`, { username: tmp }, options).then(response => {
                 if (response.data != null) {
@@ -218,7 +215,6 @@ const Profile = () => {
                     userMatchHistory.push(obj)
                 })
                 setFirstOpen(false);
-                console.log("userDisplay", userDisplay)
             }
         }).catch(error => {
             console.log(error);
@@ -275,17 +271,9 @@ const Profile = () => {
                         Change Profile Picture
                         <input id='file-upload' hidden type='file' accept='.jpeg, .jpg, .png' onChange={convertFile} />
                     </Button>
-                    <div className="infoUser">
-                        <h3 className="userName">
-                            Login :
-                        </h3>
-                        <Typography className="userNamePrint">
-                            {user.user?.login}
-                        </Typography>
-                    </div>
                     <div className="infoUsername">
                         <h3 className="userNameChange">
-                            userName :
+                            Username :
                         </h3>
                         <Typography className="userNamePrintChange">
                             {userDisplay?.username}
@@ -369,15 +357,15 @@ const Profile = () => {
                     <>
                         <div className="rectangle">
                             <div className="textRectangle">
-                                <p>nbr Win</p>
+                                <p>Wins</p>
                                 {userDisplay.WinNumber}
                             </div>
                             <div className="textRectangle">
-                                <h2 style={{ color: 'black' }}>Rank </h2>
+                                <h2 style={{ color: 'black' }}>Rank</h2>
                                 <h3 style={{ textAlign: 'center', fontWeight: '900', marginBottom: '3px' }}>{userDisplay.Rank}</h3>
                             </div>
                             <div className="textRectangle">
-                                <p>nbr Loose</p>
+                                <p>Losses</p>
                                 {userDisplay.LossNumber}
                             </div>
                         </div>
@@ -386,10 +374,10 @@ const Profile = () => {
                                 <div className={match.winner === user.user?.username ? 'itemWinner' : 'itemLoser'} key={match.id.toString()}>
                                     <div className="results" >
                                         <div className="name">{match.player1 === user.user?.username ? match.player1 : match.player2}</div>
-                                        <div className="score">-{match.player1 === user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="score">{match.player1 === user.user?.username ? match.score1 : match.score2}</div>
                                     </div>
                                     <div className="results">
-                                        <div className="score">-{match.player2 === user.user?.username ? match.score1 : match.score2}-</div>
+                                        <div className="score">{match.player2 === user.user?.username ? match.score1 : match.score2}</div>
                                         <div className="name">{match.player2 === user.user?.username ? match.player1 : match.player2}</div>
                                     </div>
                                 </div>

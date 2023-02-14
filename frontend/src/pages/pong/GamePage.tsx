@@ -161,7 +161,6 @@ const GamePage = (props: any) => {
 
     utils.socket.removeListener("finish");
     utils.gameSocket.on('finish', (data : {room: GameClass, draw : boolean}) => {
-        console.log('finish front')
         setDraw(data.draw);
         setFinishGame(true)
         setFinishRoom(data.room)

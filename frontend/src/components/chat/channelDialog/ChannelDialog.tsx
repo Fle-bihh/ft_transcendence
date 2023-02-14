@@ -78,6 +78,7 @@ const ChannelDialog = (props: {
     props.setOpen(false);
     setPasswordSwitchOn(false);
     setChannelPasswordInput("");
+    setJoinChannelPasswordInput("");
     setChannelNameInput("");
     setDescriptionInput("");
     setSearchInputValue("");
@@ -137,8 +138,6 @@ const ChannelDialog = (props: {
 
               if (list != null) {
                 for (let i = 0; i < list.children.length; i++) {
-                  console.log(list.children[i]);
-                  console.log(event.currentTarget.value);
                   if (list.children[i].children.length)
                     if (
                       !event.currentTarget.value.length ||

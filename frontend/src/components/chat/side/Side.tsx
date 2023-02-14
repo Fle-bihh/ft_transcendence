@@ -81,7 +81,6 @@ const Side = (props: {
             }
             handleClickOpen();
             utils.socket.emit("GET_ALL_CHANNELS", user.user?.username);
-            console.log("send GET_ALL_CHANNELS to back from", user.user?.username);
           }}
         >
           <div className="newConvButtonText">New Channel</div>

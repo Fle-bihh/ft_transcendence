@@ -22,16 +22,13 @@ const Friends = () => {
 
   useEffect(() => {
     utils.socket.emit("GET_USER_FRIENDS", { username: user.user?.username});
-    console.log(user.user?.username, "send GET_USER_FRIENDS to backend");
     utils.socket.emit("GET_ALL_USERS_NOT_FRIEND", { username: user.user?.username});
-    console.log(user.user?.username, "send GET_ALL_USERS to backend");
   }, [user.user?.username, utils.socket]);
 
   utils.socket.removeListener("get_all_users_not_friend");
   utils.socket.on(
     "get_all_users_not_friend",
     (users: Array<{ username: string; profileImage: string }>) => {
-      console.log(user.user?.username, "received get_all_users with", users);
       let tmpArray = Array<{
         index: number;
         username: string;

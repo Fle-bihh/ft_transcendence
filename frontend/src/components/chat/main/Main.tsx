@@ -148,7 +148,6 @@ const Main = (props: {
         password: boolean;
       }>
     ) => {
-      console.log("get_all_channels recu", user.user?.username);
       props.setAllChannels([...data]);
     }
   );
@@ -163,7 +162,6 @@ const Main = (props: {
   };
 
   function inviteGame1(username: string) {
-    console.log("invite game front 1 to : ", username);
     utils.gameSocket.emit("INVITE_GAME", {
       sender: user.user?.username,
       gameMap: "map1",
@@ -172,7 +170,6 @@ const Main = (props: {
     setInviteSend(true);
   }
   function inviteGame2(username: string) {
-    console.log("invite game front 2");
     utils.gameSocket.emit("INVITE_GAME", {
       sender: user.user?.username,
       gameMap: "map2",
@@ -181,7 +178,6 @@ const Main = (props: {
     setInviteSend(true);
   }
   function inviteGame3(username: string) {
-    console.log("invite game front 3");
     utils.gameSocket.emit("INVITE_GAME", {
       sender: user.user?.username,
       gameMap: "map3",
@@ -194,7 +190,6 @@ const Main = (props: {
   utils.gameSocket.on(
     "accept_game",
     (data: { sender: string; gameMap: string; receiver: string }) => {
-      console.log("accept received");
       utils.gameSocket.emit("JOIN_ROOM", data.sender + data.receiver);
       utils.gameSocket.emit("START_INVITE_GAME", {
         user: { login: user.user?.username },
@@ -212,7 +207,6 @@ const Main = (props: {
   utils.gameSocket.on(
     "decline_game",
     (data: { sender: string; gameMap: string; receiver: string }) => {
-      console.log("decline received");
       setDeclineGame(true);
       setTimeout(function () {
         setGameOpenDialog(false);
@@ -532,10 +526,6 @@ const Main = (props: {
                       username: user.user?.username,
                       target: props.openConvName,
                     });
-                    console.log(
-                      "send BLOCK_USER to back from",
-                      user.user?.username
-                    );
                   }}
                 >
                   {/* <input hidden accept="image/*" type="file" /> */}
@@ -606,7 +596,6 @@ const Main = (props: {
                         receiver: props.openConvName,
                         content: inputValue,
                       });
-                      console.log("send ADD_MESSAGE to back");
                       setMsgTimeout(new Date().getTime());
                       setInputValue("");
                     }

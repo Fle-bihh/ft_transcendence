@@ -29,7 +29,6 @@ const SpectatorPage = (props: {
     utils.gameSocket.on("start_spectate", (room: GameClass) => { render(room); });
 
     function drawFont(ctx: CanvasRenderingContext2D | null, room: GameClass) {
-        console.log("font", room.canvas.width, room.canvas.height)
         if (ctx !== null) {
             ctx.fillStyle = room.map.mapColor;
             ctx.fillRect(0, 0, room.canvas.width, room.canvas.height);
@@ -125,14 +124,12 @@ const SpectatorPage = (props: {
                 resetCanvas(room)
                 drawFont(ctx, room)
                 if (room.players[0].ready && room.players[1].ready) {
-                    console.log("drawScore", room)
                     drawLimitCamps(ctx, room) 
                 }
                 if (room.players[0].score !== 0 || room.players[1].score !== 0)
                     drawScore(ctx, room)
                 }
                 if (!room.players[0].ready || !room.players[1].ready) {
-                    console.log("drawText", room)
                     drawText(ctx, room)
                     return
                 }
@@ -145,7 +142,6 @@ const SpectatorPage = (props: {
         }
 
     utils.gameSocket.on('finish', (data: { room: GameClass, draw: boolean }) => {
-        console.log('finish front')
         setDraw(data.draw);
         setFinishGame(true)
         setFinishRoom(data.room)

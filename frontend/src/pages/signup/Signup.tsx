@@ -11,10 +11,7 @@ import "./signup.scss";
   );
 
   useEffect(() => {
-    console.log("refresh utils = ", utils.ip)
-
     setUser(null);
-    console.log("pls c est quoi ca? == ",userReducer.user)
     removeNotifPong();
   }, [])
 
