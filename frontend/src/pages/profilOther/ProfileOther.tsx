@@ -57,9 +57,9 @@ const ProfileOther = () => {
   const [roomSpectate, setRoomSpectate] = useState("");
   const [spectate, setSpectate] = useState(false);
   const [openGame, setOpenGame] = useState(false);
+  const [myPong, setMyPong] = useState(false);
   const dispatch = useDispatch();
   const { removeNotifInvite } = bindActionCreators(actionCreators, dispatch);
-  const navigate = useNavigate();
   const [matchHistory, setMatchHistory] = useState(
     Array<{
       id: string;
@@ -92,13 +92,6 @@ const ProfileOther = () => {
   utils.socket.on(
     "updateProfileOther",
     (data: { username: string; friendStatus: string }) => {
-      console.log(
-        "updateProfileOther received with",
-        data.username,
-        data.friendStatus,
-        "usrname = ",
-        userDisplay.username
-      );
       if (data.username !== userDisplay.username) return;
       if (data.friendStatus === "blocked") {
         setFriend(BLOCKED);
@@ -117,8 +110,7 @@ const ProfileOther = () => {
   utils.gameSocket.on(
     "getClientStatus",
     (data: { user: string; status: string; emitFrom: string }) => {
-      console.log("getClientStatus", data, userDisplay);
-      if (data.user !== userDisplay.login) return;
+      if (data.user !== userDisplay.username) return;
       if (data.status === "online") setClientStatus(ONLINE);
       else if (data.status === "offline") setClientStatus(OFFLINE);
       else if (data.status === "in-game") setClientStatus(IN_GAME);
@@ -127,7 +119,6 @@ const ProfileOther = () => {
 
   const getUserData = async () => {
     const parsed = queryString.parse(window.location.search);
-    console.log("parsed = ", parsed);
     if (
       parsed.username === "" ||
       parsed.username === undefined ||
@@ -136,6 +127,12 @@ const ProfileOther = () => {
       window.history.pushState({}, window.location.toString());
       window.location.replace("/");
     } else {
+      const jwt = cookies.get("jwt");
+      const options = {
+        headers: {
+          authorization: `Bearer ${jwt}`,
+        },
+      };
       axios
         .get(
           `http://${utils.ip}:5001/user/username/${parsed.username} `,
@@ -160,7 +157,7 @@ const ProfileOther = () => {
               username: response.data.username,
             });
             utils.gameSocket.emit("GET_CLIENT_STATUS", {
-              login: response.data.login,
+              login: response.data.username,
             });
             axios
               .get(`http://${utils.ip}:5001/game/${response.data.id}`, options)
@@ -193,7 +190,6 @@ const ProfileOther = () => {
     }
 
   };
-  // console.log('histo', userDisplay.WinNumber, userDisplay.LossNumber)
 
   const handleClickOpen = () => {
     if (friend !== BLOCKED) setOpen(true);
@@ -201,7 +197,6 @@ const ProfileOther = () => {
 
   const handleClose = (change: boolean) => {
     if (change === true) {
-      console.log("send ", friend, "to : back with ", userDisplay.login);
       if (friend === NOT_FRIEND) {
         utils.socket.emit("SEND_FRIEND_REQUEST", {
           sender: user.user?.username,
@@ -235,7 +230,6 @@ const ProfileOther = () => {
   };
 
   function inviteGame1() {
-    console.log("invite game front 1 to : ", userDisplay.username);
     utils.gameSocket.emit("INVITE_GAME", {
       sender: user.user?.username,
       gameMap: "map1",
@@ -244,7 +238,6 @@ const ProfileOther = () => {
     setInviteSend(true);
   }
   function inviteGame2() {
-    console.log("invite game front 2");
     utils.gameSocket.emit("INVITE_GAME", {
       sender: user.user?.username,
       gameMap: "map2",
@@ -253,7 +246,6 @@ const ProfileOther = () => {
     setInviteSend(true);
   }
   function inviteGame3() {
-    console.log("invite game front 3");
     utils.gameSocket.emit("INVITE_GAME", {
       sender: user.user?.username,
       gameMap: "map3",
@@ -266,7 +258,6 @@ const ProfileOther = () => {
   utils.gameSocket.on(
     "accept_game",
     (data: { sender: string; gameMap: string; receiver: string }) => {
-      console.log("accept received");
       utils.gameSocket.emit("JOIN_ROOM", data.sender + data.receiver);
       utils.gameSocket.emit("START_INVITE_GAME", {
         user: { login: user.user?.username },
@@ -284,7 +275,6 @@ const ProfileOther = () => {
   utils.gameSocket.on(
     "decline_game",
     (data: { sender: string; gameMap: string; receiver: string }) => {
-      console.log("decline received");
       setDeclineGame(true);
       setTimeout(function () {
         setGameOpenDialog(false);
@@ -374,6 +364,20 @@ const ProfileOther = () => {
     setSpectate(true);
   });
 
+  utils.gameSocket.removeListener("goToMyRoom");
+  utils.gameSocket.on("goToMyRoom", (roomId: string) => {
+    setRoomId(roomId);
+    setMyPong(true);
+  });
+
+  if (myPong && roomId !== "")
+    return (
+      <Navigate
+        to="/Pong"
+        replace={true}
+        // state={{ roomId: roomId }}
+      />
+    );
   if (openGame && roomId !== "")
     return (
       <Navigate
@@ -438,14 +442,8 @@ const ProfileOther = () => {
             ) : (
               <></>
             )}
-            <div className="infoUserOther">
-              <h3 className="userNameOther">Login :</h3>
-              <Typography className="userNamePrintOther">
-                {userDisplay?.login}
-              </Typography>
-            </div>
             <div className="infoUsernameOther">
-              <h3 className="userNameChangeOther">userName :</h3>
+              <h3 className="userNameChangeOther">Username :</h3>
               <Typography className="userNamePrintChangeOther">
                 {userDisplay?.username}
               </Typography>
@@ -458,7 +456,7 @@ const ProfileOther = () => {
               {friend === NOT_FRIEND
                 ? "ADD FRIEND"
                 : friend === FRIEND_REQUEST_SEND
-                  ? "FRIEND REQUEST SEND"
+                  ? "FRIEND REQUEST SENT"
                   : friend === BLOCKED
                     ? "BLOCKED"
                     : friend === FRIEND_REQUEST_WAITING
@@ -480,7 +478,7 @@ const ProfileOther = () => {
                 <Button onClick={() => handleClose(false)}>Cancel</Button>
               </DialogActions>
             </Dialog>
-            {friend === FRIEND ? (
+            {friend === FRIEND && clientStatus === ONLINE ? (
               <Button className="buttonChangeOther" onClick={handleGameOpen}>
                 Invite to game
               </Button>
@@ -616,7 +614,7 @@ const ProfileOther = () => {
                   <DialogTitle>Decline</DialogTitle>
                   <DialogContent>
                     <DialogContentText>
-                      Sorry {userDisplay.username} decline your invitation
+                      Sorry {userDisplay.username} declined your invitation
                     </DialogContentText>
                     <DialogActions>
                       <Button onClick={() => handleGameClose(false)}>
@@ -633,6 +631,7 @@ const ProfileOther = () => {
                 onClick={() => {
                   utils.gameSocket.emit("GET_ROOM_ID", {
                     userToSee: userDisplay.username,
+                    userWatching: user.user?.username
                   });
                 }}
               >
@@ -645,7 +644,7 @@ const ProfileOther = () => {
           <div className="statOther">
             <div className="rectangleOther">
               <div className="textRectangle">
-                <p>nbr Win</p>
+                <p>Wins</p>
                 {userDisplay?.WinNumber}
               </div>
               <div className="textRectangle">
@@ -661,12 +660,11 @@ const ProfileOther = () => {
                 </h3>
               </div>
               <div className="textRectangle">
-                <p>nbr Loose</p>
+                <p>Losses</p>
                 {userDisplay?.LossNumber}
               </div>
             </div>
             {matchHistory.map((match) => {
-              console.log('maq:kshvbdlkbdsfkvtch', match)
               return (
                 <div
                   className={
@@ -683,20 +681,20 @@ const ProfileOther = () => {
                         : match.player2}
                     </div>
                     <div className="scoreOther">
-                      -
+
                       {match.player1 === userDisplay?.username
                         ? match.score1
                         : match.score2}
-                      -
+
                     </div>
                   </div>
                   <div className="resultsOther">
                     <div className="scoreOther">
-                      -
+
                       {match.player2 === userDisplay?.username
                         ? match.score1
                         : match.score2}
-                      -
+
                     </div>
                     <div className="nameOther">
                       {match.player2 === userDisplay?.username

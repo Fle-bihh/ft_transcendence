@@ -8,6 +8,7 @@
         background-color: #8c98af;
         overflow: scroll;
         overflow-anchor: none;
+
         .profile {
             height: 96%;
             width: 96%;
@@ -63,8 +64,6 @@
             .userNamePrint {
                 white-space: pre-line;
                 margin-left: 1.66%;
-                text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
             }
@@ -74,6 +73,7 @@
             color: black;
             justify-content: center;
             display: flex;
+            padding-bottom: 2%;
             align-items: center;
 
             .userNameChange {
@@ -83,7 +83,6 @@
 
             .userNamePrintChange {
                 margin-left: 1.66%;
-                text-transform: capitalize;
                 font-family: "system-ui";
                 font-size: 200%;
             }
@@ -139,6 +138,7 @@
                 z-index: 999;
                 text-align: center;
             }
+
             * {
                 box-sizing: border-box;
             }
@@ -195,9 +195,7 @@
 
             .name {
                 padding: 2px;
-
                 font-size: x-small;
-                text-transform: capitalize;
             }
         }
     }
@@ -213,6 +211,7 @@
         background-color: #8c98af;
         overflow: scroll;
         overflow-anchor: none;
+
         .profile {
             height: 96%;
             width: 96%;
@@ -283,7 +282,6 @@
 
             .userNamePrint {
                 margin-left: 1.66%;
-                text-transform: capitalize;
                 font-family: "system-ui";
                 font-size: 200%;
             }
@@ -295,6 +293,7 @@
             margin-top: 2%;
             display: flex;
             align-items: center;
+            padding-bottom: 2%;
 
             .userNameChange {
                 color: grey;
@@ -303,7 +302,6 @@
 
             .userNamePrintChange {
                 margin-left: 1.66%;
-                text-transform: capitalize;
                 font-family: "system-ui";
                 font-size: 200%;
             }
@@ -402,7 +400,6 @@
             .name {
                 padding: 2px;
                 font-size: x-small;
-                text-transform: capitalize;
             }
         }
     }
@@ -418,6 +415,7 @@
         background-color: #8c98af;
         overflow: scroll;
         overflow-anchor: none;
+
         .profile {
             margin-top: 3%;
             height: 90%;
@@ -433,7 +431,7 @@
                 height: 50%;
                 display: flex;
                 justify-content: center;
-                
+
                 .avatar {
                     box-shadow: 1px 2px 20px rgb(99, 97, 97);
                     max-height: 80%;
@@ -489,8 +487,6 @@
             .userNamePrint {
                 white-space: pre-line;
                 margin-left: 1.66%;
-                text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
             }
@@ -500,6 +496,7 @@
             color: black;
             justify-content: center;
             margin-top: 5%;
+            padding-bottom: 2%;
             display: flex;
             align-items: center;
 
@@ -510,8 +507,6 @@
 
             .userNamePrintChange {
                 margin-left: 1.66%;
-                text-transform: capitalize;
-
                 font-family: "system-ui";
                 font-size: 200%;
             }
@@ -554,6 +549,7 @@
 
                 text-align: center;
             }
+
             * {
                 box-sizing: border-box;
             }
@@ -612,7 +608,6 @@
             .name {
                 font-size: x-small;
                 margin-top: 9%;
-                text-transform: capitalize;
             }
         }
     }

@@ -32,7 +32,6 @@ export default function Notif() {
   utils.gameSocket.on(
     "redirect_to_game",
     (data: { sender: string; gameMap: string; receiver: string }) => {
-      console.log("room name : ", data.sender + data.receiver);
       utils.gameSocket.emit("JOIN_ROOM", data.sender + data.receiver);
       utils.gameSocket.emit("START_INVITE_GAME", {
         user: { login: persistantReducer.userReducer.user?.username },
@@ -47,10 +46,8 @@ export default function Notif() {
   utils.socket.removeListener("check_user_exist");
 
   utils.socket.on("check_user_exist", (data: {exist: boolean, username: string}) => {
-    console.log('check_user_exist received front', data.exist);
     if (!data.exist) {
       persistantReducer.notifReducer.notifArray.forEach((notif, index) => {
-        console.log('notif.data.sender = ', notif.data.sender)
         if (notif.type === NotifType.FRIENDREQUEST && notif.data.sender === data.username) {
           delNotif(index);
         }
@@ -70,7 +67,6 @@ export default function Notif() {
           switch (notif.type) {
             case NotifType.FRIENDREQUEST: {
               utils.socket.emit('CHECK_USER_EXIST', {username: notif.data.sender});
-              console.log('send CHECK_USER_EXIST to back');
               return (
                 <div className="notifElement" key={index}>
                   <div
@@ -88,7 +84,7 @@ export default function Notif() {
                   </div>
                   <DialogActions onClick={() => {delNotif(index)}}>
                     <Button className="notifAccept">
-                      <NavLink to={`/profileother?username=${notif.data.sender}`} className="notifFriend">Look my send friend's request</NavLink>
+                      <NavLink to={`/profileother?username=${notif.data.sender}`} className="notifFriend">Look my friend's profile</NavLink>
                     </Button>
                   </DialogActions>
                 </div>

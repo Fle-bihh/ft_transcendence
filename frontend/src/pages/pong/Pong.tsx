@@ -26,7 +26,6 @@ const Pong = () => {
         }
     }, []);
 
-    console.log("pong = ", location.state)
     if (location.state && location.state.invite === true) return (
         <div>
             <Navbar />

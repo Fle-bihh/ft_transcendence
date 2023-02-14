@@ -65,7 +65,6 @@ export default function WatchingListGame(props: {
         left: 'calc(50% - 9px)',
         transition: theme.transitions.create('opacity'),
     }));
-    console.log("watching list game props : ", props)
     return (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '100%', overflowX: "scroll"}}>
             {props.all_rooms.map((room) => (

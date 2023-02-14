@@ -35,7 +35,6 @@ export class EventsGateway {
 
   @SubscribeMessage('CONNECT')
   connect() {
-    this.logger.log('connected serverside');
   }
 
   @SubscribeMessage('CHECK_USER_EXIST')
@@ -71,7 +70,6 @@ export class EventsGateway {
 
   @SubscribeMessage('STORE_CLIENT_INFO')
   store_client_info(client: Socket, data: { user: any }) {
-    this.logger.log('STORE_CLIENT_INFO event : ');
     users[users.findIndex((item) => item.socket.id == client.id)].user =
       data.user;
     client.emit('store_client_done');
@@ -134,11 +132,6 @@ export class EventsGateway {
                 .username,
               friendStatus: 'request-waiting',
             });
-            this.logger.log(
-              'emit updateProfileOther to ',
-              users.find((item) => item.socket.id == client.id).user.username,
-              'with request-waiting',
-            );
             receiverSocket.emit('add_notif', {
               type: 'FRIENDREQUEST',
               data: { sender: data.sender },
@@ -183,11 +176,6 @@ export class EventsGateway {
             .username,
           friendStatus: 'not-friend',
         });
-      this.logger.log(
-        'emit updateProfileOther to ',
-        users.find((item) => item.socket.id == client.id).user.username,
-        'with not-friend',
-      );
     }
   }
 
@@ -220,7 +208,6 @@ export class EventsGateway {
           item.id_2 == userToCheck.id,
       )
     )
-    {this.logger.log('Y A L ERREUR LA LA PUTAIN DE SA M*** ELELALA JOUE avec', userToCheck.username); return;}
     await this.friendRequestService.delFriendRequest(check.id);
     await this.friendShipService.addFriendShip(
       userToCheck.id,
@@ -231,11 +218,6 @@ export class EventsGateway {
       username: data.receiver,
       friendStatus: 'friend',
     });
-    this.logger.log(
-      'emit updateProfileOther to ',
-      users.find((user) => user.socket.id === client.id).user.username,
-      'with friend',
-    );
     if (
       users.find((item) => item.user.username == userToCheck.username) !=
       undefined
@@ -280,11 +262,6 @@ export class EventsGateway {
       username: data.receiver,
       friendStatus: 'not-friend',
     });
-    this.logger.log(
-      'emit updateProfileOther to ',
-      data.receiver,
-      'with not-friend',
-    );
     if (
       users.find((item) => item.user.username == userToCheck.username) !=
       undefined
@@ -304,7 +281,6 @@ export class EventsGateway {
       const userToCheck = await this.userService.getUserByUsername(
         data.username,
       );
-      this.logger.log('getfriend status : ', data.username);
       if (!userToCheck) return;
       const check = await this.friendRequestService.getRelation(
         userToCheck.id,
@@ -353,13 +329,11 @@ export class EventsGateway {
         }
       }
     } catch (error) {
-      this.logger.log('ERROR USER IN GET_FRIEND_STATUS');
     }
   }
 
   @SubscribeMessage('GET_USER_FRIENDS')
   async get_user_friends(client: Socket, data: { username: string }) {
-    console.log("get user friend : ", data)
     const user = users.find((item) => (item.user.username != undefined && item.user.username === data.username));
     if (!user)
       return;
@@ -372,7 +346,6 @@ export class EventsGateway {
           retArray.push({ username: item.username });
       }
     }
-    console.log("retArray == ", retArray);
     client.emit('get_user_friends', retArray);
   }
 
@@ -391,13 +364,11 @@ export class EventsGateway {
           retArray.push({ username: item.username });
       }
     }
-    console.log("retArray == ", retArray);
     client.emit('get_all_users_not_friend', retArray);
   }
 
   @SubscribeMessage('DISCONNECT_SOCKET')
   disconnectSocket(client: Socket) {
-    this.logger.log(`client ${client.id} disconnected socket`);
     users.splice(
       users.findIndex((item) => item.socket.id == client.id),
       1,
@@ -405,12 +376,10 @@ export class EventsGateway {
   }
 
   handleConnection(client: Socket) {
-    this.logger.log(`new client connected ${client.id}`);
     users.push({ user: {}, socket: client });
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`client ${client.id} disconnected`);
     users.splice(
       users.findIndex((item) => item.socket.id == client.id),
       1,

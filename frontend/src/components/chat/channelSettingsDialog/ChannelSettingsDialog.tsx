@@ -26,11 +26,7 @@ const ChannelSettingsDialog = (props: {
   const [nameSecurityDialog, setNameSecurityDialog] = useState(false);
   const [passwordSecurityDialog, setPasswordSecurityDialog] = useState(false);
   const [participantRole, setParticipantRole] = useState("");
-  const [participants, setParticipants] = useState(
-    Array<{
-      username: string;
-      admin: boolean;
-    }>()
+  const [participants, setParticipants] = useState( Array<{ username: string; admin: boolean; }>()
   );
   const utils = useSelector((state: RootState) => state.utils);
   const user = useSelector(
@@ -147,14 +143,13 @@ const ChannelSettingsDialog = (props: {
               <div className="participantsContainer">
                 {participants.map((participant, index) => {
                   if (participant.username !== user.user?.username) {
-                    if (!props.allChannels.find((channel) => channel.name === props.openConvName && channel.owner === participant.username)) {
                       return (
                         <div key={index} className="participantItemContainer">
-                          <div key={index} className="participantName">
+                          <div className="participantName">
                             {participant.username}
                           </div>
                           {participantRole === "owner" ? (
-                            <div key={index} className={participant.admin ? "adminButton" : "notAdminButton"}
+                            <div className={participant.admin ? "adminButton" : "notAdminButton"}
                               onClick={() => {
                                 if (!participant.admin) {
                                   utils.socket.emit("ADD_ADMIN", { new_admin: participant.username, channel: props.openConvName, });
@@ -164,12 +159,12 @@ const ChannelSettingsDialog = (props: {
                                   handleClose();
                                 }
                               }}>
-                              <div key={index} className="content">ADMIN</div>
+                              <div className="content">ADMIN</div>
                             </div>
                           ) : (
-                            <div key={index}></div>
+                            <div></div>
                           )}
-                          <div key={index}
+                          <div
                             className="muteButton"
                             onClick={() => {
                               if (1) {
@@ -181,9 +176,9 @@ const ChannelSettingsDialog = (props: {
                               }
                             }}
                           >
-                            <div key={index} className="content">MUTE</div>
+                            <div className="content">MUTE</div>
                           </div>
-                          <div key={index}
+                          <div
                             className="banButton"
                             onClick={() => {
                               if (1) {
@@ -195,10 +190,10 @@ const ChannelSettingsDialog = (props: {
                               }
                             }}
                           >
-                            <div key={index} className="content">BAN</div>
+                            <div className="content">BAN</div>
                           </div>
                           {participantRole === "owner" ? (
-                            <div key={index}
+                            <div
                               className="kickButton"
                               onClick={() => {
                                 if (1) {
@@ -210,14 +205,13 @@ const ChannelSettingsDialog = (props: {
                                 }
                               }}
                             >
-                              <div key={index} className="content">KICK</div>
+                              <div className="content">KICK</div>
                             </div> 
                           ) : (
-                            <div key={index}></div>
+                            <div></div>
                           )}
                         </div>
                       );
-                    }
                   }
                   return <div key={index}> </div>;
                 })}

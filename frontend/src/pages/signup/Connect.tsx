@@ -54,23 +54,13 @@ const Connect = () => {
           else if (response.data.accessToken)
             setFirstCo(false);
           setLoading(false)
-
-          console.log('response.data.user -->', firstCo)
-          // const tmp = true
-
-
-          console.log('response.data.user -->', firstCo)
         }
-        // utils.socket.emit("STORE_CLIENT_INFO", { user: response.data.user });
-        // utils.gameSocket.emit("CHECK_RECONNEXION", {
-        //   username: userReducer.user?.username,
-        // });
       })
       .catch(() => {
         /*  window.history.pushState({}, window.location.toString());
           window.location.replace("/signup");*/
       });
-  },[])
+  }, [])
 
   function verify2FA(value: string) {
     const jwt = cookies.get("jwt");
@@ -79,7 +69,6 @@ const Connect = () => {
         Authorization: `Bearer ${jwt}`,
       },
     };
-    console.log("Connect 1 cookie == ", options);
     axios
       .get(
         `http://${utils.ip}:5001/user/${userReducer.user?.id}/2fa/verify/` +
@@ -97,9 +86,9 @@ const Connect = () => {
 
   }
 
-  useEffect(() => {
-    console.log('ouiouiouoiuoiui', firstCo)
-  }, [firstCo])
+  // useEffect(() => {
+  //   // console.log('ouiouiouoiuoiui', firstCo)
+  // }, [firstCo])
 
   const handleClose = () => {
     const jwt = cookies.get('jwt');
@@ -108,23 +97,23 @@ const Connect = () => {
         'authorization': `Bearer ${jwt}`
       }
     }
-    const tmp = inputValue.replace(/ /g, "")
-    console.log("tmp=", tmp)
-    if (tmp !== "") {
-      console.log("iiiiii")
-      axios.patch(`http://${utils.ip}:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options).then(response => {
+    let tmp = inputValue.replace(/ /g, "")
+    if (tmp === "") {
+      tmp = userReducer.user?.username ? userReducer.user.username : ""
+    }
+    axios.patch(`http://${utils.ip}:5001/user/${userReducer.user?.id}/username`, { username: tmp }, options)
+      .then((response) => {
         if (response.data != null) {
-          console.log('resp data == ', response.data);
           setUser(response.data)
+          window.history.pushState({}, window.location.toString());
+          window.location.replace("/");
+          setFirstCo(false)
         }
       })
-    }
-    window.history.pushState({}, window.location.toString());
-    window.location.replace("/");
-    setFirstCo(false)
+      .catch((e) => {
+        console.log(e)
+      })
   }
-  console.log('response.data.user! -->', firstCo)
-
 
   if (loading) return (<></>)
 
@@ -143,7 +132,7 @@ const Connect = () => {
             placeholder={userReducer.user?.username}
             inputProps={{ maxLength: 12 }}
             onChange={(event) => setInputValue(event.currentTarget.value)}
-            onKeyUp={(e) => { if (e.key === 'Enter') { handleClose() } }}
+            onKeyDown={(e) => { if (e.key === 'Enter') { handleClose() } }}
           ></TextField>
           <Button onClick={() => handleClose()}>Confirm</Button>
         </div>

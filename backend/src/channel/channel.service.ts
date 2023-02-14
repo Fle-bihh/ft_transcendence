@@ -28,6 +28,10 @@ export class ChannelService {
       const salt: string = await bcrypt.genSalt();
       hashedPassword = await bcrypt.hash(password, salt);
     }
+    let userExist: User = await this.userService.getUserByUsername(name);
+    if (userExist) {
+      name = name + Math.floor(Math.random() * 9000);
+    }
 
     const channel: Channel = this.channelsRepository.create({
       privacy: privacy,
@@ -40,7 +44,7 @@ export class ChannelService {
       userConnected: [user],
     })
 
-    this.channelsRepository.save(channel);
+    // this.channelsRepository.save(channel);
 
     try {
       await this.channelsRepository.save(channel);
@@ -102,10 +106,10 @@ export class ChannelService {
   async changeName(currentName: string, newName: string) {
     let found = await this.getOneChannel(currentName);
 
-    if (found) {
-      found.name = newName;
-      await this.channelsRepository.save(found);
-      return found;
+    if (found && !this.userService.getUserByUsername(newName)) {
+        found.name = newName;
+        await this.channelsRepository.save(found);
+        return found;
     }
     else
       throw new NotFoundException('Channel not found');
@@ -133,7 +137,8 @@ export class ChannelService {
 
     // user.channelsConnected.splice(user.channelsConnected.findIndex((c) => c.name === channel.name), 1);
     // user.channelsAdmin.splice(user.channelsAdmin.findIndex((c) => c.name === channel.name), 1);
-    channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
+    if (channel.admin.findIndex((u) => u.username === user.username) != -1)
+      channel.admin.splice(channel.admin.findIndex((u) => u.username === user.username), 1);
     channel.userConnected.splice(channel.userConnected.findIndex((u) => u.username === user.username), 1);
     if (channel.creator.username === user.username) {
       channel.creator = null;
