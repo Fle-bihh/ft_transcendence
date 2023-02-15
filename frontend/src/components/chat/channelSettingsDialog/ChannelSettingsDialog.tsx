@@ -5,7 +5,8 @@ import { RootState } from "../../../state";
 //
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Button, Dialog } from "@mui/material";
+import { Button, Dialog,  Typography} from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 const ChannelSettingsDialog = (props: {
   settingsDialogOpen: boolean;
@@ -232,7 +233,18 @@ const ChannelSettingsDialog = (props: {
           }}
         >
           <div className="leaveChannelText">Leave This Channel</div>
+
         </div>
+
+        <Button
+         onClick={() => {
+          handleClose();
+         }}
+          >
+        Return chat
+        </Button>
+
+  
       </div>
       <Dialog open={nameSecurityDialog} onClose={handleCloseSecuName}>
         <div className="securityText">Are you sure ?</div>

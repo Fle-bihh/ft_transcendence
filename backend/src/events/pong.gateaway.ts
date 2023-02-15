@@ -405,6 +405,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const room = this.getRoomByID(info.roomId)
       this.allGames[room[0]].players[0].connect = true
       this.allGames[room[0]].setOponnent(users.find(client => client.user.username == oponnent.user.login).socket.id, oponnent.user.login)
+      this.allGames[room[0]].setOponnentObstacle()
       this.allGames[room[0]].gameOn = true
       users.find(client => client.user.username == oponnent.user.login).socket.emit('start', room[1].roomID)
       this.io.to(client.id).emit('start', room[1].roomID)
