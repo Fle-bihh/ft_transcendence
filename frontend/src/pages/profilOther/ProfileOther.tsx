@@ -648,7 +648,7 @@ const ProfileOther = () => {
               <div className="textRectangle">
                 <h2 style={{ color: "black" }}>Rank</h2>
                 <h3
-                  style={{  key={match.id.toString()}
+                  style={{
                     textAlign: "center",
                     fontWeight: "900",
                     marginBottom: "3px",
