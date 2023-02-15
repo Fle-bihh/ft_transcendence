@@ -494,7 +494,6 @@ const ProfileOther = () => {
               {!inviteSend ? (
                 <>
                   <DialogTitle>Choose the map you want to play :</DialogTitle>
-                  <DialogContentText>
                     <Box
                       sx={{
                         display: "flex",
@@ -585,7 +584,6 @@ const ProfileOther = () => {
                         </Image>
                       </ImageButton>
                     </Box>
-                  </DialogContentText>
                   <DialogActions>
                     <Button onClick={() => handleGameClose(false)}>
                       Cancel

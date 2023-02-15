@@ -8,6 +8,8 @@ import PinInput from "react-pin-input";
 import "./Connect.scss";
 import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
+import FlashMessage from '../../components/alert-message/Alert'
+
 
 const Connect = () => {
   const queryString = window.location.search;
@@ -17,6 +19,8 @@ const Connect = () => {
   const [firstCo, setFirstCo] = useState(false)
   const [loading, setLoading] = useState(true)
   const [inputValue, setInputValue] = useState("")
+  const [message2, setmessage2] = useState("");
+  const [error, seterror] = useState(false);
 
   const dispatch = useDispatch();
   const { setUser } = bindActionCreators(actionCreators, dispatch);
@@ -111,8 +115,12 @@ const Connect = () => {
         }
       })
       .catch((e) => {
+        setmessage2("This username is already used")
+        seterror(true)
         console.log(e)
       })
+      seterror(false)
+
   }
 
   if (loading) return (<></>)
@@ -136,6 +144,9 @@ const Connect = () => {
           ></TextField>
           <Button onClick={() => handleClose()}>Confirm</Button>
         </div>
+        {
+                    error ? <FlashMessage message2={message2} /> : ''
+                }
       </div>
     );
 

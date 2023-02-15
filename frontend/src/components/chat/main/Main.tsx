@@ -371,7 +371,6 @@ const Main = (props: {
                       <DialogTitle>
                         Choose the map you want to play :
                       </DialogTitle>
-                      <DialogContentText>
                         <Box
                           sx={{
                             display: "flex",
@@ -471,7 +470,6 @@ const Main = (props: {
                             </Image>
                           </ImageButton>
                         </Box>
-                      </DialogContentText>
                       <DialogActions>
                         <Button onClick={() => handleGameClose(false)}>
                           Cancel
