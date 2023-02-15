@@ -28,10 +28,13 @@ export class ChannelService {
       const salt: string = await bcrypt.genSalt();
       hashedPassword = await bcrypt.hash(password, salt);
     }
-    let userExist: User = await this.userService.getUserByUsername(name);
-    if (userExist) {
-      name = name + Math.floor(Math.random() * 9000);
+    try {
+      let userExist: User = await this.userService.getUserByUsername(name);
+      if (userExist) {
+        name = name + Math.floor(Math.random() * 9000);
+      }
     }
+    catch {}
 
     const channel: Channel = this.channelsRepository.create({
       privacy: privacy,
@@ -77,6 +80,7 @@ export class ChannelService {
   }
 
   async joinChannel(username: string, channelName: string, password: string) {
+    console.log("join channel ===", channelName);
     let channel: Channel = await this.getOneChannel(channelName);
 
     if (channel && (channel.password === "" || await bcrypt.compare(password, channel.password))) {
@@ -197,15 +201,16 @@ export class ChannelService {
   }
 
   async createMessage(sender: User, message: MessagesDto) {
-    const msg: Message = this.messagesRepository.create({
+    const msg: Message =this.messagesRepository.create({
       body: message.body,
       date: message.date,
-      sender: sender,
+      sender: message.sender,
       receiver: message.receiver,
       channel: message.channel,
       serverMsg: message.serverMsg
     });
-
+    console.log("sender dans create message == ", sender);
+    console.log("create sender = ", sender.username)
     sender.messagesSent = (await this.userService.getMessages(sender.id)).messagesSent;
     sender.messagesSent.push(msg);
 
@@ -221,7 +226,6 @@ export class ChannelService {
 
     try {
       await this.messagesRepository.save(msg);
-      await this.usersRepository.save(sender);
     } catch (e) { console.log(e.code); }
   }
 

@@ -31,7 +31,7 @@ export class ChatGateway {
   constructor(
     private channelsService: ChannelService,
     private usersService: UsersService,
-  ) {}
+  ) { }
 
   @WebSocketServer()
   httpServer = createServer();
@@ -64,6 +64,13 @@ export class ChatGateway {
           friendStatus: 'blocked',
         });
     }
+    const retMsg = data.username + ' blocked you';
+    this.add_message(client, {
+      sender: data.username,
+      receiver: data.target,
+      content: retMsg,
+      server: true,
+    });
   }
 
   @SubscribeMessage('STORE_CLIENT_INFO')
@@ -88,32 +95,23 @@ export class ChatGateway {
     let check = muteList.find(
       (u) => u.username === username && u.channel === channel,
     );
-    if (check != undefined && check.time >= Date.now()) {
+    if (check !== undefined && check.time >= Date.now()) {
       return true;
     } else if (check) {
-      muteList.splice(
-        muteList.findIndex(
-          (u) => u.username === check.username && u.channel === check.channel,
-        ),
-        1,
-      );
+      muteList.splice(muteList.findIndex((u) => u.username === check.username && u.channel === check.channel), 1);
     }
     return false;
   }
 
   isBanned(username: string, channel: string): boolean {
-    let check = banList.find(
-      (u) => u.username === username && u.channel === channel,
-    );
-    if (check != undefined && check.time >= Date.now()) {
+    console.log("ban list = ", banList)
+    let check = banList.find((u) => u.username === username && u.channel === channel);
+    if (check !== undefined && check.time >= Date.now()) {
+      console.log("ON RENTRE?")
       return true;
     }
-    muteList.splice(
-      banList.findIndex(
-        (u) => u.username === check.username && u.channel === check.channel,
-      ),
-      1,
-    );
+    if (check)
+      banList.splice(banList.findIndex((u) => u.username === check.username && u.channel === check.channel), 1);
     return false;
   }
 
@@ -145,7 +143,7 @@ export class ChatGateway {
       convers = convers.reverse();
     }
     let retArray;
-    if (convers && convers.length)
+    if (convers)
       retArray = [...convers];
     try {
       for (let conv of convers) {
@@ -253,6 +251,7 @@ export class ChatGateway {
     },
   ) {
     let sender: User = await this.usersService.getUserByUsername(data.sender);
+    console.log("sender = ", sender.username)
     let receiverUser: User;
     let receiverChannel: Channel;
     try {
@@ -267,6 +266,7 @@ export class ChatGateway {
     }
     const actualTime: Date = new Date();
     if (data.server == undefined) data.server = false;
+    console.log("sender = ", sender.username)
     const messageDto: MessagesDto = {
       date: actualTime,
       sender: sender,
@@ -275,6 +275,7 @@ export class ChatGateway {
       channel: receiverChannel == undefined ? null : receiverChannel,
       serverMsg: data.server == undefined ? false : data.server,
     };
+    console.log("message = ", messageDto)
     const isMute = this.isMuted(data.sender, data.receiver);
     let isBlock: boolean;
     try {
@@ -282,22 +283,13 @@ export class ChatGateway {
     } catch (e) {
       this.logger.log(e.code);
     }
-    if (
-      receiverChannel?.userConnected.find((u) => u.username === data.sender) ||
-      (!isMute &&
-      (receiverChannel ||
-        (receiverUser &&
-          !isBlock)))
-    ) {
+    if ((receiverChannel?.userConnected.find((u) => u.username === data.sender) && !isMute) || (receiverUser && !isBlock) || data.server) {
+      console.log("sender = ", sender)
       await this.channelsService.createMessage(sender, messageDto);
       client.emit('new_message');
-      if (receiverChannel) {
+      if (receiverChannel) { 
         for (let user of users) {
-          if (
-            receiverChannel.userConnected.find(
-              (u) => u.username === user.user.username,
-            )
-          )
+          if (receiverChannel.userConnected.find( (u) => u.username === user.user.username))
             user.socket.emit('new_message');
         }
       } else {
@@ -337,7 +329,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('GET_PARTICIPANTS')
-  async get_participants( client: Socket, data: { username: string; channel: string } ) {
+  async get_participants(client: Socket, data: { username: string; channel: string }) {
     let userConnected: User[];
     let retArray: Array<{ username: string; admin: boolean }> = new Array<{ username: string; admin: boolean; }>();
     let channel = await this.channelsService.getOneChannel(data.channel);
@@ -417,6 +409,7 @@ export class ChatGateway {
         server: true,
       });
     } catch (error) {
+      console.log(error)
       this.logger.log('ERROR USER IN CREATE_CHANNEL');
     }
     this.get_all_conv_info(client, { sender: data.owner });
@@ -429,6 +422,7 @@ export class ChatGateway {
   ) {
     try {
       if (!this.isBanned(data.username, data.channelName)) {
+        console.log("is bannedddddddd = ", this.isBanned(data.username, data.channelName))
         await this.channelsService.joinChannel(
           data.username,
           data.channelName,
@@ -473,22 +467,10 @@ export class ChatGateway {
 
   @SubscribeMessage('BAN_USER')
   async ban_user(client: Socket, data: { user: string; channel: string }) {
-    if (
-      banList.find(
-        (u) => u.username === data.user && u.channel === data.channel,
-      )
-    ) {
-      banList.splice(
-        banList.findIndex(
-          (u) => u.username === data.user && u.channel === data.channel,
-        ),
-      );
+    if (banList.find((u) => u.username === data.user && u.channel === data.channel)) {
+      banList.splice(banList.findIndex((u) => u.username === data.user && u.channel === data.channel));
     }
-    banList.push({
-      username: data.user,
-      channel: data.channel,
-      time: Date.now() + 120000,
-    });
+    banList.push({ username: data.user, channel: data.channel, time: Date.now() + 120000 });
     this.leave_channel(client, { login: data.user, channelName: data.channel });
     const retMsg = data.user + ' has been banned';
     this.add_message(client, {
@@ -524,8 +506,6 @@ export class ChatGateway {
       content: retMsg,
       server: true,
     });
-
-    // ADD USER TO MUTE_LIST
   }
 
   // -------------- PATCH -------------

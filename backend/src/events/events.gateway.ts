@@ -201,13 +201,6 @@ export class EventsGateway {
       users.find((item) => item.socket.id == client.id).user.id,
     );
 
-    if (
-      friendList.find(
-        (item) =>
-          item.id_1 == userToCheck.id ||
-          item.id_2 == userToCheck.id,
-      )
-    )
     await this.friendRequestService.delFriendRequest(check.id);
     await this.friendShipService.addFriendShip(
       userToCheck.id,
