@@ -265,7 +265,7 @@ const Profile = () => {
             <div className="profilePageContainer">
                 <div className="profile" >
                     <Stack direction="row" spacing={2} className="avatarItem">
-                        <img alt="Cerise" src={user.user?.profileImage} className="avatar" />
+                        <img alt="Photo de profil" src={user.user?.profileImage} className="avatar" />
                     </Stack>
                     <Button component="label" className="avatarChange">
                         Change Profile Picture

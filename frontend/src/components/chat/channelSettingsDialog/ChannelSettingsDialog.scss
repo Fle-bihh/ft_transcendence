@@ -1,204 +1,94 @@
-$primary: rgb(255, 255, 255,);
-$secondary: rgb(190, 190, 190);
+$primary: rgb(129, 143, 168);
+$secondary: rgb(255, 255, 255);
 $third: rgb(150, 150, 150);
 $content: black;
 
 .channelSettingsDialog {
   .rawContainer {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     background-color: $primary;
+    
     .firstRaw {
-      background-color: $primary;
       display: flex;
-      width: 90%;
-      height: 15%;
-      margin-left: 5%;
-      margin-top: 2%;
-      border-radius: 25px;
-      .changeChannelName {
-        background-color: $secondary;
+      width: 100%;
+      height: 15vh;
+      align-items: center;
+      justify-content: space-around;
+      
+      .changeChannelName, .changeChannelPassword{
         display: flex;
-        width: 40%;
+        width: 35%;
         height: 70%;
-        margin-left: 5%;
-        margin-top: 2%;
-        border-radius: 25px;
-        .changeChannelNameInput {
-          background-color: $secondary;
-
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          outline: none;
-          border: 0;
-          border-radius: 25px;
-
-          // margin-block: 3%;
-          margin-inline: auto;
-          padding-left: 2%;
-
+        .changeChannelNameInput, .changeChannelPasswordInput {
+          width: 100%;
           font-weight: bold;
-          font-size: large;
-        }
-      }
-      .changeChannelPassword {
-        background-color: $secondary;
-        display: flex;
-        width: 40%;
-        height: 70%;
-        margin-left: 10%;
-        margin-top: 2%;
-        border-radius: 25px;
-        .changeChannelPasswordInput {
-          background-color: $secondary;
-
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          outline: none;
-          border: 0;
-          border-radius: 25px;
-
-          // margin-block: 3%;
-          margin-inline: auto;
-          padding-left: 2%;
-
-          font-weight: bold;
-          font-size: large;
+          text-align: center;
         }
       }
     }
+
     .secondRaw {
       display: flex;
-      width: 90%;
-      height: 60%;
-      margin-left: 5%;
-      margin-top: 2%;
-      border-radius: 25px;
-      .participantsList {
-        background-color: $secondary;
-        // background-color: $primary;
-        width: 90%;
-        height: 90%;
-        margin-top: 1%;
-        margin-left: 3%;
-        border-radius: 25px;
+      width: 100vw;
+      align-items: center;
+      justify-content: space-around;
+
+
+
         .participantsContainer {
-          overflow: scroll;
+          width: 85vw;
+          min-height: 60vh;
           display: flex;
+          background-color: $secondary;
+          overflow-y: scroll;
           flex-direction: column;
-          scroll-behavior: smooth;
-          width: 100%;
-          height: 80%;
+          align-items: center;
+          padding-bottom: 3vh;
+          
           .participantItemContainer {
-            color: $content;
-            display: flex;
-
-            width: 90%;
-            height: 60px;
-            min-height: 30px;
+            margin-top: 3vh;
             background-color: $primary;
-            margin-left: 5%;
-            border-radius: 25px;
-            margin-top: 10px;
-            .content {
-              margin-top: 10px;
-              margin-left: 5px;
-            }
+            width: 75vw;
+            height: 10vh;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
             .participantName {
-              // background-color: $secondary;
-              background-color: transparent;
-              margin-top: 20px;
-              margin-left: 20px;
-              height: 25px;
+              font-weight: bold;
+              color: $secondary;
+              text-decoration: underline;
+
             }
-            .adminButton {
-              margin-left: 20px;
-              background-color: $secondary;
-              // background-color: red;
-              margin-top: 5px;
-              border-radius: 50px;
-              height: 50px;
-              width: 70px;
-            }
-            .adminButton:hover {
+
+            .banButton, .kickButton, .notadminButton, .muteButton, .adminButton, .return_message{
+              width: 10%;
+              height: 50%;
+              border-radius: 10px;
               cursor: pointer;
             }
 
-            .notAdminButton {
-              margin-left: 20px;
-              background-color: transparent;
-              // background-color: red;
-              margin-top: 5px;
-              border-radius: 50px;
-              height: 50px;
-              width: 70px;
-            }
-            .notAdminButton:hover {
-              cursor: pointer;
+            .banButton, .kickButton, .notadminButton, .muteButton, .return_message{
+              background-color: $secondary;
+
             }
 
-            .muteButton {
-              background-color: $secondary;
-              // background-color: blue;
-              margin-top: 5px;
-              margin-left: 50%;
-              border-radius: 50px;
-              height: 50px;
-              width: 70px;
-            }
-            .muteButton:hover {
-              cursor: pointer;
+            .adminButton{
+              border: 1px solid $secondary;
+              color: $secondary;
             }
 
-            .banButton {
-              background-color: $secondary;
-              // background-color: green;
-              margin-top: 5px;
-              height: 50px;
-              width: 70px;
-              margin-left: 25px;
-              border-radius: 50px;
-            }
-            .banButton:hover {
-              cursor: pointer;
-            }
-
-            .kickButton {
-              background-color: $secondary;
-              // background-color: purple;
-              margin-top: 5px;
-              height: 50px;
-              width: 70px;
-              margin-left: 25px;
-              border-radius: 50px;
-            }
-            .kickButton:hover {
-              cursor: pointer;
+            .content {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
             }
           }
         }
       }
     }
-
-    .leaveChannel {
-      background-color: $secondary;
-      display: flex;
-      width: 20%;
-      height: 10%;
-      margin-left: 40%;
-      margin-top: 2%;
-      border-radius: 25px;
-      .leaveChannelText {
-        font-size: large;
-        font-weight: bold;
-        color: $content;
-        margin-left: 20%;
-        margin-top: 7%;
-      }
-    }
   }
-}
+

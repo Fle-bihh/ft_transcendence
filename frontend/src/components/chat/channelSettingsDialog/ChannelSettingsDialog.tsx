@@ -140,7 +140,6 @@ const ChannelSettingsDialog = (props: {
 
         {participantRole !== "participant" ? (
           <div className="secondRaw">
-            <div className="participantsList">
               <div className="participantsContainer">
                 {participants.map((participant, index) => {
                   if (participant.username !== user.user?.username) {
@@ -218,7 +217,7 @@ const ChannelSettingsDialog = (props: {
                 })}
               </div>
             </div>
-          </div>
+          
         ) : (
           <div></div>
         )}
@@ -236,7 +235,7 @@ const ChannelSettingsDialog = (props: {
 
         </div>
 
-        <Button
+        <Button className="return_message"
          onClick={() => {
           handleClose();
          }}
