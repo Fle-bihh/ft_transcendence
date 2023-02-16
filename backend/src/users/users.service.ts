@@ -99,7 +99,7 @@ export class UsersService {
   async patchUsername(id: string, user: User, username: string): Promise<User> {
     let found = await this.getUserById(id, user);
     let regex = /[a-zA-Z0-9_]/g;
-    if (username.match(regex).length == username.length) {
+    if (username.match(regex)?.length == username.length) {
     found.username = username
     if (username.length > 12)
       throw new InternalServerErrorException('Username must be shorter or equal to 12 characters');
