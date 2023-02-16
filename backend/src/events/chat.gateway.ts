@@ -392,27 +392,29 @@ export class ChatGateway {
       owner: string;
     },
   ) {
-    try {
-      const user = await this.usersService.getUserByUsername(data.owner);
-      const channel: Channel = await this.channelsService.createChannel(
-        user,
-        data.name,
-        data.password,
-        data.description,
-        data.privacy,
-      ); // ADD MSG CHANNEL CREATED
-      const retMsg = user.username + ' created this channel';
-      this.add_message(client, {
-        sender: data.owner,
-        receiver: channel.name,
-        content: retMsg,
-        server: true,
-      });
-    } catch (error) {
-      console.log(error)
-      this.logger.log('ERROR USER IN CREATE_CHANNEL');
+    if (data.name.length != 0) {
+      try {
+        const user = await this.usersService.getUserByUsername(data.owner);
+        const channel: Channel = await this.channelsService.createChannel(
+          user,
+          data.name,
+          data.password,
+          data.description,
+          data.privacy,
+        ); // ADD MSG CHANNEL CREATED
+        const retMsg = user.username + ' created this channel';
+        this.add_message(client, {
+          sender: data.owner,
+          receiver: channel.name,
+          content: retMsg,
+          server: true,
+        });
+      } catch (error) {
+        console.log(error)
+        this.logger.log('ERROR USER IN CREATE_CHANNEL');
+      }
+      this.get_all_conv_info(client, { sender: data.owner });
     }
-    this.get_all_conv_info(client, { sender: data.owner });
   }
 
   @SubscribeMessage('JOIN_CHANNEL')

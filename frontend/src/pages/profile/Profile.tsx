@@ -238,14 +238,13 @@ const Profile = () => {
         const img = e.target.files.item(0);
         var formData = new FormData();
         formData.append("photo", img);
-
+        console.log("data = ", formData)
         var config = {
             method: 'POST',
             url: `http://${utils.ip}:5001/user/${user.user?.id}/profileImage`,
             headers: options.headers,
             profileImage: formData,
             data: formData,
-            withCredentials: true
         }
         axios(config).then((res) => {
             setUser(res.data);
