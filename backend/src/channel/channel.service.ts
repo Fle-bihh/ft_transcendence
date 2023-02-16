@@ -109,14 +109,16 @@ export class ChannelService {
 
   async changeName(currentName: string, newName: string) {
     let found = await this.getOneChannel(currentName);
-
-    if (found && !this.userService.getUserByUsername(newName)) {
+    try {
+      await this.userService.getUserByUsername(newName)
+      return null;
+    } catch (e) {
+    if (found) {
         found.name = newName;
         await this.channelsRepository.save(found);
         return found;
     }
-    else
-      throw new NotFoundException('Channel not found');
+  }
   }
 
   async changePassword(channelName: string, newPassword: string) {

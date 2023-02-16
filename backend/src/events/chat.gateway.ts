@@ -16,6 +16,7 @@ import { User } from 'src/entities/user.entity';
 import { Channel } from 'src/entities/channel.entity';
 import { Interval } from '@nestjs/schedule';
 import { channel } from 'diagnostics_channel';
+import { userInfo } from 'os';
 
 const users = Array<{ user: any; socket: Socket }>();
 const muteList = Array<{ username: string; channel: string; time: number }>();
@@ -392,7 +393,7 @@ export class ChatGateway {
       owner: string;
     },
   ) {
-    if (data.name.length != 0) {
+    if (data.name.length != 0 && data.name.length < 17) {
       try {
         const user = await this.usersService.getUserByUsername(data.owner);
         const channel: Channel = await this.channelsService.createChannel(
@@ -534,16 +535,28 @@ export class ChatGateway {
     client: Socket,
     data: { login: string; currentName: string; newName: string },
   ) {
-    await this.channelsService.changeName(data.currentName, data.newName);
-    const retMsg = data.login + ' changed the channel name to ' + data.newName;
-    await this.add_message(client, {
-      sender: data.login,
-      receiver: data.newName,
-      content: retMsg,
-      server: true,
-    });
-    await this.get_all_channels(client, data.login);
-    // await this.get_all_conv_info(client, { sender: data.login });
+    if (data.newName.length > 16)
+     return;
+    try {
+      let ret = await this.channelsService.changeName(data.currentName, data.newName)
+      if (ret) {
+      const retMsg = data.login + ' changed the channel name to ' + data.newName;
+      await this.add_message(client, {
+        sender: data.login,
+        receiver: data.newName,
+        content: retMsg,
+        server: true,
+      });
+      await this.get_all_channels(client, data.login);
+      for (let user of users) {
+        if (ret.userConnected.find( (u) => u.username === user.user.username))
+        user.socket.emit('channel_name_change', { channelName: data.newName });
+        }
+      }
+    } catch {
+      // await this.get_all_conv_info(client, { sender: data.login });
+      // await this.get_all_channels(client, data.login);
+    }
   }
 
   @SubscribeMessage('CHANGE_CHANNEL_PASSWORD')
