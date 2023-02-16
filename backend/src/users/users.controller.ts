@@ -1,4 +1,4 @@
-import { BadRequestException, UseInterceptors, Body, Controller, Get, Param, Patch, Post, Put, Req, Response, UnauthorizedException, UseGuards, UploadedFile, Res, Headers } from '@nestjs/common';
+import { BadRequestException, UseInterceptors, Body, Controller, Get, Param, Patch, Post, Put, Request, Response, UnauthorizedException, UseGuards, UploadedFile, Res, Headers } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { Game } from 'src/entities/game.entity';
@@ -50,8 +50,9 @@ export class UsersController {
 
   @Patch('/:id/username')
 @UseGuards(AuthGuard('jwt'))
-  async patchUsername(@Param('id') id: string, @GetUser() user: User, @Body('username') username: string): Promise<User> {
-    return await this.usersService.patchUsername(id, user, username);
+  async patchUsername(@Request() req, @Param('id') id: string, @GetUser() user: User, @Body('username') username: string): Promise<User> {
+    if (req.user.username === (await this.usersService.getUserById(id)).username)
+      return await this.usersService.patchUsername(id, user, username);
   }
 
   @Get('/profilePic/:fileId')
@@ -76,7 +77,8 @@ export class UsersController {
   @Post('/:id/profileImage')
 @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('photo', multerOptions))
-  public async uploadFile(@Headers() headers, @UploadedFile() image: any, @Param('id') id: string) {
+  public async uploadFile(@Request() req, @Headers() headers, @UploadedFile() image: any, @Param('id') id: string) {
+    if (req.user.username === (await this.usersService.getUserById(id)).username) {
     if (image.filename) {
       let buffer = readFileSync(process.cwd() + '/uploads/profileImages/'+ image.filename)
       const res = await this.usersService.checkMagicNumber(image.mimetype, buffer);
@@ -92,15 +94,18 @@ export class UsersController {
     } else
     throw new BadRequestException('Unable to update your avatar, file too big.');
   }
+  }
 
   @Get('/:id/2fa/generate')
 @UseGuards(AuthGuard('jwt'))
-  async register(@Response() response: any, @Param('id') id: string) {
+  async register(@Request() req, @Response() response: any, @Param('id') id: string) {
+    if (req.user.username === (await this.usersService.getUserById(id)).username) {
     const user: User = await this.usersService.getUserById(id);
     const { otpAuthUrl } =
       await this.usersService.generateTwoFactorAuthenticationSecret(user);
     return response.json(
       await this.usersService.generateQrCodeDataURL(otpAuthUrl),);
+    }
   }
 
   @Get('/id/:id')
@@ -135,31 +140,37 @@ export class UsersController {
 
   @Get('/:id/2FA/deactivate/:secret')
 @UseGuards(AuthGuard('jwt'))
-  async deactivate2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<User> {
+  async deactivate2FA(@Request() req, @Param('id') id: string, @Param('secret') secret: string): Promise<User> {
+    if (req.user.username === (await this.usersService.getUserById(id)).username) {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
     if (!isCodeValid)
       throw new UnauthorizedException('Wrong authentication code');
     return await this.usersService.deactivate2FA(user);
+    }
   }
 
   @Get('/:id/2FA/activate/:secret')
 @UseGuards(AuthGuard('jwt'))
-  async activate2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<User> {
+  async activate2FA(@Request() req, @Param('id') id: string, @Param('secret') secret: string): Promise<User> {
+    if (req.user.username === (await this.usersService.getUserById(id)).username) {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
     if (!isCodeValid)
     throw new UnauthorizedException('Wrong authentication code');
     return await this.usersService.activate2FA(user);
+    }
   }
 
   @Get('/:id/2fa/verify/:secret')
 @UseGuards(AuthGuard('jwt'))
-  async verify2FA(@Param('id') id: string, @Param('secret') secret: string): Promise<boolean> {
+  async verify2FA(@Request() req,@Param('id') id: string, @Param('secret') secret: string): Promise<boolean> {
+    if (req.user.username === (await this.usersService.getUserById(id)).username) {
     const user: User = await this.usersService.getUserById(id);
     const isCodeValid: boolean = this.usersService.isTwoFactorAuthenticationCodeValid(secret, user);
     if (!isCodeValid)
     throw new UnauthorizedException('Wrong authentication code');
     return isCodeValid;
+    }
   }
 }
