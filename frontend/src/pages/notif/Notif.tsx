@@ -82,8 +82,8 @@ export default function Notif() {
                   <div className="notifText">
                     sent you a friend's request
                   </div>
-                  <DialogActions onClick={() => {delNotif(index)}}>
-                    <Button className="notifAccept">
+                  <DialogActions>
+                    <Button className="notifAccept" onClick={() => {delNotif(index)}}>
                       <NavLink to={`/profileother?username=${notif.data.sender}`} className="notifFriend">Look my friend's profile</NavLink>
                     </Button>
                   </DialogActions>
