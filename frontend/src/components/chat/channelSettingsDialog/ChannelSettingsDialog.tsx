@@ -256,7 +256,7 @@ const ChannelSettingsDialog = (props: {
               currentName: props.openConvName,
               newName: nameInputValue,
             });
-            props.setOpenConvName(nameInputValue);
+            props.setOpenConvName("");
             handleCloseSecuName();
             handleClose();
           }}

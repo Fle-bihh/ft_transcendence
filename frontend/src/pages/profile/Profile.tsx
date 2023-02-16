@@ -87,7 +87,7 @@ const Profile = () => {
                 }
             }).catch(err => {
                 if (err.response!.status === 500) {
-                    setmessage2("username deja existant");
+                    setmessage2("Invalid username");
                     seterror(true);
                 }
             })

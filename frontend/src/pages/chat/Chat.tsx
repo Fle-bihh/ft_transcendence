@@ -65,6 +65,12 @@ const Chat = () => {
     utils.socket.emit("GET_ALL_CONV_INFO", { sender: user.user?.username });
   });
 
+  utils.socket.removeListener("channel_name_change");
+  utils.socket.on("channel_name_change", (data: {channelName: string}) => {
+    utils.socket.emit("GET_ALL_CHANNELS", { login: user.user?.username });
+    setOpenConvName(data.channelName)
+  });
+
   return (
     <div className="chat">
       <div className="navSpace"></div>
